@@ -8,6 +8,18 @@ branch, which holds just this folder and is kept up to date by a workflow.
 
     tools/sync-common.sh        # git subtree pull --prefix=common <AERA-Atari> common --squash
 
+## Who uses it
+
+| App | Since | Check when it moved |
+|---|---|---|
+| EFTP | 14 Oct 2026 | programs byte-identical before/after; unit, FTP/FTPS and gateway tests |
+| EMail | 14 Oct 2026 | programs byte-identical; unit and Dovecot tests (plain, Falcon TLS, stunnel gateway) |
+| ECal | 14 Oct 2026 | programs byte-identical; unit, gateway and Radicale tests (same results as before) |
+| EContact | 14 Oct 2026 | programs byte-identical; unit, low-memory and Radicale tests |
+
+ClaudeST (`st/`) and EHypView carry older copies of some of these files; they follow once layer 2
+is in, since their copies differ more.
+
 ## What's here (layer 1)
 
 These files were the same code in ECal, EContact, EMail and EFTP when they moved here (October 2026).
