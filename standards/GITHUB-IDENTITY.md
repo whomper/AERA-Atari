@@ -110,9 +110,11 @@ should update its remote:
 
 ## Commits
 
-- **Author.** Commits should show you. Today some are by "Claude", some by "whomper" and some by
-  "Erez Yaary". Set the git author for Claude sessions to your name and address (Claude adds a
-  `Co-Authored-By` line).
+- **Author and committer.** Commits made by Claude sessions name Erez Yaary as the author
+  (`git commit --author="Erez Yaary <yaary@me.com>"`) and keep Claude `<noreply@anthropic.com>` as
+  the committer. The sessions sign each commit, and GitHub shows a signed commit as **Verified** only
+  when the committer matches the signing key; a commit with Erez as committer shows as Unverified.
+  Commits made before 14 Oct 2026 mix "Claude", "whomper" and "Erez Yaary".
 - **Branches.** `main` is the default branch everywhere. Under Settings → General, tick
   "Automatically delete head branches" so merged branches tidy themselves away.
 
