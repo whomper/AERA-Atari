@@ -30,11 +30,15 @@ void icon_draw(const GRECT *work, const GRECT *clip, const unsigned short *icon,
 {
 	static const short std[16] = { 0, 1, 0, 0, 0, 0, 0, 0, 8, 9, 1, 1, 0, 2, 3, 9 };
 	GRECT c = *clip, all = *work, r;
-	short n = status ? (short)strlen(status) : 0, x, y, room;
+	short n = status ? (short)strlen(status) : 0, x, y, room, sw, sh;
 	font_sys_push();
-	room = n && work->h >= ICON_H + ch + 2 && work->w >= n * cw;
+	/* the status in the 6x6 font, as the desktop labels its icons: in an
+	   iconified window of 72x72 the system font leaves no room under the
+	   icon (font_sys_pop() sets the app's font and size again) */
+	vst_height(vdi_h, 4, &sw, &sh);
+	room = n && work->h >= ICON_H + sh + 2 && work->w >= n * sw;
 	x = work->x + (work->w - ICON_W) / 2;
-	y = work->y + (work->h - ICON_H - (room ? ch + 1 : 0)) / 2;
+	y = work->y + (work->h - ICON_H - (room ? sh + 1 : 0)) / 2;
 	clip_on(&c);
 	fill(&all, 0);
 	if (planes >= 4 && icon16) {
@@ -56,8 +60,13 @@ void icon_draw(const GRECT *work, const GRECT *clip, const unsigned short *icon,
 				}
 			}
 	}
-	if (room)
-		text_at(work->x + (work->w - n * cw) / 2, y + ICON_H + 1, status, n, n, TX_BOLD | TX_LTR);
+	if (room) {
+		vswr_mode(vdi_h, 2);	/* transparent, in black, plain, from the top */
+		vst_color(vdi_h, 1);
+		vst_effects(vdi_h, 0);
+		vst_alignment(vdi_h, 0, 5);
+		v_gtext_n(vdi_h, work->x + (work->w - n * sw) / 2, y + ICON_H + 1, status, n);
+	}
 	clip_off();
 	font_sys_pop();
 }
