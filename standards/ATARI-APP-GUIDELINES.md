@@ -213,12 +213,17 @@ table in each help file is generated from the menu definition, so it can't drift
 
 ### 5.1 Windows
 - **Window parts:** name, closer, mover, fuller, sizer, info line, plus sliders where content scrolls.
-  The iconifier is added when `appl_getinfo(11)` reports it.
+  The iconifier is added when `appl_getinfo(11)` reports it (`icon_kind()`).
 - **Iconify (must, where the AES has it):**
-  - Handle `WM_ICONIFY`, `WM_UNICONIFY` and `WM_ALLICONIFY`.
-  - The iconified window shows the app icon and a short status: today's date for ECal, unread count
-    for EMail, transfer % for EFTP.
-  - Reference: ECal `ui/win.c`.
+  - Handle `WM_ICONIFY`, `WM_UNICONIFY` and `WM_ALLICONIFY`, in every window of the app's own.
+  - The iconified window shows the app icon and a short status under it when there is room
+    (`icon_redraw()`): today's date for ECal, the number of contacts for EContact, unread mail for
+    EMail, transfer % for EFTP, "busy" or "offline" for ClaudeST.
+  - An iconified window takes no keys or clicks: they are taken and dropped, not left in the AES's
+    buffer for when it comes back. Moving the icon doesn't change the place saved in the INF.
+  - Nothing is laid out for the icon's small work area: the app lays out again when it comes back.
+  - A page or file asked for (VA_START) brings back an iconified viewer (EHypView).
+  - Reference: `common/ui/iconify.c`; ECal `ui/win.c`.
 - **`WM_BOTTOMED` sends the window to the back** where the AES supports it.
 - **Window title:** `ECal` or `ECal – Work`. The **info line** is the status line.
 - **Position and size** are saved in the INF and checked against the current screen on the next start.
@@ -348,7 +353,7 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 4.2 Drag and drop in | ✗ | ✗ | ✗ | ~ (inside its window) | ✗ | ✗ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
 | 4.4 Clipboard | ✗ | ~ (write) | ✗ | ✗ | ✗ | ✗ |
-| 5.1 Iconify | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.1 INF in boot root | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ (current folder) |
