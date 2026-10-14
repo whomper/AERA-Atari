@@ -23,7 +23,8 @@
 short icon_kind(short kind);
 
 /* the iconified window's work area (in clip): the 32x32 icon, in colour
-   with 16 colours or more (icon16 may be 0), and status under it */
+   with 16 colours or more (icon16 may be 0), and status under it in the
+   6x6 font (an iconified window is usually 72x72) */
 void icon_draw(const GRECT *work, const GRECT *clip, const unsigned short *icon,
 	       const unsigned char *icon16, const char *status);
 
