@@ -102,6 +102,13 @@ What they brought in:
 In EFTP, EMail, ECal and EContact only `gem.o` and `nf.o` changed: every other object file builds the
 same as before.
 
+## Layer 3: GEM building blocks (October 2026)
+
+| File | From | What it does |
+|---|---|---|
+| `atari/crash.c/.S/.h` | EMail | the crash catcher: a crash in the program (2 to 8 bombs) writes `CRASH.LOG` and quits tidily; TOS's record of a crash in the system is added at the next start. `crash_install(workdir, "ECal", version)`, in a program only (a desk accessory never installs it, and takes no memory for it). `crash_report = conn_log_append` adds the report to the protocol log too. `tests/crash/` checks every kind of crash in Hatari on a 68000 and a 68030 |
+| `tools/crashaddr.py` | EMail | turns the offsets in a `CRASH.LOG` into function names, from the ELF file of the same build |
+
 ## Coming next
 
 | Area | Files | Plan |
