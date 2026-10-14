@@ -27,7 +27,7 @@ The AERA logos are in [`../brand/`](../brand/) and come in two forms:
 | File | Use it for |
 |---|---|
 | [`aera-wordmark.jpg`](../brand/aera-wordmark.jpg): "AERA" over a line with the star | wide spaces: README and profile banners, the corner of social previews |
-| [`aera-star.jpg`](../brand/aera-star.jpg): the four-point star alone | square and small spaces: the GitHub avatar, repos without an Atari icon (EDOS, FTP_XL, AERA-Gateway, AERA-Atari) |
+| [`aera-star.jpg`](../brand/aera-star.jpg): the four-point star alone | square and small spaces: the GitHub avatar, repos without an Atari icon (EDOS, EFTP_XL, AERA-Gateway, AERA-Atari) |
 
 Both are 500×500 renders of brushed metal on dark stone. They work on the `#040A11` navy because the
 generator fades the dark background out.
@@ -67,7 +67,7 @@ ECal and EContact are missing the icon today.
 ### 3. Family footer
 Every app README ends with the same line, so a visitor can reach the rest of the family:
 
-> Part of **AERA** for Atari: [ECal](https://github.com/whomper/ECal) · [EContact](https://github.com/whomper/EContact) · [EMail](https://github.com/whomper/EMail) · [EFTP](https://github.com/whomper/EFTP) · [EHypView](https://github.com/whomper/EHypView) · [ClaudeST](https://github.com/whomper/ClaudeST) · 8-bit: [EDOS](https://github.com/whomper/EDOS) · [FTP_XL](https://github.com/whomper/FTP_XL)
+> Part of **AERA** for Atari: [ECal](https://github.com/whomper/ECal) · [EContact](https://github.com/whomper/EContact) · [EMail](https://github.com/whomper/EMail) · [EFTP](https://github.com/whomper/EFTP) · [EHypView](https://github.com/whomper/EHypView) · [ClaudeST](https://github.com/whomper/ClaudeST) · 8-bit: [EDOS](https://github.com/whomper/EDOS) · [EFTP_XL](https://github.com/whomper/EFTP_XL)
 
 ### 4. Profile README
 `whomper/whomper` doesn't exist yet. Create it as a public repo with that exact name, and its README
@@ -86,7 +86,7 @@ Decided 14 Oct 2026:
 | Repo | New name | Why |
 |---|---|---|
 | EMAIL | **EMail** | the app's own spelling |
-| ftp_xl | **FTP_XL** | the program's name; upper case like the rest |
+| ftp_xl | **EFTP_XL** | E-prefix like the rest of the family; upper case |
 | atari_web | **AERA-Gateway** | it's the Pi side of the family; ECal's, EFTP's and EMail's gateways join it in step 3 |
 | ClaudeST | stays | "Claude ST" and "EClaude" in old screenshots become **ClaudeST** |
 
@@ -129,6 +129,6 @@ Set these on each repo's main page: the ⚙ next to **About**.
 | EHypView | A modern ST-Guide hypertext (.HYP) viewer for the Atari TT, Falcon and FireBee: program or desk accessory. | `atari-st` `atari-falcon` `gem` `tos` `st-guide` `hypertext` `retrocomputing` `aera` |
 | ClaudeST | A native GEM client for claude.ai on the Atari ST, STE, Mega ST/STE, TT and Falcon, with a Raspberry Pi bridge. | `atari-st` `atari-falcon` `gem` `tos` `claude` `raspberry-pi` `retrocomputing` `aera` |
 | EDOS | A menu-driven Disk Utility Package for Atari 8-bit computers, running on top of MyDOS or SpartaDOS. | `atari-8bit` `atari-xl` `6502` `assembly` `mac65` `spartados` `retrocomputing` `aera` |
-| FTP_XL | File transfer for Atari 8-bit computers (400/800/XL/XE) over FujiNet, to any FTP or SFTP server. | `atari-8bit` `atari-xl` `fujinet` `ftp` `sftp` `cc65` `retrocomputing` `aera` |
+| EFTP_XL | File transfer for Atari 8-bit computers (400/800/XL/XE) over FujiNet, to any FTP or SFTP server. | `atari-8bit` `atari-xl` `fujinet` `ftp` `sftp` `cc65` `retrocomputing` `aera` |
 | AERA-Gateway | Raspberry Pi proxies that give an Atari modern e-mail (TROLL, EMail) and web access (WRP, Macproxy). | `atari-falcon` `atari-st` `raspberry-pi` `imap` `proxy` `retrocomputing` `aera` |
 | AERA-Atari | How the AERA Atari programs look and behave, the repo template they share, the brand, and (soon) their shared code. | `atari-st` `atari-falcon` `gem` `tos` `style-guide` `retrocomputing` `aera` |

@@ -22,7 +22,7 @@
     {"out": "social/EDOS.png", "name": "EDOS", "mark": "aera-star.jpg", "wordmark": "aera-wordmark.jpg",
      "tag": "// ATARI 400 · 800 · XL · XE //",
      "tagline": "A menu-driven Disk Utility Package for Atari 8-bit computers, on top of MyDOS or SpartaDOS."},
-    {"out": "social/FTP_XL.png", "name": "FTP_XL", "mark": "aera-star.jpg", "wordmark": "aera-wordmark.jpg",
+    {"out": "social/EFTP_XL.png", "name": "EFTP_XL", "mark": "aera-star.jpg", "wordmark": "aera-wordmark.jpg",
      "tag": "// ATARI 400 · 800 · XL · XE //",
      "tagline": "File transfer for Atari 8-bit computers over FujiNet, to any FTP or SFTP server."},
     {"out": "social/AERA-Gateway.png", "name": "AERA-Gateway", "mark": "aera-star.jpg", "wordmark": "aera-wordmark.jpg",

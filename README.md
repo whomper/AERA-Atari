@@ -16,7 +16,7 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | <img src="brand/icons/ehypview.png" width="48" alt="EHypView icon"> | [EHypView](https://github.com/whomper/EHypView) | TT, Falcon, FireBee | ST-Guide hypertext viewer |
 | <img src="brand/icons/claudest.png" width="48" alt="ClaudeST icon"> | [ClaudeST](https://github.com/whomper/ClaudeST) | ST, STE, TT, Falcon | claude.ai client |
 | | [EDOS](https://github.com/whomper/EDOS) | 400, 800, XL, XE | Disk Utility Package |
-| | [FTP_XL](https://github.com/whomper/FTP_XL) | 400, 800, XL, XE | file transfer over FujiNet |
+| | [EFTP_XL](https://github.com/whomper/EFTP_XL) | 400, 800, XL, XE | file transfer over FujiNet |
 | | [AERA-Gateway](https://github.com/whomper/AERA-Gateway) | Raspberry Pi | mail and web proxies for the Atari |
 
 ## What's here

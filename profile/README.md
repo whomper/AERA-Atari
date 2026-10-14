@@ -23,7 +23,7 @@ Music and builds: **[yaary.music](https://yaary.music)** · **[YouTube](https://
 #### Atari 400 · 800 · XL · XE
 
 - **[EDOS](https://github.com/whomper/EDOS)**: a menu-driven Disk Utility Package
-- **[FTP_XL](https://github.com/whomper/FTP_XL)**: file transfer over FujiNet
+- **[EFTP_XL](https://github.com/whomper/EFTP_XL)**: file transfer over FujiNet
 
 #### Behind the scenes
 
