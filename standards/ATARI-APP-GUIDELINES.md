@@ -351,6 +351,6 @@ INF, and on the next start the app offers to show it.
 | 6.1 INF in boot root | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ (current folder) |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
 | 6.4 Crash handler | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
-| 7.1 Random DNS ID, checked lengths | ✗ | ✗ | ✗ | ✗ | n/a | n/a |
+| 7.1 Random DNS ID, checked lengths | ~ (random ID) | ~ (random ID) | ~ (random ID) | ~ (random ID) | n/a | n/a |
 | 7.2 No silent plaintext passwords | ✗ | ✗ | ✗ | ✗ | n/a | n/a |
 | 7.3 Gateway private-only by default | ✓ | n/a | ✗ (whole LAN unless `--allow`) | ✓ | n/a | ✓ (after step 1) |

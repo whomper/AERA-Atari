@@ -16,9 +16,8 @@ branch, which holds just this folder and is kept up to date by a workflow.
 | EMail | 14 Oct 2026 | programs byte-identical; unit and Dovecot tests (plain, Falcon TLS, stunnel gateway) |
 | ECal | 14 Oct 2026 | programs byte-identical; unit, gateway and Radicale tests (same results as before) |
 | EContact | 14 Oct 2026 | programs byte-identical; unit, low-memory and Radicale tests |
-
-ClaudeST (`st/`) and EHypView carry older copies of some of these files; they follow once layer 2
-is in, since their copies differ more.
+| ClaudeST | 14 Oct 2026 | layout and bridge tests; demo recording (Falcon, serial) and STinG through FAKESTNG (ST): every screenshot the same as the old build's |
+| EHypView | 14 Oct 2026 | unit, ASan, big-endian (QEMU) and golden tests; Atari report equal to the host's; GUI test (45 checks) |
 
 ## What's here (layer 1)
 
@@ -99,6 +98,9 @@ What they brought in:
 - **ClaudeST:** the serial port calls (`Rsconf`, `Bconmap`, `Bcostat`, `DEV_AUX`, the `BAUD_*`
   codes) in `tos.h`.
 - `appl_write()` now takes a `const` message.
+
+In EFTP, EMail, ECal and EContact only `gem.o` and `nf.o` changed: every other object file builds the
+same as before.
 
 ## Coming next
 
