@@ -1,0 +1,24 @@
+name: Publish common
+
+# Keep the `common` branch equal to the common/ folder, so the apps can
+#   git subtree pull --prefix=common https://github.com/whomper/AERA-Atari common --squash
+on:
+  push:
+    branches: [main]
+    paths: ["common/**", ".github/workflows/publish-common.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  split:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Split common/ into the common branch
+        run: |
+          git subtree split --prefix=common -b common
+          git push origin common

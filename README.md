@@ -28,13 +28,14 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | [`standards/repo-template/`](standards/repo-template/) | the files every app repo carries (README skeleton, CLAUDE.md, CI and Release workflows…) and how to move a repo over |
 | [`brand/`](brand/) | the AERA logos, the app icons, the social-preview images and the script that draws them |
 | [`profile/`](profile/) | the draft README for the GitHub profile page |
-| `common/` *(coming)* | the code the apps share: the Atari runtime, GEM building blocks, TLS and network layer |
+| [`common/`](common/) | the code the apps share, pulled into each app with `git subtree` (layer 1 so far: TLS library, DSP RSA, bidi, dates, password encryption, build tools) |
 
 ## Licence
 
 The code and documents here are free software under the GNU General Public License, version 2 or (at
 your option) any later version; see [COPYING](COPYING). The fonts in `brand/fonts/` are under the SIL
-Open Font License.
+Open Font License; BearSSL in `common/third_party/` under the MIT licence; `common/certs/CACERT.PEM`
+under the Mozilla Public License 2.0.
 
 The **AERA name and the AERA logos** (`brand/aera-*.jpg`, `brand/banner.png` and the images in
 `brand/social/`) are **not** covered by the GPL. They identify Erez Yaary's work and may not be used for
