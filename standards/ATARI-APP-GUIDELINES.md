@@ -169,8 +169,9 @@ table in each help file is generated from the menu definition, so it can't drift
     page (EHypView)
   - empty, meaning "open / top your window"
 - It replies `AV_STARTED` so the sender can free the string.
-- **This is the only way family apps call each other.** There are no private message numbers; EContact's
-  `EC_OPEN` (0x4543) goes.
+- **This is the only way family apps call each other.** There are no private message numbers (EContact's
+  `EC_OPEN`, 0x4543, is gone).
+- The shared code is `common/ui/av.c`: `av_init()`, `av_message()`, `av_arg()`, `av_exit()`, `av_send()`.
 - **On start, an app that finds an AV server** (`AVSERVER` environment variable, else Thing / jinnee /
   Gemini) **sends `AV_PROTOKOLL`**, and on quit it sends `AV_EXIT`. That lets the desktop open files with
   the app and route drag-and-drop to ACC windows (`VA_DRAGACCWIND`).
@@ -341,8 +342,8 @@ INF, and on the next start the app offers to show it.
 | 3.1 PRG menu bar | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ~ (^S) | ~ (^S) | ✗ (^F ^S, no ^W) | ~ (no ^W) | ✓ | ~ (no ^W) |
 | 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
-| 4.1 Accepts VA_START | ✗ | ✓ | ✗ (breaks EContact → Mail) | ✗ | ✓ | ✗ |
-| 4.1 AV_PROTOKOLL / AV_EXIT | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.2 Drag and drop in | ✗ | ✗ | ✗ | ~ (inside its window) | ✗ | ✗ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ~ (no viewer: keys) | ~ (no viewer: keys) | ~ (no viewer: keys) | ~ (no viewer: keys) | n/a | ~ (no viewer: About) |
 | 4.4 Clipboard | ✗ | ~ (write) | ✗ | ✗ | ✗ | ✗ |
