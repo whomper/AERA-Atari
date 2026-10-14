@@ -197,7 +197,8 @@ table in each help file is generated from the menu definition, so it can't drift
   - Use `Mxalloc(size, 0x2B)`: global, readable under MiNT memory protection, TT RAM preferred.
   - On TOS 1.x, where Mxalloc doesn't exist, use a static buffer.
   - The shared launcher, `common/ui/help.c` (from EContact's `shared_buf`), does both.
-- **If no viewer is running**, an alert says to install EHypView or ST-Guide as an accessory.
+- **If no viewer is running**, an alert says to install EHypView or ST-Guide as an accessory
+  (`help_key()`), with a button for what the app shows itself, such as its keys.
 - **Every app ships `NAME.HYP` built from `docs/GUIDE.md`** by one generator, with these chapters:
   Getting started · Windows and menus · Keyboard · Settings · Troubleshooting · About.
 
@@ -288,7 +289,7 @@ table in each help file is generated from the menu definition, so it can't drift
 
 ### 6.4 Crashes
 Every app installs the shared crash handler (`common/atari/crash.c`, from EMail's). It writes `CRASH.LOG` next to the
-INF, and on the next start the app offers to show it.
+INF, and on the next start the app offers to show it (`crash_offer()` in `common/ui/aboutbox.c`).
 
 ---
 
@@ -332,27 +333,27 @@ INF, and on the next start the app offers to show it.
 
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
 |---|---|---|---|---|---|---|
-| 1.1 Desk name = product name | ✗ "ECalendar" | ✗ "Contacts" | n/a | n/a | ✗ "Hypertext" | n/a |
+| 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 1.2 Build doesn't change VERSION; releases | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (hard-coded) |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✗ ACC | ✓ |
+| 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ |
 | 2.1 PRG + ACC | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
-| 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✗ hangs | n/a |
+| 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 2.3 File-change check, PRG/ACC hand-over | ✗ | ~ | ✗ | ✗ | ✗ | ✗ |
 | 3.1 PRG menu bar | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
-| 3.2 Family shortcuts | ~ (^S) | ~ (^S) | ✗ (^F ^S, no ^W) | ~ (no ^W) | ✓ | ~ (no ^W) |
-| 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.2 Drag and drop in | ✗ | ✗ | ✗ | ~ (inside its window) | ✗ | ✗ |
-| 4.3 Help launcher (EHypView first, 0x2B memory) | ~ (no viewer: keys) | ~ (no viewer: keys) | ~ (no viewer: keys) | ~ (no viewer: keys) | n/a | ~ (no viewer: About) |
+| 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
 | 4.4 Clipboard | ✗ | ~ (write) | ✗ | ✗ | ✗ | ✗ |
 | 5.1 Iconify | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
-| 5.1 WM_BOTTOMED | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
-| 5.2 ST Low gets an alert | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.1 INF in boot root | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ (current folder) |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 6.4 Crash handler (offers to show CRASH.LOG) | ~ (names it) | ~ (names it) | ~ (names it) | ~ (names it) | ~ (names it) | ~ (names it) |
+| 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 7.1 Random DNS ID, checked lengths | ~ (random ID) | ~ (random ID) | ~ (random ID) | ~ (random ID) | n/a | n/a |
 | 7.2 No silent plaintext passwords | ✗ | ✗ | ✗ | ✗ | n/a | n/a |
 | 7.3 Gateway private-only by default | ✓ | n/a | ✗ (whole LAN unless `--allow`) | ✓ | n/a | ✓ (after step 1) |
