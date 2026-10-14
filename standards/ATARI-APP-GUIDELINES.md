@@ -48,8 +48,8 @@ The last section lists where each app stands today. Step 4 of the roadmap works 
   [repo-template](repo-template/README.md).
 
 ### 1.3 About box (must)
-Every app has the same About box, drawn by the shared `about_show()`. The reference is ECal's
-`ui/about.c`, which draws to ST RAM, has the TT-RAM line, and uses the system font.
+Every app has the same About box, drawn by the shared `about_show()` (`common/ui/aboutbox.c`, from
+ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the system font.
 
 ```
             ┌──────────────────────────────────────────────┐
@@ -116,7 +116,7 @@ Both editions use the **same settings and data files** (see 6.1), so running bot
 ### 3.1 Menu bar
 - **Every PRG has a menu bar** with these titles, in this order, leaving out empty ones:
   **Desk · File · Edit · View · [app titles] · Options · Help**. The menu bar is built at run time by the
-  shared builder (reference: EHypView's `src/gem/menu.c`, which right-aligns the shortcut column).
+  shared builder (`common/ui/mbar.c`, from EHypView's, which right-aligns the shortcut column).
 - **The ACC has no menu bar.** Its toolbar ≡ menu carries the same commands.
 - **Menu items show their shortcut** as `^N`, `⇧^F`. Commands that open a dialog end in "…".
 
@@ -147,8 +147,8 @@ table in each help file is generated from the menu definition, so it can't drift
 ### 3.3 Context menus (must)
 - **Right-click on anything that has commands opens a context menu at the mouse.** That covers list rows,
   sidebar items, text fields, files and toolbar buttons.
-- **It is drawn by the shared `popup.c`** (reference: ECal's, with check-mark alignment, system font and
-  `popup_area`).
+- **It is drawn by the shared `popup()`** (`common/ui/popup.c`, from ECal's, with check-mark alignment,
+  system font and `popup_area`).
 - **The first entry is the double-click action.** The menu only repeats commands that also exist in the
   menu bar or toolbar, with their shortcuts, so nothing is right-click only.
 - **Insert opens the same menu** for the selected item (ClaudeST), for keyboard users.
@@ -195,7 +195,7 @@ table in each help file is generated from the menu definition, so it can't drift
 - **The string is in memory the viewer may read.**
   - Use `Mxalloc(size, 0x2B)`: global, readable under MiNT memory protection, TT RAM preferred.
   - On TOS 1.x, where Mxalloc doesn't exist, use a static buffer.
-  - Reference: EContact's `shared_buf`.
+  - The shared launcher, `common/ui/help.c` (from EContact's `shared_buf`), does both.
 - **If no viewer is running**, an alert says to install EHypView or ST-Guide as an accessory.
 - **Every app ships `NAME.HYP` built from `docs/GUIDE.md`** by one generator, with these chapters:
   Getting started · Windows and menus · Keyboard · Settings · Troubleshooting · About.
@@ -268,7 +268,7 @@ table in each help file is generated from the menu definition, so it can't drift
     `form_do` in EMail/EFTP.
 
 ### 6.2 Alerts
-- **One shared `alert()`** (reference: ECal `ui/field.c`): it wraps text to 30 characters, at most 5
+- **One shared `alert()`** (`common/ui/alert.c`, from ECal's): it wraps text to 30 characters, at most 5
   lines, and runs bidi.
 - **Icons:**
   - 1 (!) to inform
@@ -286,7 +286,7 @@ table in each help file is generated from the menu definition, so it can't drift
 - **The app stays usable while network work runs**, wherever the protocol allows it.
 
 ### 6.4 Crashes
-Every app installs the shared crash handler (EMail's `atari/crash.c`). It writes `CRASH.LOG` next to the
+Every app installs the shared crash handler (`common/atari/crash.c`, from EMail's). It writes `CRASH.LOG` next to the
 INF, and on the next start the app offers to show it.
 
 ---
@@ -333,24 +333,24 @@ INF, and on the next start the app offers to show it.
 |---|---|---|---|---|---|---|
 | 1.1 Desk name = product name | ✗ "ECalendar" | ✗ "Contacts" | n/a | n/a | ✗ "Hypertext" | n/a |
 | 1.2 Build doesn't change VERSION; releases | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (hard-coded) |
-| 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✗ no GPL | ✗ no GPL | ✓ |
+| 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✗ ACC | ✓ |
 | 2.1 PRG + ACC | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✗ hangs | n/a |
 | 2.3 File-change check, PRG/ACC hand-over | ✗ | ~ | ✗ | ✗ | ✗ | ✗ |
 | 3.1 PRG menu bar | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ~ (^S) | ~ (^S) | ✗ (^F ^S, no ^W) | ~ (no ^W) | ✓ | ~ (no ^W) |
-| 3.3 Context menus (shared popup) | ✓ | ✓ | ~ old | ~ old | ✗ | ~ own |
+| 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ |
 | 4.1 Accepts VA_START | ✗ | ✓ | ✗ (breaks EContact → Mail) | ✗ | ✓ | ✗ |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 4.2 Drag and drop in | ✗ | ✗ | ✗ | ~ (inside its window) | ✗ | ✗ |
-| 4.3 Help launcher (EHypView first, 0x2B memory) | ~ | ~ | ✗ | ✗ | n/a | ✗ |
+| 4.3 Help launcher (EHypView first, 0x2B memory) | ~ (no viewer: keys) | ~ (no viewer: keys) | ~ (no viewer: keys) | ~ (no viewer: keys) | n/a | ~ (no viewer: About) |
 | 4.4 Clipboard | ✗ | ~ (write) | ✗ | ✗ | ✗ | ✗ |
 | 5.1 Iconify | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 5.1 WM_BOTTOMED | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 6.1 INF in boot root | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ (current folder) |
-| 6.2 Shared alert with bidi | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
-| 6.4 Crash handler | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 6.4 Crash handler | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 7.1 Random DNS ID, checked lengths | ~ (random ID) | ~ (random ID) | ~ (random ID) | ~ (random ID) | n/a | n/a |
 | 7.2 No silent plaintext passwords | ✗ | ✗ | ✗ | ✗ | n/a | n/a |
 | 7.3 Gateway private-only by default | ✓ | n/a | ✗ (whole LAN unless `--allow`) | ✓ | n/a | ✓ (after step 1) |
