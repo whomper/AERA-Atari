@@ -178,7 +178,12 @@ table in each help file is generated from the menu definition, so it can't drift
 
 ### 4.2 Drag and drop (should)
 - **Windows accept `AP_DRAGDROP`** (MagiC, MiNT): `ARGS` (files) and `.TXT` (text).
-- **Under single TOS, windows accept `VA_DRAGACCWIND`** from the desktop.
+- **Under single TOS, windows accept `VA_DRAGACCWIND`** from the desktop. An accessory tells the
+  desktop about each window it opens and closes (`AV_ACCWINDOPEN`, `AV_ACCWINDCLOSED`).
+- **What an app doesn't take, it refuses,** so the sender knows (`DD_EXT`, `DD_NAK`). A drop that comes
+  while the app is busy is refused, not left unanswered.
+- Files dropped are taken as files handed over with `VA_START` (4.1).
+- Shared code: `common/ui/dd.c` (`dd_message()`), `av_window()` in `common/ui/av.c`.
 - What a drop does:
 
 | App | Drop files | Drop text |
@@ -205,6 +210,26 @@ table in each help file is generated from the menu definition, so it can't drift
 ### 4.4 Clipboard
 - ^C ^X ^V work in every text field and on list selections that have a text form, through the GEM
   clipboard (`scrp_read` / `scrp_write`, `SCRAP.TXT`, Atari character set).
+- **Nothing selected:**
+  - ^C and ^X take the whole field.
+  - In a text of several lines, they take the line the cursor is in (in EMail's header lines, the value
+    after "To: ").
+  - ^V inserts at the cursor; a field of one line takes the first line only.
+- **Passwords are never copied out of a field;** pasting into one works.
+- **Lists copy their selection's text form;** ^X and ^V do nothing there:
+  - EMail: the message shown, or the folder's name.
+  - EFTP: the chosen files' full names, a line each.
+  - ECal: the event: title, when, where, notes.
+  - EContact: "Name <email>", as EMail's To: line takes it.
+  - EHypView: the page as text.
+  - ClaudeST: Claude's last answer, from an empty reply line.
+- **A program with a menu bar has an Edit menu:** Cut ^X, Copy ^C, Paste ^V, Select all ^A where it
+  has one. Items that don't apply to what has the keyboard are greyed.
+- **Writing the clipboard:** SCRAP.TXT goes in the AES's clipboard folder, made if it isn't there yet,
+  else `\CLIPBRD` on the boot drive. The other `SCRAP.*` files go first, and lines end CR LF.
+  Other programs are told with `SC_CHANGED` where the AES can broadcast.
+- Shared code: `common/ui/clip.c` (`clip_put()`, `clip_get()`, `clip_key()`, and `clip_edit()` for a
+  dialog's edit field).
 - An app never tells the user to paste somewhere that can't paste.
 
 ---
@@ -350,9 +375,9 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 4.2 Drag and drop in | ✗ | ✗ | ✗ | ~ (inside its window) | ✗ | ✗ |
+| 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
-| 4.4 Clipboard | ✗ | ~ (write) | ✗ | ✗ | ✗ | ✗ |
+| 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
