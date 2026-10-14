@@ -348,6 +348,7 @@ INF, and on the next start the app offers to show it.
 | 4.4 Clipboard | ✗ | ~ (write) | ✗ | ✗ | ✗ | ✗ |
 | 5.1 Iconify | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 5.1 WM_BOTTOMED | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 5.2 ST Low gets an alert | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 6.1 INF in boot root | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ (current folder) |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ~ (names it) | ~ (names it) | ~ (names it) | ~ (names it) | ~ (names it) | ~ (names it) |
