@@ -1,0 +1,39 @@
+name: Release
+
+# Push a tag vX.Y (matching VERSION) to build the programs and publish them
+# as a GitHub Release, with the zip as its download.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: The tag matches VERSION
+        run: |
+          if [ "v$(cat VERSION)" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::tag $GITHUB_REF_NAME, but VERSION says $(cat VERSION)"
+            exit 1
+          fi
+      - name: Install the m68k cross compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-m68k-linux-gnu
+      - name: Gateway dependencies
+        run: if [ -f gateway/requirements.txt ]; then pip install -r gateway/requirements.txt; fi
+      - name: Test
+        run: make test
+      - name: Build the release
+        run: make dist RELEASE=1
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "${GITHUB_REPOSITORY#*/} $(cat VERSION)" \
+            --generate-notes

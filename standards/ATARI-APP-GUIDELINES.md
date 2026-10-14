@@ -1,0 +1,356 @@
+# AERA Atari app guidelines
+
+These are the rules every AERA GEM program follows, so the apps feel like one family:
+- ECal
+- EContact
+- EMail
+- EFTP
+- EHypView
+- ClaudeST
+- every app after them
+
+Each rule says **what** the user sees and **which existing code** is the reference, so a rule is
+implemented once (in the shared library) rather than six times.
+
+Words used here:
+- **must**: required before a release.
+- **should**: expected, unless the app has a stated reason not to.
+- **PRG**: the program started from the desktop.
+- **ACC**: the desk accessory.
+- **ST edition**: the build without TLS (`NAMEST.PRG` / `NAMEST.ACC`).
+
+The last section lists where each app stands today. Step 4 of the roadmap works through it.
+
+---
+
+## 1. Identity: names, version, About box
+
+### 1.1 Names
+- **Product name.** "E" plus what it is, written as one word with capitals: ECal, EContact, EMail, EFTP,
+  EHypView. ClaudeST keeps its name. The same spelling is used everywhere: README, window title, About
+  box, Desk menu, help file.
+- **Files.** Upper-case 8.3 names from one stem:
+  - `ECAL.PRG`, `ECAL.ACC`, `ECAL.HYP`, `ECAL.INF`, `ECAL.KEY`.
+  - The ST edition adds `ST`, shortening the stem to keep 8 characters: `ECALST.ACC`, `ECONTST.ACC`,
+    `EFTPST.PRG`.
+- **Desk menu entry.** Two spaces plus the product name: `"  ECal"`, `"  EContact"`. Not a
+  description ("Contacts") and not a longer name ("ECalendar").
+
+### 1.2 Version
+- **The `VERSION` file is the version.** It holds `major.minor` (e.g. `1.32`). The same string shows in:
+  - the About box
+  - the help file
+  - any `User-Agent` / `PRODID`
+- **A build never changes `VERSION`.** Only a release does: `tools/bump.py` in a release commit, tagged
+  `v1.32`.
+- **Builds that aren't a release show `1.32-dev`.** This lets a screenshot or bug report tell them apart.
+- Built programs are published as **GitHub Releases**, not committed. See
+  [repo-template](repo-template/README.md).
+
+### 1.3 About box (must)
+Every app has the same About box, drawn by the shared `about_show()`. The reference is ECal's
+`ui/about.c`, which draws to ST RAM, has the TT-RAM line, and uses the system font.
+
+```
+            ┌──────────────────────────────────────────────┐
+            │                  [32×32 icon]                 │  16-colour icon with ≥16 colours,
+            │                     ECal                      │  mono otherwise; name bold, underlined
+            │                 Version 1.32                  │
+            │       Calendar for the Atari ST, TT, Falcon   │  tagline: one line, ≤ 44 characters
+            │  ───────────────────────────────────────────  │
+            │              Created by Erez Yaary            │
+            │           © 2026 Erez Yaary · AERA            │
+            │                                               │
+            │     Falcon mode (TLS) • 3.1 MB free           │  status line: app-specific, optional
+            │                                               │
+            │   Free software under the GNU GPL, version 2  │  fine print, small font
+            │   or later. github.com/whomper/ECal           │  + "not affiliated with …" / trademark
+            │                                               │    lines when the app names others
+            │                     [ OK ]                    │
+            └──────────────────────────────────────────────┘
+```
+
+- It is centred on the screen, not the window, and closes with Return, Esc, Undo or a click on OK.
+- **It opens from the first menu item, "About ECal…".**
+  - With a menu bar: the first entry under the Desk title.
+  - Without one (an ACC, or a PRG in a window-only layout): the first entry of the toolbar's ≡ menu.
+  - Either way, **every edition must be able to reach it**. Today EHypView's ACC can't.
+- **Pens 8–15 may be borrowed** for the icon while the box is open, and must be restored when it closes.
+- **The icon is drawn from ST RAM** (copied there), never straight from program memory. Program memory
+  may be TT/Fast RAM, which the screen can't read.
+
+---
+
+## 2. Program and desk accessory
+
+### 2.1 Editions
+- **One source tree, one binary.** `crt0.S` tells PRG from ACC (`a0 != 0` at start: ECal's crt0).
+  `NAME.ACC` and `NAME.PRG` are the same file under two names.
+- **Apps worth having over another program should ship both** (ECal, EContact, EHypView: yes). An app
+  that ships only a PRG says why in its README; memory is a fair reason.
+- **ACC memory comes from a fixed heap** sized at build time (`acc_heap`). The README says how much the
+  ACC takes, and running out shows an alert. It must never fail silently.
+
+### 2.2 Life of an ACC
+| Event | ACC must |
+|---|---|
+| `AC_OPEN` | open its window, or top it if open |
+| `AC_CLOSE` | forget its window handles (the AES closed them), save settings, keep background work (sync, reminders) going |
+| `AP_TERM` | ignore it; an ACC never returns from `main` (it would land in crt0's `hang` loop) |
+| Window closer / ^W | close the window, stay resident |
+
+### 2.3 PRG and ACC side by side
+Both editions use the **same settings and data files** (see 6.1), so running both is safe:
+- **Before writing a file, check its date and size** (`files_check`, `pf_stamp`, EContact). If the other
+  edition changed it since it was loaded, load it again first, then write.
+- **Write to a temporary file, then rename over the old one.** A reset in the middle never leaves a
+  half-written file.
+- **Only one copy is active at a time.** On start, a PRG that finds its own ACC running (same name,
+  another `ap_id`) sends it `VA_START` with its command line and quits. The ACC then opens. Under
+  single TOS this is what "double-click ECAL.PRG while ECAL.ACC is installed" does.
+
+---
+
+## 3. Menus and keyboard
+
+### 3.1 Menu bar
+- **Every PRG has a menu bar** with these titles, in this order, leaving out empty ones:
+  **Desk · File · Edit · View · [app titles] · Options · Help**. The menu bar is built at run time by the
+  shared builder (reference: EHypView's `src/gem/menu.c`, which right-aligns the shortcut column).
+- **The ACC has no menu bar.** Its toolbar ≡ menu carries the same commands.
+- **Menu items show their shortcut** as `^N`, `⇧^F`. Commands that open a dialog end in "…".
+
+### 3.2 Family shortcuts (must)
+These keys mean the same thing in every app. An app may leave one unused, but **never gives it another
+meaning**.
+
+| Key | Command | Key | Command |
+|---|---|---|---|
+| ^N | New (event, contact, message, chat, connection) | ^A | Select all |
+| ^O | Open | ^C ^X ^V | Copy, Cut, Paste (GEM clipboard) |
+| ^S | Save | ^Z / Undo key | Undo (viewers: Back) |
+| ^W | Close window (a one-window PRG: quit) | ^P | Print (reserved) |
+| ^Q | Quit (ACC: close window) | ^I | Get info / properties |
+| ^F | Find | ^, | Settings… |
+| Help | Help for what's on screen (see 4.3) | Insert | Context menu for the selection (see 3.3) |
+| Esc | Dialog: Cancel. File list: refresh (as the TOS desktop) | Return | Default button / open selection |
+
+App commands use the other letters, then ⇧^ for related commands. Where the app copies a Mac app,
+use that app's ⌘ key as ^:
+- ECal: ^R refresh, ^T today.
+- EMail: ^R reply, ⇧^R reply all, ⇧^F forward, ⇧^D send, ⇧^N get mail.
+- **Sidebar show/hide is ⇧^S in every app that has a sidebar.**
+
+Alternate+letter is left free, because some country keyboards use it for accented letters. The shortcut
+table in each help file is generated from the menu definition, so it can't drift.
+
+### 3.3 Context menus (must)
+- **Right-click on anything that has commands opens a context menu at the mouse.** That covers list rows,
+  sidebar items, text fields, files and toolbar buttons.
+- **It is drawn by the shared `popup.c`** (reference: ECal's, with check-mark alignment, system font and
+  `popup_area`).
+- **The first entry is the double-click action.** The menu only repeats commands that also exist in the
+  menu bar or toolbar, with their shortcuts, so nothing is right-click only.
+- **Insert opens the same menu** for the selected item (ClaudeST), for keyboard users.
+- **Viewers may make Back the first entry** (EHypView), instead of right-click going back with no menu.
+
+### 3.4 Toolbar and tooltips
+- Toolbar buttons have a tooltip after about 1 s, drawn by the shared tooltip code (ECal/EFTP).
+- If BubbleGEM is running, tooltips go through it.
+
+---
+
+## 4. Talking to the desktop and other programs
+
+### 4.1 AV protocol
+- **Every app must accept `VA_START`.** The argument is one of:
+  - a file or several (space-separated, quoted when needed)
+  - a URL-like command: `mailto:` (EMail), `webcal:` / `.ics` (ECal), `.vcf` (EContact), `.HYP` plus a
+    page (EHypView)
+  - empty, meaning "open / top your window"
+- It replies `AV_STARTED` so the sender can free the string.
+- **This is the only way family apps call each other.** There are no private message numbers; EContact's
+  `EC_OPEN` (0x4543) goes.
+- **On start, an app that finds an AV server** (`AVSERVER` environment variable, else Thing / jinnee /
+  Gemini) **sends `AV_PROTOKOLL`**, and on quit it sends `AV_EXIT`. That lets the desktop open files with
+  the app and route drag-and-drop to ACC windows (`VA_DRAGACCWIND`).
+
+### 4.2 Drag and drop (should)
+- **Windows accept `AP_DRAGDROP`** (MagiC, MiNT): `ARGS` (files) and `.TXT` (text).
+- **Under single TOS, windows accept `VA_DRAGACCWIND`** from the desktop.
+- What a drop does:
+
+| App | Drop files | Drop text |
+|---|---|---|
+| ECal | `.ics` → import | new event with that title |
+| EContact | `.vcf` → import | — |
+| EMail | attach to the message being written (or a new one) | insert at the cursor |
+| EFTP | upload to the server folder shown | — |
+| EHypView | `.HYP` → open | — |
+| ClaudeST | text file → into the reply line | into the reply line |
+
+### 4.3 Help
+- **Help opens the app's `.HYP` at the page for what's on screen.** The help launcher (shared) tries, in
+  this order, `EHYPVIEW`, `ST-GUIDE`, `HYPVIEW`, `HYP_VIEW`, using `VA_START "*:\NAME.HYP page"`.
+- **The string is in memory the viewer may read.**
+  - Use `Mxalloc(size, 0x2B)`: global, readable under MiNT memory protection, TT RAM preferred.
+  - On TOS 1.x, where Mxalloc doesn't exist, use a static buffer.
+  - Reference: EContact's `shared_buf`.
+- **If no viewer is running**, an alert says to install EHypView or ST-Guide as an accessory.
+- **Every app ships `NAME.HYP` built from `docs/GUIDE.md`** by one generator, with these chapters:
+  Getting started · Windows and menus · Keyboard · Settings · Troubleshooting · About.
+
+### 4.4 Clipboard
+- ^C ^X ^V work in every text field and on list selections that have a text form, through the GEM
+  clipboard (`scrp_read` / `scrp_write`, `SCRAP.TXT`, Atari character set).
+- An app never tells the user to paste somewhere that can't paste.
+
+---
+
+## 5. Windows, screen, fonts
+
+### 5.1 Windows
+- **Window parts:** name, closer, mover, fuller, sizer, info line, plus sliders where content scrolls.
+  The iconifier is added when `appl_getinfo(11)` reports it.
+- **Iconify (must, where the AES has it):**
+  - Handle `WM_ICONIFY`, `WM_UNICONIFY` and `WM_ALLICONIFY`.
+  - The iconified window shows the app icon and a short status: today's date for ECal, unread count
+    for EMail, transfer % for EFTP.
+  - Reference: ECal `ui/win.c`.
+- **`WM_BOTTOMED` sends the window to the back** where the AES supports it.
+- **Window title:** `ECal` or `ECal – Work`. The **info line** is the status line.
+- **Position and size** are saved in the INF and checked against the current screen on the next start.
+- **Redraw** uses the AES rectangle list. Nothing is drawn outside the work area.
+
+### 5.2 Screen modes and colour
+- **These modes must work:**
+  - ST High (640×400 mono)
+  - ST Medium (640×200, 4 colours)
+  - TT Medium
+  - Falcon modes up to 640×480 in 256 colours
+- **ST Low (320×200) gets an alert** ("ECal needs a screen 640 pixels wide") and quits, or closes its
+  window if it's the ACC.
+- **Colours:**
+  - Use the 16 standard VDI pens.
+  - In 256-colour modes an app may set pens 16 and up for its theme (EMail's `theme.c`), and puts them
+    back on exit.
+  - Pens 0–15 are only borrowed by the About box (1.3).
+- **Never rely on colour alone.** Every state also shows in mono, e.g. a selected row is inverted.
+
+### 5.3 Fonts and text
+- **Dialogs, alerts, menus and context menus use the system font.**
+- **The content font can be chosen** through GDOS/NVDI (shared `font.c`) and is saved in the INF.
+  Apps follow the font protocol `FONT_CHANGED` (EHypView).
+- **Hebrew:**
+  - All text drawing goes through the shared bidi code, including alerts.
+  - The Hebrew keyboard works the same way in every app (shared `key_char` table).
+
+---
+
+## 6. Settings, files, errors
+
+### 6.1 Settings
+- **Where the files live:**
+  - Settings file: `X:\NAME.INF` in the **root of the boot drive**.
+  - Encryption key: `X:\NAME.KEY`, next to it.
+  - Data: a folder named by `FOLDER=` in the INF.
+  - This is ECal/EContact's `locate_folder`. An ACC can't rely on the current folder, so neither does
+    the PRG.
+- **The INF is plain text:**
+  - One `NAME=value` per line, CR/LF line ends.
+  - `;` comment lines that explain each setting.
+  - The program writes it back keeping comments and unknown lines.
+- **One Settings… dialog** (^,), with a sidebar of pages in this order, leaving out what doesn't apply:
+  **General · Accounts/Servers · Secure · Appearance · Advanced**.
+  - The **Secure** page is the same in every networked app: "Falcon mode (TLS on this Atari)" or
+    "Through the Pi gateway: address, port".
+  - Step 3 picks one dialog engine from the two in use today: FIELD in ECal/EContact, OBJECT +
+    `form_do` in EMail/EFTP.
+
+### 6.2 Alerts
+- **One shared `alert()`** (reference: ECal `ui/field.c`): it wraps text to 30 characters, at most 5
+  lines, and runs bidi.
+- **Icons:**
+  - 1 (!) to inform
+  - 2 (?) to ask
+  - 3 (stop) when something failed
+- **Text:** what happened, then what to do: "Can't reach the server. | Check the network and try again."
+  Error numbers go at the end in brackets, if at all.
+- **Buttons are verbs** ("Delete", "Keep"), at most 3 of up to 10 characters. The default button is the
+  safe one, and Cancel comes last.
+
+### 6.3 Progress and status
+- **A short status goes on the info line.**
+- **Long work** (sync, transfer, download) shows progress inside the window with a **Stop** button
+  (EFTP). A modal progress box only when there's no window to show it in.
+- **The app stays usable while network work runs**, wherever the protocol allows it.
+
+### 6.4 Crashes
+Every app installs the shared crash handler (EMail's `atari/crash.c`). It writes `CRASH.LOG` next to the
+INF, and on the next start the app offers to show it.
+
+---
+
+## 7. Networking and security
+
+### 7.1 Connections
+- **Transport:** the shared `net_tos` (STinG, or MiNTnet when present).
+- **DNS:** STinG's resolver, else the built-in one with a **random transaction ID**.
+- **Falcon/TT editions do TLS 1.2 on the Atari:**
+  - BearSSL, with RSA on the DSP.
+  - The chain, host name and date are always checked against `ROOTS.DAT`, which is built from
+    `CACERT.PEM`.
+  - **There is no "ignore certificate" option**, now or later.
+- **ST editions go through a Pi gateway**, which does the same checks.
+- **Connections time out after 60 s, and every network operation can be stopped.**
+- **Network data is untrusted:**
+  - Every length or count read from the network is range-checked before use: IMAP literals, HTTP
+    Content-Length and chunk sizes, FTP replies, XML depth.
+  - Parsers get host unit tests under AddressSanitizer.
+
+### 7.2 Passwords
+- **Kept encrypted** with `secret.c` (XTEA, key in `NAME.KEY`).
+- **If a password can't be encrypted**, the user is told; it is never stored in plaintext silently.
+- **Never logged**, never in `CRASH.LOG`, never in a screenshot used in docs.
+
+### 7.3 Pi gateways
+- **One install pattern for all gateways**: `install.sh` plus a systemd unit with its own user,
+  `NoNewPrivileges`, `ProtectSystem=strict`, `ProtectHome` and `PrivateTmp` (ecalgate/eftpgate today).
+- **Listening:**
+  - With no `--allow` list, only private-network addresses are accepted.
+  - `--allow IP` narrows it to the Atari.
+  - If a firewall step can't be applied, the installer says so and stops.
+- **No test-only switches** such as `--insecure` in the installed service.
+- **Docs and examples use `192.168.1.x`** and `PI_IP` / `ATARI_IP`, never a real home network.
+
+---
+
+## 8. Where each app stands (October 2026)
+
+✓ = done, ✗ = missing or different, ~ = partly done.
+
+| Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
+|---|---|---|---|---|---|---|
+| 1.1 Desk name = product name | ✗ "ECalendar" | ✗ "Contacts" | n/a | n/a | ✗ "Hypertext" | n/a |
+| 1.2 Build doesn't change VERSION; releases | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (hard-coded) |
+| 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✗ no GPL | ✗ no GPL | ✓ |
+| 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✗ ACC | ✓ |
+| 2.1 PRG + ACC | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
+| 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✗ hangs | n/a |
+| 2.3 File-change check, PRG/ACC hand-over | ✗ | ~ | ✗ | ✗ | ✗ | ✗ |
+| 3.1 PRG menu bar | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| 3.2 Family shortcuts | ~ (^S) | ~ (^S) | ✗ (^F ^S, no ^W) | ~ (no ^W) | ✓ | ~ (no ^W) |
+| 3.3 Context menus (shared popup) | ✓ | ✓ | ~ old | ~ old | ✗ | ~ own |
+| 4.1 Accepts VA_START | ✗ | ✓ | ✗ (breaks EContact → Mail) | ✗ | ✓ | ✗ |
+| 4.1 AV_PROTOKOLL / AV_EXIT | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 4.2 Drag and drop in | ✗ | ✗ | ✗ | ~ (inside its window) | ✗ | ✗ |
+| 4.3 Help launcher (EHypView first, 0x2B memory) | ~ | ~ | ✗ | ✗ | n/a | ✗ |
+| 4.4 Clipboard | ✗ | ~ (write) | ✗ | ✗ | ✗ | ✗ |
+| 5.1 Iconify | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 5.1 WM_BOTTOMED | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 6.1 INF in boot root | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ (current folder) |
+| 6.2 Shared alert with bidi | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| 6.4 Crash handler | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| 7.1 Random DNS ID, checked lengths | ✗ | ✗ | ✗ | ✗ | n/a | n/a |
+| 7.2 No silent plaintext passwords | ✗ | ✗ | ✗ | ✗ | n/a | n/a |
+| 7.3 Gateway private-only by default | ✓ | n/a | ✗ (whole LAN unless `--allow`) | ✓ | n/a | ✓ (after step 1) |
