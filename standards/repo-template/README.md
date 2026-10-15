@@ -83,7 +83,7 @@ Do these in order, one commit each, with `make`, `make test` and the Hatari rigs
 
    ```c
    /* SPDX-License-Identifier: GPL-2.0-or-later
-    * Copyright (C) 2026 Erez Yaary */
+    * Copyright (C) 2026 AERA | Erez Yaary */
    ```
 
    Shell and Python files use `#`. EFTP has none today; EHypView has 5 of 77.

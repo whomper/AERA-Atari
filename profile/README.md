@@ -4,7 +4,7 @@
 
 <img src="banner.png" alt="AERA: software for Atari computers" width="100%">
 
-### Erez Yaary · AERA
+### AERA | Erez Yaary
 
 I make electronic music, build and restore synths, and write new software for Atari computers.
 Music and builds: **[yaary.music](https://yaary.music)** · **[YouTube](https://www.youtube.com/@erezyaarymusic)**

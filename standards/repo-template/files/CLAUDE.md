@@ -24,7 +24,7 @@ look and behave as one family.
 - **Versions:** `VERSION` changes only in a release commit (`tools/bump.py`, then tag `vX.Y`). A normal
   build must leave every tracked file unchanged. Don't commit built programs; releases carry them.
 - **Every new source file starts with the SPDX line and copyright** (see any `.c` file).
-- **Commits:** `git commit --author="Erez Yaary <yaary@me.com>"`, with Claude as the (signing)
+- **Commits:** `git commit --author="AERA | Erez Yaary <yaary@me.com>"`, with Claude as the (signing)
   committer, so GitHub shows them as Verified.
 - **Never commit:**
   - real addresses from the owner's network: use `192.168.1.x`, `PI_IP`, `ATARI_IP`

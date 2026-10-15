@@ -58,8 +58,8 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
             │                 Version 1.32                  │
             │       Calendar for the Atari ST, TT, Falcon   │  tagline: one line, ≤ 44 characters
             │  ───────────────────────────────────────────  │
-            │              Created by Erez Yaary            │
-            │           © 2026 Erez Yaary · AERA            │
+            │           Created by AERA | Erez Yaary        │
+            │            © 2026 AERA | Erez Yaary           │
             │                                               │
             │     Falcon mode (TLS) • 3.1 MB free           │  status line: app-specific, optional
             │                                               │

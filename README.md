@@ -38,7 +38,7 @@ Open Font License; BearSSL in `common/third_party/` under the MIT licence; `comm
 under the Mozilla Public License 2.0.
 
 The **AERA name and the AERA logos** (`brand/aera-*.jpg`, `brand/banner.png` and the images in
-`brand/social/`) are **not** covered by the GPL. They identify Erez Yaary's work and may not be used for
+`brand/social/`) are **not** covered by the GPL. They identify the work of AERA | Erez Yaary and may not be used for
 other projects without permission.
 
-Copyright (C) 2026 Erez Yaary.
+Copyright (C) 2026 AERA | Erez Yaary.

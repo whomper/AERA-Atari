@@ -110,11 +110,15 @@ should update its remote:
 
 ## Commits
 
-- **Author and committer.** Commits made by Claude sessions name Erez Yaary as the author
-  (`git commit --author="Erez Yaary <yaary@me.com>"`) and keep Claude `<noreply@anthropic.com>` as
-  the committer. The sessions sign each commit, and GitHub shows a signed commit as **Verified** only
-  when the committer matches the signing key; a commit with Erez as committer shows as Unverified.
-  Commits made before 14 Oct 2026 mix "Claude", "whomper" and "Erez Yaary".
+- **Author and committer.** Commits made by Claude sessions name AERA | Erez Yaary as the author
+  (`git commit --author="AERA | Erez Yaary <yaary@me.com>"`) and keep Claude
+  `<noreply@anthropic.com>` as the committer. The sessions sign each commit, and GitHub shows a signed
+  commit as **Verified** only when the committer matches the signing key; a commit with Erez as
+  committer shows as Unverified.
+- **The name** reads "AERA | Erez Yaary" wherever it is given: as the author, in copyright lines
+  (`Copyright (C) 2026 AERA | Erez Yaary`), in About boxes and help files. Commits from 15 Oct 2026 on
+  use it; earlier ones say "Erez Yaary", and those before 14 Oct 2026 mix "Claude", "whomper" and
+  "Erez Yaary".
 - **Branches.** `main` is the default branch everywhere. Under Settings → General, tick
   "Automatically delete head branches" so merged branches tidy themselves away.
 
