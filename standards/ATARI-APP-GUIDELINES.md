@@ -84,10 +84,11 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 ## 2. Program and desk accessory
 
 ### 2.1 Editions
+- **Whether an app has an ACC is the app's choice.** ECal, EContact and EHypView ship both; EMail,
+  EFTP and ClaudeST are programs only. The rest of section 2, and 6.1's settings in the root, are for
+  the apps that have an ACC.
 - **One source tree, one binary.** `crt0.S` tells PRG from ACC (`a0 != 0` at start: ECal's crt0).
   `NAME.ACC` and `NAME.PRG` are the same file under two names.
-- **Apps worth having over another program should ship both** (ECal, EContact, EHypView: yes). An app
-  that ships only a PRG says why in its README; memory is a fair reason.
 - **ACC memory comes from a fixed heap** sized at build time (`acc_heap`). The README says how much the
   ACC takes, and running out shows an alert. It must never fail silently.
 
@@ -100,14 +101,23 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 | Window closer / ^W | close the window, stay resident |
 
 ### 2.3 PRG and ACC side by side
-Both editions use the **same settings and data files** (see 6.1), so running both is safe:
-- **Before writing a file, check its date and size** (`files_check`, `pf_stamp`, EContact). If the other
-  edition changed it since it was loaded, load it again first, then write.
-- **Write to a temporary file, then rename over the old one.** A reset in the middle never leaves a
-  half-written file.
-- **Only one copy is active at a time.** On start, a PRG that finds its own ACC running (same name,
-  another `ap_id`) sends it `VA_START` with its command line and quits. The ACC then opens. Under
-  single TOS this is what "double-click ECAL.PRG while ECAL.ACC is installed" does.
+Both editions use the **same settings and data files** (see 6.1), and **only one of them is in use at a
+time**, so they never write the same file at once. The shared `common/ui/twin.c` does the finding:
+- **Where the AES lists its programs** (MagiC, MiNT with XaAES or N.AES: `appl_search`), a PRG that finds
+  its own ACC running (same name, another `ap_id`) sends it `VA_START` with its command line, waits
+  for `AV_STARTED` and quits (`twin_handover`). The ACC then opens.
+- **Under single TOS** the AES can't list the accessories, so the PRG runs, and the ACC stands aside
+  while it does (`twin_prg`, asked with `TWIN_ASK` in case the name the AES gives the program in front
+  is a leftover): its Desk menu entry and any `VA_START` go to the PRG (`twin_pass`), and its
+  background work (refreshing, reminders, indexing) waits.
+- **When the ACC is next used, it first checks its files' dates and sizes** (`store_changed`,
+  `files_check`, `font_check`): what the PRG changed meanwhile is read again before anything is
+  written. The ACC notes the files after its own writes, or when its window closes; never on an
+  `AC_CLOSE` that comes because a program ended (on single TOS that is the PRG itself).
+- **Write to a temporary file, then rename over the old one** (`pf_save` in `common/src/futil.c`).
+  The temporary name is 8.3 (`ECAL.IN$` for `ECAL.INF`): on a FAT disk under TOS, `ECAL.INF.TMP` is
+  `ECAL.INF` itself. A reset in the middle never leaves a half-written file, and `pf_load` finishes a
+  save cut short after the old file went.
 
 ---
 
@@ -282,12 +292,13 @@ table in each help file is generated from the menu definition, so it can't drift
 ## 6. Settings, files, errors
 
 ### 6.1 Settings
-- **Where the files live:**
-  - Settings file: `X:\NAME.INF` in the **root of the boot drive**.
-  - Encryption key: `X:\NAME.KEY`, next to it.
-  - Data: a folder named by `FOLDER=` in the INF.
-  - This is ECal/EContact's `locate_folder`. An ACC can't rely on the current folder, so neither does
-    the PRG.
+- **Where the files live,** in an app that has an ACC:
+  - Settings file: `X:\NAME.INF` in the **root of the boot drive**, where the ACC can always find it.
+  - Data, and the encryption key `NAME.KEY`: a folder named by `FOLDER=` in the INF. The PRG uses the
+    folder it was started from and writes it there; the ACC reads it, and asks when it is missing
+    (ECal/EContact's `find_workdir` and `locate_folder`). A root (`C:\`) is a folder too.
+  - An INF left next to the PRG by an older version is copied to the root the first time.
+  - A PRG-only app keeps its INF and key next to the program.
 - **The INF is plain text:**
   - One `NAME=value` per line, CR/LF line ends.
   - `;` comment lines that explain each setting.
@@ -367,10 +378,10 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 1.2 Build doesn't change VERSION; releases | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (hard-coded) |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ |
-| 2.1 PRG + ACC | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
+| 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a |
-| 2.3 File-change check, PRG/ACC hand-over | ✗ | ~ | ✗ | ✗ | ✗ | ✗ |
-| 3.1 PRG menu bar | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a |
+| 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -381,7 +392,7 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 6.1 INF in boot root | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ (current folder) |
+| 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 7.1 Random DNS ID, checked lengths | ~ (random ID) | ~ (random ID) | ~ (random ID) | ~ (random ID) | n/a | n/a |
