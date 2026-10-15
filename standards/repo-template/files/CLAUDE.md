@@ -3,6 +3,10 @@
 EName is one of the AERA Atari apps (ECal, EContact, EMail, EFTP, EHypView, ClaudeST). They are meant to
 look and behave as one family.
 
+## For every AERA app
+
+These come from AERA-Atari's repo template and are the same in every app's CLAUDE.md.
+
 - **Follow the AERA Atari app guidelines** ([ATARI-APP-GUIDELINES.md](https://github.com/whomper/AERA-Atari/blob/main/standards/ATARI-APP-GUIDELINES.md)). Pay most
   attention to:
   - About box
@@ -17,21 +21,29 @@ look and behave as one family.
 - **Shared code lives in [AERA-Atari](https://github.com/whomper/AERA-Atari).** Files under `common/` come from it. Change them
   there, not here, and pull them in with `tools/sync-common.sh`. A fix made only in this repo will drift
   again.
-- **Build and test before every push:**
-  - `make` and `make test`.
-  - Also `make itest` when network code changed.
-  - The Hatari rigs in `tests/hatari/` when the GEM side changed.
-- **Versions:** `VERSION` changes only in a release commit: `tools/bump.py`, commit, push, then run the
-  Release workflow on `main` with the notes (or push a tag `vX.Y` made with `git tag -a`). A normal
-  build must leave every tracked file unchanged. Don't commit built programs,
-  help files or certificates (`binary/`, `dist/`): the release workflow builds them and publishes each
-  one, and the zip, as a GitHub Release.
-- **Every new source file starts with the SPDX line and copyright** (see any `.c` file).
-- **Commits:** `git commit --author="AERA | Erez Yaary <yaary@me.com>"`, with Claude as the (signing)
-  committer, so GitHub shows them as Verified.
+- **Build and test before every push:** `make` with no warnings and `make test`, plus this repo's
+  own checks (below): `make itest` when network code changed, the Hatari rigs in `tests/hatari/` when
+  the GEM side changed.
+- **Versions and releases:** `VERSION` changes only in a release commit. A release: `tools/bump.py`,
+  commit, push, then run the Release workflow on `main` with the notes (or push a tag `vX.Y` made with
+  `git tag -a`); it tests, builds with `RELEASE=1`, tags vX.Y and publishes each file and the zip as a
+  GitHub Release. A normal build must leave every tracked file unchanged (it shows `x.y-dev`). Don't
+  commit built programs, help files or certificates (`binary/`, `dist/`). Never reuse a number.
+- **Every new source file starts with the SPDX line and copyright** (see any `.c` file); a generator
+  writes them into the files it makes.
+- **The name** reads "AERA | Erez Yaary" wherever it is given: copyright lines
+  (`Copyright (C) 2026 AERA | Erez Yaary`), the About box, the help file's `@author`, the docs, and as
+  the author of every commit: `git commit --author="AERA | Erez Yaary <yaary@me.com>"`, with Claude as
+  the signing committer, so GitHub shows the commits as Verified (AERA-Atari,
+  `standards/GITHUB-IDENTITY.md`).
 - **Never commit:**
   - real addresses from the owner's network: use `192.168.1.x`, `PI_IP`, `ATARI_IP`
   - passwords, session keys, `.KEY` / `.INF` files from a test run
   - photos that still carry EXIF/GPS data
 - **README:** keep the section order from the template (Highlights, Getting started, How it reaches the
   servers, Building, Source, Tests, Licence, family footer). Use British English.
+
+## EName
+
+What is particular to this repo: its exact test commands, its gateway, its memory limits, the code it
+shares with a sibling app.

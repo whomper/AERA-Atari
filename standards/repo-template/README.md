@@ -104,7 +104,8 @@ Do these in order, one commit each, with `make`, `make test` and the Hatari rigs
     * Copyright (C) 2026 AERA | Erez Yaary */
    ```
 
-   Shell and Python files use `#`. EFTP has none today; EHypView has 5 of 77.
+   Shell and Python files use `#`. Files a tool writes (icon headers, test vectors) get it from the
+   tool, so they keep it when they are made again.
 
 ## Settings to set by hand on GitHub
 
@@ -115,3 +116,21 @@ Per repo:
   - Tick **Automatically delete head branches**.
 - **Settings → Actions → General:** workflow permissions "Read and write". The release workflow needs it
   to publish.
+
+## Where each repo stands (15 Oct 2026)
+
+✓ = done, ~ = under way, ✗ = missing, ? = not checked (needs the repo's settings page).
+
+| Item | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
+|---|---|---|---|---|---|---|
+| `.gitignore`, `.gitattributes` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Version from `VERSION`, `-dev` builds | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (`st/claudest.c`) |
+| `binary/` not committed, icons in `icons/`, `make dist` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| CI and Release workflows; a release out | ✓ 1.97 | ✓ 1.33 | ✓ 1.30 | ✓ 1.31 | ✓ 1.0 | ✓ 1.34 |
+| Bug report form | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| README in the skeleton's order, family footer | ~ | ~ | ~ | ~ | ~ | ~ |
+| CLAUDE.md: the shared section, then the repo's | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| SPDX line on every own source file | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Description (paste-ready list in GITHUB-IDENTITY.md) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Topics | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Social preview, auto-delete head branches | ? | ? | ? | ? | ? | ? |

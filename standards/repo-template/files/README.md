@@ -48,15 +48,17 @@ The gateway's own README: [`gateway/`](gateway/).
 
 ```sh
 sudo apt install gcc-m68k-linux-gnu python3   # Debian/Ubuntu; no MiNTLib needed
-make            # build/ENAME.PRG, ENAME.ACC, ENAMEST.*
+make            # binary/ENAME.PRG, ENAME.ACC, ENAMEST.*
 make test       # unit tests on this computer, plus the gateway's tests
 make itest      # against a local server (SERVER-NAME)
 make dist       # dist/ENAME-x.y.zip, as on the Releases page
 make help HCP=/path/to/hcp   # ENAME.HYP from docs/GUIDE.md (hcp: github.com/th-otto/hypview)
 ```
 
-A build doesn't change any tracked file. A release does: `tools/bump.py`, commit, tag `vX.Y`, push
-the tag; GitHub Actions builds and publishes it.
+`binary/` and `dist/` are what make builds; they are never committed, and a build changes no tracked
+file. A release: `tools/bump.py`, commit and push, then **Actions > Release > Run workflow** on `main`
+with what is new. The workflow tests, builds with `RELEASE=1`, tags the commit `vX.Y` and publishes the
+files and the zip on the Releases page. Builds in between show `x.y-dev` in the About box.
 
 ## Source
 
