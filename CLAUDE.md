@@ -15,3 +15,7 @@ This repo is the reference for the AERA Atari family. It holds:
   photo EXIF/GPS. Strip metadata from any photo before committing it.
 - **The AERA name and logos are not GPL** (see README, Licence). Don't relabel them.
 - British English, as in the app READMEs.
+- **The name** reads "AERA | Erez Yaary" wherever it is given: copyright lines, About boxes
+  (`common/ui/aboutbox.c`), help files' `@author`, docs, and as the author of every commit
+  (`git commit --author="AERA | Erez Yaary <yaary@me.com>"`); see `standards/GITHUB-IDENTITY.md`.
+  Every app's CLAUDE.md says so too.
