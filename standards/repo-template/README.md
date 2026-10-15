@@ -10,8 +10,8 @@ placeholders (`EName`, `ENAME`, `WHAT-IT-SHOWS`…), then work through the check
 | `COPYING` | GPL v2 text (the apps are GPL-2.0-or-later) |
 | `.gitignore` | build output, Python caches, and files the program writes when run: `*.KEY`, `binary/*.INF`, `CRASH.LOG` |
 | `.gitattributes` | keeps Atari files' CR/LF; marks BearSSL as vendored for the language stats |
-| `.github/workflows/ci.yml` | on every push: `make test`, the Atari build (`make dist`), a check that the build changed no tracked file, the zip as a download |
-| `.github/workflows/release.yml` | on a `vX.Y` tag: checks the tag matches `VERSION`, tests, builds with `RELEASE=1`, publishes a GitHub Release with the zip |
+| `.github/workflows/ci.yml` | on every push to `main`: `make test`, the Atari build, a check that the build changed no tracked file, the programs as a download |
+| `.github/workflows/release.yml` | on a `vX.Y` tag: checks the tag matches `VERSION`, builds hcp (`common/tools/build-hcp.sh`), tests, builds with `RELEASE=1`, publishes a GitHub Release with each file and the zip, the tag's message as its notes |
 | `.github/ISSUE_TEMPLATE/` | a bug form that asks for version, file, Atari setup |
 | `tools/bump.py` | the release bump (replaces the bump-on-every-link scripts) |
 
@@ -21,11 +21,11 @@ The workflows rely on these targets:
 
 | Target | Does |
 |---|---|
-| `make` / `make all` | builds into `build/`, changing no tracked file |
+| `make` / `make all` | builds the programs into `binary/` (build output, in `.gitignore`), changing no tracked file |
 | `make test` | host unit tests plus `gateway/` tests; needs no cross compiler |
 | `make itest` | integration tests against local servers |
-| `make dist` | `dist/ENAME-<version>.zip` with everything the Getting started table lists |
-| `make help` | `ENAME.HYP` from `docs/GUIDE.md` (needs `hcp`) |
+| `make dist` | everything the Getting started table lists in `dist/`, each file and `dist/ENAME-<version>.zip` |
+| `make help` | `binary/ENAME.HYP` and `.REF` from `docs/GUIDE.md` (needs `hcp`: `common/tools/build-hcp.sh DIR`) |
 
 The version is read from `VERSION` and never written by the build. Release builds show `1.32`; other
 builds show `1.32-dev`:
@@ -40,15 +40,23 @@ $(OBJDIR)/version.c: FORCE | $(OBJDIR)
 FORCE:
 .PHONY: FORCE
 
-dist: all
-	mkdir -p dist
-	cd build && zip -q -9 ../dist/ENAME-$(VERSION_STR).zip ENAME.PRG ENAME.ACC ENAMEST.PRG ENAMEST.ACC
-	cd binary && zip -q -9 ../dist/ENAME-$(VERSION_STR).zip ENAME.HYP ENAME.REF CACERT.PEM ROOTS.DAT
+DIST  := binary/ENAME.PRG binary/ENAME.ACC binary/ENAMEST.ACC binary/ENAME.HYP binary/ENAME.REF \
+         binary/CACERT.PEM binary/ROOTS.DAT
+ICONS := icons/ENAME.RSC icons/ENAME.ICN icons/ENAMEMK.ICN
+dist: all help
+	rm -rf dist
+	mkdir -p dist/zip/icons
+	cp $(DIST) $(ICONS) dist/
+	cp $(DIST) dist/zip/
+	cp $(ICONS) dist/zip/icons/
+	cd dist/zip && zip -q -9 -r ../ENAME-$(VERSION_STR).zip .
+	rm -rf dist/zip
 ```
 
-`hcp` isn't packaged for Ubuntu, so CI can't build the help file yet. Until it can, `ENAME.HYP` / `.REF`
-stay committed in `binary/`, rebuilt with `make help` when `docs/GUIDE.md` changes. These are the only
-generated files that stay in git.
+`hcp` isn't packaged for Ubuntu; `common/tools/build-hcp.sh` builds it from a fixed commit of
+th-otto/hypview in under a minute, so the release workflow makes the help file too. Nothing built is
+committed. The desktop icon files are the exception that proves it: `tools/icon` draws them, and they
+are committed in `icons/` with the icon headers it writes.
 
 ## Moving an existing repo to the template
 
@@ -65,14 +73,17 @@ Do these in order, one commit each, with `make`, `make test` and the Hatari rigs
      only `version.c` defines it.
    - Add `tools/bump.py`.
 3. **Build output.**
-   - The build writes `build/` instead of `binary/`.
+   - `binary/` stays what the build writes, in `.gitignore` with `dist/`; give the rules that write
+     there `| binary` so a fresh clone builds.
+   - Move `binary/icons/` to `icons/` and point `tools/icon` at it.
    - Add `dist`.
-   - Update the Hatari rigs' paths.
-   - `git rm` the committed `.PRG` / `.ACC` / `ROOTS.DAT`.
+   - `git rm --cached` everything else in `binary/`: programs, `.HYP` / `.REF`, `CACERT.PEM`,
+     `ROOTS.DAT`.
 4. **CI and Releases.**
    - Add the two workflows and the issue template.
-   - Tag the current version (`v$(cat VERSION)`) so the first Release appears with the same binaries
-     users have today.
+   - Tag the current version (`git tag -a v$(cat VERSION) -m "notes"`) so the first Release appears
+     with the same programs users have today. Check first that `make RELEASE=1` builds them
+     byte for byte.
 5. **README.**
    - Bring it to the skeleton's section order and add the icon header if missing.
    - "Getting started" now points at Releases.

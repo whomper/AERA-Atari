@@ -44,8 +44,9 @@ The last section lists where each app stands today. Step 4 of the roadmap works 
 - **A build never changes `VERSION`.** Only a release does: `tools/bump.py` in a release commit, tagged
   `v1.32`.
 - **Builds that aren't a release show `1.32-dev`.** This lets a screenshot or bug report tell them apart.
-- Built programs are published as **GitHub Releases**, not committed. See
-  [repo-template](repo-template/README.md).
+- Built programs are published as **GitHub Releases**, not committed, with the help file, the
+  certificates and the desktop icon: each file on its own and all in a zip, built by the release
+  workflow from a `vX.Y` tag. See [repo-template](repo-template/README.md).
 
 ### 1.3 About box (must)
 Every app has the same About box, drawn by the shared `about_show()` (`common/ui/aboutbox.c`, from
