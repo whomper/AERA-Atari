@@ -338,27 +338,40 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 
 ### 7.1 Connections
 - **Transport:** the shared `net_tos` (STinG, or MiNTnet when present).
-- **DNS:** STinG's resolver, else the built-in one with a **random transaction ID**.
+- **DNS:** STinG's resolver, else the built-in one with a **random transaction ID**. Every count
+  and length in the reply is checked against what came (`atari/dns.h`, tested and fuzzed in
+  `tests/dns`).
 - **Falcon/TT editions do TLS 1.2 on the Atari:**
   - BearSSL, with RSA on the DSP.
   - The chain, host name and date are always checked against `ROOTS.DAT`, which is built from
     `CACERT.PEM`.
   - **There is no "ignore certificate" option**, now or later.
 - **ST editions go through a Pi gateway**, which does the same checks.
-- **Connections time out after 60 s, and every network operation can be stopped.**
+- **Connections time out after 60 s, and every network operation can be stopped:**
+  - Esc or Undo while the busy bee shows (`ui/busy.c`: the keys are read while `conn` waits, and
+    any other key is kept for afterwards), or the app's own Stop button (EFTP).
+  - A stop ends the operation as a timeout would; the alert says "stopped", and nothing new is
+    connected for it.
 - **Network data is untrusted:**
   - Every length or count read from the network is range-checked before use: IMAP literals, HTTP
     Content-Length and chunk sizes, FTP replies, XML depth.
-  - Parsers get host unit tests under AddressSanitizer.
+  - Parsers get host unit tests under AddressSanitizer, and fuzz targets: `make fuzz` (libFuzzer;
+    `tests/fuzz/fuzz_net.c` plays the servers, one part of the input for each connection).
+  - What once broke a parser is kept in the app's `tests/fuzz/found`; `make test` runs it and the
+    seeds again with the build machine's compiler (`tests/fuzz/replay.c`), so no fix comes undone.
 
 ### 7.2 Passwords
 - **Kept encrypted** with `secret.c` (XTEA, key in `NAME.KEY`).
 - **If a password can't be encrypted**, the user is told; it is never stored in plaintext silently.
+  `secret_encode()` returns 0 then, and calls the app's `secret_warn` once a run with the key
+  file's name, for an alert ("can't write its key file ..., so the passwords in NAME.INF are kept
+  unencrypted").
 - **Never logged**, never in `CRASH.LOG`, never in a screenshot used in docs.
 
 ### 7.3 Pi gateways
 - **One install pattern for all gateways**: `install.sh` plus a systemd unit with its own user,
-  `NoNewPrivileges`, `ProtectSystem=strict`, `ProtectHome` and `PrivateTmp` (ecalgate/eftpgate today).
+  `NoNewPrivileges`, `ProtectSystem=strict`, `ProtectHome` and `PrivateTmp` (ecalgate, eftpgate,
+  emailgate). A gateway on ports below 1024 gets `CAP_NET_BIND_SERVICE` and nothing else.
 - **Listening:**
   - With no `--allow` list, only private-network addresses are accepted.
   - `--allow IP` narrows it to the Atari.
@@ -395,6 +408,7 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 7.1 Random DNS ID, checked lengths | ~ (random ID) | ~ (random ID) | ~ (random ID) | ~ (random ID) | n/a | n/a |
-| 7.2 No silent plaintext passwords | ✗ | ✗ | ✗ | ✗ | n/a | n/a |
-| 7.3 Gateway private-only by default | ✓ | n/a | ✗ (whole LAN unless `--allow`) | ✓ | n/a | ✓ (after step 1) |
+| 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a |
+| 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a |
+| 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a |
+| 7.3 Gateway private-only by default | ✓ | n/a | ✓ (emailgate) | ✓ | n/a | ✓ (after step 1) |
