@@ -34,10 +34,7 @@ jobs:
         run: |
           git status --porcelain
           test -z "$(git status --porcelain)"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: programs-dev
-          path: binary/
+      # no artifact: only formal releases leave the build machine
 
   # Hatari rigs: enable once the repo's rigs run headless (see EHypView's ci.yml)
   # hatari:
