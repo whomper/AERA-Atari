@@ -21,8 +21,9 @@ look and behave as one family.
   - `make` and `make test`.
   - Also `make itest` when network code changed.
   - The Hatari rigs in `tests/hatari/` when the GEM side changed.
-- **Versions:** `VERSION` changes only in a release commit (`tools/bump.py`, then `git tag -a vX.Y`, and
-  push the tag). A normal build must leave every tracked file unchanged. Don't commit built programs,
+- **Versions:** `VERSION` changes only in a release commit: `tools/bump.py`, commit, push, then run the
+  Release workflow on `main` with the notes (or push a tag `vX.Y` made with `git tag -a`). A normal
+  build must leave every tracked file unchanged. Don't commit built programs,
   help files or certificates (`binary/`, `dist/`): the release workflow builds them and publishes each
   one, and the zip, as a GitHub Release.
 - **Every new source file starts with the SPDX line and copyright** (see any `.c` file).

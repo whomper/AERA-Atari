@@ -8,10 +8,10 @@ placeholders (`EName`, `ENAME`, `WHAT-IT-SHOWS`…), then work through the check
 | `README.md` | the README skeleton: header, Highlights, Getting started, How it reaches the servers, Building, Source, Tests, Licence, family footer |
 | `CLAUDE.md` | rules for Claude sessions working in the repo, so every session keeps the family consistent |
 | `COPYING` | GPL v2 text (the apps are GPL-2.0-or-later) |
-| `.gitignore` | build output, Python caches, and files the program writes when run: `*.KEY`, `binary/*.INF`, `CRASH.LOG` |
+| `.gitignore` | build output (`binary/`, `dist/`), Python caches, and files the program writes when run: `*.KEY`, `CRASH.LOG` |
 | `.gitattributes` | keeps Atari files' CR/LF; marks BearSSL as vendored for the language stats |
 | `.github/workflows/ci.yml` | on every push to `main`: `make test`, the Atari build, a check that the build changed no tracked file, the programs as a download |
-| `.github/workflows/release.yml` | on a `vX.Y` tag: checks the tag matches `VERSION`, builds hcp (`common/tools/build-hcp.sh`), tests, builds with `RELEASE=1`, publishes a GitHub Release with each file and the zip, the tag's message as its notes |
+| `.github/workflows/release.yml` | run by hand on `main` (Actions > Release > Run workflow, with the notes), or on a pushed `vX.Y` tag (the tag's message is the notes): checks the version is new (or the tag matches `VERSION`), builds hcp (`common/tools/build-hcp.sh`), tests, builds with `RELEASE=1`, tags the commit `vX.Y` and publishes a GitHub Release with each file and the zip |
 | `.github/ISSUE_TEMPLATE/` | a bug form that asks for version, file, Atari setup |
 | `tools/bump.py` | the release bump (replaces the bump-on-every-link scripts) |
 
@@ -26,6 +26,12 @@ The workflows rely on these targets:
 | `make itest` | integration tests against local servers |
 | `make dist` | everything the Getting started table lists in `dist/`, each file and `dist/ENAME-<version>.zip` |
 | `make help` | `binary/ENAME.HYP` and `.REF` from `docs/GUIDE.md` (needs `hcp`: `common/tools/build-hcp.sh DIR`) |
+
+Two more rules keep a fresh clone (and CI) honest:
+- `HDRS`, the headers every object depends on, includes `common/ui/*.h` with the other `common/`
+  folders. Without it a changed shared header leaves stale objects behind, and the program differs
+  from one built from scratch (EContact 1.33 was).
+- Tests read nothing from `binary/`: certificates come from `common/certs/`.
 
 The version is read from `VERSION` and never written by the build. Release builds show `1.32`; other
 builds show `1.32-dev`:
@@ -65,8 +71,8 @@ Do these in order, one commit each, with `make`, `make test` and the Hatari rigs
 1. **Housekeeping.**
    - Add `.gitignore` and `.gitattributes`, then `git rm --cached` any `*.KEY` / test `*.INF` they now
      ignore.
-   - Check for files that are *meant* to be shipped, such as ClaudeST's `CLAUDEST.INF`, and add a `!`
-     exception for them.
+   - Files that are *meant* to be shipped but aren't built, such as ClaudeST's example
+     `CLAUDEST.INF`, move to a tracked folder (ClaudeST: `st/`), and `dist` copies them.
 2. **Version.**
    - Swap the bump-on-link rule for the `VERSION_STR` rule above.
    - Rename the version symbol the code uses (`cal_version`, `mail_version`…) or keep it, as long as
@@ -81,9 +87,10 @@ Do these in order, one commit each, with `make`, `make test` and the Hatari rigs
      `ROOTS.DAT`.
 4. **CI and Releases.**
    - Add the two workflows and the issue template.
-   - Tag the current version (`git tag -a v$(cat VERSION) -m "notes"`) so the first Release appears
-     with the same programs users have today. Check first that `make RELEASE=1` builds them
-     byte for byte.
+   - Run the Release workflow on `main` with the notes (or push `git tag -a v$(cat VERSION)`) so the
+     first Release appears with the same programs users have today. Check first that
+     `make RELEASE=1` builds them byte for byte, from a fresh clone; where it doesn't, find out why
+     and run the Hatari rigs on the fresh build before releasing it.
 5. **README.**
    - Bring it to the skeleton's section order and add the icon header if missing.
    - "Getting started" now points at Releases.

@@ -4,6 +4,9 @@
 """Start a release: count the version in VERSION up and say what to do next.
 
 A normal build never changes VERSION (it shows "x.y-dev"); only this does.
+The release workflow (.github/workflows/release.yml), run by hand on main
+or started by a tag vX.Y, builds the programs and publishes them as a
+GitHub Release.
 
     tools/bump.py          1.32 -> 1.33
     tools/bump.py major    1.32 -> 2.0
@@ -19,5 +22,7 @@ else:
     sys.exit(__doc__)
 open("VERSION", "w").write(version + "\n")
 print("VERSION is now %s. Then:" % version)
-print('  git commit -am "Release %s" && git tag v%s && git push && git push origin v%s'
-      % (version, version, version))
+print('  git commit -am "Release %s" && git push' % version)
+print("  and run the Release workflow on main (Actions > Release > Run workflow)")
+print('  with what is new; or: git tag -a v%s -m "What is new" && git push origin v%s'
+      % (version, version))

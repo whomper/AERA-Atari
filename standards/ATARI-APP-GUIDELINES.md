@@ -42,11 +42,12 @@ The last section lists where each app stands today. Step 4 of the roadmap works 
   - the help file
   - any `User-Agent` / `PRODID`
 - **A build never changes `VERSION`.** Only a release does: `tools/bump.py` in a release commit, tagged
-  `v1.32`.
+  `v1.32` by the release workflow.
 - **Builds that aren't a release show `1.32-dev`.** This lets a screenshot or bug report tell them apart.
 - Built programs are published as **GitHub Releases**, not committed, with the help file, the
   certificates and the desktop icon: each file on its own and all in a zip, built by the release
-  workflow from a `vX.Y` tag. See [repo-template](repo-template/README.md).
+  workflow (run by hand on `main`, or from a pushed `vX.Y` tag). See
+  [repo-template](repo-template/README.md).
 
 ### 1.3 About box (must)
 Every app has the same About box, drawn by the shared `about_show()` (`common/ui/aboutbox.c`, from
@@ -389,7 +390,7 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
 |---|---|---|---|---|---|---|
 | 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a |
-| 1.2 Build doesn't change VERSION; releases | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (hard-coded) |
+| 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ |
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) |
