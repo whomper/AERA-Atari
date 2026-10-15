@@ -132,7 +132,7 @@ Set these on each repo's main page: the ⚙ next to **About**.
 | EContact | Contacts for the Atari ST, STE, TT and Falcon: a GEM desk accessory that syncs over CardDAV and works with EMail and ECal. | `atari-st` `atari-falcon` `gem` `tos` `carddav` `contacts` `desk-accessory` `retrocomputing` `aera` |
 | EMail | E-mail for the Atari ST, STE, TT and Falcon: a GEM IMAP/POP3/SMTP client with TLS on the Falcon and a Raspberry Pi gateway. | `atari-st` `atari-falcon` `gem` `tos` `email` `imap` `smtp` `retrocomputing` `aera` |
 | EFTP | FTP for the Atari ST, STE, TT and Falcon: a two-pane GEM client with FTPS on the Falcon and SFTP through a Raspberry Pi. | `atari-st` `atari-falcon` `gem` `tos` `ftp` `sftp` `ftps` `retrocomputing` `aera` |
-| EHypView | A modern ST-Guide hypertext (.HYP) viewer for the Atari TT, Falcon and FireBee: program or desk accessory. | `atari-st` `atari-falcon` `gem` `tos` `st-guide` `hypertext` `retrocomputing` `aera` |
+| EHypView | A modern ST-Guide hypertext (.HYP) viewer for the Atari TT and Falcon: program or desk accessory. | `atari-st` `atari-falcon` `gem` `tos` `st-guide` `hypertext` `retrocomputing` `aera` |
 | ClaudeST | A native GEM client for claude.ai on the Atari ST, STE, Mega ST/STE, TT and Falcon, with a Raspberry Pi bridge. | `atari-st` `atari-falcon` `gem` `tos` `claude` `raspberry-pi` `retrocomputing` `aera` |
 | EDOS | A menu-driven Disk Utility Package for Atari 8-bit computers, running on top of MyDOS or SpartaDOS. | `atari-8bit` `atari-xl` `6502` `assembly` `mac65` `spartados` `retrocomputing` `aera` |
 | EFTP_XL | File transfer for Atari 8-bit computers (400/800/XL/XE) over FujiNet, to any FTP or SFTP server. | `atari-8bit` `atari-xl` `fujinet` `ftp` `sftp` `cc65` `retrocomputing` `aera` |

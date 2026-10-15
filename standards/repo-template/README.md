@@ -128,9 +128,9 @@ Per repo:
 | `binary/` not committed, icons in `icons/`, `make dist` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | CI and Release workflows; a release out | ✓ 1.97 | ✓ 1.33 | ✓ 1.30 | ✓ 1.31 | ✓ 1.0 | ✓ 1.34 |
 | Bug report form | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| README in the skeleton's order, family footer | ~ | ~ | ~ | ~ | ~ | ~ |
+| README in the skeleton's order, family footer | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | CLAUDE.md: the shared section, then the repo's | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | SPDX line on every own source file | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Description (paste-ready list in GITHUB-IDENTITY.md) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Description (paste-ready list in GITHUB-IDENTITY.md) | ✓ | ✓ | ✓ | ✓ | ~ (drop FireBee) | ✓ |
 | Topics | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Social preview, auto-delete head branches | ? | ? | ? | ? | ? | ? |
