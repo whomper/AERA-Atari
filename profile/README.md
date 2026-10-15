@@ -27,5 +27,5 @@ Music and builds: **[yaary.music](https://yaary.music)** · **[YouTube](https://
 
 #### Behind the scenes
 
-- **[AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: Raspberry Pi proxies for mail and the web
+- **[AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: the Raspberry Pi gateways (mail, calendars and contacts, FTP, Claude) and their installer
 - **[AERA-Atari](https://github.com/whomper/AERA-Atari)**: how the programs look and behave, and the code they share

@@ -27,7 +27,7 @@
      "tagline": "File transfer for Atari 8-bit computers over FujiNet, to any FTP or SFTP server."},
     {"out": "social/AERA-Gateway.png", "name": "AERA-Gateway", "mark": "aera-star.jpg", "wordmark": "aera-wordmark.jpg",
      "tag": "// RASPBERRY PI · ATARI //",
-     "tagline": "Raspberry Pi proxies that give an Atari modern e-mail and web access."},
+     "tagline": "The Raspberry Pi gateways for mail, calendars, contacts, FTP and Claude."},
     {"out": "social/AERA-Atari.png", "name": "AERA-Atari", "mark": "aera-star.jpg", "wordmark": "aera-wordmark.jpg",
      "tag": "// STANDARDS · SHARED CODE //",
      "tagline": "How the AERA Atari programs look and behave, and the code they share."}

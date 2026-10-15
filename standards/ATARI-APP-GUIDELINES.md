@@ -371,13 +371,25 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 - **Never logged**, never in `CRASH.LOG`, never in a screenshot used in docs.
 
 ### 7.3 Pi gateways
-- **One install pattern for all gateways**: `install.sh` plus a systemd unit with its own user,
-  `NoNewPrivileges`, `ProtectSystem=strict`, `ProtectHome` and `PrivateTmp` (ecalgate, eftpgate,
-  emailgate). A gateway on ports below 1024 gets `CAP_NET_BIND_SERVICE` and nothing else.
+- **They live in [AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: emailgate (EMail),
+  ecalgate (ECal and EContact), eftpgate (EFTP), and `aeragate.py`, the rules below in one place.
+  The apps carry `gateway/` as a read-only copy (`tools/sync-gateway.sh`), as they carry `common/`.
+  ClaudeST's bridge stays in ClaudeST.
+- **One installer**, `gateway/aera-gateway` (install, update, status, remove): a systemd unit per
+  gateway with its own user, `NoNewPrivileges`, `ProtectSystem=strict`, `ProtectHome` and
+  `PrivateTmp`. A gateway on ports below 1024 gets `CAP_NET_BIND_SERVICE` and nothing else. An
+  update keeps every setting and stored key, and a new gateway replaces the old one only once it
+  answers.
 - **Listening:**
   - With no `--allow` list, only private-network addresses are accepted.
   - `--allow IP` narrows it to the Atari.
   - If a firewall step can't be applied, the installer says so and stops.
+- **Going onwards:** never back into the home network without `--allow-local`, and only to the
+  address that was checked (no second look-up of the name); TLS 1.2 or newer, certificate and name
+  checked.
+- **The log** names who connected where, never a path, a message or a password.
+- **Ports are part of each app's protocol** (143/587/110, 8180, 2121 and 30000-30099, 2323): they
+  change only with the app's OK.
 - **No test-only switches** such as `--insecure` in the installed service.
 - **Docs and examples use `192.168.1.x`** and `PI_IP` / `ATARI_IP`, never a real home network.
 
@@ -413,4 +425,4 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a |
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a |
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a |
-| 7.3 Gateway private-only by default | ✓ | n/a | ✓ (emailgate) | ✓ | n/a | ✓ (after step 1) |
+| 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) |

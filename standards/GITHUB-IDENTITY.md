@@ -87,7 +87,7 @@ Decided 14 Oct 2026:
 |---|---|---|
 | EMAIL | **EMail** | the app's own spelling |
 | ftp_xl | **EFTP_XL** | E-prefix like the rest of the family; upper case |
-| atari_web | **AERA-Gateway** | it's the Pi side of the family; ECal's, EFTP's and EMail's gateways join it in step 3 |
+| atari_web | **AERA-Gateway** | it's the Pi side of the family; ECal's, EFTP's and EMail's gateways join it in step 3 (they did, 15 Oct 2026) |
 | ClaudeST | stays | "Claude ST" and "EClaude" in old screenshots become **ClaudeST** |
 
 Renaming is safe for visitors: GitHub forwards the old name. Each existing clone, including the Pi's,
@@ -136,5 +136,5 @@ Set these on each repo's main page: the ⚙ next to **About**.
 | ClaudeST | A native GEM client for claude.ai on the Atari ST, STE, Mega ST/STE, TT and Falcon, with a Raspberry Pi bridge. | `atari-st` `atari-falcon` `gem` `tos` `claude` `raspberry-pi` `retrocomputing` `aera` |
 | EDOS | A menu-driven Disk Utility Package for Atari 8-bit computers, running on top of MyDOS or SpartaDOS. | `atari-8bit` `atari-xl` `6502` `assembly` `mac65` `spartados` `retrocomputing` `aera` |
 | EFTP_XL | File transfer for Atari 8-bit computers (400/800/XL/XE) over FujiNet, to any FTP or SFTP server. | `atari-8bit` `atari-xl` `fujinet` `ftp` `sftp` `cc65` `retrocomputing` `aera` |
-| AERA-Gateway | Raspberry Pi proxies that give an Atari modern e-mail (TROLL, EMail) and web access (WRP, Macproxy). | `atari-falcon` `atari-st` `raspberry-pi` `imap` `proxy` `retrocomputing` `aera` |
+| AERA-Gateway | The Raspberry Pi side of the AERA programs: gateways for mail, calendars and contacts, FTP and Claude, with one installer. | `atari-falcon` `atari-st` `raspberry-pi` `imap` `caldav` `sftp` `proxy` `retrocomputing` `aera` |
 | AERA-Atari | How the AERA Atari programs look and behave, the repo template they share, the brand, and (soon) their shared code. | `atari-st` `atari-falcon` `gem` `tos` `style-guide` `retrocomputing` `aera` |
