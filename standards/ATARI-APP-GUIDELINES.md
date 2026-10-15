@@ -433,5 +433,5 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a |
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a |
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) |
-| 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ |
-| 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✗ | ✓ | ✓ | ✗ | ✓ (Pi too) |
+| 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✗ | ✓ | ✓ | ✓ | ✓ (Pi too) |
