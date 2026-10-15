@@ -11,7 +11,7 @@ placeholders (`EName`, `ENAME`, `WHAT-IT-SHOWS`…), then work through the check
 | `.gitignore` | build output (`binary/`, `dist/`), Python caches, and files the program writes when run: `*.KEY`, `CRASH.LOG` |
 | `.gitattributes` | keeps Atari files' CR/LF; marks BearSSL as vendored for the language stats |
 | `.github/workflows/ci.yml` | on every push to `main`: `make test`, the Atari build, a check that the build changed no tracked file, the programs as a download |
-| `.github/workflows/release.yml` | run by hand on `main` (Actions > Release > Run workflow, with the notes), or on a pushed `vX.Y` tag (the tag's message is the notes): checks the version is new (or the tag matches `VERSION`), builds hcp (`common/tools/build-hcp.sh`), tests, builds with `RELEASE=1`, tags the commit `vX.Y` and publishes a GitHub Release with each file and the zip |
+| `.github/workflows/release.yml` | run by hand on `main` (Actions > Release > Run workflow, with the notes), or on a pushed `vX.Y` tag (the tag's message is the notes): checks the version is new (or the tag matches `VERSION`), builds hcp (`common/tools/build-hcp.sh`), tests, builds, tags the commit `vX.Y` and publishes a GitHub Release with each file and the zip |
 | `.github/ISSUE_TEMPLATE/` | a bug form that asks for version, file, Atari setup |
 | `tools/bump.py` | the release bump (replaces the bump-on-every-link scripts) |
 
@@ -33,13 +33,13 @@ Two more rules keep a fresh clone (and CI) honest:
   from one built from scratch (EContact 1.33 was).
 - Tests read nothing from `binary/`: certificates come from `common/certs/`.
 
-The version is read from `VERSION` and never written by the build. Release builds show `1.32`; other
-builds show `1.32-dev`:
+The version is read from `VERSION` and never written by the build. Every build shows it as it is
+(`1.32`); there is no `-dev` label, since only releases leave the build machine:
 
 ```make
-VERSION_STR := $(shell cat VERSION)$(if $(RELEASE),,-dev)
+VERSION_STR := $(shell cat VERSION)
 
-# written again whenever the string changes, so RELEASE=1 rebuilds it
+# written again whenever the string changes (a release commit changes VERSION)
 $(OBJDIR)/version.c: FORCE | $(OBJDIR)
 	@printf 'const char app_version[] = "%s";\n' "$(VERSION_STR)" > $@.new
 	@if cmp -s $@.new $@; then rm $@.new; else mv $@.new $@; fi
@@ -89,7 +89,7 @@ Do these in order, one commit each, with `make`, `make test` and the Hatari rigs
    - Add the two workflows and the issue template.
    - Run the Release workflow on `main` with the notes (or push `git tag -a v$(cat VERSION)`) so the
      first Release appears with the same programs users have today. Check first that
-     `make RELEASE=1` builds them byte for byte, from a fresh clone; where it doesn't, find out why
+     `make` builds them byte for byte, from a fresh clone; where it doesn't, find out why
      and run the Hatari rigs on the fresh build before releasing it.
 5. **README.**
    - Bring it to the skeleton's section order and add the icon header if missing.
@@ -124,7 +124,7 @@ Per repo:
 | Item | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
 |---|---|---|---|---|---|---|
 | `.gitignore`, `.gitattributes` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Version from `VERSION`, `-dev` builds | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (`st/claudest.c`) |
+| Version from `VERSION`, no `-dev` label | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (`st/claudest.c`) |
 | `binary/` not committed, icons in `icons/`, `make dist` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | CI and Release workflows; a release out | ✓ 1.97 | ✓ 1.33 | ✓ 1.30 | ✓ 1.31 | ✓ 1.0 | ✓ 1.34 |
 | Bug report form | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

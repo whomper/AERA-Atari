@@ -57,9 +57,8 @@ make help HCP=/path/to/hcp   # ENAME.HYP from docs/GUIDE.md (hcp: github.com/th-
 
 `binary/` and `dist/` are what make builds; they are never committed, and a build changes no tracked
 file. A release: `tools/bump.py`, commit and push, then **Actions > Release > Run workflow** on `main`
-with what is new. The workflow tests, builds with `RELEASE=1`, tags the commit `vX.Y` and publishes the
-files and the zip on the Releases page. Builds in between show `x.y-dev` in the About box and are never
-handed out: to try a change, release it.
+with what is new. The workflow tests, builds, tags the commit `vX.Y` and publishes the
+files and the zip on the Releases page. Builds in between are never handed out: to try a change, release it.
 
 ## Source
 

@@ -43,9 +43,10 @@ The last section lists where each app stands today. Step 4 of the roadmap works 
   - any `User-Agent` / `PRODID`
 - **A build never changes `VERSION`.** Only a release does: `tools/bump.py` in a release commit, tagged
   `v1.32` by the release workflow.
-- **Builds that aren't a release show `1.32-dev`.** This lets a screenshot or bug report tell them apart.
+- **There is no `-dev` label** (Erez's decision, 15 Oct 2026). Every build shows `VERSION` as it is; a
+  build between releases shows the last release's number, and never leaves the build machine.
 - **Only formal releases leave the build machine** (Erez's decision, 15 Oct 2026). Nobody is handed a
-  test build, an `x.y-dev` build, a CI artifact or a build from a branch, not even to try a fix: work
+  test build, a CI artifact or a build from a branch, not even to try a fix: work
   lands on `main`, and a fix to try on real hardware goes out as a release. CI builds and checks but
   publishes nothing. If a release doesn't work, roll back with a release: revert on `main`, release the
   next number (never reuse or delete one), and mark the bad release's notes as withdrawn, naming the one
@@ -432,4 +433,5 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a |
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a |
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) |
+| 1.2 No `-dev` label: every build shows `VERSION` | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✗ | ✗ | ✗ | ✓ | ✗ | ✓ (Pi: in hand) |
