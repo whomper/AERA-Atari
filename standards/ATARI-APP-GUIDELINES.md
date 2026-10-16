@@ -21,6 +21,28 @@ Words used here:
 
 The last section lists where each app stands today. Step 4 of the roadmap works through it.
 
+### The machines
+
+- **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
+  or a cartridge network adapter, the Pi gateway for encryption. Every 68000 build runs here, and the
+  ST editions are made for it.
+- **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware: a Falcon030 with
+  a **DFB1** accelerator (a 68030 at 50 MHz with a **68882** maths coprocessor and **128 MB of TT
+  RAM**), **NetUSBee** for the network, and the Falcon's **DSP**. What follows from it:
+  - code and data belong in TT RAM (`PRGFLAGS=7`; the heap prefers it already). Only what the
+    hardware reads stays in ST RAM: the screen, and bitmaps the VDI copies (`st_ram()`; the blitter
+    can't reach TT RAM);
+  - Falcon mode (TLS on the Atari) is the way out, without the Pi: EMail's `tools/tlsbench` measured
+    a 5 s handshake on a 50 MHz 68030 in fast RAM, and about 1.5 s with RSA on the DSP;
+  - a 68030 build has the CPU's own 32-bit multiply and divide (the 68000 build calls routines in
+    `tos.c`) and reads longs at any address; the 68882 helps floating point only, which no app uses
+    today;
+  - in Hatari, the nearest is `--machine falcon --cpuclock 32 --fpu 68882 --ttram 128 --addr24 off
+    --dsp emu` (32 MHz is Hatari's most).
+- **A 68000 and a 68030 build** (Erez's question, 16 Oct 2026): each app is measuring what a build
+  for the Falcon above would gain over the 68000 one. The family's names and rules for two builds
+  come here once that is known.
+
 ---
 
 ## 1. Identity: names, version, About box
