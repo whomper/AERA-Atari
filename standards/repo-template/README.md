@@ -14,6 +14,7 @@ placeholders (`EName`, `ENAME`, `WHAT-IT-SHOWS`…), then work through the check
 | `.github/workflows/release.yml` | run by hand on `main` (Actions > Release > Run workflow, with the notes), or on a pushed `vX.Y` tag (the tag's message is the notes): checks the version is new (or the tag matches `VERSION`), builds hcp (`common/tools/build-hcp.sh`), tests, builds, tags the commit `vX.Y` and publishes a GitHub Release with each file and the zip |
 | `.github/ISSUE_TEMPLATE/` | a bug form that asks for version, file, Atari setup |
 | `tools/bump.py` | the release bump (replaces the bump-on-every-link scripts) |
+| `tools/sync-common.sh` | pulls `common/` from AERA-Atari (`git subtree pull --squash`), then signs the squash commit git subtree leaves unsigned (`common/tools/sign-subtree.sh`); an app with `gateway/` has `tools/sync-gateway.sh`, the same for AERA-Gateway's `gateway` branch |
 
 ## Makefile contract
 
