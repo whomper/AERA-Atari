@@ -131,6 +131,29 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 | `AP_TERM` | ignore it; an ACC never returns from `main` (it would land in crt0's `hang` loop) |
 | Window closer / ^W | close the window, stay resident |
 
+**A quiet start (must).** Under plain TOS an accessory runs only while the program in front calls
+the AES, so every moment it holds the machine between its own event calls is a moment nothing else
+answers. Measured on 16 Oct 2026: ECal read a 250-event calendar in one go (1.6 s on a Falcon,
+15 s on an ST) and checked its reminders the same way every minute; EHypView indexed its library
+before its first event call (7 s with 6,700 pages).
+- **Before the first `evnt_multi`:** only `appl_init`, `menu_register`, the VDI workstation, finding
+  the INF and taking memory (which must happen now: an accessory can't take memory later under
+  plain TOS). Nothing is read, scanned, measured or synced.
+- **Background work waits** until the user opens the accessory or a quiet period after boot has
+  passed, by the app's setting `START=`: `now`, `opened`, or seconds after boot. The family's
+  default is 60 s; EHypView's is `opened`.
+- **At most 50 ms between event calls** on a 68030 (100 ms on a 68000), in background work and in
+  the idle loop. Work goes in short steps through `common/ui/bgwork.c`: slices of 40 ms (80 ms on
+  a 68000), paused for 2 s after the mouse moves or a key or button is pressed, while the program
+  in front keeps the machine, and while the app's own program edition runs.
+- **No timer of 0** in an accessory's `evnt_multi`; while work waits, 50 ms (`bg_timer()`).
+- **Periodic jobs cost next to nothing:** a reminder check compares the time with a prepared
+  list; it doesn't go through the calendars.
+- **Not in the background:** alerts, the busy bee, drawing to a closed window, and work that can't
+  be cut into steps (a TLS handshake) unless the user asked for it or `bg_may_work()` says so.
+- **Checked:** build with `-DAES_PROFILE` (common/atari/gem.c) and every stretch over the limit goes
+  to the emulator's console as `AESGAP <ms> ms <tag>`; `common/tests/bgwork` shows the way.
+
 ### 2.3 PRG and ACC side by side
 Both editions use the **same settings and data files** (see 6.1), and **only one of them is in use at a
 time**, so they never write the same file at once. The shared `common/ui/twin.c` does the finding:
@@ -436,6 +459,7 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ |
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a |
+| 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✗ (reads calendars in one go; reminders every minute) | ~ (waits until opened; first open is one stretch) | n/a | n/a | ✗ (indexes the library at boot) | n/a |
 | 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

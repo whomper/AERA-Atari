@@ -191,6 +191,22 @@ every app, and `tos_ms()` dropped its correction.
 once with timer C at 312 Hz (a file `C:\FASTCLK`) and once at 200 Hz, and time the 8 seconds it counts
 by `tos_ms()` with the build machine's clock: 8.04 and 8.00 s on the ST, 8.00 and 7.94 s on the Falcon.
 
+## Background work (16 Oct 2026)
+
+`ui/bgwork.c` lets an accessory, or a program, do background work without making the machine feel
+slow (guideline 2.2, "A quiet start"). Work waits for its start (`START=` in the INF: `now`,
+`opened`, or seconds after boot; the family's default is 60 s), runs in slices of 40 ms (80 ms on a
+68000) with an event call between them, rests for 2 s after the mouse moves or a key or button is
+pressed or when the program in front keeps the machine, and stops while the app's program edition
+runs. It allocates nothing, so an accessory may use it at any time. Built with `-DAES_PROFILE`,
+`atari/gem.c` reports every stretch between event calls over 50 ms to the emulator's console
+(`AESGAP <ms> ms <tag>`).
+
+`tests/bgwork`: `make test` checks the rules on the build machine (four planted bugs, all caught);
+`make prg` and `run.py etos512us.img` run `BGT.PRG` in Hatari: 300 ms of work in one go shows as
+300 ms, and 3 s of work through bgwork never held the machine longer than 85 ms on an ST (80 ms
+slices) and 40 ms on a Falcon (40 ms slices).
+
 ## Coming next
 
 | Area | Files | Plan |
