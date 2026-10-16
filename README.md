@@ -177,7 +177,7 @@ the heap's structure checked. `make prg` and `run.py etos512us.img` run `HEAPT.P
 something has set MFP timer C faster and still calls TOS's handler each time. On Erez's Falcon the
 counter runs at 312 Hz, so EFTP showed a 16-second transfer as 25 and its speeds 1.56 times too low.
 At its first call `tos_ms()` measures the counter against timer C's own count-down, which runs off the
-MFP's crystal however the timer is set, for 20 of the counter's steps (100 ms when all is well); more
+MFP's crystal however the timer is set, for 6 of the counter's steps (30 ms when all is well, busy, once per run); more
 than 3% off, it scales its times. `tos_clock()` is `""` on a true clock, else the line for an app's log
 ("the 200 Hz clock runs at 312.5 Hz: times corrected"). The code is EFTP's (whomper/EFTP a1e3b44).
 An app's `pf_ms()` becomes `return tos_ms();`.
