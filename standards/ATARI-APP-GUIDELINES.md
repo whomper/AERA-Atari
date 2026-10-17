@@ -76,6 +76,9 @@ way working.
   - The network on any machine and TOS: `m.network()` puts FAKESTNG in `C:\AUTO` and starts
     `serial_bridge.py` on the serial port. FAKESTNG makes the cookie jar TOS 1.04 lacks and turns off
     the XON/XOFF TOS 1.04 starts with (it took 0x13 bytes out of the frames).
+  - With TOS 1.04, `C:\AUTO\BOOTC.PRG` makes C: the boot drive, as the hard disk driver on Erez's ST
+    does (Hatari's C: is no hard disk to TOS 1.04, which would count A: and send programs looking for
+    their files to an empty floppy drive).
   - Which machines a change passes: a 68000 build on `ST-1` and `ST` (`mono` and `med`); the
     68030 code (the Falcon editions, BearSSL, EHypView's colour) on `TT` and `Falcon`; drawing and
     pictures on `Falcon:16` and `Falcon:256` too. AES messages and drag and drop also under MiNT
@@ -624,6 +627,6 @@ checked by its session.
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
-| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✓ | ✓ | ✓ (none uses another program) | ✗ | ✗ |
-| Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✗ | ✗ | ✗ (1.38 has the other flag) | ✗ (1.38 has the other flag) | ✓ (1.9, one 68000 build) | ✗ |
-| Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ |
+| Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✗ | ✗ | ✗ (1.38 has the other flag) | ✗ (1.38 has the other flag; main 78b8360) | ✓ (1.9, one 68000 build) | ✓ (1.46) |
+| Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✗ | ✗ | ✗ | ✓ (2e58e3e) | ✗ | ✓ (a49765b) |
