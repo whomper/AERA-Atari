@@ -211,7 +211,7 @@ connections). It never drops to DOS while the program is in memory.
 |---|---|---|
 | $0600 | $06FF | EDOS's loader, only during Load Binary |
 | | up to MEMLO | DOS (DOS 2.5, MyDOS and SpartaDOS 3 end below $1E00) |
-| $1E00 | $39F8 | EDOS 3.5: its code, then its variables |
+| $1E00 | $39FF | EDOS 3.6: its code, then its variables, up to the work area with 0 bytes to spare |
 | $3A00 | $3FFF | EDOS's work area: fast-SIO code ($3A00, up to $440 bytes), FILE $3E40, INP1 $3E80, BUF $3F00 |
 | $3F00 | | EDOS's load check (AXLOAD): run once at load, then the work area covers it |
 | $4000 | $7FFF | EDOS's bank window during copies (130XE banks), and Byte Compare's buffers; so EDOS needs MEMTOP at $8000 or more (AXHIGH) |
@@ -382,7 +382,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 3.4 ESC (and BREAK) cancel every question and prompt | ✓ 3.5 (all 33 prompts, Duplicate and Copy stop; typed lines key by key) | ~ (done in 1.3, not released) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ~ (no note line; `;` lines not skipped) |
-| 5.3 AERA.FNT through the shared AXFONT | ~ (3.3 places it below the screen with its own LDFONT; moves to AXFONT) | ~ (1.2 carries a built-in copy; 1.3: AXFONT, ending below $9800) |
+| 5.3 AERA.FNT through the shared AXFONT | ✓ 3.6 (AXFONT, AXFROM; Load Binary protects the font's pages only when it is loaded) | ~ (1.2 carries a built-in copy; 1.3: AXFONT, ending below $9800) |
 | 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ~ (no test disk for real hardware) |
 | 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |
 
