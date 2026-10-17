@@ -377,13 +377,13 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 1.4 About lines, title "(C) AERA 2026" | ✓ 3.3 (on `?`) | ✓ 1.2 |
 | 2.1 source form | ✓ 3.3 (largest file UTILS, 16,070 tokenised) | ✓ 1.2 |
 | 2.2 comments | ✓ 3.3 | ✓ |
-| 3.2 family keys | ✓ 3.4 (HELP through HELPFG at the menu, and `?`) | ~ (BREAK at a prompt) |
+| 3.2 family keys | ✓ 3.4 (HELP through HELPFG at the menu, and `?`) | ✓ 1.3 (BREAK as ESC) |
 | 3.3 RESET | ✓ 3.3 (AXRESET, every exit tested) | ✓ 1.2 (sim and atari800) |
-| 3.4 ESC (and BREAK) cancel every question and prompt | ✓ 3.5 (all 33 prompts, Duplicate and Copy stop; typed lines key by key) | ~ (done in 1.3, not released) |
+| 3.4 ESC (and BREAK) cancel every question and prompt | ✓ 3.5 (all 33 prompts, Duplicate and Copy stop; typed lines key by key) | ✓ 1.3 (every prompt and the Sites screen, ESC and BREAK; a transfer stops with either) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
-| 5.1 settings file notes | n/a | ~ (no note line; `;` lines not skipped) |
-| 5.3 AERA.FNT through the shared AXFONT | ✓ 3.6 (AXFONT, AXFROM; Load Binary protects the font's pages only when it is loaded) | ~ (1.2 carries a built-in copy; 1.3: AXFONT, ending below $9800) |
-| 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ~ (no test disk for real hardware) |
+| 5.1 settings file notes | n/a | ✓ 1.3 (a note at the top, `;` lines skipped) |
+| 5.3 AERA.FNT through the shared AXFONT | ✓ 3.6 (AXFONT, AXFROM; Load Binary protects the font's pages only when it is loaded) | ✓ 1.3 (AXFONT; no font in the program; without AERA.FNT, ROM characters for its icons) |
+| 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ✓ 1.3 (a8sim, atari800 with MAC/65, EFTPTEST.ATR with TESTPLAN.TXT) |
 | 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |
 
 EDOS 3.3 (17 Oct 2026) checked by the hub: the release's EDOS.COM is main's build, byte for byte;
@@ -397,3 +397,9 @@ EFTP_XL 1.2 (17 Oct 2026) checked by the hub: the release's program is main's bu
 byte; its disk holds the sources, the AX files, the program and AERA.FNT; in atari800 it starts and
 comes back from RESET; MAC/65 on the Atari builds the same bytes from the disk (EFTP_XL's run with
 the cartridge).
+
+EFTP_XL 1.3 (17 Oct 2026) checked by the hub: the release's EFTPXL.PRG (14,943 bytes) and
+AERA.FNT are main's build (bfb2a19), byte for byte, and AERA.FNT is xl/font/AERA.FNT. EFTPXL.ATR
+and EFTPTEST.ATR hold the same files as main's build, with the same contents (only the dates
+differ), both fsck clean. EFTPTEST.ATR has the test files, the TREE folders and TESTPLAN.TXT, and an
+EFTPXL.CFG with its notes, PI_IP and no password. It starts in atari800.
