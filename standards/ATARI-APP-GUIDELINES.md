@@ -21,6 +21,12 @@ Words used here:
 
 The last section lists where each app stands today. Step 4 of the roadmap works through it.
 
+**No compatibility code, for now (Erez, 17 Oct 2026).** Until the apps have other users, nothing
+reads old settings names, old file formats or answers older versions: when the family changes a
+setting, a file or a protocol, every app moves in step in its next release and the old way is
+removed in the same change. When the apps get other users, this rule ends and changes keep the old
+way working.
+
 ### The machines
 
 - **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
@@ -233,8 +239,37 @@ table in each help file is generated from the menu definition, so it can't drift
     page (EHypView)
   - empty, meaning "open / top your window"
 - It replies `AV_STARTED` so the sender can free the string.
-- **This is the only way family apps call each other.** There are no private message numbers (EContact's
-  `EC_OPEN`, 0x4543, is gone).
+- **This is the only way family apps hand each other work.** There are no private message numbers
+  (EContact's `EC_OPEN`, 0x4543, is gone), except PEOPLE below.
+
+**Asking EContact about people: PEOPLE (must).** EMail and ECal show people by name and let the user
+pick them in EContact. They ask EContact; no app reads another app's files (CONTACTS.TXT is gone).
+- **The message:** PEOPLE, 0x4E43, laid out as `VA_START` (msg[1] the sender, msg[3..4] a string in
+  memory the receiver may read) and answered with `AV_STARTED`. It is the family's one message besides
+  the AV protocol's, kept apart so a question is never taken for files to open.
+- **Commands** (the string's first word, then a colon; lines are `address<TAB>name`, Atari text, "\n",
+  names at most 63 bytes):
+  - `names:ASKER a@b c@d` → `names:` and a line per address; an empty name means EContact doesn't know
+    the address among the contacts it holds.
+  - `pick:ASKER [text]` → EContact's window in a choose mode (people or a group; the text fills its
+    search); `pick:` and a line per person chosen, or a bare `pick:` when cancelled, closed or quit.
+  - `changed:`, from EContact to the askers of the session, when the people or their addresses really
+    changed, and when its contacts have finished loading.
+  - ASKER is the asker's AES name (`EMAIL`, `ECAL`, `ECALST`). Answers go to the sender's id (msg[1]);
+    before `changed:`, EContact checks `appl_find(ASKER)` still gives that id.
+- **Rules:**
+  - At most 1 KB a string; longer questions and answers are split into whole commands, and a sender
+    sends its next PEOPLE only after `AV_STARTED` for the last (3 s without it: lost).
+  - The asker never waits: it shows the address until the name comes (`people_name()` gives 0 meanwhile).
+  - Every event loop, modal ones too, reads messages (`MU_MESAG`) and hands PEOPLE to `people_message()`.
+  - `pick:` is never sent while the asker holds the screen (a dialog's `BEG_UPDATE`): close the dialog,
+    pick, open it again with the result. One pick at a time.
+  - EContact answers from the contacts it holds (it loads them in the background, 2.2) and never
+    reads its files, raises an alert or changes the mouse form to answer.
+  - EContact not there: addresses show as they are.
+- Privacy: an asker learns only names for addresses it already has; `pick:` needs the user.
+- Shared code: `common/ui/av.c` (`av_people()`, `AV_PEOPLE`), `common/ui/people_ask.c` (the asker's side,
+  and the format and the answers' sending for EContact). Tests: `common/tests/people`, `tests/av`.
 - The shared code is `common/ui/av.c`: `av_init()`, `av_message()`, `av_arg()`, `av_exit()`, `av_send()`.
 - **On start, an app that finds an AV server** (`AVSERVER` environment variable, else Thing / jinnee /
   Gemini) **sends `AV_PROTOKOLL`**, and on quit it sends `AV_EXIT`. That lets the desktop open files with
@@ -466,6 +501,7 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✗ (reads CONTACTS.TXT) | ✗ (writes CONTACTS.TXT) | ✗ (reads it through EMAIL.patch) | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
 | 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
