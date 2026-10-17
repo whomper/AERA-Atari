@@ -25,8 +25,18 @@ jobs:
       - run: python3 xl/tests/test_tools.py
       - run: python3 xl/tests/test_ax.py
 
+  atari800:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get install -y -q autoconf automake zlib1g-dev >/dev/null
+      - run: xl/tests/test_atari800.sh "$RUNNER_TEMP/a8"
+
   split:
-    needs: test
+    needs: [test, atari800]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     steps:

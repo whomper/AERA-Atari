@@ -295,8 +295,9 @@ Three levels:
    memory. CI runs it on every push. Today each program has its own simulator; their common core
    (6502, memory, CIO, E:, K:, D:, the screen) moves to `xl/tools/` next, and each program keeps its
    devices as plug-ins (EDOS's drive and SIO, EFTP_XL's FujiNet).
-2. **atari800 (libatari800, with an OS ROM that may be shared, such as AltirraOS) with the DOS,
-   before each release** (its harness comes to `xl/tools/` too):
+2. **atari800 (libatari800 with its own OS ROM, so no Atari ROMs are needed) with the DOS, before
+   each release:** `xl/tools/atari800/` (`build.sh`, then `a8check.py start` and `a8check.py mac65`;
+   the MAC/65 cartridge image stays out of git):
    - the disk boots;
    - MAC/65 builds the same program from it;
    - the program starts.
