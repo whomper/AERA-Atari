@@ -40,7 +40,7 @@ as MAC/65's two passes need. No shared file includes another.
 |---|---|
 | `mac65.py` | The cross assembler. It makes the same program as MAC/65 1.01, byte for byte: EDOS 3.2 and EFTP_XL 1.1 build as released. It takes files with and without line numbers, and `[ ]`. It fails where MAC/65 would: a zero-page name used before it is defined, a `.IF` on a later name, a nested include. |
 | `mac65tok.py` | MAC/65's tokenised SAVE format, both ways, checked against files MAC/65 1.01 saved |
-| `atari_src.py` | The sources between git and the Atari (2.1). `disk` makes the bootable SpartaDOS disk: numbered, tokenised, the headers and sizes checked. `check --to` and `import` bring an Atari file back without its numbers, with the layout of every unchanged line kept. |
+| `atari_src.py` | The sources between git and the Atari (2.1). `disk` makes the bootable SpartaDOS disk: numbered, tokenised, the headers and sizes checked. `check --to` and `import` bring an Atari file back without its numbers, with the layout of every unchanged line kept. `layout` puts numbered sources into git's form once, for a program moving over. |
 | `sparta.py`, `atr.py` | SpartaDOS and DOS 2 / MyDOS disk images: list, add, remove, check |
 | `font.py` | `AERA.FNT`, from Erez's `font/EREZ.FNT`: as a file, or as `.BYTE` lines for a program that carries it |
 | `disk/` | SpartaDOS 3.2's boot sectors and `X32G.DOS`, for the bootable disks |

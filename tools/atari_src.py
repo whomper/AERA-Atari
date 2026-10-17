@@ -24,6 +24,10 @@ its numbers again and keeps the layout of every line that didn't change.
       the file from the Atari (tokenised, or LIST's numbered text) into
       GIT.M65: lines whose tokens are unchanged keep git's layout, new
       ones are laid out in the family's columns.
+  atari_src.py layout FILE...
+      each file in git's form, in place: line numbers gone, every line in
+      the family's columns (for a program moving to these rules; the
+      tokens, and so the program, stay the same).
 """
 import argparse
 import difflib
@@ -257,6 +261,20 @@ def cmd_import(a):
     print(f'{a.git}: {text.count(chr(10))} lines')
 
 
+def cmd_layout(a):
+    for path in a.files:
+        text = open(path, encoding='utf-8').read()
+        lines = [re.sub(r'^\d+ ?', '', x) for x in text.split('\n')]
+        if lines and lines[-1] == '':
+            lines.pop()
+        out = [layout(x) for x in lines]
+        for old, new in zip(lines, out):
+            if tokens(old) != tokens(new):
+                raise SrcError(f'{path}: laying out changes {old!r}')
+        open(path, 'w', encoding='utf-8').write('\n'.join(out) + '\n')
+        print(f'{path}: {len(out)} lines')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     sub = ap.add_subparsers(dest='cmd', required=True)
@@ -270,12 +288,15 @@ def main():
     p = sub.add_parser('check')
     p.add_argument('atr')
     p.add_argument('--to')
+    p = sub.add_parser('layout')
+    p.add_argument('files', nargs='+')
     p = sub.add_parser('import')
     p.add_argument('atari')
     p.add_argument('git')
     a = ap.parse_args()
     try:
-        {'disk': cmd_disk, 'check': cmd_check, 'import': cmd_import}[a.cmd](a)
+        {'disk': cmd_disk, 'check': cmd_check, 'import': cmd_import,
+         'layout': cmd_layout}[a.cmd](a)
     except (SrcError, mac65tok.TokError) as e:
         print(f'error: {e}', file=sys.stderr)
         return 1

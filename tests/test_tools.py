@@ -194,6 +194,14 @@ class TestSourceDisk(unittest.TestCase):
         atari_src.cmd_check(type('A', (), dict(atr=atr, to=back)))
         self.assertEqual(open(os.path.join(back, 'MAIN.M65')).read(), SAMPLE)
 
+    def test_layout(self):
+        path = os.path.join(self.tmp, 'OLD.M65')
+        with open(path, 'w') as f:
+            f.write('10 ;OLD\n20 START LDA #1 ;ONE\n30     STA $80\n40 LOOP\n')
+        atari_src.cmd_layout(type('A', (), dict(files=[path])))
+        self.assertEqual(open(path).read(), ';OLD\nSTART    LDA #1             ;ONE\n'
+                                            '         STA $80\nLOOP\n')
+
     def test_shared_files_round_trip(self):
         for name in os.listdir(os.path.join(XL, 'src')):
             text = open(os.path.join(XL, 'src', name), encoding='utf-8').read()
