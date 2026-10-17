@@ -193,9 +193,10 @@ connections). It never drops to DOS while the program is in memory.
 |---|---|---|
 | $0600 | $06FF | EDOS's loader, only during Load Binary |
 | | up to MEMLO | DOS (DOS 2.5, MyDOS and SpartaDOS 3 end below $1E00) |
-| $1E00 | $3863 | EDOS: code and variables |
-| $3900 | $3FFF | EDOS's work area: fast-SIO code, buffers |
-| $4000 | $7FFF | EDOS's bank window during copies (130XE banks) |
+| $1E00 | $3987 | EDOS 3.3: code to $3975, then its variables |
+| $3A00 | $3FFF | EDOS's work area: fast-SIO code ($3A00, up to $440 bytes), FILE $3E40, INP1 $3E80, BUF $3F00 |
+| $3F00 | | EDOS's load check (AXLOAD): run once at load, then the work area covers it |
+| $4000 | $7FFF | EDOS's bank window during copies (130XE banks), and Byte Compare's buffers; so EDOS needs MEMTOP at $8000 or more (AXHIGH) |
 | $4000 | $9B41 | EFTP_XL 1.2: the font, the program, its variables |
 | $9A00 | | EFTP_XL's load check (AXLOAD): run once at load, then its variables cover it |
 | below $9C00 | | the screen; BASIC may stay on. EDOS's font: the highest 1K below the screen |
@@ -339,18 +340,25 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 
 | Rule | EDOS | EFTP_XL |
 |---|---|---|
-| 1.2 version in one place, checked | ~ (headers not checked) | ✓ 1.2 |
-| 1.3 release files, AERA.FNT | ✗ (EDOS.FNT) | ✓ 1.2 |
-| 1.4 About lines, title "(C) AERA 2026" | ✗ ("(C) EY 2026") | ✓ 1.2 |
-| 2.1 source form | ✗ (numbers in git, EDOSMAIN 24K) | ✓ 1.2 |
-| 2.2 comments | ✗ (capitals, no routine blocks) | ✓ |
-| 3.2 family keys | ~ | ~ (BREAK at a prompt) |
-| 3.3 RESET | ✓ (every exit, tested) | ✓ 1.2 (sim and atari800) |
-| 4.2 load check | ✗ | ✓ 1.2 (AXLOAD) |
+| 1.2 version in one place, checked | ✓ 3.3 (TTL2, the headers and About checked) | ✓ 1.2 |
+| 1.3 release files, AERA.FNT | ✓ 3.3 | ✓ 1.2 |
+| 1.4 About lines, title "(C) AERA 2026" | ✓ 3.3 (on `?`) | ✓ 1.2 |
+| 2.1 source form | ✓ 3.3 (largest file UTILS, 16,070 tokenised) | ✓ 1.2 |
+| 2.2 comments | ✓ 3.3 | ✓ |
+| 3.2 family keys | ~ (`?` but not HELP: K: never gives it; HELPFG would) | ~ (BREAK at a prompt) |
+| 3.3 RESET | ✓ 3.3 (AXRESET, every exit tested) | ✓ 1.2 (sim and atari800) |
+| 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ~ (no note line; `;` lines not skipped) |
-| 5.3 AERA.FNT | ✗ (EDOS.FNT) | ✓ 1.2 (over its built-in copy) |
-| 8 tests, three levels | ~ (no atari800 run yet) | ~ (no test disk for real hardware) |
-| 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✗ (moving now, 3.3) | ✓ 1.2 |
+| 5.3 AERA.FNT | ✓ 3.3 (below the screen, else the ROM font) | ✓ 1.2 (over its built-in copy) |
+| 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ~ (no test disk for real hardware) |
+| 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |
+
+EDOS 3.3 (17 Oct 2026) checked by the hub: the release's EDOS.COM is main's build, byte for byte;
+its EDOS.ATR holds the sources (EDOSMAIN now in four files), the AX files, the program and
+AERA.FNT; it starts in atari800 ("EDOS 3.3 ... (C) AERA 2026"); MAC/65 on the Atari builds the
+same bytes from the disk (EDOS's run with the cartridge). Writing the comments found six bugs, each
+fixed with a test; three more need real hardware (PERCOM length, DBLE's sector size, a drive that
+doesn't answer $3F).
 
 EFTP_XL 1.2 (17 Oct 2026) checked by the hub: the release's program is main's build, byte for
 byte; its disk holds the sources, the AX files, the program and AERA.FNT; in atari800 it starts and
