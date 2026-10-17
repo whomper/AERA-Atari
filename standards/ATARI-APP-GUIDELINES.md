@@ -51,8 +51,29 @@ way working.
   - a 68030 build has the CPU's own 32-bit multiply and divide (the 68000 build calls routines in
     `tos.c`) and reads longs at any address; the 68882 helps floating point only, which no app uses
     today;
-  - in Hatari, the nearest is `--machine falcon --cpuclock 32 --fpu 68882 --ttram 128 --addr24 off
-    --dsp emu` (32 MHz is Hatari's most).
+  - in Hatari, the nearest is the `Falcon` machine below (32 MHz is Hatari's most);
+  - Erez works in 640x480 with 16 colours, sometimes 256, with **TOS 4.04** and **NVDI 5** (17 Oct
+    2026). NVDI isn't emulated.
+- **The test machines** (Erez, 17 Oct 2026): every rig starts Hatari through
+  `common/tools/machines.py` with one of these names, never with Hatari options of its own, and its
+  report names the machine and the TOS (`describe()`):
+
+  | Name | Machine | Screens (first: the default) | Erez's TOS |
+  |---|---|---|---|
+  | `ST` | Erez's 1040 ST: 68000 at 8 MHz, 4 MB | `mono`, `med`, `low` | 1.04 |
+  | `ST-1` | the same with 1 MB, the smallest the family runs on | `mono`, `med`, `low` | 1.04 |
+  | `TT` | TT030: 68030 at 32 MHz, 68882, 4 MB ST RAM + 16 MB TT RAM | `ttmed`, `mono`, `med` | none (EmuTOS) |
+  | `Falcon` | Erez's Falcon with the DFB1: 68030 + 68882, 14 MB ST RAM + 128 MB TT RAM, DSP, VGA | `16`, `256` | 4.04 |
+
+  - Each machine has its own settings: its own NVRAM (no rig's settings leak into another's) and the
+    Falcon's screen mode, which a real TOS 4 takes from `C:\NEWDESK.INF`.
+  - The app sessions test on EmuTOS 1.4 (fetched and checked by `machines.py`). Erez's own TOS
+    images (TOS 1.04 from his ST, TOS 4.04 from his Falcon) stay with the hub, outside git: the hub
+    runs each release candidate on them before Erez is asked for his yes.
+  - Which machines a change passes: a 68000 build on `ST-1` and `ST` (`mono` and `med`); the
+    68030 code (the Falcon editions, BearSSL, EHypView's colour) on `TT` and `Falcon`; drawing and
+    pictures on `Falcon:16` and `Falcon:256` too. AES messages and drag and drop also under MiNT
+    and XaAES (`common/tests/xaaes`).
 - **A 68000 and a 68030 build** (Erez's question, 16 Oct 2026): each app is measuring what a build
   for the Falcon above would gain over the 68000 one. The family's names and rules for two builds
   come here once that is known.
@@ -599,3 +620,4 @@ checked by its session.
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✓ | ✓ | ✓ (none uses another program) | ✗ | ✗ |
 | Machines: 68000 builds with `-fno-expensive-optimizations` | ✗ | ✗ | ✗ | ✓ (1.38) | ✓ (1.9, one 68000 build) | ✗ |
+| Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
