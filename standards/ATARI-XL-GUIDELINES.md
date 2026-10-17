@@ -164,7 +164,7 @@ START    LDA #<BSS          ; zero BSS..BSSEND
 | Key | Does |
 |---|---|
 | HELP (or ?) | the keys, then the About lines (1.4) |
-| ESC | back or stop; never quits |
+| ESC | back or stop; cancel at a question or prompt (3.4); never quits |
 | RETURN | open, confirm |
 | Q at a menu, ^Q where letters are typed | quit to DOS |
 | Y | yes to a question; any other key is no |
@@ -173,6 +173,22 @@ START    LDA #<BSS          ; zero BSS..BSSEND
 The keyboard starts in capitals (SHFLOK), and CAPS switches. A program puts in capitals the names DOS
 needs. Where only names and hex are typed, a program may hold capitals (EDOS does), and its README says
 so. BREAK at a typed prompt goes back, as ESC does.
+
+### 3.4 ESC cancels (must)
+**ESC closes any question, prompt or box as if the answer were no** (Erez, 17 Oct 2026). That covers:
+- a Y/N question;
+- a typed name or number;
+- a list to choose from;
+- a settings screen.
+
+BREAK does the same.
+- **The action it was about to do is not done:**
+  - nothing is written, erased, sent or changed;
+  - what was typed is thrown away;
+  - the program goes back to the screen it came from.
+- At a Y question, ESC is no, as any key but Y is. In a box with choices, ESC picks the one that does
+  nothing; it never picks the one that writes or erases.
+- During a transfer or a disk operation, ESC stops it (3.2), and the program says so.
 
 ### 3.3 RESET (must)
 RESET brings the program back to its main screen or menu, with files closed (and EFTP_XL's
@@ -347,6 +363,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 2.2 comments | ✓ 3.3 | ✓ |
 | 3.2 family keys | ~ (`?` but not HELP: K: never gives it; HELPFG would) | ~ (BREAK at a prompt) |
 | 3.3 RESET | ✓ 3.3 (AXRESET, every exit tested) | ✓ 1.2 (sim and atari800) |
+| 3.4 ESC (and BREAK) cancel every question and prompt | to check | to check (BREAK in 1.3) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ~ (no note line; `;` lines not skipped) |
 | 5.3 AERA.FNT | ✓ 3.3 (below the screen, else the ROM font) | ✓ 1.2 (over its built-in copy) |

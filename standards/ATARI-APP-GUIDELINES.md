@@ -206,7 +206,7 @@ meaning**.
 | ^Q | Quit (ACC: close window) | ^I | Get info / properties |
 | ^F | Find | ^, | Settings… |
 | Help | Help for what's on screen (see 4.3) | Insert | Context menu for the selection (see 3.3) |
-| Esc | Dialog: Cancel. File list: refresh (as the TOS desktop) | Return | Default button / open selection |
+| Esc | Dialog or alert: Cancel (3.5). File list: refresh (as the TOS desktop) | Return | Default button / open selection |
 
 App commands use the other letters, then ⇧^ for related commands. Where the app copies a Mac app,
 use that app's ⌘ key as ^:
@@ -230,6 +230,35 @@ table in each help file is generated from the menu definition, so it can't drift
 ### 3.4 Toolbar and tooltips
 - Toolbar buttons have a tooltip after about 1 s, drawn by the shared tooltip code (ECal/EFTP).
 - If BubbleGEM is running, tooltips go through it.
+
+### 3.5 Esc cancels (must)
+**Esc closes any dialog box or alert as if Cancel was clicked** (Erez, 17 Oct 2026). Undo does the
+same.
+- **The action it was about to do is not done:**
+  - nothing is deleted, sent, written, moved or overwritten;
+  - no setting changes;
+  - what was typed into the dialog is thrown away;
+  - the program carries on from where it was before the dialog opened.
+- **Which button Esc picks:**
+  - **Cancel**, where there is one;
+  - otherwise **the button that does nothing**: Keep, Not now, Close;
+  - in a dialog that only informs (one OK), Esc closes it.
+  - **Esc never picks a button that acts** (Delete, Send, Overwrite, Quit), even when that button is
+    the default.
+  - So 6.2's order is a rule: Cancel, or the button that does nothing, is always the last button.
+- **In a text field, Esc cancels the dialog; it doesn't clear the field.** GEM's `form_do` clears the
+  field on Esc, so the shared dialog loop catches Esc before it does.
+- **The same goes for:**
+  - dialogs in a window or a pane (Find, Settings, a login form). Esc closes them as Cancel does.
+    Where changes apply as they are made and there is no Cancel, Esc just leaves: it closes the
+    dialog's window, or goes back from the Settings pane. It never closes the app's main window or
+    quits;
+  - popups and context menus (3.3): Esc closes them with nothing chosen;
+  - the About box (1.3): Esc closes it;
+  - a question asked while something runs: Esc stops the operation (7.1).
+- **Reference:** the shared `alert()` (`common/ui/alert.c`) and dialog loop (`common/ui/dialog.c`).
+  These are being built now. TOS's and EmuTOS's `form_alert` take Return but not Esc, so the alert is
+  drawn and run by our own loop, the same on every AES.
 
 ---
 
@@ -416,6 +445,7 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
   Error numbers go at the end in brackets, if at all.
 - **Buttons are verbs** ("Delete", "Keep"), at most 3 of up to 10 characters. The default button is the
   safe one, and Cancel comes last.
+- **Esc and Undo pick the last button** (3.5), so it is always Cancel or the button that does nothing.
 
 ### 6.3 Progress and status
 - **A short status goes on the info line.**
@@ -492,6 +522,9 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 
 ✓ = done, ✗ = missing or different, ~ = partly done.
 
+Rule 3.5 is ✗ everywhere for now: `form_alert` ignores Esc, so no app's alerts take it yet. Each app's
+own dialogs are to be checked by its session.
+
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
 |---|---|---|---|---|---|---|
 | 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a |
@@ -505,6 +538,7 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ |
+| 3.5 Esc cancels every dialog and alert, as Cancel | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✗ (reads CONTACTS.TXT) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a |
