@@ -371,7 +371,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 1.4 About lines, title "(C) AERA 2026" | ✓ 3.3 (on `?`) | ✓ 1.2 |
 | 2.1 source form | ✓ 3.3 (largest file UTILS, 16,070 tokenised) | ✓ 1.2 |
 | 2.2 comments | ✓ 3.3 | ✓ |
-| 3.2 family keys | ~ (`?` but not HELP: K: never gives it; HELPFG would) | ~ (BREAK at a prompt) |
+| 3.2 family keys | ✓ 3.4 (HELP through HELPFG at the menu, and `?`) | ~ (BREAK at a prompt) |
 | 3.3 RESET | ✓ 3.3 (AXRESET, every exit tested) | ✓ 1.2 (sim and atari800) |
 | 3.4 ESC (and BREAK) cancel every question and prompt | to check | to check (BREAK in 1.3) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
