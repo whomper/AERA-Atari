@@ -187,7 +187,7 @@ class Machine:
         Memory is kept."""
         self.reset_pending = False
         self.resets += 1
-        if self.cio:
+        if self.cio and hasattr(self.cio, 'reset'):
             self.cio.reset()
         for f in self.on_reset:
             f(self)
