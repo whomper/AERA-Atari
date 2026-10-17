@@ -271,11 +271,11 @@ MAC/65 assembles in two passes, and so must the sources:
 - **When `D:AERA.FNT` is there (the current drive and, on SpartaDOS, folder: where the program was
   started from), the program uses it.** DOS doesn't tell a program where it was loaded from, so `D:`
   is the rule. `xl/src/AXFONT.M65` loads it to a 1K-aligned page the program gives (EDOS: the highest
-  below the screen, above $8000; EFTP_XL: over its built-in copy at $4000); RESET sets CHBAS again
-  without reading the file again.
-- **Without it:**
-  - EDOS keeps the ROM font;
-  - EFTP_XL keeps its built-in copy.
+  below the screen, above $8000; EFTP_XL: a page of its own, where to be settled with Erez); RESET
+  sets CHBAS again without reading the file again.
+- **No program carries the font in its binary** (Erez, 17 Oct 2026). Without `AERA.FNT` a program runs
+  in the ROM font. The box lines still look right, and the family's own glyphs show as the ROM's
+  characters in their places (EFTP_XL's four icons as the heart, club, ^F and spade).
 
 ### 5.4 Errors
 - A CIO error shows its number and its text (`xl/src/AXERR.M65`, from EDOS's CIOSTAT).
@@ -366,7 +366,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 3.4 ESC (and BREAK) cancel every question and prompt | to check | to check (BREAK in 1.3) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ~ (no note line; `;` lines not skipped) |
-| 5.3 AERA.FNT | ✓ 3.3 (below the screen, else the ROM font) | ✓ 1.2 (over its built-in copy) |
+| 5.3 AERA.FNT | ✓ 3.3 (below the screen, else the ROM font) | ~ (1.2 carries a built-in copy; it goes in 1.3) |
 | 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ~ (no test disk for real hardware) |
 | 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |
 
