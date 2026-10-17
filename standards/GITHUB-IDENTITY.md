@@ -135,6 +135,6 @@ Set these on each repo's main page: the ⚙ next to **About**.
 | EHypView | A modern ST-Guide hypertext (.HYP) viewer for the Atari TT and Falcon: program or desk accessory. | `atari-st` `atari-falcon` `gem` `tos` `st-guide` `hypertext` `retrocomputing` `aera` |
 | ClaudeST | A native GEM client for claude.ai on the Atari ST, STE, Mega ST/STE, TT and Falcon, with a Raspberry Pi bridge. | `atari-st` `atari-falcon` `gem` `tos` `claude` `raspberry-pi` `retrocomputing` `aera` |
 | EDOS | A menu-driven Disk Utility Package for Atari 8-bit computers, running on top of MyDOS or SpartaDOS. | `atari-8bit` `atari-xl` `6502` `assembly` `mac65` `spartados` `retrocomputing` `aera` |
-| EFTP_XL | File transfer for Atari 8-bit computers (400/800/XL/XE) over FujiNet, to any FTP or SFTP server. | `atari-8bit` `atari-xl` `fujinet` `ftp` `sftp` `cc65` `retrocomputing` `aera` |
+| EFTP_XL | File transfer for Atari 8-bit computers (400/800/XL/XE) over FujiNet, to any FTP server. | `atari-8bit` `atari-xl` `fujinet` `ftp` `6502` `assembly` `mac65` `retrocomputing` `aera` |
 | AERA-Gateway | The Raspberry Pi side of the AERA programs: gateways for mail, calendars and contacts, FTP and Claude, with one installer. | `atari-falcon` `atari-st` `raspberry-pi` `imap` `caldav` `sftp` `proxy` `retrocomputing` `aera` |
 | AERA-Atari | How the AERA Atari programs look and behave, the repo template they share, the brand, and (soon) their shared code. | `atari-st` `atari-falcon` `gem` `tos` `style-guide` `retrocomputing` `aera` |

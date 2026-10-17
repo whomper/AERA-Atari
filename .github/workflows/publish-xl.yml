@@ -1,0 +1,39 @@
+name: Publish xl
+
+# Test xl/, then keep the `xl` branch equal to it, so the 8-bit programs can
+#   git subtree pull --prefix=xl https://github.com/whomper/AERA-Atari xl --squash
+on:
+  push:
+    branches: [main]
+    paths: ["xl/**", ".github/workflows/publish-xl.yml"]
+  pull_request:
+    paths: ["xl/**", ".github/workflows/publish-xl.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q -r xl/requirements.txt
+      - run: python3 xl/tests/test_tools.py
+      - run: python3 xl/tests/test_ax.py
+
+  split:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Split xl/ into the xl branch
+        run: |
+          git subtree split --prefix=xl -b xl
+          git push origin xl

@@ -4,11 +4,14 @@ This repo is the reference for the AERA Atari family. It holds:
 - the app guidelines, the GitHub identity and the repo template (`standards/`)
 - the brand files (`brand/`)
 - the profile README draft (`profile/`)
-- later, the shared code (`common/`)
+- the shared code: `common/` for the ST apps, `xl/` for the 8-bit programs (its rules:
+  `standards/ATARI-XL-GUIDELINES.md`; test with `python3 xl/tests/test_tools.py` and
+  `python3 xl/tests/test_ax.py` before pushing)
 
 - **A change to a standard is a change to every app.** When a rule changes:
   - say so in the commit message
   - update the "Where each app stands" table at the end of `standards/ATARI-APP-GUIDELINES.md`
+    (or, for the 8-bit, `standards/ATARI-XL-GUIDELINES.md`)
 - **Brand images are generated.** Edit `brand/social.json` or `brand/tools/mkpreview.py`, then run
   `python3 brand/tools/mkpreview.py`. Don't hand-edit the PNGs.
 - **Never put personal details in images or docs.** That means real home-network addresses, logins, and

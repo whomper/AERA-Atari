@@ -9,6 +9,9 @@ These are the rules every AERA GEM program follows, so the apps feel like one fa
 - ClaudeST
 - every app after them
 
+The 8-bit programs (EDOS, EFTP_XL) have their own:
+[ATARI-XL-GUIDELINES.md](ATARI-XL-GUIDELINES.md).
+
 Each rule says **what** the user sees and **which existing code** is the reference, so a rule is
 implemented once (in the shared library) rather than six times.
 

@@ -24,10 +24,12 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | Folder | What it is |
 |---|---|
 | [`standards/ATARI-APP-GUIDELINES.md`](standards/ATARI-APP-GUIDELINES.md) | how every AERA GEM program behaves: About box, program and desk accessory, menus and shortcuts, right-click menus, drag and drop, help, windows, settings, alerts, networking and security |
+| [`standards/ATARI-XL-GUIDELINES.md`](standards/ATARI-XL-GUIDELINES.md) | the same for the 8-bit programs (EDOS, EFTP_XL): sources and comments, the disk, keys, RESET, memory, the font, releases |
 | [`standards/GITHUB-IDENTITY.md`](standards/GITHUB-IDENTITY.md) | how the repos present themselves: colours, type, logos, README layout, names, wording, descriptions |
 | [`standards/repo-template/`](standards/repo-template/) | the files every app repo carries (README skeleton, CLAUDE.md, CI and Release workflows…) and how to move a repo over |
 | [`brand/`](brand/) | the AERA logos, the app icons, the social-preview images and the script that draws them |
 | [`profile/`](profile/) | the draft README for the GitHub profile page |
+| [`xl/`](xl/) | the 8-bit programs' shared tools and includes (cross assembler, tokeniser, source disk, AERA.FNT, AXEQU/AXLOAD/AXRESET/AXFONT/AXERR, release workflows), pulled in with `git subtree` |
 | [`common/`](common/) | the code the apps share, pulled into each app with `git subtree` (layer 1 so far: TLS library, DSP RSA, bidi, dates, password encryption, build tools) |
 
 ## Licence
