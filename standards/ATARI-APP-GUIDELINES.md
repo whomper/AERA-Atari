@@ -507,7 +507,7 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 | 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✗ (reads CONTACTS.TXT) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✗ (reads it through EMAIL.patch) | n/a | n/a | n/a |
+| 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✗ (reads CONTACTS.TXT) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
 | 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
