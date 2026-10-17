@@ -98,8 +98,9 @@ The title line shows `NAME x.y` and `(C) AERA 2026` at all times, as EFTP_XL's d
 - **Files:**
   - `NAME.M65`, at the repository's root (EDOS) or in one folder (EFTP_XL's `ASM/`), with the same
     names on the disk;
-  - the main file (`EDOS.M65`, `EFTPXL.M65`) is a short list, under 1K tokenised: the options, the
-    origin and the `.INCLUDE #D:NAME.M65` lines. Only it has includes (MAC/65 stops with NESTED
+  - the main file (`EDOS.M65`, `EFTPXL.M65`) is short, at most 2K tokenised (EDOS's is 589
+    bytes, EFTP_XL's 1,434): the options, the origin, the `.INCLUDE #D:NAME.M65` lines and little
+    else, as it stays in memory beside the symbol table while MAC/65 assembles. Only it has includes (MAC/65 stops with NESTED
     INCLUDE otherwise). On the Atari: `LOAD #D:MAIN.M65`, then `ASM ,,#D:OUT`. (`ASM #D:FILE`
     fails on SpartaDOS: MAC/65's pass-2 POINT is refused);
   - a file is at most 16K tokenised (about 1,000 lines), so it LOADs and edits on any DOS;
@@ -195,8 +196,8 @@ connections). It never drops to DOS while the program is in memory.
 | $1E00 | $3863 | EDOS: code and variables |
 | $3900 | $3FFF | EDOS's work area: fast-SIO code, buffers |
 | $4000 | $7FFF | EDOS's bank window during copies (130XE banks) |
-| $4000 | $978F | EFTP_XL: the font, the program, its variables |
-| $9A00 | $9A86 | EFTP_XL's load check (used once, at load) |
+| $4000 | $9B41 | EFTP_XL 1.2: the font, the program, its variables |
+| $9A00 | | EFTP_XL's load check (AXLOAD): run once at load, then its variables cover it |
 | below $9C00 | | the screen; BASIC may stay on. EDOS's font: the highest 1K below the screen |
 
 A new program says where it goes here before its first release.
@@ -337,14 +338,20 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 
 | Rule | EDOS | EFTP_XL |
 |---|---|---|
-| 1.2 version in one place, checked | ~ (headers not checked) | ✓ |
-| 1.3 release files, AERA.FNT | ✗ | ✗ |
-| 1.4 About lines, title "(C) AERA 2026" | ✗ ("(C) EY 2026") | ~ (no About lines) |
-| 2.1 source form | ✗ (numbers in git, EDOSMAIN 24K) | ~ (.ASM names in git) |
+| 1.2 version in one place, checked | ~ (headers not checked) | ✓ 1.2 |
+| 1.3 release files, AERA.FNT | ✗ (EDOS.FNT) | ✓ 1.2 |
+| 1.4 About lines, title "(C) AERA 2026" | ✗ ("(C) EY 2026") | ✓ 1.2 |
+| 2.1 source form | ✗ (numbers in git, EDOSMAIN 24K) | ✓ 1.2 |
 | 2.2 comments | ✗ (capitals, no routine blocks) | ✓ |
-| 3.2 family keys | ~ | ~ |
-| 3.3 RESET | ✓ (every exit, tested) | ✗ |
-| 4.2 load check | ✗ | ✓ |
-| 5.3 AERA.FNT | ✗ (EDOS.FNT) | ✗ (built-in only) |
-| 8 tests, three levels | ✓ | ~ (no test disk) |
-| 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✗ | ✗ |
+| 3.2 family keys | ~ | ~ (BREAK at a prompt) |
+| 3.3 RESET | ✓ (every exit, tested) | ✓ 1.2 (sim and atari800) |
+| 4.2 load check | ✗ | ✓ 1.2 (AXLOAD) |
+| 5.1 settings file notes | n/a | ~ (no note line; `;` lines not skipped) |
+| 5.3 AERA.FNT | ✗ (EDOS.FNT) | ✓ 1.2 (over its built-in copy) |
+| 8 tests, three levels | ~ (no atari800 run yet) | ~ (no test disk for real hardware) |
+| 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✗ (moving now, 3.3) | ✓ 1.2 |
+
+EFTP_XL 1.2 (17 Oct 2026) checked by the hub: the release's program is main's build, byte for
+byte; its disk holds the sources, the AX files, the program and AERA.FNT; in atari800 it starts and
+comes back from RESET; MAC/65 on the Atari builds the same bytes from the disk (EFTP_XL's run with
+the cartridge).
