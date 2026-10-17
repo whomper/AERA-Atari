@@ -35,11 +35,14 @@ way working.
 - **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
   or a cartridge network adapter, the Pi gateway for encryption. Every 68000 build runs here, and the
   ST editions are made for it.
-  - **Every 68000 build compiles with `-fno-expensive-optimizations`** (EHypView, 17 Oct 2026). GCC
-    13's bswap pass joins byte reads into one word or long read (`p[0]<<24 | p[1]<<16 | ...`,
+  - **Every 68000 build compiles with `-fdisable-tree-bswap`** (EHypView, 17 Oct 2026). GCC 13's
+    bswap pass joins byte reads into one word or long read (`p[0]<<24 | p[1]<<16 | ...`,
     neighbouring byte fields), even with `-mstrict-align`; on a 68000 that is an address error
-    whenever the address is odd. `-fno-store-merging` covers only stores. Check a file with
-    `-fdump-tree-bswap-details`: no "load in target endianness" lines may be left.
+    whenever the address is odd. `-fno-store-merging` covers only stores. The flag turns off that
+    pass alone, and GCC says so in one note per file ("cc1: note: disable pass tree-bswap ..."),
+    which is not a warning. Not `-fno-expensive-optimizations`: it also stops the pass, but GCC 13.3
+    miscompiled EHypView's index scanner with it. Check: `be32()` and neighbouring byte fields
+    compile to `move.b` reads.
 - **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware: a Falcon030 with
   a **DFB1** accelerator (a 68030 at 50 MHz with a **68882** maths coprocessor and **128 MB of TT
   RAM**), **NetUSBee** for the network, and the Falcon's **DSP**. What follows from it:
@@ -619,5 +622,5 @@ checked by its session.
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✓ | ✓ | ✓ (none uses another program) | ✗ | ✗ |
-| Machines: 68000 builds with `-fno-expensive-optimizations` | ✗ | ✗ | ✗ | ✓ (1.38) | ✓ (1.9, one 68000 build) | ✗ |
+| Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✗ | ✗ | ✗ (1.38 has the other flag) | ✗ (1.38 has the other flag) | ✓ (1.9, one 68000 build) | ✗ |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
