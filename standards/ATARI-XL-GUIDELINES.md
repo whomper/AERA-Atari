@@ -215,7 +215,7 @@ connections). It never drops to DOS while the program is in memory.
 | $3A00 | $3FFF | EDOS's work area: fast-SIO code ($3A00, up to $440 bytes), FILE $3E40, INP1 $3E80, BUF $3F00 |
 | $3F00 | | EDOS's load check (AXLOAD): run once at load, then the work area covers it |
 | $4000 | $7FFF | EDOS's bank window during copies (130XE banks), and Byte Compare's buffers; so EDOS needs MEMTOP at $8000 or more (AXHIGH) |
-| $4000 | $9B41 | EFTP_XL 1.2: its built-in font, the program, its variables. 1.3: the program and its variables to $94D0, no built-in font; its load check asks for the font's page too (AXHIGH = its end + $41F, MEMTOP being $3E1 under the screen) |
+| $4000 | $9B41 | EFTP_XL 1.2: its built-in font, the program, its variables. 1.3: the program and its variables to $94A6, no built-in font (857 bytes below the font's page with BASIC in) |
 | $9A00 | | EFTP_XL's load check (AXLOAD): run once at load, then its variables cover it |
 | (RAMTOP-8) AND $FC | +$3FF | AERA.FNT (5.3, AXFONT): $9800-$9BFF with BASIC in, $B800-$BBFF without. Every program ends below $9800, so the font always fits |
 | (RAMTOP-4) | RAMTOP | the screen (GR.0); BASIC may stay on |
@@ -273,9 +273,7 @@ MAC/65 assembles in two passes, and so must the sources:
   disk and in its release without building it; `font.py check` and xl's tests say it is up to date.
   It ships with every release and on every ATR. EDOS.FNT goes.
 - **Four characters are kept for icons:** screen codes $40, $46, $50 and $7B (ATASCII ^, (heart),
-  ^F, ^P (club) and ^; (spade)). AERA.FNT has the family's icons there. Text doesn't use them, and a
-  program may put its own icons over them (Erez, 17 Oct 2026: EFTP_XL carries its four, so it
-  doesn't depend on the font).
+  ^F, ^P (club) and ^; (spade)). AERA.FNT has the family's icons there, and text doesn't use them.
 - **When `D:AERA.FNT` is there (the current drive and, on SpartaDOS, folder: where the program was
   started from), the program uses it.** DOS doesn't tell a program where it was loaded from, so `D:`
   is the rule.
@@ -290,13 +288,10 @@ MAC/65 assembles in two passes, and so must the sources:
     memory (EDOS: $80, above its bank window). Under that there is no room, and the ROM font
     stays.
   - The program keeps its own data off the font's page.
-  - The program gives `AXFCOPY` before the include. With 0, no file means the ROM font. With 1, no
-    file (or a short one) means the font in use is copied to the page and selected, so the page is
-    always RAM and the program can put its icons on it after the call (EFTP_XL). With no room it is
-    the ROM font either way: a program checks `AXFPG` <> $E0 before it writes icons.
-- **No program carries the font in its binary** (Erez, 17 Oct 2026). Without `AERA.FNT` a program runs
-  in the ROM font. The box lines still look right. A program with its own icons puts them on the copy
-  (`AXFCOPY` 1); otherwise the four kept characters show as the ROM's.
+- **No program carries the font in its binary, or a copy of it** (Erez, 17 Oct 2026). Without
+  `AERA.FNT` a program runs in the ROM font as it is. The box lines still look right, and a program
+  shows ROM characters in place of its icons. EFTP_XL uses ATASCII $7F (right triangle) for a folder, a
+  blank for a file, $1F (right arrow) for a cut name and $12 (a line) for the bar.
 
 ### 5.4 Errors
 - A CIO error shows its number and its text (`xl/src/AXERR.M65`, from EDOS's CIOSTAT).
