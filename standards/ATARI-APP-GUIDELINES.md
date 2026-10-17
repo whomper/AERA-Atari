@@ -262,6 +262,9 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
     sends its next PEOPLE only after `AV_STARTED` for the last (3 s without it: lost).
   - The asker never waits: it shows the address until the name comes (`people_name()` gives 0 meanwhile).
   - Every event loop, modal ones too, reads messages (`MU_MESAG`) and hands PEOPLE to `people_message()`.
+    The shared busy loop does it when the app gives it its message handler (`busy_message`): PEOPLE
+    goes to the shared code, the rest to the app. The shared pop-up and About box are short and don't
+    read messages; an answer lost there is asked again after 5 s.
   - `pick:` is never sent while the asker holds the screen (a dialog's `BEG_UPDATE`): close the dialog,
     pick, open it again with the result. One pick at a time.
   - EContact answers from the contacts it holds (it loads them in the background, 2.2) and never
