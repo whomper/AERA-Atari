@@ -82,6 +82,13 @@ way working.
   publishes nothing. If a release doesn't work, roll back with a release: revert on `main`, release the
   next number (never reuse or delete one), and mark the bad release's notes as withdrawn, naming the one
   to use.
+- **A test that needs another AERA program uses that program's latest release** (Erez's decision,
+  17 Oct 2026), what Erez runs, not a build of its `main`: `common/tools/getrelease.py APP DIR FILE...`
+  fetches it (and `APP@vX.Y` a given one) and writes which release it was. A report names the release
+  it was tested against. The one exception is a change that both programs are still making (a
+  message one sends and the other answers): then test against the other's `main` at a named commit,
+  say so in the report, and test again against its release once it is out. Shared code (`common/`,
+  `xl/`, `gateway/`) is taken as source by design; this rule is about programs.
 - Built programs are published as **GitHub Releases**, not committed, with the help file, the
   certificates and the desktop icon: each file on its own and all in a zip, built by the release
   workflow (run by hand on `main`, or from a pushed `vX.Y` tag). See
@@ -585,3 +592,4 @@ checked by its session.
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
+| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |

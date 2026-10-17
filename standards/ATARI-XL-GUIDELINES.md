@@ -51,6 +51,7 @@ file, a name or a rule, every program moves in its next release and the old way 
   - the version changes only in a release commit;
   - there is no `-dev` label;
   - only formal releases leave the build machine;
+  - a test that needs another AERA program uses its latest release, not a build of its `main`;
   - never reuse a number;
   - a bad release is rolled back with a new one.
 - **The Release workflow** (`xl/workflows/release.yml`, the same in every program, section 9):
