@@ -565,13 +565,13 @@ checked by its session.
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ |
-| 3.5 Esc cancels every dialog and alert, as Cancel | ✗ | ✓ (1.42; Esc leaves the search field as it is) | ✓ (1.36) | ✓ (1.36; Esc during a transfer's question stops it) | ✓ (1.8; Esc leaves the library search as it is) | ✓ (1.43; Shift+Delete clears the reply line) |
+| 3.5 Esc cancels every dialog and alert, as Cancel | ✓ (2.8; Undo no longer empties a field) | ✓ (1.42; Esc leaves the search field as it is) | ✓ (1.36) | ✓ (1.36; Esc during a transfer's question stops it) | ✓ (1.8; Esc leaves the library search as it is) | ✓ (1.43; Shift+Delete clears the reply line) |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✗ (reads CONTACTS.TXT) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a |
+| 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✓ (2.8: invitees by name, Add... picks in EContact; tried with EContact 1.42, PRG and ACC) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
-| 4.3 Help front page (banner, window, diagram, contents) | ✗ | ✗ | ~ (sample, 17 Oct) | ✗ | n/a | ✗ |
+| 4.3 Help front page (banner, window, diagram, contents) | ✗ | ✗ | ~ (main 2c3a8a1; next release) | ✗ | n/a | ✗ |
 | 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
