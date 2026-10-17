@@ -31,7 +31,7 @@ as MAC/65's two passes need. No shared file includes another.
 | `AXEQU.M65` | The OS's addresses under the Atari's own names (DOSINI, ICCOM, CIOV ...), CIO's commands and modes as `AXOPEN`, `AXGETCHR`, `AXOPNIN` ..., the family's colours. Include it first. | | 0 |
 | `AXLOAD.M65` | The load check (4.2): an init segment that refuses to load over DOS or past MEMTOP, says why on E: and goes back to DOS | `AXLOW`, `AXHIGH`, `*=` where it goes, the messages `AXLOWM` and `AXROOMM` | 64, used once |
 | `AXRESET.M65` | RESET back into the program (3.3): `AXSTART` at the start, `AXQUIT` before every way out; RESET runs DOS's init, then `AXWARM` | `AXWARM` | 48 |
-| `AXFONT.M65` | `AXFONT`: D:AERA.FNT to the page in A, through the IOCB in X; C=0 when read | | 70 |
+| `AXFONT.M65` | The family font (5.3), just below the screen as EDOS had it. `AXFONT` (X: an IOCB×16): the first call reads D:AERA.FNT to page (RAMTOP-8) AND $FC and selects it; later calls (after RESET) only set CHBAS; no file, a short one or no room keeps the ROM font (C=1). `AXFPG` is its page ($E0: the ROM's). `AXFROM`: the ROM font, before going back to DOS | `AXFMIN`: the lowest page the font may take, above the program's own memory | 124 |
 | `AXERR.M65` | `AXERRT`: the text of CIO error Y, at A/Y; C=1 when there is none | `AXPTR`; `AXERRS` 1 (CIO's 128-147) or 2 (and DOS's 160-171) | 53 + texts |
 
 ## The tools (`tools/`)

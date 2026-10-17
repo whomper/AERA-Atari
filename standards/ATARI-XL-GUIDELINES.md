@@ -213,9 +213,10 @@ connections). It never drops to DOS while the program is in memory.
 | $3A00 | $3FFF | EDOS's work area: fast-SIO code ($3A00, up to $440 bytes), FILE $3E40, INP1 $3E80, BUF $3F00 |
 | $3F00 | | EDOS's load check (AXLOAD): run once at load, then the work area covers it |
 | $4000 | $7FFF | EDOS's bank window during copies (130XE banks), and Byte Compare's buffers; so EDOS needs MEMTOP at $8000 or more (AXHIGH) |
-| $4000 | $9B41 | EFTP_XL 1.2: the font, the program, its variables |
+| $4000 | $9B41 | EFTP_XL 1.2: its built-in font, the program, its variables. From 1.3: no built-in font, and it ends below $9800 |
 | $9A00 | | EFTP_XL's load check (AXLOAD): run once at load, then its variables cover it |
-| below $9C00 | | the screen; BASIC may stay on. EDOS's font: the highest 1K below the screen |
+| (RAMTOP-8) AND $FC | +$3FF | AERA.FNT (5.3, AXFONT): $9800-$9BFF with BASIC in, $B800-$BBFF without. Every program ends below $9800, so the font always fits |
+| (RAMTOP-4) | RAMTOP | the screen (GR.0); BASIC may stay on |
 
 A new program says where it goes here before its first release.
 
@@ -270,9 +271,18 @@ MAC/65 assembles in two passes, and so must the sources:
   ATR. EDOS.FNT goes.
 - **When `D:AERA.FNT` is there (the current drive and, on SpartaDOS, folder: where the program was
   started from), the program uses it.** DOS doesn't tell a program where it was loaded from, so `D:`
-  is the rule. `xl/src/AXFONT.M65` loads it to a 1K-aligned page the program gives (EDOS: the highest
-  below the screen, above $8000; EFTP_XL: a page of its own, where to be settled with Erez); RESET
-  sets CHBAS again without reading the file again.
+  is the rule.
+- **It goes just below the screen, in every program** (Erez, 17 Oct 2026): the 1K at page
+  (RAMTOP-8) AND $FC, as EDOS put it. That's $9800 with BASIC in and $B800 without, on a 64K
+  machine.
+- **The code is shared:** `xl/src/AXFONT.M65`, nothing of a program's own.
+  - `AXFONT` reads the file once and selects it. It is called at the start and again after RESET,
+    when it only sets CHBAS, without reading the file again.
+  - `AXFROM` puts the ROM font back before the program goes to DOS.
+  - The program gives `AXFMIN`, the lowest page the font may take: the first page above its own
+    memory (EDOS: $80, above its bank window). Under that there is no room, and the ROM font
+    stays.
+  - The program keeps its own data off the font's page.
 - **No program carries the font in its binary** (Erez, 17 Oct 2026). Without `AERA.FNT` a program runs
   in the ROM font. The box lines still look right, and the family's own glyphs show as the ROM's
   characters in their places (EFTP_XL's four icons as the heart, club, ^F and spade).
@@ -366,7 +376,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 3.4 ESC (and BREAK) cancel every question and prompt | to check | to check (BREAK in 1.3) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ~ (no note line; `;` lines not skipped) |
-| 5.3 AERA.FNT | ✓ 3.3 (below the screen, else the ROM font) | ~ (1.2 carries a built-in copy; it goes in 1.3) |
+| 5.3 AERA.FNT through the shared AXFONT | ~ (3.3 places it below the screen with its own LDFONT; moves to AXFONT) | ~ (1.2 carries a built-in copy; 1.3: AXFONT, ending below $9800) |
 | 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ~ (no test disk for real hardware) |
 | 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |
 
