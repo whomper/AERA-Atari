@@ -262,8 +262,13 @@ same.
 - **The crash alert stays on `form_alert`** (6.4): it has one button, and the crash path stays as
   simple as it can be.
 - **Reference:** the shared `alert()` (`common/ui/alert.c`) and dialog loop (`common/ui/dialog.c`).
-  These are being built now. TOS's and EmuTOS's `form_alert` take Return but not Esc, so the alert is
-  drawn and run by our own loop, the same on every AES.
+  TOS's and EmuTOS's `form_alert` take Return but not Esc, so the alert is drawn and run by our own
+  loop, the same on every AES.
+  - `alert()`: Esc and Undo give the last button.
+  - `dlg_do(tree, start, cancel)` in place of `form_do(tree, start)`, and `dlg_modal(tree, start,
+    cancel)` for the whole modal dialog (centred, drawn, run, put away): Esc and Undo give `cancel`,
+    and a text field keeps its text. A dialog with no button that does nothing passes -1 and gets -1
+    back.
 
 ---
 
@@ -527,8 +532,10 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 
 ✓ = done, ✗ = missing or different, ~ = partly done.
 
-Rule 3.5 is ✗ everywhere for now: `form_alert` ignores Esc, so no app's alerts take it yet. Each app's
-own dialogs are to be checked by its session.
+Rule 3.5 is ✗ everywhere for now: `form_alert` ignores Esc, so no app's alerts take it yet. The shared
+`alert()` and `dlg_do`/`dlg_modal` take it (17 Oct 2026); an app ticks the row once it has synced
+`common/`, links `dialog.o` and has moved its own dialogs over. Each app's own dialogs are to be
+checked by its session.
 
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
 |---|---|---|---|---|---|---|
