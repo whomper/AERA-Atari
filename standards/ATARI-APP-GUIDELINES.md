@@ -598,4 +598,4 @@ checked by its session.
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✓ | ✓ | ✓ (none uses another program) | ✗ | ✗ |
-| Machines: 68000 builds with `-fno-expensive-optimizations` | ✗ | ✗ | ✗ | ✗ | ✓ (1.9, one 68000 build) | ✗ |
+| Machines: 68000 builds with `-fno-expensive-optimizations` | ✗ | ✗ | ✗ | ✓ (1.38) | ✓ (1.9, one 68000 build) | ✗ |
