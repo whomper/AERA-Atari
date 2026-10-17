@@ -73,6 +73,9 @@ way working.
   - The app sessions test on EmuTOS 1.4 (fetched and checked by `machines.py`). Erez's own TOS
     images (TOS 1.04 from his ST, TOS 4.04 from his Falcon) stay with the hub, outside git: the hub
     runs each release candidate on them before Erez is asked for his yes.
+  - The network on any machine and TOS: `m.network()` puts FAKESTNG in `C:\AUTO` and starts
+    `serial_bridge.py` on the serial port. FAKESTNG makes the cookie jar TOS 1.04 lacks and turns off
+    the XON/XOFF TOS 1.04 starts with (it took 0x13 bytes out of the frames).
   - Which machines a change passes: a 68000 build on `ST-1` and `ST` (`mono` and `med`); the
     68030 code (the Falcon editions, BearSSL, EHypView's colour) on `TT` and `Falcon`; drawing and
     pictures on `Falcon:16` and `Falcon:256` too. AES messages and drag and drop also under MiNT
