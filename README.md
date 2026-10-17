@@ -71,7 +71,7 @@ These had drifted between the apps; each is now the most complete copy, with eve
 | `atari/include/tos.h` | EFTP + ECal | `Dfree`, `Fattrib`, `Fdatime`, `Drvmap`, `boot_drive` |
 | `atari/include/stdlib.h` | ECal | `heap_add()` (the accessories' fixed heap) |
 | `src/util.c/.h` | ECal | `sb_room()` |
-| `src/tz.c/.h` | ECal | a small cache of the last zones looked up |
+| `src/tz.c/.h` | ECal | a small cache of the last zones looked up; `tz_offset()` keeps the last four zone-years with their two changes (ECal 2.6's `tzm_offset`), so a series of events no longer works out summer time from the rules each time; `tz_offset_rules()` is the slow way, for tests |
 | `src/charset.c/.h`, `charset_tab.h` | EMail | ECal and EContact lose the Troll-proxy guesswork EMail dropped (it could take real text for already-converted Atari text) |
 
 ## Layer 2b: TLS and connections (14 Oct 2026)
@@ -222,6 +222,10 @@ and EContact's integration patches go; nothing reads another app's files.
 
 `tests/people`: `make test`, the asker against a pretend EContact and EContact's side (seven planted
 bugs, all caught); `tests/av` checks PEOPLE in and out.
+
+`tests/tz`: `make test`, 83 million offsets from the kept zone-years against the rules: every built-in
+zone around each change from 1990 to 2040, random moments, a zone whose rules change at the same
+address, and one that changes on new year's day (four planted bugs, all caught).
 
 ## Coming next
 
