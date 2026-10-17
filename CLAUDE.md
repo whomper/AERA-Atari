@@ -5,8 +5,8 @@ This repo is the reference for the AERA Atari family. It holds:
 - the brand files (`brand/`)
 - the profile README draft (`profile/`)
 - the shared code: `common/` for the ST apps, `xl/` for the 8-bit programs (its rules:
-  `standards/ATARI-XL-GUIDELINES.md`; test with `python3 xl/tests/test_tools.py` and
-  `python3 xl/tests/test_ax.py` before pushing)
+  `standards/ATARI-XL-GUIDELINES.md`; test with `python3 xl/tests/test_tools.py`,
+  `test_ax.py` and `test_sim.py` before pushing)
 
 - **A change to a standard is a change to every app.** When a rule changes:
   - say so in the commit message

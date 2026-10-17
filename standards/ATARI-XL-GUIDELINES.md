@@ -293,9 +293,9 @@ MAC/65 assembles in two passes, and so must the sources:
 ## 8. Tests (must)
 Three levels:
 1. **The real program on an emulated 6502** (py65): every command, the screens, files written and
-   memory. CI runs it on every push. Today each program has its own simulator; their common core
-   (6502, memory, CIO, E:, K:, D:, the screen) moves to `xl/tools/` next, and each program keeps its
-   devices as plug-ins (EDOS's drive and SIO, EFTP_XL's FujiNet).
+   memory. CI runs it on every push. The machine, CIO and its E:, K: and D:, SIO's dispatch, the
+   key script and the screen are `xl/tools/a8sim`; each program keeps its own devices (EDOS's
+   drive, EFTP_XL's FujiNet) and its tests.
 2. **atari800 (libatari800 with its own OS ROM, so no Atari ROMs are needed) with the DOS, before
    each release:** `xl/tools/atari800/` (`build.sh`, then `a8check.py start` and `a8check.py mac65`;
    the MAC/65 cartridge image stays out of git):
@@ -316,7 +316,8 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
     way home;
   - `sparta.py` and `atr.py`;
   - `font.py`;
-  - next: the simulator's core and the atari800 harness.
+  - `a8sim/`, the simulator (8, level 1); `atari800/`, the release checks in atari800 (level 2);
+    `mac65real/`, the real MAC/65 cartridge on py65.
 - `xl/workflows/`: `release.yml`, `withdraw.yml`, copied into place by `tools/sync-xl.sh`.
 - `xl/font/EREZ.FNT`: the source of `AERA.FNT`.
 - `xl/src/AX*.M65`: small includes, one job each, labels starting with `AX`. A shared file's header

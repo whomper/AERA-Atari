@@ -24,6 +24,7 @@ jobs:
       - run: pip install -q -r xl/requirements.txt
       - run: python3 xl/tests/test_tools.py
       - run: python3 xl/tests/test_ax.py
+      - run: python3 xl/tests/test_sim.py
 
   atari800:
     runs-on: ubuntu-24.04
