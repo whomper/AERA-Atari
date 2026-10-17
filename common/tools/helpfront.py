@@ -123,6 +123,8 @@ def diagram(g):
     o = heading(g["title"])
     o += ["@box %d 16 4" % x for x in xs] + [""]
     row1, row2 = [], []
+    for b in boxes:
+        assert all(vis(markup(t)) <= 13 for t in b), "box text over 13 characters: %s" % b
     for i, (x, b) in enumerate(zip(xs, boxes)):
         row1.append((x + 1, markup(b[0])))
         if len(b) > 1:
@@ -185,15 +187,33 @@ def front(spec, d, version, pics):
 def page(spec_path, src, out):
     spec = json.load(open(spec_path, encoding="utf-8"))
     d = os.path.dirname(os.path.dirname(os.path.abspath(spec_path)))    # the repository
-    stg = open(src, encoding="latin-1").read()
-    m = re.search(r'@node\s+"Main"[^\n]*\n.*?@endnode[^\n]*\n', stg, re.S)
+    raw = open(src, "rb").read()
+    # the Atari character set (most guides), or UTF-8 that hcp converts
+    # (ECal's): keep what the source is in
+    utf8 = not re.search(rb"@inputenc\s+\"?atarist", raw)
+    try:
+        stg = raw.decode("utf-8") if utf8 else None
+    except UnicodeDecodeError:
+        utf8 = False
+    if not utf8:
+        stg = raw.decode("latin-1")
+    m = re.search(r'@node\s+"?Main\b"?[^\n]*\n.*?@endnode[^\n]*\n', stg, re.S)
     if not m:
         sys.exit("%s: no Main node" % src)
     v = re.search(r"@\$VER:\s*\S+\s+([0-9.]+)", stg)
+    w = re.search(r"^@width\s+(\d+)", stg, re.M)
+    global WIDTH
+    WIDTH = min(75, int(w.group(1))) if w else 75
     pics = []
     page_ = front(spec, d, v.group(1) if v else "", pics)
+    if not re.search(r"^@autorefoff", stg[:m.start()], re.M):
+        # the guide links words to pages by itself: not on the front page,
+        # whose links are all written out
+        page_ = page_.replace("\n", "\n@autorefoff\n", 1).replace("@endnode", "@autorefon\n@endnode")
+    if utf8:
+        page_ = page_.replace("\xfa", "\u00b7")     # the middle dot
     stg = stg[:m.start()] + page_ + stg[m.end():]
-    with open(out, "w", encoding="latin-1") as f:
+    with open(out, "w", encoding="utf-8" if utf8 else "latin-1") as f:
         f.write(stg)
     for img, name in pics:
         shutil.copyfile(img, os.path.join(os.path.dirname(os.path.abspath(out)), name))
