@@ -578,7 +578,7 @@ checked by its session.
 | 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✓ (2.8: invitees by name, Add... picks in EContact; tried with EContact 1.42, PRG and ACC) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
-| 4.3 Help front page (banner, window, diagram, contents) | ✗ | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ~ (main e6491ee; next release) | n/a | ✗ |
+| 4.3 Help front page (banner, window, diagram, contents) | ✓ (2.9) | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ✓ (1.37; the picture a column in, 59a8d98, with the next) | n/a | ✗ |
 | 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -592,4 +592,4 @@ checked by its session.
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
-| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✗ | ✗ | ✓ (none uses another program) | ✗ | ✗ |
