@@ -256,9 +256,10 @@ same.
   - popups and context menus (3.3): Esc closes them with nothing chosen;
   - the About box (1.3): Esc closes it;
   - a question asked while something runs: Esc stops the operation (7.1).
-- **A search field in a window** (not a dialog: EHypView's library, a list's filter): Esc cancels the
-  search. It clears the query and shows everything again; when the query is already empty, Esc does
-  nothing. It never closes the window.
+- **Esc never clears text** (Erez, 17 Oct 2026). Only editing keys take text out: Backspace,
+  Delete, ^X and the like. That holds in a text field of a window too, which isn't a dialog: a
+  search field (EHypView's library, a list's filter), a reply line (ClaudeST). There Esc leaves the
+  text as it is and does nothing else; it never closes the window.
 - **The crash alert stays on `form_alert`** (6.4): it has one button, and the crash path stays as
   simple as it can be.
 - **Reference:** the shared `alert()` (`common/ui/alert.c`) and dialog loop (`common/ui/dialog.c`).

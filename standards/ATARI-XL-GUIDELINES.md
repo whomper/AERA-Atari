@@ -186,6 +186,8 @@ BREAK does the same.
   - nothing is written, erased, sent or changed;
   - what was typed is thrown away;
   - the program goes back to the screen it came from.
+- ESC never clears text in a line that stays on screen; only editing keys do (BACK S, DELETE LINE).
+  What ESC throws away is a prompt it closes (Erez, 17 Oct 2026).
 - At a Y question, ESC is no, as any key but Y is. In a box with choices, ESC picks the one that does
   nothing; it never picks the one that writes or erases.
 - During a transfer or a disk operation, ESC stops it (3.2), and the program says so.
@@ -209,11 +211,11 @@ connections). It never drops to DOS while the program is in memory.
 |---|---|---|
 | $0600 | $06FF | EDOS's loader, only during Load Binary |
 | | up to MEMLO | DOS (DOS 2.5, MyDOS and SpartaDOS 3 end below $1E00) |
-| $1E00 | $3987 | EDOS 3.3: code to $3975, then its variables |
+| $1E00 | $39F8 | EDOS 3.5: its code, then its variables |
 | $3A00 | $3FFF | EDOS's work area: fast-SIO code ($3A00, up to $440 bytes), FILE $3E40, INP1 $3E80, BUF $3F00 |
 | $3F00 | | EDOS's load check (AXLOAD): run once at load, then the work area covers it |
 | $4000 | $7FFF | EDOS's bank window during copies (130XE banks), and Byte Compare's buffers; so EDOS needs MEMTOP at $8000 or more (AXHIGH) |
-| $4000 | $9B41 | EFTP_XL 1.2: its built-in font, the program, its variables. From 1.3: no built-in font, and it ends below $9800 |
+| $4000 | $9B41 | EFTP_XL 1.2: its built-in font, the program, its variables. 1.3: the program and its variables to $94D0, no built-in font; its load check asks for the font's page too (AXHIGH = its end + $41F, MEMTOP being $3E1 under the screen) |
 | $9A00 | | EFTP_XL's load check (AXLOAD): run once at load, then its variables cover it |
 | (RAMTOP-8) AND $FC | +$3FF | AERA.FNT (5.3, AXFONT): $9800-$9BFF with BASIC in, $B800-$BBFF without. Every program ends below $9800, so the font always fits |
 | (RAMTOP-4) | RAMTOP | the screen (GR.0); BASIC may stay on |
@@ -266,9 +268,14 @@ MAC/65 assembles in two passes, and so must the sources:
 
 ### 5.3 The font: AERA.FNT (must)
 - **The family font is `AERA.FNT`:** EDOS's font plus EFTP_XL's four glyphs (the folder, the file,
-  the "more" mark, the progress fill). It is kept in AERA-Atari (`xl/font/`), built by
-  `xl/tools/font.py` from Erez's `xl/font/EREZ.FNT`, and shipped with every release and on every
-  ATR. EDOS.FNT goes.
+  the "more" mark, the progress fill). It is kept in AERA-Atari, built by `xl/tools/font.py` from
+  Erez's `xl/font/EREZ.FNT`. The built file is `xl/font/AERA.FNT`, so a program carries it on its
+  disk and in its release without building it; `font.py check` and xl's tests say it is up to date.
+  It ships with every release and on every ATR. EDOS.FNT goes.
+- **Four characters are kept for icons:** screen codes $40, $46, $50 and $7B (ATASCII ^, (heart),
+  ^F, ^P (club) and ^; (spade)). AERA.FNT has the family's icons there. Text doesn't use them, and a
+  program may put its own icons over them (Erez, 17 Oct 2026: EFTP_XL carries its four, so it
+  doesn't depend on the font).
 - **When `D:AERA.FNT` is there (the current drive and, on SpartaDOS, folder: where the program was
   started from), the program uses it.** DOS doesn't tell a program where it was loaded from, so `D:`
   is the rule.
@@ -283,9 +290,13 @@ MAC/65 assembles in two passes, and so must the sources:
     memory (EDOS: $80, above its bank window). Under that there is no room, and the ROM font
     stays.
   - The program keeps its own data off the font's page.
+  - The program gives `AXFCOPY` before the include. With 0, no file means the ROM font. With 1, no
+    file (or a short one) means the font in use is copied to the page and selected, so the page is
+    always RAM and the program can put its icons on it after the call (EFTP_XL). With no room it is
+    the ROM font either way: a program checks `AXFPG` <> $E0 before it writes icons.
 - **No program carries the font in its binary** (Erez, 17 Oct 2026). Without `AERA.FNT` a program runs
-  in the ROM font. The box lines still look right, and the family's own glyphs show as the ROM's
-  characters in their places (EFTP_XL's four icons as the heart, club, ^F and spade).
+  in the ROM font. The box lines still look right. A program with its own icons puts them on the copy
+  (`AXFCOPY` 1); otherwise the four kept characters show as the ROM's.
 
 ### 5.4 Errors
 - A CIO error shows its number and its text (`xl/src/AXERR.M65`, from EDOS's CIOSTAT).
@@ -373,7 +384,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 2.2 comments | ✓ 3.3 | ✓ |
 | 3.2 family keys | ✓ 3.4 (HELP through HELPFG at the menu, and `?`) | ~ (BREAK at a prompt) |
 | 3.3 RESET | ✓ 3.3 (AXRESET, every exit tested) | ✓ 1.2 (sim and atari800) |
-| 3.4 ESC (and BREAK) cancel every question and prompt | to check | to check (BREAK in 1.3) |
+| 3.4 ESC (and BREAK) cancel every question and prompt | ✓ 3.5 (all 33 prompts, Duplicate and Copy stop; typed lines key by key) | ~ (done in 1.3, not released) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ~ (no note line; `;` lines not skipped) |
 | 5.3 AERA.FNT through the shared AXFONT | ~ (3.3 places it below the screen with its own LDFONT; moves to AXFONT) | ~ (1.2 carries a built-in copy; 1.3: AXFONT, ending below $9800) |
