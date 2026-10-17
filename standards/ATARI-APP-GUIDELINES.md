@@ -256,6 +256,11 @@ same.
   - popups and context menus (3.3): Esc closes them with nothing chosen;
   - the About box (1.3): Esc closes it;
   - a question asked while something runs: Esc stops the operation (7.1).
+- **A search field in a window** (not a dialog: EHypView's library, a list's filter): Esc cancels the
+  search. It clears the query and shows everything again; when the query is already empty, Esc does
+  nothing. It never closes the window.
+- **The crash alert stays on `form_alert`** (6.4): it has one button, and the crash path stays as
+  simple as it can be.
 - **Reference:** the shared `alert()` (`common/ui/alert.c`) and dialog loop (`common/ui/dialog.c`).
   These are being built now. TOS's and EmuTOS's `form_alert` take Return but not Esc, so the alert is
   drawn and run by our own loop, the same on every AES.
