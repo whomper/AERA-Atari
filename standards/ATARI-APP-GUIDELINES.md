@@ -351,6 +351,20 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
   (`help_key()`), with a button for what the app shows itself, such as its keys.
 - **Every app ships `NAME.HYP` built from `docs/GUIDE.md`** by one generator, with these chapters:
   Getting started · Windows and menus · Keyboard · Settings · Troubleshooting · About.
+- **The front page is the family's** (Erez, 17 Oct 2026): `common/tools/helpfront.py page docs/front.json`
+  makes the guide's Main page, and the text leads, the pictures support it:
+  - a slim AERA banner (`common/help/NAME.IMG`, drawn by AERA-Atari's `brand/tools/mkhelpbanner.py`
+    from `brand/social.json`: the icon, the name, the tag, the wordmark, the teal line);
+  - a short welcome saying what the program is;
+  - the program's window at half size on the right (`helpfront.py thumb` from a Hatari screen
+    capture, numbered teal badges, committed as `docs/help/WINDOW.IMG`), its numbered parts
+    explained on the left;
+  - how it reaches its servers, drawn with the hypertext's own `@box` and `@line` (so it lines up in
+    any font and in ST-Guide), with links in it;
+  - the guide's pages in groups, two side by side, and a footer: name, version, AERA | Erez Yaary and
+    the project's address.
+  Pictures are 16-colour images in the standard palette, with a mask for monochrome screens; viewers
+  show them in colour in every colour mode (EHypView, from its next release).
 
 ### 4.4 Clipboard
 - ^C ^X ^V work in every text field and on list selections that have a text form, through the GEM
@@ -557,6 +571,7 @@ checked by its session.
 | 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✗ (reads CONTACTS.TXT) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
+| 4.3 Help front page (banner, window, diagram, contents) | ✗ | ✗ | ~ (sample, 17 Oct) | ✗ | n/a | ✗ |
 | 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |

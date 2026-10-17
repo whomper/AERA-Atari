@@ -13,7 +13,8 @@ This repo is the reference for the AERA Atari family. It holds:
   - update the "Where each app stands" table at the end of `standards/ATARI-APP-GUIDELINES.md`
     (or, for the 8-bit, `standards/ATARI-XL-GUIDELINES.md`)
 - **Brand images are generated.** Edit `brand/social.json` or `brand/tools/mkpreview.py`, then run
-  `python3 brand/tools/mkpreview.py`. Don't hand-edit the PNGs.
+  `python3 brand/tools/mkpreview.py`, and `python3 brand/tools/mkhelpbanner.py` for the help files'
+  banners (`common/help/NAME.IMG`). Don't hand-edit the PNGs or the IMGs.
 - **Never put personal details in images or docs.** That means real home-network addresses, logins, and
   photo EXIF/GPS. Strip metadata from any photo before committing it.
 - **The AERA name and logos are not GPL** (see README, Licence). Don't relabel them.
