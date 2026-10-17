@@ -592,4 +592,4 @@ checked by its session.
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
-| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✓ | ✗ | ✓ (none uses another program) | ✗ | ✗ |
+| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✓ | ✓ | ✓ (none uses another program) | ✗ | ✗ |
