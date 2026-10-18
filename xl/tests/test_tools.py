@@ -308,5 +308,16 @@ class TestFont(unittest.TestCase):
         self.assertEqual(font.ICONS, tuple(font.internal(a) for a in (0x00, 0x06, 0x10, 0x7B)))
 
 
+class TestGetRelease(unittest.TestCase):
+    def test_same_as_common(self):
+        """xl/tools/getrelease.py is common/tools/getrelease.py, byte for
+        byte (in AERA-Atari, where both are)"""
+        common = os.path.join(os.path.dirname(XL), 'common', 'tools', 'getrelease.py')
+        if not os.path.exists(common):
+            self.skipTest('no common/ here')
+        with open(common, 'rb') as a, open(os.path.join(XL, 'tools', 'getrelease.py'), 'rb') as b:
+            self.assertEqual(a.read(), b.read())
+
+
 if __name__ == '__main__':
     unittest.main()
