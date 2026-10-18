@@ -392,7 +392,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 3.4 ESC (and BREAK) cancel every question and prompt | ✓ 3.5 (all 33 prompts, Duplicate and Copy stop; typed lines key by key) | ✓ 1.3 (every prompt and the Sites screen, ESC and BREAK; a transfer stops with either) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ✓ 1.3 (a note at the top, `;` lines skipped) |
-| 5.5 disk: user's changes at once, bulk work through a buffer, one OPEN per file per job | ? | ? |
+| 5.5 disk: user's changes at once, bulk work through a buffer, one OPEN per file per job | ? | ~ 1.4 (one OPEN per job, at once, idle quiet; 40-81 PUT/GET of 512 per 20 KB: 1.5 takes MEMLO to $3FFF as its buffer) |
 | 5.3 AERA.FNT through the shared AXFONT | ✓ 3.6 (AXFONT, AXFROM; Load Binary protects the font's pages only when it is loaded) | ✓ 1.3 (AXFONT; no font in the program; without AERA.FNT, ROM characters for its icons) |
 | 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ✓ 1.3 (a8sim, atari800 with MAC/65, EFTPTEST.ATR with TESTPLAN.TXT) |
 | 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |
