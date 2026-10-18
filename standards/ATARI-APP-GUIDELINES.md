@@ -685,7 +685,7 @@ checked by its session.
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 6.5 Disk: user's changes at once, bulk work through memory, one open per file per job | ? | ✗ (1.49: 146 opens for 25 photos, a .PIC per photo) | ? | ? | ✗ (1.12: index read and written 4 KB per open; a stat per guide) | ? | ? |
+| 6.5 Disk: user's changes at once, bulk work through memory, one open per file per job | ? | ✗ (1.49: 146 opens for 25 photos, a .PIC per photo) | ? | ~ (1.41: downloads one open, 64 KB writes, listings from the DTA; Dfree per draw, a reopen per file for its date, small writes on a 1 MB ST) | ✗ (1.12: index read and written 4 KB per open; a stat per guide) | ? | ~ (0.11: pages, history and downloads in memory, idle 0; EWEB.FNT opened per face, INF saved at every quit, TLS lookups) |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | n/a (no passwords in 0.11) |
