@@ -15,7 +15,7 @@ Music and builds: **[yaary.music](https://yaary.music)** · **[YouTube](https://
 |---|---|---|
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/ecal.png" width="40" alt=""> | **[ECal](https://github.com/whomper/ECal)** | calendar desk accessory, iCloud and CalDAV |
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/econtact.png" width="40" alt=""> | **[EContact](https://github.com/whomper/EContact)** | contacts desk accessory, CardDAV |
-| <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/email.png" width="40" alt=""> | **[EMail](https://github.com/whomper/EMail)** | e-mail with TLS on the Falcon |
+| <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/email.png" width="40" alt=""> | **[EMail](https://github.com/whomper/EMail)** | e-mail: IMAP, POP3 and SMTP |
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/eftp.png" width="40" alt=""> | **[EFTP](https://github.com/whomper/EFTP)** | two-pane FTP, FTPS and SFTP |
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/ehypview.png" width="40" alt=""> | **[EHypView](https://github.com/whomper/EHypView)** | ST-Guide hypertext viewer |
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/claudest.png" width="40" alt=""> | **[ClaudeST](https://github.com/whomper/ClaudeST)** | claude.ai on the Atari |

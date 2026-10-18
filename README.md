@@ -13,7 +13,7 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | <img src="brand/icons/econtact.png" width="48" alt="EContact icon"> | [EContact](https://github.com/whomper/EContact) | ST, STE, TT, Falcon | contacts desk accessory; CardDAV |
 | <img src="brand/icons/email.png" width="48" alt="EMail icon"> | [EMail](https://github.com/whomper/EMail) | ST, STE, TT, Falcon | IMAP, POP3 and SMTP mail |
 | <img src="brand/icons/eftp.png" width="48" alt="EFTP icon"> | [EFTP](https://github.com/whomper/EFTP) | ST, STE, TT, Falcon | two-pane FTP, FTPS and SFTP |
-| <img src="brand/icons/ehypview.png" width="48" alt="EHypView icon"> | [EHypView](https://github.com/whomper/EHypView) | TT, Falcon | ST-Guide hypertext viewer |
+| <img src="brand/icons/ehypview.png" width="48" alt="EHypView icon"> | [EHypView](https://github.com/whomper/EHypView) | ST, STE, TT, Falcon | ST-Guide hypertext viewer, program or desk accessory |
 | <img src="brand/icons/claudest.png" width="48" alt="ClaudeST icon"> | [ClaudeST](https://github.com/whomper/ClaudeST) | ST, STE, TT, Falcon | claude.ai client |
 | | [EDOS](https://github.com/whomper/EDOS) | 400, 800, XL, XE | Disk Utility Package |
 | | [EFTP_XL](https://github.com/whomper/EFTP_XL) | 400, 800, XL, XE | file transfer over FujiNet |
@@ -30,7 +30,7 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | [`brand/`](brand/) | the AERA logos, the app icons, the social-preview images and the script that draws them |
 | [`profile/`](profile/) | the draft README for the GitHub profile page |
 | [`xl/`](xl/) | the 8-bit programs' shared tools and includes (cross assembler, tokeniser, source disk, AERA.FNT, AXEQU/AXLOAD/AXRESET/AXFONT/AXERR, release workflows), pulled in with `git subtree` |
-| [`common/`](common/) | the code the apps share, pulled into each app with `git subtree` (layer 1 so far: TLS library, DSP RSA, bidi, dates, password encryption, build tools) |
+| [`common/`](common/) | the code the apps share, pulled into each app with `git subtree`: the C library and start-up, TLS and connections (and the Falcon's DSP), Hebrew, dates and time zones, the GEM building blocks (alerts, menus, About box, help, clipboard, drag and drop), the help front page, the build tools and the test machines |
 
 ## Licence
 
