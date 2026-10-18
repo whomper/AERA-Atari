@@ -635,4 +635,4 @@ checked by its session.
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✗ | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) |
-| 3.2 Shortcuts take Control through `key_ctrl()` | ✗ | ✗ | ✓ (1.40; key_ctrl on main ec5ec777) | ✗ | ✗ | ✓ (1.47) |
+| 3.2 Shortcuts take Control through `key_ctrl()` | ✗ | ✗ | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✗ | ✓ (1.47) |
