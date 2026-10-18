@@ -215,6 +215,12 @@ before its first event call (7 s with 6,700 pages).
   closed, or kept in memory until it is whole. The same goes for GEMDOS memory: an accessory takes
   it only before its first event call (`acc_heap`), never later (an About box, a font), since later
   it would belong to the program in front.
+- **GDOS fonts in an accessory** (Erez's decision, 18 Oct 2026): `vst_load_fonts` goes before the
+  first event call, and only when the settings name a GDOS font (`FONT=`); otherwise the accessory
+  draws with the system font and loads none. Under FONTGDOS or SpeedoGDOS the fonts' memory belongs to
+  the program in front, so fonts loaded later would be freed under the accessory. A font chosen while
+  the accessory runs takes effect at the next boot (the accessory says so); the program edition
+  loads fonts as before.
 - **Periodic jobs cost next to nothing:** a reminder check compares the time with a prepared
   list; it doesn't go through the calendars.
 - **Not in the background:** alerts, the busy bee, drawing to a closed window, and work that can't
@@ -625,7 +631,7 @@ checked by its session.
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a |
-| 2.2 ACC: no file open and no GEMDOS memory taken across an event call | ✗ (subscription .NEW, cache rewrite, kept caches) | ✗ (pf_keep during network waits) | n/a | n/a | ✗ (index file; About box Malloc) | n/a |
+| 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✗ (subscription .NEW, cache rewrite, kept caches) | ✗ (pf_keep during network waits) | n/a | n/a | ✗ (index file; About box Malloc) | n/a |
 | 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
