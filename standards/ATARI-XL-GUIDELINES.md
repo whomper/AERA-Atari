@@ -36,10 +36,11 @@ file, a name or a rule, every program moves in its next release and the old way 
 - **Product name:** "E" plus what it is, as on the ST: EDOS, EFTP_XL. A program that is the 8-bit
   twin of an ST one adds `_XL` to the ST name.
 - **Files:** upper-case 8.3 from one stem. The program, its settings, its disk:
-  - `EFTPXL.PRG`, `EFTPXL.CFG`, `EFTPXL.ATR`;
+  - `EFTPXL.COM`, `EFTPXL.CFG`, `EFTPXL.ATR`;
   - `EDOS.COM`, `EDOS.ATR`, `EDOSTEST.ATR`.
-- **The program's extension:** `.PRG` (Erez's choice, 16 and 17 Oct 2026). EDOS keeps `.COM`: typed
-  as `EDOS` at the SpartaDOS prompt, and installed as `DUP.SYS` on DOS 2.5 and MyDOS.
+- **The program's extension: `.COM` (must)** (Erez's decision, 18 Oct 2026; it replaces the `.PRG`
+  of 16 and 17 Oct). `.PRG` is the ST's. A `.COM` is typed without its extension at the SpartaDOS
+  prompt, and loaded with L in DOS 2.5's and MyDOS's menu; EDOS is also installed as `DUP.SYS` there.
 
 ### 1.2 Version (must)
 - **One place holds the version:**
