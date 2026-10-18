@@ -629,4 +629,4 @@ checked by its session.
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✗ | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✗ | ✗ | ✗ (1.38 has the other flag) | ✗ (1.38 has the other flag; main 78b8360) | ✓ (1.9, one 68000 build) | ✓ (1.46) |
-| Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✗ | ✗ | ✓ (83734b70) | ✓ (2e58e3e) | ✗ | ✓ (a49765b) |
+| Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✗ | ✗ | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) |
