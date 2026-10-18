@@ -207,6 +207,14 @@ before its first event call (7 s with 6,700 pages).
   a 68000), paused for 2 s after the mouse moves or a key or button is pressed, while the program
   in front keeps the machine, and while the app's own program edition runs.
 - **No timer of 0** in an accessory's `evnt_multi`; while work waits, 50 ms (`bg_timer()`).
+- **No file open across an event call (must).** An accessory has no process of its own. A file it
+  opens belongs to the program in front, whose `Pterm` closes it, and the handle's number can then be
+  given to another file, so a later write lands in someone else's file. Open, use and close a file
+  within one step, and before any event call, the network wait's (`busy_idle`) included. Close
+  `pf_keep`'s kept files there too. A download is written in pieces, each opened, appended and
+  closed, or kept in memory until it is whole. The same goes for GEMDOS memory: an accessory takes
+  it only before its first event call (`acc_heap`), never later (an About box, a font), since later
+  it would belong to the program in front.
 - **Periodic jobs cost next to nothing:** a reminder check compares the time with a prepared
   list; it doesn't go through the calendars.
 - **Not in the background:** alerts, the busy bee, drawing to a closed window, and work that can't
@@ -617,6 +625,7 @@ checked by its session.
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a |
+| 2.2 ACC: no file open and no GEMDOS memory taken across an event call | ✗ (subscription .NEW, cache rewrite, kept caches) | ✗ (pf_keep during network waits) | n/a | n/a | ✗ (index file; About box Malloc) | n/a |
 | 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a |
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
