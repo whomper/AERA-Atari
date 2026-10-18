@@ -211,8 +211,8 @@ before its first event call (7 s with 6,700 pages).
   opens belongs to the program in front, whose `Pterm` closes it, and the handle's number can then be
   given to another file, so a later write lands in someone else's file. Open, use and close a file
   within one step, and before any event call, the network wait's (`busy_idle`) included. Close
-  `pf_keep`'s kept files there too. A download is written in pieces, each opened, appended and
-  closed, or kept in memory until it is whole. The same goes for GEMDOS memory: an accessory takes
+  `pf_keep`'s kept files there too. A download is kept in memory and written in one go (6.5),
+  not reopened at every wait; one bigger than its buffer is written a buffer at a time. The same goes for GEMDOS memory: an accessory takes
   it only before its first event call (`acc_heap`), never later (an About box, a font), since later
   it would belong to the program in front.
 - **GDOS fonts in an accessory** (Erez's decision, 18 Oct 2026): `vst_load_fonts` goes before the
@@ -552,6 +552,34 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
 Every app installs the shared crash handler (`common/atari/crash.c`, from EMail's). It writes `CRASH.LOG` next to the
 INF, and on the next start the app offers to show it (`crash_offer()` in `common/ui/aboutbox.c`).
 
+### 6.5 Disk access (must)
+Every open costs real time on the family's disks (an SD card on SCSI under HDDRIVER, ACSI drives):
+each `Fopen`, `Fcreate` and `Fsfirst` walks the FAT and the folder and reads sectors. Measured on
+18 Oct 2026: EContact 1.49's accessory opened files 146 times to sync 25 photos, and EHypView 1.12's
+opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
+- **What the user does goes to disk at once.** An event, a contact, a message or a setting the user
+  made or changed is saved there and then, in one safe save (`pf_save`). Nothing the user typed
+  waits in memory.
+- **Bulk work goes through memory.** A sync, a download, a transfer or an index gathers what it
+  brings in memory and writes it in one go at the end of the job, or when its buffer is full: never
+  a write per card, photo, event or block. What a reset loses is fetched again by the next sync.
+- **The buffer has a fixed size.** An accessory has only the memory it took at boot (2.2), and the
+  ST editions run in 1 MB, so the buffer is sized from what is free. A job that outgrows it writes
+  a buffer at a time, each piece one open, write and close. A program edition writing a big file
+  (EFTP's transfers) may keep that one file open for the whole job and write it in big pieces.
+- **Read in one go.** A file is read whole in one open when it fits, otherwise in big pieces
+  (32 KB on a 68030, 16 KB on a 68000, within a background step's slice), never in small ones.
+- **Fewer files.** Many small items go into one file with an index (a pack), not a file each: every
+  lookup in a folder of hundreds of files is slower.
+- **One look per file.** Sizes and dates come from the folder listing's DTA (`Fsfirst`/`Fsnext`);
+  a file isn't looked up again in the same job, nor opened twice for one request, and the settings
+  file is read once per start.
+- **No disk while idle.** Whether a file changed is checked when the window opens or a job starts,
+  never on a timer.
+- **Checked:** the rigs count each job's opens and lookups from Hatari's GEMDOS trace (EContact's
+  and EHypView's `tests/hatari/acc_files.py`) and fail above the job's budget: about one open per
+  file the job touches, plus a safe save's rename.
+
 ---
 
 ## 7. Networking and security
@@ -650,6 +678,7 @@ checked by its session.
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 6.5 Disk: user's changes at once, bulk work through memory, one open per file per job | ? | ✗ (1.49: 146 opens for 25 photos, a .PIC per photo) | ? | ? | ✗ (1.12: index read and written 4 KB per open; a stat per guide) | ? | ? |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | n/a (no passwords in 0.11) |

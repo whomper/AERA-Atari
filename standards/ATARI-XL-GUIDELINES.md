@@ -298,6 +298,15 @@ MAC/65 assembles in two passes, and so must the sources:
 - A CIO error shows its number and its text (`xl/src/AXERR.M65`, from EDOS's CIOSTAT).
 - A server's error shows the server's own reply line.
 
+### 5.5 Disk access (must)
+The family's policy (the ST guidelines, 6.5; Erez's decision, 18 Oct 2026). On SIO every OPEN reads
+the directory and the VTOC at 19,200 baud, so:
+- **What the user does goes to disk at once** (a setting, a site saved), in one OPEN, PUT and CLOSE.
+- **Bulk work goes through memory:** a transfer or a copy fills a buffer as big as the free memory
+  allows and writes it in one PUT; the file is opened once for the whole job, never per block.
+- **Read in one go:** one GET as big as the buffer, never a byte or a line at a time from the disk.
+- **No disk while idle,** and a file is looked up once per job.
+
 ---
 
 ## 6. Networking and security
@@ -383,6 +392,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 3.4 ESC (and BREAK) cancel every question and prompt | ✓ 3.5 (all 33 prompts, Duplicate and Copy stop; typed lines key by key) | ✓ 1.3 (every prompt and the Sites screen, ESC and BREAK; a transfer stops with either) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ✓ 1.3 (a note at the top, `;` lines skipped) |
+| 5.5 disk: user's changes at once, bulk work through a buffer, one OPEN per file per job | ? | ? |
 | 5.3 AERA.FNT through the shared AXFONT | ✓ 3.6 (AXFONT, AXFROM; Load Binary protects the font's pages only when it is loaded) | ✓ 1.3 (AXFONT; no font in the program; without AERA.FNT, ROM characters for its icons) |
 | 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ✓ 1.3 (a8sim, atari800 with MAC/65, EFTPTEST.ATR with TESTPLAN.TXT) |
 | 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |
