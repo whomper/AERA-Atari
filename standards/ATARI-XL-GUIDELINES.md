@@ -120,7 +120,10 @@ The title line shows `NAME x.y` and `(C) AERA 2026` at all times, as EFTP_XL's d
   - `*=*+n` for room, never `.DS`;
   - no `.INCBIN`, `.REPT`, `%%` or `<<`;
   - `[ ]` around an expression after `<` or `>`;
-  - labels unique across all files: no `.LOCAL`, no `?` labels.
+  - labels unique across all files: no `.LOCAL`, no `?` labels;
+  - an equate on a later label (`AXFMIN = [BSSEND+255]/256` above BSSEND) used before its own line
+    takes its first-pass value, 0, in MAC/65 and in mac65.py alike: use it only after its line, or
+    write the expression where it is used (EFTP_XL 1.5, 18 Oct 2026).
   A token not used before is checked against MAC/65 1.01's own SAVE (`xl/tools/mac65tok.py`).
 
 ### 2.2 Comments (must)
@@ -383,7 +386,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 
 | Rule | EDOS | EFTP_XL |
 |---|---|---|
-| 1.1 the program is NAME.COM | ✓ (EDOS.COM) | ✗ (1.4: EFTPXL.PRG; .COM from 1.5) |
+| 1.1 the program is NAME.COM | ✓ (EDOS.COM) | ✓ 1.5 |
 | 1.2 version in one place, checked | ✓ 3.3 (TTL2, the headers and About checked) | ✓ 1.2 |
 | 1.3 release files, AERA.FNT | ✓ 3.3 | ✓ 1.2 |
 | 1.4 About lines, title "(C) AERA 2026" | ✓ 3.3 (on `?`) | ✓ 1.2 |
@@ -394,7 +397,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 | 3.4 ESC (and BREAK) cancel every question and prompt | ✓ 3.5 (all 33 prompts, Duplicate and Copy stop; typed lines key by key) | ✓ 1.3 (every prompt and the Sites screen, ESC and BREAK; a transfer stops with either) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ✓ 1.3 (a note at the top, `;` lines skipped) |
-| 5.5 disk: user's changes at once, bulk work through a buffer, one OPEN per file per job | exception (Erez, 18 Oct 2026): Copy and Duplicate stay as they are (Copy: 3 OPENs and 16 KB GET/PUTs through the extended banks; Duplicate by sector through the banks); its own files one OPEN each; idle quiet; Byte Compare 1 OPEN a file, $FF-byte GETs | ~ 1.4 (one OPEN per job, at once, idle quiet; 40-81 PUT/GET of 512 per 20 KB: 1.5 takes MEMLO to $3FFF as its buffer) |
+| 5.5 disk: user's changes at once, bulk work through a buffer, one OPEN per file per job | exception (Erez, 18 Oct 2026): Copy and Duplicate stay as they are (Copy: 3 OPENs and 16 KB GET/PUTs through the extended banks; Duplicate by sector through the banks); its own files one OPEN each; idle quiet; Byte Compare 1 OPEN a file, $FF-byte GETs | ✓ 1.5 (loads at $1E00, Erez's choice; the transfer buffer above the program to MEMTOP, 8K with BASIC, 16K without: a 20 KB file in 3 or 2 PUT/GETs and one OPEN; a site saved in one OPEN) |
 | 5.3 AERA.FNT through the shared AXFONT | ✓ 3.6 (AXFONT, AXFROM; Load Binary protects the font's pages only when it is loaded) | ✓ 1.3 (AXFONT; no font in the program; without AERA.FNT, ROM characters for its icons) |
 | 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ✓ 1.3 (a8sim, atari800 with MAC/65, EFTPTEST.ATR with TESTPLAN.TXT) |
 | 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |
@@ -410,6 +413,12 @@ EFTP_XL 1.2 (17 Oct 2026) checked by the hub: the release's program is main's bu
 byte; its disk holds the sources, the AX files, the program and AERA.FNT; in atari800 it starts and
 comes back from RESET; MAC/65 on the Atari builds the same bytes from the disk (EFTP_XL's run with
 the cartridge).
+
+EFTP_XL 1.5 (18 Oct 2026) checked by the hub: the release's EFTPXL.COM (16,013 bytes, sha256
+33316a55…) is 1cadf68's build, byte for byte; from the release's EFTPXL.ATR it starts in atari800
+on SpartaDOS 3.2g with BASIC off, and with BASIC on (from BASIC's DOS), and lists the disk's 24
+files. It refuses a MEMLO above $1E00 (DOS 2.5 with an R: handler, for one); MAC/65 builds the
+same bytes from the disk (EFTP_XL's run with the cartridge).
 
 EFTP_XL 1.3 (17 Oct 2026) checked by the hub: the release's EFTPXL.PRG (14,943 bytes) and
 AERA.FNT are main's build (bfb2a19), byte for byte, and AERA.FNT is xl/font/AERA.FNT. EFTPXL.ATR
