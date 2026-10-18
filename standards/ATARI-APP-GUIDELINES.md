@@ -563,10 +563,17 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 - **Bulk work goes through memory.** A sync, a download, a transfer or an index gathers what it
   brings in memory and writes it in one go at the end of the job, or when its buffer is full: never
   a write per card, photo, event or block. What a reset loses is fetched again by the next sync.
-- **The buffer has a fixed size.** An accessory has only the memory it took at boot (2.2), and the
-  ST editions run in 1 MB, so the buffer is sized from what is free. A job that outgrows it writes
-  a buffer at a time, each piece one open, write and close. A program edition writing a big file
-  (EFTP's transfers) may keep that one file open for the whole job and write it in big pieces.
+- **The memory: TT RAM first, else ST RAM** (Erez's decision, as EFTP does it). A program takes
+  its job's buffer with `big_alloc` (`common/atari/bigbuf.c`, from EFTP's `pf_bigbuf`): TT RAM, a
+  TT's or an accelerated Falcon's Fast RAM, when there is enough of it, else ST RAM, with 64 KB of
+  TT RAM and 32 KB of ST RAM left; Malloc on TOS 1.x. The heap prefers TT RAM too (`libc.c`,
+  Mxalloc mode 3) and the programs are built with PRGFLAGS 7 (they load and Malloc in TT RAM). An
+  accessory has only the memory it took at boot (2.2): its `acc_heap` takes it from TT RAM when
+  there is some, and its buffers come out of that heap.
+- **The buffer has a fixed size.** The ST editions run in 1 MB, so the buffer is sized from what is
+  free. A job that outgrows it writes a buffer at a time, each piece one open, write and close. A
+  program edition writing a big file (EFTP's transfers) may keep that one file open for the whole
+  job and write it in big pieces.
 - **Read in one go.** A file is read whole in one open when it fits, otherwise in big pieces
   (32 KB on a 68030, 16 KB on a 68000, within a background step's slice), never in small ones.
 - **Fewer files.** Many small items go into one file with an index (a pack), not a file each: every
