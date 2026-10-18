@@ -615,48 +615,48 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 
 ## 8. Where each app stands (October 2026)
 
-✓ = done, ✗ = missing or different, ~ = partly done.
+✓ = done, ✗ = missing or different, ~ = partly done, ? = not reported yet. EWeb's column (0.11, a program for the TT and Falcon) is from its session's report.
 
 Rule 3.5 is ✗ everywhere for now: `form_alert` ignores Esc, so no app's alerts take it yet. The shared
 `alert()` and `dlg_do`/`dlg_modal` take it (17 Oct 2026); an app ticks the row once it has synced
 `common/`, links `dialog.o` and has moved its own dialogs over. Each app's own dialogs are to be
 checked by its session.
 
-| Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
-|---|---|---|---|---|---|---|
-| 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a |
-| 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) |
-| 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ |
-| 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) |
-| 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a |
-| 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a |
-| 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✗ (subscription .NEW, cache rewrite, kept caches) | ✗ (pf_keep during network waits) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a |
-| 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a |
-| 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ |
-| 3.5 Esc cancels every dialog and alert, as Cancel | ✓ (2.8; Undo no longer empties a field) | ✓ (1.42; Esc leaves the search field as it is) | ✓ (1.36) | ✓ (1.36; Esc during a transfer's question stops it) | ✓ (1.8; Esc leaves the library search as it is) | ✓ (1.43; Shift+Delete clears the reply line) |
-| 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✓ (2.8: invitees by name, Add... picks in EContact; tried with EContact 1.42, PRG and ACC) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a |
-| 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ |
-| 4.3 Help front page (banner, window, diagram, contents) | ✓ (2.9) | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ✓ (1.37; the picture a column in, 59a8d98, with the next) | ✓ (1.11) | ✓ (1.44) |
-| 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a |
-| 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a |
-| 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a |
-| 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a |
-| 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) |
-| 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) |
-| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ |
-| Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) |
-| Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) |
-| 3.2 Shortcuts take Control through `key_ctrl()` | ✓ (2.11) | ✓ (1.46) | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✓ (1.10) | ✓ (1.47) |
+| Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST | EWeb |
+|---|---|---|---|---|---|---|---|
+| 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a (program only) |
+| 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) | ✓ |
+| 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ | ✓ |
+| 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) |
+| 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
+| 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
+| 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✗ (subscription .NEW, cache rewrite, kept caches) | ✗ (pf_keep during network waits) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
+| 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
+| 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ | ✓ (Back first; a link's menu; the address field's) |
+| 3.5 Esc cancels every dialog and alert, as Cancel | ✓ (2.8; Undo no longer empties a field) | ✓ (1.42; Esc leaves the search field as it is) | ✓ (1.36) | ✓ (1.36; Esc during a transfer's question stops it) | ✓ (1.8; Esc leaves the library search as it is) | ✓ (1.43; Shift+Delete clears the reply line) | ✓ (the address field keeps its text) |
+| 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (an address or a file) |
+| 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✓ (2.8: invitees by name, Add... picks in EContact; tried with EContact 1.42, PRG and ACC) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a | n/a |
+| 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ | ✓ |
+| 4.3 Help front page (banner, window, diagram, contents) | ✓ (2.9) | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ✓ (1.37; the picture a column in, 59a8d98, with the next) | ✓ (1.11) | ✓ (1.44) | ✓ (0.11) |
+| 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
+| 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ? |
+| 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
+| 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ? |
+| 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) | n/a |
+| 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ |
+| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | ? |
+| Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) |
+| Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) |
+| 3.2 Shortcuts take Control through `key_ctrl()` | ✓ (2.11) | ✓ (1.46) | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✓ (1.10) | ✓ (1.47) | ✓ (0.11) |
