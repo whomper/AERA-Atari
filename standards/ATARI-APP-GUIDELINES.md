@@ -79,6 +79,8 @@ way working.
   - With TOS 1.04, `C:\AUTO\BOOTC.PRG` makes C: the boot drive, as the hard disk driver on Erez's ST
     does (Hatari's C: is no hard disk to TOS 1.04, which would count A: and send programs looking for
     their files to an empty floppy drive).
+  - An ST has no clock: on `ST` and `ST-1`, `C:\AUTO\CLOCK.PRG` sets this computer's date and time
+    at boot, as one does on a real ST from the Control Panel (from ECal's rigs). Rigs drop their own.
   - Which machines a change passes: a 68000 build on `ST-1` and `ST` (`mono` and `med`); the
     68030 code (the Falcon editions, BearSSL, EHypView's colour) on `TT` and `Falcon`; drawing and
     pictures on `Falcon:16` and `Falcon:256` too. AES messages and drag and drop also under MiNT
