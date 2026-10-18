@@ -19,6 +19,7 @@ Music and builds: **[yaary.music](https://yaary.music)** · **[YouTube](https://
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/eftp.png" width="40" alt=""> | **[EFTP](https://github.com/whomper/EFTP)** | two-pane FTP, FTPS and SFTP |
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/ehypview.png" width="40" alt=""> | **[EHypView](https://github.com/whomper/EHypView)** | ST-Guide hypertext viewer |
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/claudest.png" width="40" alt=""> | **[ClaudeST](https://github.com/whomper/ClaudeST)** | claude.ai on the Atari |
+| | **[EWeb](https://github.com/whomper/EWeb)** | a web browser for the Falcon, being built |
 
 #### Atari 400 · 800 · XL · XE
 
