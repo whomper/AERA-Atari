@@ -259,6 +259,11 @@ use that app's ⌘ key as ^:
 Alternate+letter is left free, because some country keyboards use it for accented letters. The shortcut
 table in each help file is generated from the menu definition, so it can't drift.
 
+**A Control key is `key_ctrl(kstate, key)`** (`common/atari/gem.h`), never `kstate & K_CTRL` alone
+(EMail, 18 Oct 2026): the AES gives the shift keys as they are when the program reads the key, so a
+^R typed while the program was busy comes with no Control in kstate and was lost. `key_ctrl` also
+takes ^A..^Z by their codes (and not Backspace, Tab, Return or Enter, which share ^H, ^I and ^M).
+
 ### 3.3 Context menus (must)
 - **Right-click on anything that has commands opens a context menu at the mouse.** That covers list rows,
   sidebar items, text fields, files and toolbar buttons.
@@ -630,3 +635,4 @@ checked by its session.
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✗ | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) |
+| 3.2 Shortcuts take Control through `key_ctrl()` | ✗ | ✗ | ✓ (1.40, its own ctrl_key) | ✗ | ✗ | ✗ |
