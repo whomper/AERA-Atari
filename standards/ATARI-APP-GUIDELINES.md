@@ -119,6 +119,13 @@ way working.
   publishes nothing. If a release doesn't work, roll back with a release: revert on `main`, release the
   next number (never reuse or delete one), and mark the bad release's notes as withdrawn, naming the one
   to use.
+- **Text-only changes take the short path** (Erez's decision, 18 Oct 2026). A change to the docs alone
+  (README, `docs/`, the guide the help file is made from, CLAUDE.md) is pushed to `main` as soon as
+  it reads right and the help file still builds and says the program's version (`make help`, or
+  what the repo's own docs check runs). It needs no Hatari rigs, no `make itest`, no machine matrix
+  and no run on Erez's TOS, and it doesn't wait for code that is still being tested: push it ahead
+  on its own commits. A release that changes only the docs and the help file goes out the same way,
+  with Erez's yes; the release workflow's own checks still run.
 - **A test that needs another AERA program uses that program's latest release** (Erez's decision,
   17 Oct 2026), what Erez runs, not a build of its `main`: `common/tools/getrelease.py APP DIR FILE...`
   fetches it (and `APP@vX.Y` a given one) and writes which release it was. A report names the release
