@@ -56,7 +56,8 @@ way working.
     today;
   - in Hatari, the nearest is the `Falcon` machine below (32 MHz is Hatari's most);
   - Erez works in 640x480 with 16 colours, sometimes 256, with **TOS 4.04** and **NVDI 5** (17 Oct
-    2026). NVDI isn't emulated.
+    2026). His own NVDI 5.03 is with the hub (19 Oct 2026), outside git as the TOS images are:
+    `m.nvdi()` in `machines.py` installs it, with his ASSIGN.SYS, drivers and Bitstream fonts.
 - **The test machines** (Erez, 17 Oct 2026): every rig starts Hatari through
   `common/tools/machines.py` with one of these names, never with Hatari options of its own, and its
   report names the machine and the TOS (`describe()`):
@@ -67,6 +68,7 @@ way working.
   | `ST-1` | the same with 1 MB, the smallest the family runs on | `mono`, `med`, `low` | 1.04 |
   | `TT` | TT030: 68030 at 32 MHz, 68882, 4 MB ST RAM + 16 MB TT RAM | `ttmed`, `mono`, `med` | none (EmuTOS) |
   | `Falcon` | Erez's Falcon with the DFB1: 68030 + 68882, 14 MB ST RAM + 128 MB TT RAM, DSP, VGA | `16`, `256` | 4.04 |
+  | `Falcon-4` | a Falcon030 as sold: 68030 at 16 MHz, no FPU, 4 MB ST RAM, no TT RAM, VGA | `16`, `256` | 4.04 |
 
   - Each machine has its own settings: its own NVRAM (no rig's settings leak into another's) and the
     Falcon's screen mode, which a real TOS 4 takes from `C:\NEWDESK.INF`.
@@ -85,6 +87,9 @@ way working.
     68030 code (the Falcon editions, BearSSL, EHypView's colour) on `TT` and `Falcon`; drawing and
     pictures on `Falcon:16` and `Falcon:256` too. AES messages and drag and drop also under MiNT
     and XaAES (`common/tests/xaaes`).
+  - **All three accessories at once** (Erez, 19 Oct 2026): ECal, EContact and EHypView, their latest
+    releases, loaded together on a 4 MB machine, `ST` (TOS 1.04, the ST editions) and `Falcon-4`
+    (TOS 4.04, with and without NVDI): `common/tests/family/acc_all.py`, run by the hub.
 - **A 68000 and a 68030 build** (Erez's question, 16 Oct 2026): each app is measuring what a build
   for the Falcon above would gain over the 68000 one. The family's names and rules for two builds
   come here once that is known.
