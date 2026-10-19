@@ -5,12 +5,13 @@
 and EHypView, their latest releases (getrelease.py), loaded together on a
 4 MB machine, as on Erez's own:
 
-    common/tests/family/acc_all.py WORK [MACHINE] [--nvdi] [--display :N]
+    common/tests/family/acc_all.py WORK [MACHINE] [--nvdi [--font]] [--display :N]
 
 MACHINE is ST (4 MB, TOS 1.04: ECALST.ACC and ECONTST.ACC, the ST
 editions) or Falcon-4 (4 MB, no TT RAM, TOS 4.04: ECAL.ACC and
 ECONTACT.ACC), ST by default; EHYPVIEW.ACC runs on both. --nvdi boots
-with Erez's NVDI (machines.py, m.nvdi()). The Atari boots to the desktop,
+with Erez's NVDI (machines.py, m.nvdi()); --font gives EHypView one of
+his Bitstream fonts (FONT=Courier 10 Pitch, 10 pt), loaded at its boot. The Atari boots to the desktop,
 each accessory is opened from the Desk menu in turn, the three windows
 left open over each other, then each opened again; the Desk menu and every
 step are screenshots in WORK/shots. Checks: the desktop came, the Desk
@@ -33,6 +34,7 @@ import machines  # noqa: E402
 
 args = [a for a in sys.argv[1:]]
 nvdi = "--nvdi" in args
+font = "--font" in args
 display = ":90"
 if "--display" in args:
     display = args[args.index("--display") + 1]
@@ -73,13 +75,16 @@ for name in ("ECAL", "ECONTACT"):
     os.makedirs(os.path.join(hd, name))
     with open(os.path.join(hd, name + ".INF"), "w", newline="") as f:
         f.write("[OPTIONS]\r\nFOLDER=C:\\%s\r\n" % name)
+if font:
+    with open(os.path.join(hd, "EHYPVIEW.INF"), "w", newline="") as f:
+        f.write("FOLDER=C:\\\r\nFONT=Courier 10 Pitch\r\nPOINT=10\r\n")
 versions = ", ".join("%s %s" % (a, open(os.path.join(rel, a.upper() + ".VERSION")).read().strip()) for a in want)
 print("on %s%s; %s" % (m.describe(), " with NVDI" if nvdi else "", versions), flush=True)
 
 x = machines.xvfb(display)
 env = m.env(dict(os.environ, DISPLAY=display, SDL_VIDEODRIVER="x11"))
 hatari = subprocess.Popen(["hatari", "--statusbar", "no", "--borders", "no", "--zoom", "1",
-                           "--fast-boot", "yes", "--log-level", "warn"] + m.args(), env=env,
+                           "--fast-boot", "yes", "--natfeats", "yes", "--log-level", "warn"] + m.args(), env=env,
                           stdout=open(work + "/hatari.log", "w"), stderr=subprocess.STDOUT)
 
 
