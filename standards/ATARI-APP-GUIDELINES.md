@@ -215,12 +215,16 @@ before its first event call (7 s with 6,700 pages).
   not reopened at every wait; one bigger than its buffer is written a buffer at a time. The same goes for GEMDOS memory: an accessory takes
   it only before its first event call (`acc_heap`), never later (an About box, a font), since later
   it would belong to the program in front.
-- **GDOS fonts in an accessory** (Erez's decision, 18 Oct 2026): `vst_load_fonts` goes before the
-  first event call, and only when the settings name a GDOS font (`FONT=`); otherwise the accessory
-  draws with the system font and loads none. Under FONTGDOS or SpeedoGDOS the fonts' memory belongs to
-  the program in front, so fonts loaded later would be freed under the accessory. A font chosen while
-  the accessory runs takes effect at the next boot (the accessory says so); the program edition
-  loads fonts as before.
+- **The accessory on par with the program** (Erez, 19 Oct 2026): it offers the same features and
+  behaves the same, except where its memory or its place in the background forbids (these rules).
+- **GDOS fonts in an accessory** (Erez's decisions, 18 and 19 Oct 2026): `vst_load_fonts` goes
+  before the first event call, never later. Under NVDI (the `NVDI` cookie) the accessory always loads
+  them at boot, so its Font... lists the same fonts as the program and a font chosen is used at once.
+  Under FONTGDOS or SpeedoGDOS it loads them only when the settings name a GDOS font (`FONT=`):
+  their bitmaps would stay in its memory for good, which a 1 MB ST can't spare, and fonts loaded
+  later would be freed under it with the program in front. There a font chosen while the accessory
+  runs takes effect at the next boot (the accessory says so). The program edition loads fonts as
+  before.
 - **Periodic jobs cost next to nothing:** a reminder check compares the time with a prepared
   list; it doesn't go through the calendars.
 - **Not in the background:** alerts, the busy bee, drawing to a closed window, and work that can't
@@ -678,6 +682,7 @@ checked by its session.
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
 | 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✓ (2.12: caches read per fill, writes and downloads in 8 KB pieces, CACERT.PEM through tls_read_at, GDOS at boot) | ✓ (1.49: pf_park before every event call, GDOS at boot) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
+| 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct) | ✗ | ✗ (f5e7757e loads them under any GDOS: to narrow to NVDI) | n/a | n/a | ✗ | n/a | n/a |
 | 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
