@@ -237,13 +237,14 @@ before its first event call (7 s with 6,700 pages).
 - **GDOS fonts in an accessory** (Erez's decisions, 18 and 19 Oct 2026): `vst_load_fonts` goes
   before the first event call, never later. Under NVDI (the `NVDI` cookie) the accessory always loads
   them at boot, so its Font... lists the same fonts as the program and a font chosen is used at once.
-  **Suspended (19 Oct 2026):** on Erez's Falcon under NVDI, ECal 2.14's accessory stopped redrawing
-  once a GDOS font was chosen in it, and kept failing after it was closed and opened again. The hub
-  reproduced it, in ECAL.PRG 2.14 as well: after a font is chosen while it runs, no window drawing
-  reaches the screen. It looks like ECal's own off-screen bitmap (the only one in the family), not the
-  accessory rule; EContact's accessory chooses fonts under NVDI without it. Until ECal's fix is tested
-  under NVDI, every accessory keeps the FONTGDOS rule below (fonts only when `FONT=` names one), under
-  NVDI too.
+  **Suspended on 19 Oct 2026 and back the same day:** on Erez's Falcon under NVDI, ECal 2.14's
+  accessory stopped redrawing once a GDOS font was chosen in it. The cause was ECal's, not the rule's:
+  its font dialog left a clip rectangle on the screen workstation, and NVDI clips raster copies
+  (`vro_cpyfm`, `vrt_cpyfm`) where TOS's VDI doesn't, so ECal's copy of its off-screen bitmap reached
+  only that box. So: **a dialog that sets a clip on the workstation turns it off before it ends**, and
+  a raster copy sets its own clip. ECal 2.16's candidate passed under NVDI on `Falcon` and `Falcon-4`
+  (TOS 4.04): the font chosen in the accessory and in the program, closed and opened again, and a
+  font from boot changed.
   Under FONTGDOS or SpeedoGDOS it loads them only when the settings name a GDOS font (`FONT=`):
   their bitmaps would stay in its memory for good, which a 1 MB ST can't spare, and fonts loaded
   later would be freed under it with the program in front. There a font chosen while the accessory
@@ -706,7 +707,7 @@ checked by its session.
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
 | 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✓ (2.12: caches read per fill, writes and downloads in 8 KB pieces, CACERT.PEM through tls_read_at, GDOS at boot) | ✓ (1.49: pf_park before every event call, GDOS at boot) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
-| 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct; suspended) | ✗ (suspended: 2.14 did it, the list matched ECAL.PRG's but a font chosen in the accessory stopped its redraws under NVDI; 2.15 is 2.13 again, 2.14 withdrawn) | ✗ (on hold) | n/a | n/a | ✗ | n/a | n/a |
+| 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct) | ✗ (2.16 candidate passed under NVDI on Falcon and Falcon-4; 2.14 withdrawn, 2.15 = 2.13) | ✗ (font patches go ahead) | n/a | n/a | ✗ (PR #32: the accessory's live change passed under NVDI) | n/a | n/a |
 | 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
