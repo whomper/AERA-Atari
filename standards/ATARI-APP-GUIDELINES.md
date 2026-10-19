@@ -58,6 +58,14 @@ way working.
   - Erez works in 640x480 with 16 colours, sometimes 256, with **TOS 4.04** and **NVDI 5** (17 Oct
     2026). His own NVDI 5.03 is with the hub (19 Oct 2026), outside git as the TOS images are:
     `m.nvdi()` in `machines.py` installs it, with his ASSIGN.SYS, drivers and Bitstream fonts.
+    ECal, EContact and EHypView have it too (19 Oct 2026), in `~/.aera/nvdi/x`, so they can test
+    under NVDI themselves; the hub still runs every candidate under it. He uses GDOS fonts in every
+    program, not only the accessories, so each program's font rig runs under NVDI
+    (`AERA_WITH_NVDI=1`, on `Falcon` and `Falcon-4`). Under NVDI, `machines.py` adds Hatari's
+    `--fast-boot` (TOS's memory count and NVDI's font scan together outlast a rig's boot wait on
+    `Falcon-4`). NVDI's 16-colour palette is not TOS's: its light grey, pen 8, is 851 851 851
+    (TOS: 733) and its dark grey, pen 9, 502; a colour pick must not take 851 for white
+    (EContact 1.51 drew a selected bar black).
 - **The test machines** (Erez, 17 Oct 2026): every rig starts Hatari through
   `common/tools/machines.py` with one of these names, never with Hatari options of its own, and its
   report names the machine and the TOS (`describe()`):
@@ -230,9 +238,12 @@ before its first event call (7 s with 6,700 pages).
   before the first event call, never later. Under NVDI (the `NVDI` cookie) the accessory always loads
   them at boot, so its Font... lists the same fonts as the program and a font chosen is used at once.
   **Suspended (19 Oct 2026):** on Erez's Falcon under NVDI, ECal 2.14's accessory stopped redrawing
-  once a GDOS font was chosen in it, and kept failing after it was closed and opened again. Until the
-  cause is found and tested under NVDI, every accessory keeps the FONTGDOS rule below (fonts only when
-  `FONT=` names one), under NVDI too.
+  once a GDOS font was chosen in it, and kept failing after it was closed and opened again. The hub
+  reproduced it, in ECAL.PRG 2.14 as well: after a font is chosen while it runs, no window drawing
+  reaches the screen. It looks like ECal's own off-screen bitmap (the only one in the family), not the
+  accessory rule; EContact's accessory chooses fonts under NVDI without it. Until ECal's fix is tested
+  under NVDI, every accessory keeps the FONTGDOS rule below (fonts only when `FONT=` names one), under
+  NVDI too.
   Under FONTGDOS or SpeedoGDOS it loads them only when the settings name a GDOS font (`FONT=`):
   their bitmaps would stay in its memory for good, which a 1 MB ST can't spare, and fonts loaded
   later would be freed under it with the program in front. There a font chosen while the accessory
