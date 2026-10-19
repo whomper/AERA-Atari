@@ -881,9 +881,16 @@ PIC *pic_decode(const unsigned char *d, long n, int w, int h, long max_px, int *
 
 void pic_pal_init(PIC_PAL *pal, int n, const unsigned char rgb[][3])
 {
+	int i, j;
 	pal->n = n < 2 ? 2 : n > 256 ? 256 : n;
 	memcpy(pal->rgb, rgb, (size_t) pal->n * 3);
 	memset(pal->near, 0, sizeof pal->near);
+	/* the pens by their red, for nearest_far */
+	for (i = 0; i < pal->n; i++) {
+		for (j = i; j > 0 && pal->rgb[pal->order[j - 1]][0] > pal->rgb[i][0]; j--)
+			pal->order[j] = pal->order[j - 1];
+		pal->order[j] = (unsigned char) i;
+	}
 }
 
 
@@ -892,7 +899,7 @@ void pic_pal_init(PIC_PAL *pal, int n, const unsigned char rgb[][3])
 
 static int nearest_far(PIC_PAL *pal, int r, int g, int b)
 {
-	int k = NEAR_AT(r, g, b), i, best = 0;
+	int k = NEAR_AT(r, g, b), lo, hi, best = 0;
 	long bd = 0x7fffffffL;
 	if (pal->near[k])
 		return pal->near[k] - 1;
@@ -900,9 +907,39 @@ static int nearest_far(PIC_PAL *pal, int r, int g, int b)
 	r = (r & ~15) + 8;
 	g = (g & ~15) + 8;
 	b = (b & ~15) + 8;
-	for (i = 0; i < pal->n; i++) {
-		long dr = r - pal->rgb[i][0], dg = g - pal->rgb[i][1], db = b - pal->rgb[i][2];
-		long dd = 3 * dr * dr + 4 * dg * dg + 2 * db * db;
+	/* outwards from the pens of about this red (they are sorted by it),
+	   until red alone puts a pen farther than the best: a few pens of
+	   256 instead of all (the 256-colour modes spent most of a picture's
+	   time here) */
+	lo = 0;
+	hi = pal->n;
+	while (lo < hi) {
+		int mid = (lo + hi) >> 1;
+		if (pal->rgb[pal->order[mid]][0] < r)
+			lo = mid + 1;
+		else
+			hi = mid;
+	}
+	hi = lo;
+	lo = lo - 1;
+	while (lo >= 0 || hi < pal->n) {
+		int i, side;
+		long dr, dd;
+		if (hi < pal->n && (lo < 0 || pal->rgb[pal->order[hi]][0] - r <= r - pal->rgb[pal->order[lo]][0]))
+			i = pal->order[hi++], side = 1;
+		else
+			i = pal->order[lo--], side = 0;
+		dr = r - pal->rgb[i][0];
+		if (3 * dr * dr >= bd) {
+			/* every pen past this one on its side is farther still */
+			if (side)
+				hi = pal->n;
+			else
+				lo = -1;
+			continue;
+		}
+		dd = 3 * dr * dr + 4L * (g - pal->rgb[i][1]) * (g - pal->rgb[i][1]) +
+		     2L * (b - pal->rgb[i][2]) * (b - pal->rgb[i][2]);
 		if (dd < bd) {
 			bd = dd;
 			best = i;

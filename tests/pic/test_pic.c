@@ -9,7 +9,8 @@
  *                             decoder's instructions under QEMU)
  *   test_pic -d FILE W H OUT  the same, then dithered to the 16 colours
  *                             of the Falcon's standard palette: OUT gets
- *                             each pixel's pen colour
+ *                             each pixel's pen colour (-D: to 256, a 6x6x6
+ *                             cube, greys and the 16)
  *   test_pic -r FILE...       robustness: each file cut short at many
  *                             lengths and with bytes changed, decoded at
  *                             three sizes (AddressSanitizer and UBSan
@@ -45,6 +46,9 @@ static const unsigned char vga16[16][3] = {
 	{ 0, 0, 170 }, { 170, 0, 170 }, { 0, 170, 170 }, { 0, 0, 0 }
 };
 
+/* -D's 256 colours */
+static unsigned char pal256[256][3];
+
 static int one(const char *file, int w, int h, const char *out, int dither)
 {
 	long n, i;
@@ -63,8 +67,21 @@ static int one(const char *file, int w, int h, const char *out, int dither)
 		return 1;
 	}
 	if (dither) {
-		PIC_PAL pal;
-		pic_pal_init(&pal, 16, vga16);
+		static PIC_PAL pal;
+		int k;
+		if (dither == 2) {
+			memcpy(pal256, vga16, sizeof vga16);
+			for (k = 0; k < 216; k++) {
+				pal256[16 + k][0] = (unsigned char) (k / 36 * 51);
+				pal256[16 + k][1] = (unsigned char) (k / 6 % 6 * 51);
+				pal256[16 + k][2] = (unsigned char) (k % 6 * 51);
+			}
+			for (k = 232; k < 256; k++)
+				pal256[k][0] = pal256[k][1] = pal256[k][2] = (unsigned char) ((k - 232) * 11);
+			pic_pal_init(&pal, 256, (const unsigned char (*)[3]) pal256);
+		} else {
+			pic_pal_init(&pal, 16, vga16);
+		}
 		pens = malloc((size_t) p->w * p->h);
 		pic_dither(p, &pal, pens);
 	}
@@ -79,7 +96,7 @@ static int one(const char *file, int w, int h, const char *out, int dither)
 		unsigned v = p->px[i];
 		unsigned char px[4];
 		if (pens != NULL) {
-			memcpy(px, vga16[pens[i]], 3);
+			memcpy(px, dither == 2 ? pal256[pens[i]] : vga16[pens[i]], 3);
 		} else {
 			/* 5-6-5 back to 8 bits a component, the top bits repeated */
 			px[0] = (unsigned char) (((v >> 8) & 0xF8) | (v >> 13));
@@ -140,10 +157,10 @@ int main(int argc, char **argv)
 {
 	if (argc >= 2 && strcmp(argv[1], "-r") == 0)
 		return robust(argc - 2, argv + 2);
-	if (argc == 6 && strcmp(argv[1], "-d") == 0)
-		return one(argv[2], atoi(argv[3]), atoi(argv[4]), argv[5], 1);
+	if (argc == 6 && (strcmp(argv[1], "-d") == 0 || strcmp(argv[1], "-D") == 0))
+		return one(argv[2], atoi(argv[3]), atoi(argv[4]), argv[5], argv[1][1] == 'D' ? 2 : 1);
 	if (argc == 5)
 		return one(argv[1], atoi(argv[2]), atoi(argv[3]), argv[4], 0);
-	fprintf(stderr, "test_pic FILE W H OUT | -d FILE W H OUT | -r FILE...\n");
+	fprintf(stderr, "test_pic FILE W H OUT | -d|-D FILE W H OUT | -r FILE...\n");
 	return 2;
 }
