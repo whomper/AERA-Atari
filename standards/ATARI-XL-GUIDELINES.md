@@ -429,4 +429,5 @@ EFTPXL.CFG with its notes, PI_IP and no password. It starts in atari800.
 EDOS 3.7 (19 Oct 2026) checked by the hub: the release's EDOS.COM (7,304 bytes, sha256
 ca6d26dd…) is e7cf2f2's build, byte for byte; EDOS.ATR holds the same 23 files as that build, with
 the same contents (only the directory's times differ). It starts in atari800 ("EDOS 3.7 ... (C)
-AERA 2026"). Since 3.6: AXFCOPY gone from AXFONT, EDOS ends at $39FF.
+AERA 2026"); MAC/65 on the Atari builds the same bytes from the disk (EDOS's run with the
+cartridge, 0 errors). Since 3.6: AXFCOPY gone from AXFONT, EDOS ends at $39FF.
