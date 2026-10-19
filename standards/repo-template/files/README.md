@@ -33,6 +33,10 @@ Download the latest `ENAME-x.y.zip` from **[Releases](../../releases/latest)** a
 
 **Needs:** TOS 1.04 or newer, MagiC, N.AES or XaAES; 640×200 or larger; RAM; network: STinG or MiNTnet.
 
+**Under TOS, put Atari's `FOLDR100.PRG` first in `AUTO`**, renamed for more room (`FOLDR400.PRG`).
+TOS keeps an entry in a small internal pool for every folder a program or accessory has looked
+into, and halts with "OUT OF INTERNAL MEMORY" when it runs out; FOLDRxxx makes the pool bigger.
+
 ## How it reaches the servers
 
 *(Networked apps only.)* Which edition connects how, with the same diagram style as ECal:

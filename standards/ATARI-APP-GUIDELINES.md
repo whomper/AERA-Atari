@@ -587,6 +587,11 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   file is read once per start.
 - **No disk while idle.** Whether a file changed is checked when the window opens or a job starts,
   never on a timer.
+- **TOS's pool:** every open file and every folder looked into takes an entry in TOS's small
+  internal pool, and folders keep theirs; when it runs out TOS halts ("OUT OF INTERNAL MEMORY", on
+  Erez's Falcon with the family's accessories, 19 Oct 2026). Fewer opens and fewer folders are
+  the lasting cure; every README's Getting started also tells the user to put `FOLDR100.PRG`
+  (renamed `FOLDR400.PRG`) first in `AUTO` (the repo template).
 - **Checked:** the rigs count each job's opens and lookups from Hatari's GEMDOS trace (EContact's
   and EHypView's `tests/hatari/acc_files.py`) and fail above the job's budget: about one open per
   file the job touches, plus a safe save's rename.
