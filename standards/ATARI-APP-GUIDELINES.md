@@ -573,7 +573,9 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 - **TT RAM to the disk** (18 Oct 2026, from EWGET's runs on Erez's Falcon): straight, in big pieces,
   when `big_direct()` says the driver bounces DMA itself (the `_FRB` cookie: HDDRIVER sets it);
   without `_FRB`, through a piece of ST RAM (8 to 32 KB) for each Fwrite and Fread. Copying through
-  ST RAM didn't stop the Falcon's crash at exit, so it is not the cause.
+  ST RAM didn't stop the Falcon's crash at exit, so it is not the cause. TOS 3.06 and 4.0x set
+  `_FRB` themselves when there is TT RAM, so the copy is for unusual driver set-ups: it matters
+  for bulk reads and writes; small, rare ones (the clipboard, CRASH.LOG) go straight.
 - **The buffer has a fixed size.** The ST editions run in 1 MB, so the buffer is sized from what is
   free. A job that outgrows it writes a buffer at a time, each piece one open, write and close. A
   program edition writing a big file (EFTP's transfers) may keep that one file open for the whole
