@@ -57,6 +57,7 @@ typedef struct {
 	   component from -128 to 383 in steps of 16: past the cube's edges
 	   too, for the dither's errors */
 	unsigned char near[32 * 32 * 32];
+	unsigned char order[256];	/* the pens sorted by their red */
 } PIC_PAL;
 /* n pens of these colours */
 void pic_pal_init(PIC_PAL *pal, int n, const unsigned char rgb[][3]);
