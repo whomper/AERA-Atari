@@ -570,6 +570,10 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   Mxalloc mode 3) and the programs are built with PRGFLAGS 7 (they load and Malloc in TT RAM). An
   accessory has only the memory it took at boot (2.2): its `acc_heap` takes it from TT RAM when
   there is some, and its buffers come out of that heap.
+- **TT RAM to the disk** (18 Oct 2026, from EWGET's runs on Erez's Falcon): straight, in big pieces,
+  when `big_direct()` says the driver bounces DMA itself (the `_FRB` cookie: HDDRIVER sets it);
+  without `_FRB`, through a piece of ST RAM (8 to 32 KB) for each Fwrite and Fread. Copying through
+  ST RAM didn't stop the Falcon's crash at exit, so it is not the cause.
 - **The buffer has a fixed size.** The ST editions run in 1 MB, so the buffer is sized from what is
   free. A job that outgrows it writes a buffer at a time, each piece one open, write and close. A
   program edition writing a big file (EFTP's transfers) may keep that one file open for the whole
