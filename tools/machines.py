@@ -38,7 +38,8 @@ NVDI: m.nvdi() installs Erez's own NVDI 5.03 (C:\\AUTO\\NVDI.PRG, NVDI.INF,
 ASSIGN.SYS, his GEMSYS drivers and his Bitstream fonts in C:\\BTFONTS) from
 the folder $AERA_NVDI (~/.aera/nvdi/x), as the TOS images: commercial,
 never in git nor sent anywhere. False when it isn't there (a rig that
-needs it says so and stops). His GEMSYS\\STING (his network's settings)
+needs it says so and stops). AERA_WITH_NVDI=1 installs it on every Falcon
+a rig starts, so the hub runs an app's own rigs under NVDI unchanged. His GEMSYS\\STING (his network's settings)
 and his accessories are left out. NVDI 5.03 boots on the Falcon's TOS 4.04
 in about 30 s here, reading every font.
 """
@@ -204,6 +205,8 @@ class Machine:
     def args(self):
         """Hatari's arguments; also writes the machine's own settings"""
         os.makedirs(self.hd, exist_ok=True)
+        if os.environ.get("AERA_WITH_NVDI") and self.name.startswith("Falcon") and not self.nvdi():
+            sys.exit("machines.py: AERA_WITH_NVDI, but no NVDI here")
         cfg = os.path.join(self.home, ".config", "hatari")
         os.makedirs(cfg, exist_ok=True)
         nv = bytearray(50)                  # the TT's and Falcon's NVRAM, past the clock
