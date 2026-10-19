@@ -682,7 +682,7 @@ checked by its session.
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
 | 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✓ (2.12: caches read per fill, writes and downloads in 8 KB pieces, CACERT.PEM through tls_read_at, GDOS at boot) | ✓ (1.49: pf_park before every event call, GDOS at boot) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
-| 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct) | ✓ (2.14: NVDI cookie at boot, else FONT_ID only; the NVDI path first on Erez's Falcon) | ✗ (f5e7757e loads them under any GDOS: to narrow to NVDI) | n/a | n/a | ✗ | n/a | n/a |
+| 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct) | ✓ (2.14: NVDI cookie at boot, else FONT_ID only; on Erez's Falcon under NVDI the accessory lists all ECAL.PRG's fonts) | ✗ (f5e7757e loads them under any GDOS: to narrow to NVDI) | n/a | n/a | ✗ | n/a | n/a |
 | 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
