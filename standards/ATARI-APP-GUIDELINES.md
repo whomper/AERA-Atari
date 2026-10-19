@@ -87,6 +87,10 @@ way working.
     68030 code (the Falcon editions, BearSSL, EHypView's colour) on `TT` and `Falcon`; drawing and
     pictures on `Falcon:16` and `Falcon:256` too. AES messages and drag and drop also under MiNT
     and XaAES (`common/tests/xaaes`).
+  - **On a 1 MB ST, one big program or accessory at a time** (Erez, 19 Oct 2026): EMAIL.PRG (a
+    422 KB image) doesn't start beside EContact's accessory (ECONTST.ACC holds 440–665 KB there:
+    the program found about 120 KB free). The READMEs say so: EMail with EContact's accessory needs
+    2 MB or more; on a 1 MB ST, EMail with ECONTACT.PRG.
   - **All three accessories at once** (Erez, 19 Oct 2026): ECal, EContact and EHypView, their latest
     releases, loaded together on a 4 MB machine, `ST` (TOS 1.04, the ST editions) and `Falcon-4`
     (TOS 4.04, with and without NVDI): `common/tests/family/acc_all.py`, run by the hub.
