@@ -59,7 +59,12 @@ way working.
     2026). His own NVDI 5.03 is with the hub (19 Oct 2026), outside git as the TOS images are:
     `m.nvdi()` in `machines.py` installs it, with his ASSIGN.SYS, drivers and Bitstream fonts.
     ECal, EContact and EHypView have it too (19 Oct 2026), in `~/.aera/nvdi/x`, so they can test
-    under NVDI themselves; the hub still runs every candidate under it. He uses GDOS fonts in every
+    under NVDI themselves. Every ST app session also has Erez's TOS 1.04 and 4.04 in `~/.aera/tos`
+    (19 Oct 2026; never in git, never sent anywhere): **each session runs its own GEM rigs on them
+    (and under NVDI where it has it) before asking Erez for a release**, and sends the hub the commit
+    and its results. The hub doesn't repeat them: it runs the family checks (`acc_all.py --use`, the
+    programs together) and the NVDI runs a session can't, then says "clear" or what failed. CI stays
+    on EmuTOS. He uses GDOS fonts in every
     program, not only the accessories, so each program's font rig runs under NVDI
     (`AERA_WITH_NVDI=1`, on `Falcon` and `Falcon-4`). Under NVDI, `machines.py` adds Hatari's
     `--fast-boot` (TOS's memory count and NVDI's font scan together outlast a rig's boot wait on
