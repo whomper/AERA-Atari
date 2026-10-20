@@ -753,7 +753,7 @@ checked by its session.
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
-| 2.1 v_opnvwk checked: handle 0 said, never drawn with (20 Oct) | ✓ 2.17 | ✓ 1.55 | ✗ (on branch vdi-check) | ✗ | ✗ | ✗ | ✗ |
+| 2.1 v_opnvwk checked: handle 0 said, never drawn with (20 Oct) | ✓ 2.17 | ✓ 1.55 | ✓ 1.48 | ✗ | ✗ | ✗ | ✗ |
 | 2.1 ACC memory: accmem.c, a fair first share, then MEMKB= as measured (20 Oct) | ✓ 2.17 | ✓ 1.55 | n/a | n/a | ✓ 1.15 (the quarter from 1 MB: 1.16) | n/a | n/a |
 | 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✓ (2.12: caches read per fill, writes and downloads in 8 KB pieces, CACERT.PEM through tls_read_at, GDOS at boot) | ✓ (1.49: pf_park before every event call, GDOS at boot) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
 | 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct) | ✓ 2.16 (passed under NVDI on Falcon and Falcon-4, TOS 4.04; 2.14 withdrawn) | ✓ 1.53 (passed under NVDI on Falcon and Falcon-4, TOS 4.04) | n/a | n/a | ✓ 1.14 (PR #32; passed under NVDI on Falcon and Falcon-4, TOS 4.04) | n/a | n/a |
@@ -764,7 +764,7 @@ checked by its session.
 | 3.5 Esc cancels every dialog and alert, as Cancel | ✓ (2.8; Undo no longer empties a field) | ✓ (1.42; Esc leaves the search field as it is) | ✓ (1.36) | ✓ (1.36; Esc during a transfer's question stops it) | ✓ (1.8; Esc leaves the library search as it is) | ✓ (1.43; Shift+Delete clears the reply line) | ✓ (the address field keeps its text) |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (an address or a file) |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 4.1 VA_START sent to every edition: "EMAIL\|EMAILST" (20 Oct) | ✓ (ECONTACT and ECONTST, by hand) | ✓ (1.56: mailto: to EMAIL\|EMAILST) | ✗ (ECONTACT only) | n/a | n/a | n/a | n/a |
+| 4.1 VA_START sent to every edition: "EMAIL\|EMAILST" (20 Oct) | ✓ (ECONTACT and ECONTST, by hand) | ✓ (1.56: mailto: to EMAIL\|EMAILST) | ✓ (1.48: ECONTACT\|ECONTST) | n/a | n/a | n/a | n/a |
 | 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✓ (2.8: invitees by name, Add... picks in EContact; tried with EContact 1.42, PRG and ACC) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ | ✓ |
