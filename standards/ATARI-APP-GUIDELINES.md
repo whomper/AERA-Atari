@@ -540,7 +540,8 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
   family or one that answers "can't be used" when chosen. A program that lays its text out in
   character cells (all of the family's so far) lists the system font and the fixed-width GDOS
   fonts only; proportional families are measured once (`NAME.FNT`) and left out of the list, not
-  shown greyed. The Size list offers only the sizes the chosen font draws. A font without Hebrew
+  shown greyed. So are fonts without letters (Symbol Monospaced, dingbats: no 'A' where an 'A'
+  should be), which can't show the program's text. The Size list offers only the sizes the chosen font draws. A font without Hebrew
   stays listed (Hebrew falls back to the system font; the Type line says so). An accessory under
   FONTGDOS or SpeedoGDOS may list the program's fonts for use from the next start, saying so: it
   can use them then.
@@ -748,7 +749,7 @@ checked by its session.
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| 5.3 Font dialog lists only usable fonts (20 Oct) | ✓ (fixed-width only, seen under NVDI) | ? (1.53: to confirm) | ✓ (fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✗ (1.14 lists proportional families greyed) | ✗ (1.50 lists 137 families, proportional ones greyed) | n/a (no GDOS fonts) |
+| 5.3 Font dialog lists only usable fonts (20 Oct) | ✓ (fixed-width only, seen under NVDI) | ✓ (1.53: fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✗ (1.14 lists proportional families greyed) | ✗ (1.50 lists 137 families, proportional ones greyed) | n/a (no GDOS fonts) |
 | 5.3 One Font dialog: Family, Style and Size lists (common/ui/fontsel.c, 20 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | n/a |
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
