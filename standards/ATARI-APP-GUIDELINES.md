@@ -209,7 +209,7 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
   then on the ACC takes what it measured (`MEMKB=`: its busiest since boot, `heap_peak`, plus room),
   at most half; `HEAPKB=` is the user's and wins. Nothing is malloc'd before the heap is taken (libc
   counts it in `heap_early`, and the log names it). The README says how much the ACC takes, and
-  running out shows an alert and takes twice as much at the next start. It must never fail silently.
+  running out shows an alert and takes four times as much at the next start (then measured down). It must never fail silently.
 
 ### 2.2 Life of an ACC
 | Event | ACC must |
