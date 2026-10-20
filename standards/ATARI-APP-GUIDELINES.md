@@ -271,7 +271,9 @@ time**, so they never write the same file at once. The shared `common/ui/twin.c`
 - **Under single TOS** the AES can't list the accessories, so the PRG runs, and the ACC stands aside
   while it does (`twin_prg`, asked with `TWIN_ASK` in case the name the AES gives the program in front
   is a leftover): its Desk menu entry and any `VA_START` go to the PRG (`twin_pass`), and its
-  background work (refreshing, reminders, indexing) waits.
+  background work (refreshing, reminders, indexing) waits. A PRG still starting answers late, once
+  it reaches its event loop: until its `TWIN_HERE` comes (`av_message` → `twin_answered`), or 30 s,
+  it counts as running; opened from the Desk menu meanwhile, the ACC asks again and waits a second.
 - **When the ACC is next used, it first checks its files' dates and sizes** (`store_changed`,
   `files_check`, `font_check`): what the PRG changed meanwhile is read again before anything is
   written. The ACC notes the files after its own writes, or when its window closes; never on an
