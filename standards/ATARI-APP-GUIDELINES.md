@@ -122,7 +122,7 @@ way working.
 - **Files.** Upper-case 8.3 names from one stem:
   - `ECAL.PRG`, `ECAL.ACC`, `ECAL.HYP`, `ECAL.INF`, `ECAL.KEY`.
   - The ST edition adds `ST`, shortening the stem to keep 8 characters: `ECALST.ACC`, `ECONTST.ACC`,
-    `EFTPST.PRG`.
+    `EFTPST.PRG`, `EMAILST.PRG`.
 - **Desk menu entry.** Two spaces plus the product name: `"  ECal"`, `"  EContact"`. Not a
   description ("Contacts") and not a longer name ("ECalendar").
 
@@ -396,6 +396,9 @@ same.
     page (EHypView)
   - empty, meaning "open / top your window"
 - It replies `AV_STARTED` so the sender can free the string.
+- **A sender names every edition of the app it hands work to**, the first one running taking it:
+  `av_send("EMAIL|EMAILST", ...)`, `av_send("ECONTACT|ECONTST", ...)` (`common/ui/av.c`, 20 Oct
+  2026). Otherwise nothing happens when the user runs the other edition.
 - **This is the only way family apps hand each other work.** There are no private message numbers
   (EContact's `EC_OPEN`, 0x4543, is gone), except PEOPLE below.
 
@@ -761,6 +764,7 @@ checked by its session.
 | 3.5 Esc cancels every dialog and alert, as Cancel | ✓ (2.8; Undo no longer empties a field) | ✓ (1.42; Esc leaves the search field as it is) | ✓ (1.36) | ✓ (1.36; Esc during a transfer's question stops it) | ✓ (1.8; Esc leaves the library search as it is) | ✓ (1.43; Shift+Delete clears the reply line) | ✓ (the address field keeps its text) |
 | 4.1 Accepts VA_START | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (an address or a file) |
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 4.1 VA_START sent to every edition: "EMAIL\|EMAILST" (20 Oct) | ✓ (ECONTACT and ECONTST, by hand) | ✗ (mailto: to EMAIL only) | ✗ (ECONTACT only) | n/a | n/a | n/a | n/a |
 | 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✓ (2.8: invitees by name, Add... picks in EContact; tried with EContact 1.42, PRG and ACC) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ | ✓ |
