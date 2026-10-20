@@ -544,6 +544,18 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
   stays listed (Hebrew falls back to the system font; the Type line says so). An accessory under
   FONTGDOS or SpeedoGDOS may list the program's fonts for use from the next start, saying so: it
   can use them then.
+- **One Font dialog for the family, laid out as Atari font selectors are** (Erez, 20 Oct 2026):
+  shared code in `common/ui/fontsel.c`, which every program calls, never its own copy. Side by side:
+  - a **Family** list with one row per family (Courier 10 Pitch, FreeMono, Liberation Mono…), the
+    system font first;
+  - a small **Style** list for the chosen family: Regular, Italic, Bold, Bold Italic and any other
+    style it has (Light, Condensed…), usable ones only;
+  - the **Size** list;
+  - below them the Type line, the Hebrew sample row and the preview, then OK and Cancel.
+  Families and styles come from the VDI where it says them (NVDI and SpeedoGDOS: `vqt_xfntinfo`'s
+  family and style names), else from the font's name (its trailing Bold, Italic, Oblique, Light…).
+  The keys work in all three lists (Tab moves between them; a letter jumps to a family), and the
+  selection follows a click, never the pointer's rest (ClaudeST's stray row).
 - **Hebrew:**
   - All text drawing goes through the shared bidi code, including alerts.
   - The Hebrew keyboard works the same way in every app (shared `key_char` table).
@@ -737,6 +749,7 @@ checked by its session.
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.3 Font dialog lists only usable fonts (20 Oct) | ✓ (fixed-width only, seen under NVDI) | ? (1.53: to confirm) | ✓ (fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✗ (1.14 lists proportional families greyed) | ✗ (1.50 lists 137 families, proportional ones greyed) | n/a (no GDOS fonts) |
+| 5.3 One Font dialog: Family, Style and Size lists (common/ui/fontsel.c, 20 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | n/a |
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
