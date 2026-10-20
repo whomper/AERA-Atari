@@ -536,6 +536,14 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
 - **Dialogs, alerts, menus and context menus use the system font.**
 - **The content font can be chosen** through GDOS/NVDI (shared `font.c`) and is saved in the INF.
   Apps follow the font protocol `FONT_CHANGED` (EHypView).
+- **The Font dialog lists only fonts the program can use** (Erez, 20 Oct 2026): never a greyed
+  family or one that answers "can't be used" when chosen. A program that lays its text out in
+  character cells (all of the family's so far) lists the system font and the fixed-width GDOS
+  fonts only; proportional families are measured once (`NAME.FNT`) and left out of the list, not
+  shown greyed. The Size list offers only the sizes the chosen font draws. A font without Hebrew
+  stays listed (Hebrew falls back to the system font; the Type line says so). An accessory under
+  FONTGDOS or SpeedoGDOS may list the program's fonts for use from the next start, saying so: it
+  can use them then.
 - **Hebrew:**
   - All text drawing goes through the shared bidi code, including alerts.
   - The Hebrew keyboard works the same way in every app (shared `key_char` table).
@@ -728,6 +736,7 @@ checked by its session.
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 5.3 Font dialog lists only usable fonts (20 Oct) | ✓ (fixed-width only, seen under NVDI) | ? (1.53: to confirm) | ✓ (fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✗ (1.14 lists proportional families greyed) | ✗ (1.50 lists 137 families, proportional ones greyed) | n/a (no GDOS fonts) |
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
