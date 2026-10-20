@@ -1310,7 +1310,7 @@ static int on_click(short mx, short my, short clicks)
 int fontsel_run(fontsel *s)
 {
 	static char heb_label[3][24];
-	short i, x, y, w, h, m[8], up = 0, done = 0, more, p;
+	short i, x, y, w, h, m[8], up = 0, done = 0, more, p, o_size;
 	AEVENT e;
 	GRECT prev;
 
@@ -1354,7 +1354,7 @@ int fontsel_run(fontsel *s)
 	tr_text(40, 5 + p, "Style");
 	lf.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 2, 6 + p, 36, 10 + more - p);
 	lst.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 40, 6 + p, 22, 4);
-	tr_text(40, 10 + p, "Size");
+	o_size = tr_text(40, 10 + p, "Size");
 	ls.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 40, 11 + p, 10, 5 + more - p);
 	tr_text(52, 11 + p, "Pt:");
 	o_pt = tr_add(G_FTEXT, EDITABLE, 0, (long)&pt_ted, 56, 11 + p, 3, 1);
@@ -1367,6 +1367,17 @@ int fontsel_run(fontsel *s)
 	o_ok = tr_add(G_BUTTON, SELECTABLE | EXIT | DEFAULT, 0, (long)"OK", 42, 21 + more, 9, 1);
 	o_cancel = tr_add(G_BUTTON, SELECTABLE | EXIT, 0, (long)"Cancel", 53, 21 + more, 9, 1);
 	tr_end();
+	/* the borders and focus rings are drawn outside the boxes: the
+	   preview a little shorter, the lists, the samples and Size a few
+	   pixels down, so no label loses its top or its descenders (no list
+	   loses a row) */
+	fs_tree[o_prev].ob_height -= 2;
+	fs_tree[o_size].ob_y += 2;
+	for (i = 0; i < 3; i++) {
+		fs_tree[lists[i].obj].ob_y += 3;
+		fs_tree[lists[i].obj].ob_height -= 3;
+		fs_tree[o_heb[i]].ob_y += 2;
+	}
 	for (i = 0; i < 3; i++) {
 		lists[i].kind = i;
 		lists[i].n = 0;
