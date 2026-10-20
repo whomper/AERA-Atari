@@ -767,7 +767,7 @@ checked by its session.
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.3 Font dialog lists only usable fonts (20 Oct) | ✓ (fixed-width only, seen under NVDI) | ✓ (1.53: fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✗ (1.14 lists proportional families greyed) | ✓ (1.51: 9 fixed-width families, seen under NVDI on Falcon and Falcon-4) | n/a (no GDOS fonts) |
-| 5.3 One Font dialog: Family, Style and Size lists (common/ui/fontsel.c, 20 Oct) | ✗ | ✓ (1.54) | ✓ (1.46) | ✓ (1.44) | ✗ | ✓ (1.52) | n/a |
+| 5.3 One Font dialog: Family, Style and Size lists (common/ui/fontsel.c, 20 Oct) | ✗ | ✓ (1.54) | ✓ (1.46) | ✓ (1.44) | ✗ | ✓ (1.52; 1.53 the smaller one, seen under NVDI) | n/a |
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
