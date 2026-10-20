@@ -87,8 +87,12 @@ int main(void)
 	a = take(150 * KB, 0, 256 * KB, 0, 0, 0);
 	check(a == 118 * KB, "150 KB free: all but 32 KB (half is under 96 KB)");
 	acc_heap_leave = 96 * KB;
-	a = take(149 * KB, 0, 1024 * KB, 0, 0, 0);
-	check(a == 74 * KB + 512 && st_free >= 74 * KB, "149 KB free, 96 KB to leave: half, a program still starts beside it");
+	a = take(160 * KB, 0, 1024 * KB, 0, 0, 0);
+	check(a == 64 * KB && st_free == 96 * KB, "160 KB free, 96 KB to leave: 64 KB, 96 KB for a program beside it");
+	a = take(130 * KB, 0, 1024 * KB, 0, 0, 0);
+	check(a == 64 * KB, "  130 KB free: still 64 KB, the least a heap is");
+	a = take(90 * KB, 0, 1024 * KB, 0, 0, 0);
+	check(a == 58 * KB, "  90 KB free: all but 32 KB");
 	a = take(300 * KB, 0, 1024 * KB, 0, 0, 0);
 	check(a == 150 * KB, "300 KB free, 96 KB to leave: half, as ever");
 	acc_heap_leave = 32 * KB;
