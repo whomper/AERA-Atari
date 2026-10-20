@@ -2,11 +2,11 @@
  * Copyright (C) 2026 AERA | Erez Yaary */
 /*
  * fontsel.c - the family's Font dialog (fontsel.h; the guidelines, 5.3),
- * from ECal's font selector, laid out as NVDI's WDIALOG one: the
- * preview across the top, then the Family list, and beside it the Style
- * list and the Size list with a Pt: field; below them the Type line,
- * the Hebrew samples, OK and Cancel. 64 by 23 cells of the system font:
- * ST medium's 640 x 200 too.
+ * from ECal's font selector, laid out as NVDI's WDIALOG one: the Family
+ * list, and beside it the Style list and the Size list with a Pt:
+ * field; below them the Type line, a small sample in the font chosen
+ * (Erez, 20 Oct 2026: no Hebrew samples), OK and Cancel. 64 by 23 cells
+ * of the system font: ST medium's 640 x 200 too.
  *
  * The programs lay their text out in character cells, so only the
  * system font and the fixed-width GDOS fonts with letters are listed
@@ -23,7 +23,7 @@
  * OK, Esc and Undo Cancel. A row is chosen by a press of the button in
  * a list, never by where the pointer rests (ClaudeST's stray row came
  * from taking the menu's release for a click). The type line and the
- * preview, which may be slow under NVDI, are drawn once no key waits.
+ * sample, which may be slow under NVDI, are drawn once no key waits.
  *
  * Built with -DFONTSEL_NAMES_ONLY, only the names part (no GEM), for
  * tests/fontsel on the build machine.
@@ -432,7 +432,7 @@ static void fonts_free(void)
 	nfo = nfa = 0;
 }
 
-/* the progress of the first look, in the preview's box */
+/* the progress of the first look, in the sample's box */
 static void show_progress(GRECT *r, short done, short todo)
 {
 	char m[64];
@@ -895,10 +895,10 @@ static void fl_show(LIST *l, short k)
 
 #define D_SIZES   1		/* the font changed: its sizes to look at */
 #define D_TYPED   2		/* Pt: typed into */
-#define D_PREVIEW 4		/* the type line and the preview to draw */
+#define D_PREVIEW 4		/* the type line and the sample to draw */
 
-static short o_ok, o_cancel, o_type, o_prev, o_pt, o_heb[3];
-static short dirty, pt, want, sel_heb, pt_idx;
+static short o_ok, o_cancel, o_type, o_prev, o_pt;
+static short dirty, pt, want, pt_idx;
 static short pt_fresh;		/* Pt: just entered: a digit typed replaces its size */
 static fontsel *fs;
 
@@ -1001,10 +1001,6 @@ static void draw_preview(void)
 		static const char l2[] = "loads its fonts only as the Atari starts.";
 		text_at(r.x + gl_wchar, r.y + 2, l1, (long)strlen(l1), cols, TX_LTR);
 		text_at(r.x + gl_wchar, r.y + 2 + gl_hchar, l2, (long)strlen(l2), cols, TX_LTR);
-	} else if (nsizes && fs->preview) {
-		fs->preview(fs, &r, f->id, pt, sel_heb);
-		clip_on(&r);		/* (in case the app's drawing turned it off) */
-		sys_font();
 	} else if (nsizes) {
 		if (f->id == 1) {
 			vst_font(vdi_h, 1);
@@ -1013,7 +1009,10 @@ static void draw_preview(void)
 			vst_font(vdi_h, f->id);
 			vst_point(vdi_h, pt, &w, &h);
 		}
-		v_gtext_n(vdi_h, r.x + gl_wchar, r.y + 2, FS_SAMPLE_LATIN, (short)strlen(FS_SAMPLE_LATIN));
+		/* (h: the cell's height) in the middle of the box, or from its
+		   top when it is taller */
+		v_gtext_n(vdi_h, r.x + gl_wchar, h < r.h ? r.y + (r.h - h) / 2 : r.y, FS_SAMPLE,
+			  (short)strlen(FS_SAMPLE));
 		sys_font();
 	}
 	clip_off();
@@ -1286,17 +1285,6 @@ static int on_click(short mx, short my, short clicks)
 		}
 	if (obj == o_pt) {
 		focus_set(F_PT);
-	} else if (obj == o_heb[0] || obj == o_heb[1] || obj == o_heb[2]) {
-		for (i = 0; i < 3; i++) {
-			short on = obj == o_heb[i];
-			if (on != ((fs_tree[o_heb[i]].ob_state & SELECTED) != 0)) {
-				fs_tree[o_heb[i]].ob_state ^= SELECTED;
-				tr_draw(o_heb[i]);
-			}
-			if (on)
-				sel_heb = i;
-		}
-		dirty |= D_PREVIEW;
 	} else if ((obj == o_ok && !(fs_tree[o_ok].ob_state & DISABLED)) || obj == o_cancel) {
 		fs_tree[obj].ob_state |= SELECTED;
 		tr_draw(obj);
@@ -1309,8 +1297,7 @@ static int on_click(short mx, short my, short clicks)
 
 int fontsel_run(fontsel *s)
 {
-	static char heb_label[3][24];
-	short i, x, y, w, h, m[8], up = 0, done = 0, more, p, o_size;
+	short i, x, y, w, h, m[8], up = 0, done = 0, more, o_size;
 	AEVENT e;
 	GRECT prev;
 
@@ -1326,12 +1313,6 @@ int fontsel_run(fontsel *s)
 		graf_mouse(ARROW, 0);
 		sys_font();
 	}
-	sel_heb = s->heb >= 0 && s->heb <= 2 ? s->heb : 0;
-
-	/* samples of shalom as each kind of font would show it */
-	strcpy(heb_label[0], "Atari  \xDA\xC7\xCD\xD6");
-	strcpy(heb_label[1], "ISO 8859-8  \xED\xE5\xEC\xF9");
-	strcpy(heb_label[2], "DOS 862  \x8D\x85\x8C\x99");
 	pt_text[0] = 0;
 	pt_ted.te_ptext = pt_text;
 	pt_ted.te_ptmplt = "___";
@@ -1344,39 +1325,31 @@ int fontsel_run(fontsel *s)
 	pt_ted.te_tmplen = 4;
 
 	/* 64 x 23 cells: ST medium's and ST high's 23 rows under the menu
-	   bar; on a taller screen (VGA's 28) the preview and the lists grow */
+	   bar; on a taller screen (VGA's 28) the lists grow */
 	more = desk_h / gl_hchar - 25;
 	more = more < 0 ? 0 : more > 4 ? 4 : more;
-	p = more ? 1 : 0;			/* the preview's share */
 	tr_begin(64, 23 + more);
-	o_prev = tr_add(G_BOX, 0, 0, 0x00FF1100L, 2, 1, 60, 4 + p);
-	tr_text(2, 5 + p, "Family");
-	tr_text(40, 5 + p, "Style");
-	lf.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 2, 6 + p, 36, 10 + more - p);
-	lst.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 40, 6 + p, 22, 4);
-	o_size = tr_text(40, 10 + p, "Size");
-	ls.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 40, 11 + p, 10, 5 + more - p);
-	tr_text(52, 11 + p, "Pt:");
-	o_pt = tr_add(G_FTEXT, EDITABLE, 0, (long)&pt_ted, 56, 11 + p, 3, 1);
-	tr_text(2, 17 + more, "Type:");
-	o_type = tr_add(G_IBOX, 0, 0, 0L, 8, 17 + more, 54, 1);
-	tr_text(2, 18 + more, "Hebrew in bitmap fonts: pick the sample that reads right");
-	for (i = 0; i < 3; i++)
-		o_heb[i] = tr_add(G_BUTTON, SELECTABLE | RBUTTON, i == sel_heb ? SELECTED : 0,
-				 (long)heb_label[i], 2 + i * 20, 19 + more, 18, 1);
+	tr_text(2, 1, "Family");
+	tr_text(40, 1, "Style");
+	lf.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 2, 2, 36, 12 + more);
+	lst.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 40, 2, 22, 4);
+	o_size = tr_text(40, 6, "Size");
+	ls.obj = tr_add(G_BOX, 0, 0, 0x00FF1100L, 40, 7, 10, 7 + more);
+	tr_text(52, 7, "Pt:");
+	o_pt = tr_add(G_FTEXT, EDITABLE, 0, (long)&pt_ted, 56, 7, 3, 1);
+	tr_text(2, 15 + more, "Type:");
+	o_type = tr_add(G_IBOX, 0, 0, 0L, 8, 15 + more, 54, 1);
+	o_prev = tr_add(G_BOX, 0, 0, 0x00FF1100L, 2, 17 + more, 60, 3);
 	o_ok = tr_add(G_BUTTON, SELECTABLE | EXIT | DEFAULT, 0, (long)"OK", 42, 21 + more, 9, 1);
 	o_cancel = tr_add(G_BUTTON, SELECTABLE | EXIT, 0, (long)"Cancel", 53, 21 + more, 9, 1);
 	tr_end();
 	/* the borders and focus rings are drawn outside the boxes: the
-	   preview a little shorter, the lists, the samples and Size a few
-	   pixels down, so no label loses its top or its descenders (no list
-	   loses a row) */
-	fs_tree[o_prev].ob_height -= 2;
+	   lists and Size a few pixels down, so no label loses its top or
+	   its descenders (no list loses a row) */
 	fs_tree[o_size].ob_y += 2;
 	for (i = 0; i < 3; i++) {
 		fs_tree[lists[i].obj].ob_y += 3;
 		fs_tree[lists[i].obj].ob_height -= 3;
-		fs_tree[o_heb[i]].ob_y += 2;
 	}
 	for (i = 0; i < 3; i++) {
 		lists[i].kind = i;
@@ -1484,7 +1457,6 @@ int fontsel_run(fontsel *s)
 		FSF *f = chosen();
 		s->id = f->id;
 		s->pt = pt;
-		s->heb = sel_heb;
 		s->later = f->later;
 		s->format = f->format;
 		strcpy(s->font, f->name);

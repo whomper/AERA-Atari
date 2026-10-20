@@ -2,20 +2,20 @@
  * Copyright (C) 2026 AERA | Erez Yaary */
 /*
  * fontsel.h - the family's Font dialog (the guidelines, 5.3), laid out as
- * the Atari font selectors are (NVDI's WDIALOG): the preview across the
- * top, the Family list on the left, the Style list and the Size list
- * with its Pt: field on the right, then the Type line, the Hebrew
- * samples, OK and Cancel. Only fonts the program can use are listed: the
+ * the Atari font selectors are (NVDI's WDIALOG): the Family list on the
+ * left, the Style list and the Size list with its Pt: field on the
+ * right, then the Type line, a small sample in the font chosen, OK and
+ * Cancel. Only fonts the program can use are listed: the
  * system font and the fixed-width GDOS fonts that have letters, each
  * measured once and the answer kept in the app's NAME.FNT.
  *
  *	static fontsel fs;
  *	fs.app = "ECal";
  *	fs.fnt = "C:\\ECAL\\ECAL.FNT";
- *	fs.id = opt.font_id;  fs.pt = opt.font_pt;  fs.heb = opt.hebfont;
+ *	fs.id = opt.font_id;  fs.pt = opt.font_pt;
  *	fs.gdos = gdos_fonts;	(FS_UNLOADED when not loaded yet)
  *	fs.acc = is_acc;
- *	fs.preview = draw_sample;  fs.apply = take_font;
+ *	fs.apply = take_font;
  *	fontsel_run(&fs);
  *	gdos_fonts = fs.gdos;	(the program loads them when they're first wanted)
  *
@@ -23,12 +23,12 @@
  * with the app's gemui.h calls, and turns every clip it set on vdi_h off
  * before it returns (2.2: NVDI clips raster copies with it). The app
  * keeps its own policy: what it does with the font chosen (apply), how
- * it draws Hebrew (preview), what it saves.
+ * it draws Hebrew, what it saves.
  *
  * The accessory never loads fonts here (2.2): with fs.acc set and the
  * fonts not loaded (FONTGDOS or SpeedoGDOS, no font named at boot), it
  * lists the fixed-width fonts NAME.FNT knows "from the next start", says
- * so in the preview and the Type line, and returns fs.later set.
+ * so in the sample's box and the Type line, and returns fs.later set.
  */
 #ifndef AERA_FONTSEL_H
 #define AERA_FONTSEL_H
@@ -37,16 +37,14 @@
 #define FS_UNLOADED (-1)	/* fs.gdos: vst_load_fonts not called yet */
 
 /* how a font gets its Hebrew letters (fontsel_hebrew; the apps' HM_*) */
-#define FS_HEB_MAP     0	/* where the sample row says: system and bitmap fonts */
+#define FS_HEB_MAP     0	/* the app's own layout: system and bitmap fonts */
 #define FS_HEB_UNICODE 1	/* a vector font's own, found by Unicode (NVDI 5) */
 #define FS_HEB_SYSTEM  2	/* a vector font without them: the system font's */
 #define FS_WHY_NOHEB    1	/* FS_HEB_SYSTEM: the font has no Hebrew letters */
 #define FS_WHY_NOLOOKUP 2	/* FS_HEB_SYSTEM: the VDI can't look letters up */
 
-/* the samples, the same in every app: Latin, then shalom olam in the
-   Atari character set (logical order) */
-#define FS_SAMPLE_LATIN  "AaBbCc 0123 The quick brown fox"
-#define FS_SAMPLE_HEBREW "\xD6\xCD\xC7\xDA \xD1\xC7\xCD\xDA - Hebrew"
+/* the sample, the same in every app */
+#define FS_SAMPLE "The quick brown fox jumps over the lazy dog"
 
 #ifndef FONTSEL_NAMES_ONLY
 #include "gem.h"
@@ -60,23 +58,18 @@ struct fontsel {
 	short id, pt;		/* the font in use: VDI id (1 the system font) and
 				   points (the system font: 8, 16, or 0 for the screen's) */
 	const char *name;	/* or by name, when id isn't listed (EHypView's FONT=) */
-	short heb;		/* the Hebrew sample: 0 Atari, 1 ISO 8859-8, 2 DOS 862 */
 	short gdos;		/* the GDOS fonts loaded on vdi_h (vst_load_fonts' count),
 				   or FS_UNLOADED; the program's are loaded here then */
 	short acc;		/* the accessory: fonts are never loaded here */
-	/* the sample in font id at pt, Hebrew as the sample row's heb says,
-	   inside r (cleared and clipped already). The dialog sets the system
-	   font and cw, ch again after it. 0: the Latin line in the font */
-	void (*preview)(fontsel *s, GRECT *r, short id, short pt, short heb);
 	/* a message while the dialog is up (EMail: EContact's answers can't
 	   wait); with 0 every 250 ms. 0: none taken */
 	void (*message)(short *msg);
 	/* OK: called once the dialog is gone, with what follows filled in;
-	   the app takes id, pt and heb, applies them and saves */
+	   the app takes id and pt, applies them and saves */
 	void (*apply)(fontsel *s);
 	void *user;		/* the app's */
 
-	/* fontsel_run's answer (and id, pt, heb as chosen) */
+	/* fontsel_run's answer (and id, pt as chosen) */
 	short later;		/* the accessory hasn't the font: from the next start */
 	short format;		/* 1 bitmap, 2 Speedo, 4 TrueType, 8 Type 1, 0 not known */
 	char font[FS_NAME], family[FS_NAME], style[FS_NAME];

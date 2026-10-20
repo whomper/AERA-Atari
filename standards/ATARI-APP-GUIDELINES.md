@@ -552,7 +552,10 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
   - a small **Style** list for the chosen family: Regular, Italic, Bold, Bold Italic and any other
     style it has (Light, Condensed…), usable ones only;
   - the **Size** list;
-  - below them the Type line, the Hebrew sample row and the preview, then OK and Cancel.
+  - below them the Type line and a small sample, "The quick brown fox jumps over the lazy dog" in
+    the font, style and size chosen, then OK and Cancel. No Hebrew samples (Erez, 20 Oct 2026):
+    the Type line says where a font's Hebrew comes from, and an app keeps the Hebrew layout of
+    bitmap fonts it already has in its INF.
   Families and styles come from the VDI where it says them (NVDI and SpeedoGDOS: `vqt_xfntinfo`'s
   family and style names), else from the font's name (its trailing Bold, Italic, Oblique, Light…).
   The keys work in all three lists (Tab moves between them; a letter jumps to a family), and the
