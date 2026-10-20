@@ -204,8 +204,10 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
   `NAME.ACC` and `NAME.PRG` are the same file under two names.
 - **ACC memory comes from a fixed heap**, taken once before the first event call and then measured
   (`common/ui/accmem.c`, 20 Oct 2026). The first start takes the app's own figure, but at most half
-  of what is free, and a quarter when 2 MB or more is free, so two accessories leave half the machine
-  to the program in front (EMail with ECal and EContact on a 4 MB Falcon with NVDI had 432 KB). From
+  of what is free, and a quarter when 1 MB or more is free, so two accessories leave half the machine
+  to the program in front (on a 4 MB Falcon with NVDI's fonts about 1.5 MB is free when the
+  accessories load; two halves left EMail none for NVDI's workstation). Every app checks
+  `v_opnvwk`'s handle: 0 means no workstation, and is said, never drawn with. From
   then on the ACC takes what it measured (`MEMKB=`: its busiest since boot, `heap_peak`, plus room),
   at most half; `HEAPKB=` is the user's and wins. Nothing is malloc'd before the heap is taken (libc
   counts it in `heap_early`, and the log names it). The README says how much the ACC takes, and
@@ -748,6 +750,7 @@ checked by its session.
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
+| 2.1 v_opnvwk checked: handle 0 said, never drawn with (20 Oct) | ✗ | ✗ | ✗ (on branch vdi-check) | ✗ | ✗ | ✗ | ✗ |
 | 2.1 ACC memory: accmem.c, a fair first share, then MEMKB= as measured (20 Oct) | ✗ (1.5 MB, half free, every start) | ✗ (measures MEMKB=; own acc_heap, half free at the first start) | n/a | n/a | ✗ | n/a | n/a |
 | 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✓ (2.12: caches read per fill, writes and downloads in 8 KB pieces, CACERT.PEM through tls_read_at, GDOS at boot) | ✓ (1.49: pf_park before every event call, GDOS at boot) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
 | 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct) | ✓ 2.16 (passed under NVDI on Falcon and Falcon-4, TOS 4.04; 2.14 withdrawn) | ✓ 1.53 (passed under NVDI on Falcon and Falcon-4, TOS 4.04) | n/a | n/a | ✓ 1.14 (PR #32; passed under NVDI on Falcon and Falcon-4, TOS 4.04) | n/a | n/a |
