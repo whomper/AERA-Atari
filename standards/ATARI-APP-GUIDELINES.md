@@ -670,7 +670,11 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 ## 7. Networking and security
 
 ### 7.1 Connections
-- **Transport:** the shared `net_tos` (STinG, or MiNTnet when present).
+- **Transport:** the shared `net_tos` (STinG, or MiNTnet when present). Every networked app's
+  README (Getting started) and guide tell STinG users to set the Delay in `STING.CPX` to 10 on a
+  Falcon or TT, 25-50 on an ST: STinG polls the card that often, and on Erez's Falcon with a
+  NetUSBee Delay 10 took downloads from 40 to 75 KB/s (EFTP, 20 Oct 2026). No app's code can do
+  better than STinG's pace.
 - **DNS:** STinG's resolver, else the built-in one with a **random transaction ID**. Every count
   and length in the reply is checked against what came (`atari/dns.h`, tested and fuzzed in
   `tests/dns`).
