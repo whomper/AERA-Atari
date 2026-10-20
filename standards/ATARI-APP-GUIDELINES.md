@@ -750,8 +750,8 @@ checked by its session.
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
-| 2.1 v_opnvwk checked: handle 0 said, never drawn with (20 Oct) | ✗ | ✓ 1.55 | ✗ (on branch vdi-check) | ✗ | ✗ | ✗ | ✗ |
-| 2.1 ACC memory: accmem.c, a fair first share, then MEMKB= as measured (20 Oct) | ✗ (1.5 MB, half free, every start) | ✓ 1.55 | n/a | n/a | ✗ | n/a | n/a |
+| 2.1 v_opnvwk checked: handle 0 said, never drawn with (20 Oct) | ✓ 2.17 | ✓ 1.55 | ✗ (on branch vdi-check) | ✗ | ✗ | ✗ | ✗ |
+| 2.1 ACC memory: accmem.c, a fair first share, then MEMKB= as measured (20 Oct) | ✓ 2.17 | ✓ 1.55 | n/a | n/a | ✗ | n/a | n/a |
 | 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✓ (2.12: caches read per fill, writes and downloads in 8 KB pieces, CACERT.PEM through tls_read_at, GDOS at boot) | ✓ (1.49: pf_park before every event call, GDOS at boot) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
 | 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct) | ✓ 2.16 (passed under NVDI on Falcon and Falcon-4, TOS 4.04; 2.14 withdrawn) | ✓ 1.53 (passed under NVDI on Falcon and Falcon-4, TOS 4.04) | n/a | n/a | ✓ 1.14 (PR #32; passed under NVDI on Falcon and Falcon-4, TOS 4.04) | n/a | n/a |
 | 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
@@ -770,7 +770,7 @@ checked by its session.
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 5.3 Font dialog lists only usable fonts (20 Oct) | ✓ (fixed-width only, seen under NVDI) | ✓ (1.53: fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✗ (1.14 lists proportional families greyed) | ✓ (1.51: 9 fixed-width families, seen under NVDI on Falcon and Falcon-4) | n/a (no GDOS fonts) |
-| 5.3 One Font dialog: Family, Style and Size lists (common/ui/fontsel.c, 20 Oct) | ✗ | ✓ (1.54) | ✓ (1.46) | ✓ (1.44) | ✗ | ✓ (1.52; 1.53 the smaller one, seen under NVDI) | n/a |
+| 5.3 One Font dialog: Family, Style and Size lists (common/ui/fontsel.c, 20 Oct) | ✓ (2.17) | ✓ (1.54) | ✓ (1.46) | ✓ (1.44) | ✗ | ✓ (1.52; 1.53 the smaller one, seen under NVDI) | n/a |
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
