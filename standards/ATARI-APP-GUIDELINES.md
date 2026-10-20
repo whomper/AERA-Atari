@@ -202,8 +202,14 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
   the apps that have an ACC.
 - **One source tree, one binary.** `crt0.S` tells PRG from ACC (`a0 != 0` at start: ECal's crt0).
   `NAME.ACC` and `NAME.PRG` are the same file under two names.
-- **ACC memory comes from a fixed heap** sized at build time (`acc_heap`). The README says how much the
-  ACC takes, and running out shows an alert. It must never fail silently.
+- **ACC memory comes from a fixed heap**, taken once before the first event call and then measured
+  (`common/ui/accmem.c`, 20 Oct 2026). The first start takes the app's own figure, but at most half
+  of what is free, and a quarter when 2 MB or more is free, so two accessories leave half the machine
+  to the program in front (EMail with ECal and EContact on a 4 MB Falcon with NVDI had 432 KB). From
+  then on the ACC takes what it measured (`MEMKB=`: its busiest since boot, `heap_peak`, plus room),
+  at most half; `HEAPKB=` is the user's and wins. Nothing is malloc'd before the heap is taken (libc
+  counts it in `heap_early`, and the log names it). The README says how much the ACC takes, and
+  running out shows an alert and takes twice as much at the next start. It must never fail silently.
 
 ### 2.2 Life of an ACC
 | Event | ACC must |
