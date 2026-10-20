@@ -35,9 +35,15 @@ long acc_heap_take(long first, long tt_first, long heapkb, long memkb)
 	if (want > cap) {
 		want = cap & ~1L;
 		/* little memory (a 1 MB ST): half is under 96 KB; then all but
-		   acc_heap_leave, when that is more than half */
-		if (want < 96L * 1024 && avail - acc_heap_leave > want)
+		   acc_heap_leave, and never under 64 KB nor more than all but
+		   32 KB (what the desktop needs to start) */
+		if (want < 96L * 1024) {
 			want = (avail - acc_heap_leave) & ~1L;
+			if (want < 64L * 1024)
+				want = 64L * 1024;
+			if (want > avail - 32L * 1024)
+				want = (avail - 32L * 1024) & ~1L;
+		}
 	}
 	if (want < 32L * 1024)
 		return 0;
