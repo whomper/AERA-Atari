@@ -229,9 +229,16 @@ and EContact's integration patches go; nothing reads another app's files.
   being asked; `people_pick()`; `people_message()`; `people_poll()` each turn; a callback when names
   come or change) and EContact's (`people_question()`, `people_next()`, `people_answer()`, which cuts
   answers into whole commands of at most 1 KB). Memory is taken once, in `people_init()`.
+- `ui/people_file.c`: EContact's CONTACTS.TXT when EContact isn't loaded, an option the user turns on
+  in EMail's or ECal's Settings (guidelines 4.1, 21 Oct 2026): `people_file(folder, message)` on,
+  `people_file(0, 0)` off. Names come from the file, read in 2 KB pieces, once a round of questions
+  and not again while it is unchanged; `people_pick()` opens the people dialog on the file (Find
+  line, list with a scroll bar, a click marks, a double click takes one, Return the marked). The
+  apps that offer the option link it (with `plat.h`'s `pf_info`, `pf_load`).
 
 `tests/people`: `make test`, the asker against a pretend EContact and EContact's side (seven planted
-bugs, all caught); `tests/av` checks PEOPLE in and out.
+bugs, all caught), and the names from a CONTACTS.TXT (pieces, case, unchanged, rewritten, missing);
+`tests/av` checks PEOPLE in and out.
 
 `tests/tz`: `make test`, 83 million offsets from the kept zone-years against the rules: every built-in
 zone around each change from 1990 to 2040, random moments, a zone whose rules change at the same
