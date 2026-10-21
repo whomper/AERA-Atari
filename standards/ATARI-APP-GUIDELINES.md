@@ -789,7 +789,7 @@ checked by its session.
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 VA_START sent to every edition: "EMAIL\|EMAILST" (20 Oct) | ✓ (ECONTACT and ECONTST, by hand) | ✓ (1.56: mailto: to EMAIL\|EMAILST) | ✓ (1.48: ECONTACT\|ECONTST) | n/a | n/a | n/a | n/a |
 | 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✓ (2.8: invitees by name, Add... picks in EContact; tried with EContact 1.42, PRG and ACC) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a | n/a |
-| 4.1 EContact's file when it isn't loaded (option, 21 Oct): CONTACTS.TXT, Settings PEOPLEFILE=/PEOPLEDIR= | ✗ | ✓ (1.58 writes CONTACTS.TXT) | ✗ | n/a | n/a | n/a | n/a |
+| 4.1 EContact's file when it isn't loaded (option, 21 Oct): CONTACTS.TXT, Settings PEOPLEFILE=/PEOPLEDIR= | ✗ | ✓ (1.58 writes CONTACTS.TXT) | ✓ (1.50: Settings > Contacts; tried on Falcon-4 with NVDI, ECal and EHypView loaded) | n/a | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ | ✓ |
 | 4.3 Help front page (banner, window, diagram, contents) | ✓ (2.9) | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ✓ (1.37; the picture a column in, 59a8d98, with the next) | ✓ (1.11) | ✓ (1.44) | ✓ (0.11) |
