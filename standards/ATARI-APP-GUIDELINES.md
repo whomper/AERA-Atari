@@ -755,6 +755,19 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   change only with the app's OK.
 - **No test-only switches** such as `--insecure` in the installed service.
 - **Docs and examples use `192.168.1.x`** and `PI_IP` / `ATARI_IP`, never a real home network.
+- **Every app with a gateway says how to set up the Pi** (Erez, 21 Oct 2026), in its README and
+  its help guide alike. It gives the steps from a fresh Pi, with the app's own service line, then how
+  to update and check, then where in the app the Pi's address and port go:
+
+  ```
+  sudo apt install -y git                  (Raspberry Pi OS Lite only)
+  git clone https://github.com/whomper/AERA-Gateway
+  cd AERA-Gateway
+  ./update-pi.sh
+  sudo gateway/aera-gateway install SERVICE ... --allow ATARI_IP
+  ```
+
+  To update: `cd ~/AERA-Gateway && ./update-pi.sh`. To check: `gateway/aera-gateway status`.
 
 ---
 
@@ -807,6 +820,7 @@ checked by its session.
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | n/a (no passwords in 0.11) |
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) | n/a |
+| 7.3 README and guide carry the Pi's install steps (21 Oct) | ✗ | ✗ | ✗ | ✗ | n/a | ✗ | ✗ |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) |
