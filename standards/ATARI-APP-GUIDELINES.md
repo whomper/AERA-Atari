@@ -433,16 +433,19 @@ CONTACTS.TXT when the user chooses it (below).
   - EContact not there: addresses show as they are, unless the user chose the file (below).
 - **EContact's file, when EContact isn't loaded (an option, off by default; Erez, 21 Oct 2026).** For a
   machine short of memory, where EContact runs as a program now and then rather than as an accessory:
-  - EContact writes `CONTACTS.TXT` in its folder: a note line (`;`), then a line per address,
-    `address<TAB>name` (as in `names:`; Atari text, CRLF, names at most 63 bytes), sorted by name. It
-    writes it once a job when the people or their addresses changed (6.5), as a whole new file
-    (`pf_save`), and never when nothing changed.
+  - EContact writes `CONTACTS.TXT` in its folder, in 1.40's format: Atari text, CRLF; `; ` lines are
+    notes (among them `; made from 1A2B3C4D`, its names stamp, so an unchanged file isn't written
+    again); `P<TAB>name<TAB>email<TAB>label` for each address; `G<TAB>group<TAB>Name <email>, ...` for
+    each group with addresses. It writes it whenever the people or their addresses changed (after a
+    load whose stamp differs from the file's, a refresh, an edit, an import), built in memory in steps
+    and written in one open (6.5; for the accessory never before its first event call, 2.2). There is
+    no switch in EContact: the choice is the reader's.
   - EMail and ECal have it in Settings, in their Contacts part: "When EContact isn't loaded, read
     its contacts file" (off by default) and "EContact's folder" (a path, with a button for the file
     selector), saved as `PEOPLEFILE=1` and `PEOPLEDIR=` in their INF.
   - With it on, when EContact doesn't answer (`appl_find` finds neither edition), `names:` is answered
-    from the file and `pick:` opens the shared people dialog (a search field and the list, several
-    can be chosen) on the file. The file is looked at once an event and read in pieces (6.5); nothing
+    from the file (its P lines) and `pick:` opens the shared people dialog on the file (a Find line
+    and the list of people and groups; several can be marked; a group gives its people). The file is looked at once an event and read in pieces (6.5); nothing
     of it is kept but the names asked for, and the dialog's list while it is open.
   - When EContact is loaded, PEOPLE is used as always; the file is never read then.
   - Shared code: `common/ui/people_file.c` (reading, the dialog), behind `people_ask.c`.
