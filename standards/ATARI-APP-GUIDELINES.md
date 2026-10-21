@@ -769,6 +769,14 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 
   To update: `cd ~/AERA-Gateway && ./update-pi.sh`. To check: `gateway/aera-gateway status`.
 
+  From AERA-Gateway 1.8 the manuals also give the short way, every gateway in one line, and may
+  write `sudo aera-gateway` (update-pi.sh links it) in place of `sudo gateway/aera-gateway`:
+
+  ```
+  sudo apt install -y git && git clone https://github.com/whomper/AERA-Gateway ~/AERA-Gateway &&
+    ~/AERA-Gateway/update-pi.sh --allow ATARI_IP [--mail IMAP SMTP[:587] [POP3]] [--browser]
+  ```
+
 ---
 
 ## 8. Where each app stands (October 2026)
