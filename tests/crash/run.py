@@ -7,9 +7,13 @@ supervisor mode outside the program, a warm reset and the report of it at
 the next start.
 
     make && python3 run.py etos512us.img [work-dir]
+    make && python3 run.py --st tos104us.img --falcon tos404.img [work-dir]
 
-EmuTOS 1.4 or later: 1.3 overwrites TOS's record of the bombs at every
-boot, so the reset checks fail there.
+One image for both machines, or one for each (--st, --falcon; either
+alone runs that machine only): Erez's TOS 1.04 is an ST's, his TOS 4.04 a
+Falcon's, and neither starts on the other. EmuTOS 1.4 or later: 1.3
+overwrites TOS's record of the bombs at every boot, so the reset checks
+fail there.
 """
 import os, re, shutil, subprocess, sys, time
 
@@ -23,8 +27,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 WARM_MAGIC = "hatari-debug w $6fc $57 $41 $52 $4d"
 
 PRG = os.path.join(HERE, "build", "CRASHT.PRG")
-tos = os.path.abspath(sys.argv[1])
-work = os.path.abspath(sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, "build", "work"))
+argv, tos_for = sys.argv[1:], {}
+while argv and argv[0] in ("--st", "--falcon") and len(argv) > 1:
+    tos_for[argv[0][2:]] = os.path.abspath(argv[1])
+    argv = argv[2:]
+if not tos_for:
+    if not argv:
+        sys.exit(__doc__)
+    tos_for = {"st": os.path.abspath(argv[0]), "falcon": os.path.abspath(argv[0])}
+    argv = argv[1:]
+work = os.path.abspath(argv[0] if argv else os.path.join(HERE, "build", "work"))
 failed = 0
 
 
@@ -44,7 +56,7 @@ def run(machine, kind, reset=False):
         f.write(kind)
     fifo = os.path.join(d, "cmd.fifo")
     log = os.path.join(d, "hatari.log")
-    args = ["hatari", "--machine", machine, "--tos", tos, "--harddrive", d,
+    args = ["hatari", "--machine", machine, "--tos", tos_for[machine], "--harddrive", d,
             "--auto", "C:\\CRASHT.PRG", "--fast-boot", "yes", "--natfeats", "yes",
             "--sound", "off", "--confirm-quit", "no", "--statusbar", "no",
             "--cmd-fifo", fifo, "--log-level", "fatal"]
@@ -87,7 +99,7 @@ NAMES = {"b": "bus error, 2 bombs", "a": "address error, 3 bombs",
          "k": "bus error, 2 bombs", "f": "line F (an FPU instruction or none), 11 bombs",
          "w": "illegal instruction, 4 bombs"}
 
-for machine in ("st", "falcon"):
+for machine in [m for m in ("st", "falcon") if m in tos_for]:
     for kind in "bizakfw":
         if kind == "a" and machine != "st":
             continue			# a 68030 reads odd addresses
