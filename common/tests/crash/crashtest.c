@@ -92,18 +92,16 @@ static const unsigned short pass4[] = { 0x2F3A, 0x0004, 0x4E75, 0x0000, 0x0000 }
 static unsigned short *pass4_block;
 static volatile long *volatile v4 = (volatile long *)0x10L;
 
-/* r: savptr and the supervisor stack, inside a Supexec */
-static long probe_savptr, probe_ssp;
-static void probe(void)
-{
-	__asm__ volatile("move.l 0x4a2.w,%0\n\tmove.l %%sp,%1" : "=d"(probe_savptr), "=d"(probe_ssp));
-}
-
+/* r: savptr and the supervisor stack in user mode: Super(0) goes to
+   supervisor mode and gives the supervisor stack it had (a Supexec runs on
+   the caller's own stack, so its sp is no measure of it) */
 static void probe_say(int i)
 {
 	char s[80];
-	Supexec(probe);
-	snprintf(s, sizeof(s), "CRASHT probe %d savptr %08lX ssp %08lX\n", i, probe_savptr, probe_ssp);
+	long savptr, ssp = trap1_wl(0x20, 0);		/* Super(0) */
+	__asm__ volatile("move.l 0x4a2.w,%0" : "=d"(savptr));
+	trap1_wl(0x20, ssp);				/* Super(ssp): back */
+	snprintf(s, sizeof(s), "CRASHT probe %d savptr %08lX ssp %08lX\n", i, savptr, ssp);
 	nf_debug(s);
 }
 
@@ -134,9 +132,13 @@ static void emu_unhook(void)
 	*v11 = old11;
 }
 
+static unsigned short tos_version;
 static void sup_v11(void)
 {
+	const unsigned char *h;
 	now11 = *v11;
+	__asm__ volatile("move.l 0x4f2.w,%0" : "=a"(h));	/* _sysbase */
+	tos_version = *(const unsigned short *)(h + 2);
 }
 
 static void pass4_hook(void)		/* supervisor mode */
@@ -287,7 +289,10 @@ int main(void)
 		extern void crash_e11(void);
 		Supexec(sup_v11);
 		if (now11 != (long)crash_e11) {
-			nf_debug("CRASHT line F not ours\n");
+			char t[80];
+			snprintf(t, sizeof(t), "CRASHT line F not ours: TOS %04X, vector 11 %08lX\n",
+				 (unsigned)tos_version, now11);
+			nf_debug(t);
 			crash_remove();
 			return 0;
 		}
