@@ -437,16 +437,20 @@ CONTACTS.TXT when the user chooses it (below).
     notes (among them `; made from 1A2B3C4D`, its names stamp, so an unchanged file isn't written
     again); `P<TAB>name<TAB>email<TAB>label` for each address; `G<TAB>group<TAB>Name <email>, ...` for
     each group with addresses. It writes it whenever the people or their addresses changed (after a
-    load whose stamp differs from the file's, a refresh, an edit, an import), built in memory in steps
-    and written in one open (6.5; for the accessory never before its first event call, 2.2). There is
-    no switch in EContact: the choice is the reader's.
+    load whose stamp differs from the file's, a refresh, an edit, an import), built in memory in steps,
+    written to `CONTACTS.TMP` a piece a step and renamed into place (2.2: one write of 65 KB held an
+    ST for 417 ms; for the accessory never before its first event call). TOS doesn't rename over a
+    file, so for a moment there is none: a reader counts a missing file it has read before as
+    unchanged. There is no switch in EContact: the choice is the reader's.
   - EMail and ECal have it in Settings, in their Contacts part: "When EContact isn't loaded, read
     its contacts file" (off by default) and "EContact's folder" (a path, with a button for the file
     selector), saved as `PEOPLEFILE=1` and `PEOPLEDIR=` in their INF.
   - With it on, when EContact doesn't answer (`appl_find` finds neither edition), `names:` is answered
     from the file (its P lines) and `pick:` opens the shared people dialog on the file (a Find line
-    and the list of people and groups; several can be marked; a group gives its people). The file is looked at once an event and read in pieces (6.5); nothing
-    of it is kept but the names asked for, and the dialog's list while it is open.
+    and the list of people and groups; several can be marked; a group gives its people). The names:
+    4 KB of the file a round of questions, opened and closed each time, stopped once every name asked
+    for has come, and not read again while it is unchanged; nothing of it is kept but the names asked
+    for, and the dialog's list while it is open (600 contacts: a 65 KB file).
   - When EContact is loaded, PEOPLE is used as always; the file is never read then.
   - Shared code: `common/ui/people_file.c` (reading, the dialog), behind `people_ask.c`.
 - Privacy: an asker learns only names for addresses it already has; `pick:` needs the user.
