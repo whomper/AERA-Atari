@@ -11,7 +11,7 @@ the next start.
 EmuTOS 1.4 or later: 1.3 overwrites TOS's record of the bombs at every
 boot, so the reset checks fail there.
 """
-import os, shutil, subprocess, sys, time
+import os, re, shutil, subprocess, sys, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # TOS's record of the bombs ($380) must live through the warm reset, as on
@@ -54,9 +54,9 @@ def run(machine, kind, reset=False):
         args += ["--monitor", "vga"]
     env = dict(os.environ, SDL_VIDEODRIVER="dummy", SDL_AUDIODRIVER="dummy")
     h = subprocess.Popen(args, env=env, stdout=open(log, "w"), stderr=subprocess.STDOUT)
-    want = "CRASHT previous" if reset else "CRASHT cleanup"
-    done = ("CRASHT no crash", "CRASHT protect")
-    t_end = time.time() + 60
+    want = "CRASHT previous" if reset else "CRASHT repeat done" if kind == "r" else "CRASHT cleanup"
+    done = ("CRASHT no crash", "CRASHT protect", "CRASHT line F not ours", "CRASHT emulator")
+    t_end = time.time() + (240 if kind == "r" else 60)
     reset_sent = False
     try:
         while time.time() < t_end and h.poll() is None:
@@ -93,6 +93,10 @@ for machine in ("st", "falcon"):
             continue			# a 68030 reads odd addresses
         d, con, rep = run(machine, kind)
         tag = "%s %s:" % (machine, NAMES[kind])
+        if kind == "f" and "CRASHT line F not ours" in con:
+            # vector 11 had another's handler (TOS 1.0x's own): left to it
+            check(not rep, tag + " left to the handler that was there, no CRASH.LOG")
+            continue
         check("CRASHT crashing" in con and "CRASHT no crash" not in con, tag + " it crashed")
         check("CrashTest 1.0: " + NAMES[kind] in rep, tag + " CRASH.LOG names it")
         if kind == "w":     # outside the program: no offset, but the caller
@@ -115,6 +119,19 @@ for machine in ("st", "falcon"):
     tag = "%s a resident program's privilege violation:" % machine
     check("CRASHT protect ok" in con, tag + " passed on to its handler")
     check(not rep, tag + " no CRASH.LOG")
+    # a software FPU emulator on vector 11: the program's line F is its
+    d, con, rep = run(machine, "e")
+    tag = "%s an FPU emulator's line F:" % machine
+    check("CRASHT emulator ok" in con, tag + " run by the emulator")
+    check(not rep, tag + " no CRASH.LOG")
+    # ten crashes caught in supervisor mode in one boot: TOS's savptr
+    # ($4A2) and the supervisor stack hold steady
+    d, con, rep = run(machine, "r")
+    probes = re.findall(r"CRASHT probe (\d+) savptr ([0-9A-F]+) ssp ([0-9A-F]+)", con)
+    tag = "%s ten crashes in one boot:" % machine
+    check(len(probes) == 11 and con.count("CRASHT cleanup") == 10, tag + " all caught (%d probes)" % len(probes))
+    check(len({p[1] for p in probes}) == 1, tag + " savptr steady (%s)" % " ".join(sorted({p[1] for p in probes})))
+    check(len({p[2] for p in probes}) == 1, tag + " the supervisor stack steady")
     d, con, rep = run(machine, "s", reset=True)
     tag = "%s supervisor bus error:" % machine
     check("CRASHT previous" in con, tag + " the program ran again after a reset")

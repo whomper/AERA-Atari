@@ -107,6 +107,21 @@ static long frame(const unsigned short *f, long vec, long *addr, short *has)
 
 static volatile long *low(long a);
 
+/* TOS's BIOS and XBIOS calls keep the caller's registers in a block below
+   savptr ($4A2), one a call, and give it back on return. A Supexec that a
+   fault taken in it abandons never returns: its block is given back here,
+   or each crash caught in one boot took another (measured: 46 bytes a
+   crash on TOS 1.04, TOS 4.04 and EmuTOS on an ST, 48 on EmuTOS on a
+   Falcon). savptr_user: savptr in user mode, worked out by sup_install;
+   0: not known, left alone. The supervisor stack needs nothing: Pterm puts
+   it back (it held steady over ten crashes on all four) */
+static long savptr_user, savptr_nested;
+
+static void sup_nested(void)
+{
+	savptr_nested = *low(0x4A2L);
+}
+
 /* the program is the process running now (GEMDOS's p_run, TOS 1.02 and
    later); supervisor mode */
 static int ours_running(void)
@@ -150,6 +165,8 @@ long crash_take(unsigned short *f, long vec)
 	}
 	if (!(size = frame(f, vec, &c_addr, &c_has_addr)))
 		return 0;
+	if ((s[0] & 0x2000) && savptr_user)
+		*low(0x4A2L) = savptr_user;	/* the abandoned call's block back */
 	c_vec = vec;
 	c_sr = s[0];
 	c_pc = (long)s[1] << 16 | s[2];
@@ -181,20 +198,44 @@ void crash_restore(void)
 	installed = 0;
 }
 
+/* vector i holds TOS's own handler, the one that shows the bombs: the
+   same as on vector j (TOS 2 to 4), the entry of a table of them 2 bytes
+   apart (EmuTOS), or the vector's number in the top byte (TOS 1.0x) */
+static int tos_default(int i, int j)
+{
+	u32 a = (u32)*low(i * 4L), b = (u32)*low(j * 4L);
+	return a == b || a == b + 2UL * (u32)(i - j) ||
+	       ((b >> 24) == (u32)j && a == ((b & 0xFFFFFFUL) | (u32)i << 24));
+}
+
 static void sup_install(void)
 {
 	volatile long *rec = low(0x380L);
-	int i;
+	long in = *low(0x4A2L), block;
+	/* line F only while vector 11 has TOS's own handler on it (it bombs):
+	   a software FPU emulator, a 68040's or 68060's FPU package (CT60) or
+	   TOS 1.0x's own (its ROM calls itself with line F) keeps it, as the
+	   program's FPU instructions may be theirs to run. Looked at before
+	   vectors 3 and 7 are ours */
+	int i, line_f = tos_default(11, 7) || tos_default(11, 3);
 	if (rec[0] == 0x12345678L) {		/* proc_lives: TOS saw bombs */
 		for (i = 0; i < 27; i++)
 			prev[i] = rec[i];
 		rec[0] = 0;			/* told once */
 	}
-	for (i = 2; i <= 11; i++)
+	/* savptr in user mode: this Supexec took one block, and the one
+	   nested in it takes another the same size */
+	Supexec(sup_nested);
+	block = in - savptr_nested;
+	savptr_user = block > 0 && block <= 128 ? in + block : 0;
+	for (i = 2; i <= 11; i++) {
+		if (i == 11 && !line_f)
+			continue;
 		if (CAUGHT(i)) {
 			crash_old[i] = *low(i * 4L);
 			*low(i * 4L) = (long)entry[i];
 		}
+	}
 	crash_old_term = *low(0x408L);	/* etv_term */
 	*low(0x408L) = (long)crash_term;
 	installed = 1;
