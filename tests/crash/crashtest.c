@@ -7,11 +7,20 @@
  *   i  an illegal instruction            z  a division by zero
  *   k  a bus error in supervisor mode in the program's own code (a
  *      Supexec of its): caught as in user mode
- *   f  line F (an opcode for a coprocessor that isn't there)
+ *   f  line F (an opcode for a coprocessor that isn't there), where vector
+ *      11 has TOS's own handler; elsewhere (TOS 1.0x's own) "not ours"
+ *   e  no crash: a software FPU emulator on vector 11 before the catcher
+ *      runs the program's line F instruction (skips it, d0 = 42); the
+ *      catcher must leave line F to it
  *   w  a wild jump: user mode, an illegal instruction outside the
  *      program, with another program's handler on vector 4 before the
  *      catcher's (as a driver's on a DFB1): caught, as the program is the
  *      process running
+ *   r  ten times in one boot: CRASHT.PRG started again (Pexec, its
+ *      command line "k") and caught in supervisor mode; before each and
+ *      after the last, TOS's savptr ($4A2) and the supervisor stack in a
+ *      Supexec, which must not drift (an abandoned Supexec's state put
+ *      back)
  *   s  a bus error in supervisor mode outside the program: the bombs,
  *      which TOS records; the run after the next reset finds the record
  *      and, since it wasn't in the program, doesn't count it as its own
@@ -83,6 +92,53 @@ static const unsigned short pass4[] = { 0x2F3A, 0x0004, 0x4E75, 0x0000, 0x0000 }
 static unsigned short *pass4_block;
 static volatile long *volatile v4 = (volatile long *)0x10L;
 
+/* r: savptr and the supervisor stack, inside a Supexec */
+static long probe_savptr, probe_ssp;
+static void probe(void)
+{
+	__asm__ volatile("move.l 0x4a2.w,%0\n\tmove.l %%sp,%1" : "=d"(probe_savptr), "=d"(probe_ssp));
+}
+
+static void probe_say(int i)
+{
+	char s[80];
+	Supexec(probe);
+	snprintf(s, sizeof(s), "CRASHT probe %d savptr %08lX ssp %08lX\n", i, probe_savptr, probe_ssp);
+	nf_debug(s);
+}
+
+/* v: the exception vectors as TOS left them */
+static long vecs[12];
+static void sup_vectors(void)
+{
+	int i;
+	for (i = 2; i <= 11; i++)
+		vecs[i] = *(volatile long *)(long)(i * 4);
+}
+
+/* e: an FPU emulator's handler: addq.l #2,2(sp) (past the instruction);
+   moveq #42,d0; rte */
+static const unsigned short fpu_emu[] = { 0x54AF, 0x0002, 0x702A, 0x4E73 };
+static unsigned short *emu_block;
+static long old11, now11;
+static volatile long *volatile v11 = (volatile long *)0x2CL;
+
+static void emu_hook(void)
+{
+	old11 = *v11;
+	*v11 = (long)emu_block;
+}
+
+static void emu_unhook(void)
+{
+	*v11 = old11;
+}
+
+static void sup_v11(void)
+{
+	now11 = *v11;
+}
+
 static void pass4_hook(void)		/* supervisor mode */
 {
 	*(long *)(pass4_block + 3) = *v4;
@@ -138,6 +194,35 @@ int main(void)
 	Fread((short)h, 1, inf);
 	Fclose((short)h);
 	kind = inf[0];
+	{
+		/* started by 'r': the kind from the command line */
+		const unsigned char *cmd = (const unsigned char *)_BasePage + 0x80;
+		if (cmd[0] > 0)
+			kind = (char)cmd[1];
+	}
+	if (kind == 'v') {		/* what TOS puts on vectors 2 to 11 */
+		char t[200];
+		int i, n = 0;
+		Supexec(sup_vectors);
+		for (i = 2; i <= 11; i++)
+			n += snprintf(t + n, sizeof(t) - n, " %d:%08lX", i, vecs[i]);
+		nf_debug("CRASHT vectors");
+		nf_debug(t);
+		snprintf(t, sizeof(t), " _CPU %ld _FPU %08lX\nCRASHT vectors done\n", get_cookie(0x5F435055L),
+			 get_cookie(0x5F465055L));
+		nf_debug(t);
+		return 0;
+	}
+	if (kind == 'r') {
+		int i;
+		for (i = 0; i < 10; i++) {
+			probe_say(i);
+			trap1_wwlll(0x4b, 0, (long)"C:\\CRASHT.PRG", (long)"\001k", 0);	/* Pexec */
+		}
+		probe_say(10);
+		nf_debug("CRASHT repeat done\n");
+		return 0;
+	}
 
 	if (kind == 'p') {		/* STinG is there before the program */
 		sting_block = Malloc(sizeof(sting_code));
@@ -147,6 +232,11 @@ int main(void)
 		}
 		memcpy(sting_block, sting_code, sizeof(sting_code));
 		Supexec(sting_hook);
+	}
+	if (kind == 'e') {		/* an FPU emulator is there first */
+		if (!(emu_block = outside(fpu_emu, sizeof fpu_emu)))
+			return 1;
+		Supexec(emu_hook);
 	}
 	if (kind == 'w') {		/* a driver's handler is there first */
 		if (!(pass4_block = outside(pass4, sizeof pass4)))
@@ -193,9 +283,25 @@ int main(void)
 	case 'k':
 		Supexec(sup_bus);
 		break;
-	case 'f':
+	case 'f': {
+		extern void crash_e11(void);
+		Supexec(sup_v11);
+		if (now11 != (long)crash_e11) {
+			nf_debug("CRASHT line F not ours\n");
+			crash_remove();
+			return 0;
+		}
 		__asm__ volatile(".short 0xFE00");	/* coprocessor 7: none */
 		break;
+	}
+	case 'e': {
+		long r;
+		__asm__ volatile("moveq #0,%%d0\n\t.short 0xFE00\n\tmove.l %%d0,%0" : "=d"(r) : : "d0");
+		crash_remove();
+		Supexec(emu_unhook);
+		nf_debug(r == 42 ? "CRASHT emulator ok\n" : "CRASHT emulator wrong\n");
+		return 0;
+	}
 	case 'w': {
 		void (*f)(void) = (void (*)(void))outside(wild, sizeof wild);
 		if (f)
