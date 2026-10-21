@@ -403,7 +403,8 @@ same.
   (EContact's `EC_OPEN`, 0x4543, is gone), except PEOPLE below.
 
 **Asking EContact about people: PEOPLE (must).** EMail and ECal show people by name and let the user
-pick them in EContact. They ask EContact; no app reads another app's files (CONTACTS.TXT is gone).
+pick them in EContact. They ask EContact; no app reads another app's files, except EContact's
+CONTACTS.TXT when the user chooses it (below).
 - **The message:** PEOPLE, 0x4E43, laid out as `VA_START` (msg[1] the sender, msg[3..4] a string in
   memory the receiver may read) and answered with `AV_STARTED`. It is the family's one message besides
   the AV protocol's, kept apart so a question is never taken for files to open.
@@ -429,7 +430,22 @@ pick them in EContact. They ask EContact; no app reads another app's files (CONT
     pick, open it again with the result. One pick at a time.
   - EContact answers from the contacts it holds (it loads them in the background, 2.2) and never
     reads its files, raises an alert or changes the mouse form to answer.
-  - EContact not there: addresses show as they are.
+  - EContact not there: addresses show as they are, unless the user chose the file (below).
+- **EContact's file, when EContact isn't loaded (an option, off by default; Erez, 21 Oct 2026).** For a
+  machine short of memory, where EContact runs as a program now and then rather than as an accessory:
+  - EContact writes `CONTACTS.TXT` in its folder: a note line (`;`), then a line per address,
+    `address<TAB>name` (as in `names:`; Atari text, CRLF, names at most 63 bytes), sorted by name. It
+    writes it once a job when the people or their addresses changed (6.5), as a whole new file
+    (`pf_save`), and never when nothing changed.
+  - EMail and ECal have it in Settings, in their Contacts part: "When EContact isn't loaded, read
+    its contacts file" (off by default) and "EContact's folder" (a path, with a button for the file
+    selector), saved as `PEOPLEFILE=1` and `PEOPLEDIR=` in their INF.
+  - With it on, when EContact doesn't answer (`appl_find` finds neither edition), `names:` is answered
+    from the file and `pick:` opens the shared people dialog (a search field and the list, several
+    can be chosen) on the file. The file is looked at once an event and read in pieces (6.5); nothing
+    of it is kept but the names asked for, and the dialog's list while it is open.
+  - When EContact is loaded, PEOPLE is used as always; the file is never read then.
+  - Shared code: `common/ui/people_file.c` (reading, the dialog), behind `people_ask.c`.
 - Privacy: an asker learns only names for addresses it already has; `pick:` needs the user.
 - Shared code: `common/ui/av.c` (`av_people()`, `AV_PEOPLE`), `common/ui/people_ask.c` (the asker's side,
   and the format and the answers' sending for EContact). Tests: `common/tests/people`, `tests/av`.
@@ -766,6 +782,7 @@ checked by its session.
 | 4.1 AV_PROTOKOLL / AV_EXIT | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.1 VA_START sent to every edition: "EMAIL\|EMAILST" (20 Oct) | ✓ (ECONTACT and ECONTST, by hand) | ✓ (1.56: mailto: to EMAIL\|EMAILST) | ✓ (1.48: ECONTACT\|ECONTST) | n/a | n/a | n/a | n/a |
 | 4.1 PEOPLE: names from EContact by message, no CONTACTS.TXT | ✓ (2.8: invitees by name, Add... picks in EContact; tried with EContact 1.42, PRG and ACC) | ✓ (1.41: answers names: and pick:, sends changed:; CONTACTS.TXT gone) | ✓ (1.35: names in lists and From:, ^B picks in EContact; tried with EContact 1.41 in Hatari) | n/a | n/a | n/a | n/a |
+| 4.1 EContact's file when it isn't loaded (option, 21 Oct): CONTACTS.TXT, Settings PEOPLEFILE=/PEOPLEDIR= | ✗ | ✗ (writes CONTACTS.TXT) | ✗ | n/a | n/a | n/a | n/a |
 | 4.2 Drag and drop in | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ | ✓ |
 | 4.3 Help front page (banner, window, diagram, contents) | ✓ (2.9) | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ✓ (1.37; the picture a column in, 59a8d98, with the next) | ✓ (1.11) | ✓ (1.44) | ✓ (0.11) |
