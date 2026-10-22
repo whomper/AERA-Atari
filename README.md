@@ -16,10 +16,10 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | <img src="brand/icons/ehypview.png" width="48" alt="EHypView icon"> | [EHypView](https://github.com/whomper/EHypView) | ST, STE, TT, Falcon | ST-Guide hypertext viewer, program or desk accessory |
 | <img src="brand/icons/claudest.png" width="48" alt="ClaudeST icon"> | [ClaudeST](https://github.com/whomper/ClaudeST) | ST, STE, TT, Falcon | claude.ai client |
 | <img src="brand/icons/eupdate.png" width="48" alt="EUpdate icon"> | [EUpdate](https://github.com/whomper/EUpdate) | Falcon, TT | GitHub releases: find repositories and owners, follow them into folders, update by hand or on a schedule |
-| | [EWeb](https://github.com/whomper/EWeb) | Falcon | web browser, being built: its CSS engine, HTTP client and measuring tools so far |
+| <img src="brand/icons/eweb.png" width="48" alt="EWeb icon"> | [EWeb](https://github.com/whomper/EWeb) | Falcon, TT (ST edition through the Pi) | web browser: pages with their stylesheets, pictures and forms; TLS on the Falcon |
 | | [EDOS](https://github.com/whomper/EDOS) | 400, 800, XL, XE | Disk Utility Package |
 | | [EFTP_XL](https://github.com/whomper/EFTP_XL) | 400, 800, XL, XE | file transfer over FujiNet |
-| | [AERA-Gateway](https://github.com/whomper/AERA-Gateway) | Raspberry Pi | the gateways for mail, calendars and contacts, FTP and Claude, and their installer |
+| | [AERA-Gateway](https://github.com/whomper/AERA-Gateway) | Raspberry Pi | the gateways for mail, calendars and contacts, FTP, the web and Claude, and their installer |
 
 ## What's here
 
@@ -29,10 +29,10 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | [`standards/ATARI-XL-GUIDELINES.md`](standards/ATARI-XL-GUIDELINES.md) | the same for the 8-bit programs (EDOS, EFTP_XL): sources and comments, the disk, keys, RESET, memory, the font, releases |
 | [`standards/GITHUB-IDENTITY.md`](standards/GITHUB-IDENTITY.md) | how the repos present themselves: colours, type, logos, README layout, names, wording, descriptions |
 | [`standards/repo-template/`](standards/repo-template/) | the files every app repo carries (README skeleton, CLAUDE.md, CI and Release workflows…) and how to move a repo over |
-| [`brand/`](brand/) | the AERA logos, the app icons, the social-preview images and the script that draws them |
+| [`brand/`](brand/) | the AERA logos, the app icons, the AERA desktop folder icon (`icons/AERA.RSC`, 16 and 256 colours), the social-preview images and the scripts that draw them |
 | [`profile/`](profile/) | the draft README for the GitHub profile page |
 | [`xl/`](xl/) | the 8-bit programs' shared tools and includes (cross assembler, tokeniser, source disk, AERA.FNT, AXEQU/AXLOAD/AXRESET/AXFONT/AXERR, release workflows), pulled in with `git subtree` |
-| [`common/`](common/) | the code the apps share, pulled into each app with `git subtree`: the C library and start-up, TLS and connections (and the Falcon's DSP), Hebrew, dates and time zones, the GEM building blocks (alerts, menus, About box, help, clipboard, drag and drop), the help front page, the build tools and the test machines |
+| [`common/`](common/) | the code the apps share, pulled into each app with `git subtree`: the C library and start-up, TLS and connections (and the Falcon's DSP), Hebrew, dates and time zones, the GEM building blocks (alerts, dialogs and long text fields, menus, About box, help, clipboard, drag and drop, the crash catcher), the help front page, the build tools and the test machines |
 
 ## Licence
 

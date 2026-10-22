@@ -19,7 +19,8 @@ Music and builds: **[yaary.music](https://yaary.music)** · **[YouTube](https://
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/eftp.png" width="40" alt=""> | **[EFTP](https://github.com/whomper/EFTP)** | two-pane FTP, FTPS and SFTP |
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/ehypview.png" width="40" alt=""> | **[EHypView](https://github.com/whomper/EHypView)** | ST-Guide hypertext viewer |
 | <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/claudest.png" width="40" alt=""> | **[ClaudeST](https://github.com/whomper/ClaudeST)** | claude.ai on the Atari |
-| | **[EWeb](https://github.com/whomper/EWeb)** | a web browser for the Falcon, being built |
+| <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/eupdate.png" width="40" alt=""> | **[EUpdate](https://github.com/whomper/EUpdate)** | GitHub releases: follow repositories and keep them up to date (Falcon, TT) |
+| <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/eweb.png" width="40" alt=""> | **[EWeb](https://github.com/whomper/EWeb)** | a web browser: pages with their stylesheets, pictures and forms |
 
 #### Atari 400 · 800 · XL · XE
 
@@ -28,5 +29,5 @@ Music and builds: **[yaary.music](https://yaary.music)** · **[YouTube](https://
 
 #### Behind the scenes
 
-- **[AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: the Raspberry Pi gateways (mail, calendars and contacts, FTP, Claude) and their installer
+- **[AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: the Raspberry Pi gateways (mail, calendars and contacts, FTP, the web, Claude) and their installer
 - **[AERA-Atari](https://github.com/whomper/AERA-Atari)**: how the programs look and behave, and the code they share
