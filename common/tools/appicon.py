@@ -30,8 +30,8 @@ It writes, each when asked:
   --headers  icon.h (icon_bits, one plane) and icon16.h (icon16_px in VDI
              pens, 0 not drawn; icon16_rgb, pens 8-15 as TOS has them) for
              the About box and the iconified window (common/ui);
-  --docs     icon.png, icon16.png and icon2.png: the three, 8 times bigger,
-             idle and selected, for the README;
+  --docs     icon.png (256 colours), icon16.png and icon2.png, each 8 times
+             bigger, clear round it, for the README;
   --png      the 256-colour icon alone, 8 times bigger, clear round it
              (AERA-Atari's brand/icons, for the profile and the previews).
 """
@@ -247,11 +247,7 @@ def image(rows, depth, lit=False):
 def write_docs(dirname, d, z=8):
     from PIL import Image
     for depth, fn in ((256, "icon.png"), (16, "icon16.png"), (2, "icon2.png")):
-        sheet = Image.new("RGBA", (2 * W * z + z * 4, H * z), (0, 0, 0, 0))
-        for k, lit in enumerate((False, True)):
-            ic = image(d[depth], depth, lit).resize((W * z, H * z), Image.NEAREST)
-            sheet.paste(ic, (k * (W * z + z * 4), 0), ic)
-        sheet.save(os.path.join(dirname, fn))
+        image(d[depth], depth).resize((W * z, H * z), Image.NEAREST).save(os.path.join(dirname, fn))
 
 
 NAMES = ["ECAL", "ECONTACT", "EMAIL", "EFTP", "EHYPVIEW", "CLAUDEST", "EWEB", "EUPDATE"]
