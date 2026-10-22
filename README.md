@@ -15,6 +15,7 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | <img src="brand/icons/eftp.png" width="48" alt="EFTP icon"> | [EFTP](https://github.com/whomper/EFTP) | ST, STE, TT, Falcon | two-pane FTP, FTPS and SFTP |
 | <img src="brand/icons/ehypview.png" width="48" alt="EHypView icon"> | [EHypView](https://github.com/whomper/EHypView) | ST, STE, TT, Falcon | ST-Guide hypertext viewer, program or desk accessory |
 | <img src="brand/icons/claudest.png" width="48" alt="ClaudeST icon"> | [ClaudeST](https://github.com/whomper/ClaudeST) | ST, STE, TT, Falcon | claude.ai client |
+| <img src="brand/icons/eupdate.png" width="48" alt="EUpdate icon"> | [EUpdate](https://github.com/whomper/EUpdate) | Falcon, TT | GitHub releases: find repositories and owners, follow them into folders, update by hand or on a schedule |
 | | [EWeb](https://github.com/whomper/EWeb) | Falcon | web browser, being built: its CSS engine, HTTP client and measuring tools so far |
 | | [EDOS](https://github.com/whomper/EDOS) | 400, 800, XL, XE | Disk Utility Package |
 | | [EFTP_XL](https://github.com/whomper/EFTP_XL) | 400, 800, XL, XE | file transfer over FujiNet |
