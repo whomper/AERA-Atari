@@ -611,7 +611,8 @@ CONTACTS.TXT when the user chooses it (below).
   token field, 30 wide, took 30 of a GitHub token's 93 characters.
 - **As much as the setting holds:** a GitHub token 99 (a fine-grained one has 93), a folder or a file's
   path as long as the app keeps it, a server's address, a name, a search.
-- **The keys:** letters type at the cursor (the Hebrew keyboard too), Backspace and Delete, the cursor
+- **The keys:** letters type at the cursor (the Hebrew keyboard too, in a dialog loop that maps it:
+  `dlg_do` passes the key as it came, as it does to every field), Backspace and Delete, the cursor
   keys left and right (with Shift: to the start or the end), ClrHome; ^C ^X ^V take and give the
   whole text (4.4). A password shows stars and is never copied out; pasting into it works.
 - **Reference:** `common/ui/field.c`. `lf_init()` on a `G_FTEXT` or `G_FBOXTEXT` field, its template
