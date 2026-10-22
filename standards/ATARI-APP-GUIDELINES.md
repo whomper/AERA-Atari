@@ -619,6 +619,10 @@ CONTACTS.TXT when the user chooses it (below).
 - **The INF is plain text:**
   - One `NAME=value` per line, CR/LF line ends.
   - `;` comment lines that explain each setting.
+  - **An empty line after every setting** (Erez, 22 Oct 2026): a setting's `;` notes and its
+    `NAME=value` line, then one empty line, so each reads as its own paragraph; a `[SECTION]` line
+    has an empty line before it. A setting with no note of its own (EUpdate's `HAVEDATE=` under
+    `HAVE=`) is a paragraph too. Reading skips empty lines; writing back keeps them.
   - The program writes it back keeping comments and unknown lines.
 - **One Settings… dialog** (^,), with a sidebar of pages in this order, leaving out what doesn't apply:
   **General · Accounts/Servers · Secure · Appearance · Advanced**.
@@ -827,6 +831,7 @@ checked by its session.
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.5 Disk: user's changes at once, bulk work through memory, one open per file per job | ✓ (2.13: ECAL.INF read once a start with no look; 3 looks a job; caches read in 16/32 KB pieces; a refresh gathered and written 16/32 KB at a time, ALARMS.IDX once; 10 changed: 6 opens and 8 looks, 2.11 8 and 34; idle 0; acc_files.py budgets) | ✓ (1.51: the photos in one pack, CACHE\PHOTOS.PAK; a job gathered in memory and written a buffer at a time; 192 photos: Falcon accessory 23 opens, program 17, a 4 MB ST's accessory 103 at Erez's 64 KB (1.49: 127 for 25); a refresh with 10 changed 52 to 5; reads and writes in 16/32 KB pieces, through ST RAM without _FRB; the log held for a job; on a 1 MB ST photos are not synced in the accessory; acc_files.py budgets) | ✓ (1.42: the bodies in one pack per folder, gathered in memory: Download all 53 in 5 opens and lookups, 166 before; FOLDERS.LST once per job; disk_test.py budgets) | ✓ (1.42: one open per file, the date set on the handle, 64 KB writes and reads from TT or ST RAM, no lookup per file, Dfree once per job; disk_audit.py) | ✓ (1.13: a file looked at once and opened once a job, size and date from the open file; the INF read once a start; the index read in 32 KB pieces (16 KB on a 68000) and written in one go; acc_files.py budgets) | ✓ (1.49: Save to disk gathered in memory, one write on an ST, four on a 1 MB ST, 569 in 1.48; Attach in 16/32 KB pieces; the font list one safe save; disk_budget.sh) | ✓ (0.12: EWEB.FNT open start to quit, INF written only when changed, ZOOM at once; a later session's first secure page 2 opens and 2 looks; disk_files.py budgets) |
+| 6.1 INF: an empty line after every setting (22 Oct) | ✓ (calstore.c) | ✓ (abook.c) | ✓ (store.c) | ✓ (store.c) | ✓ (inf_put) | ✓ | ✗ (ui/main.c put() writes none; EUpdate ✗ too: store.c put_str) |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | n/a (no passwords in 0.11) |
