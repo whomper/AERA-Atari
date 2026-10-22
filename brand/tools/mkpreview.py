@@ -34,7 +34,7 @@ def knockout_white(path):
         if 0 <= x < w and 0 <= y < h and not mp[x, y] and px[x, y][:3] == (255, 255, 255):
             mp[x, y] = 255
             stack += [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
-    im.putalpha(ImageChops.invert(mask))
+    im.putalpha(ImageChops.darker(im.getchannel("A"), ImageChops.invert(mask)))
     return im
 
 def glow_mark(path, size, floor=70, radial=False):
