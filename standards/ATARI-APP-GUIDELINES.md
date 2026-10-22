@@ -169,8 +169,8 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 
 ```
             ┌──────────────────────────────────────────────┐
-            │                  [32×32 icon]                 │  16-colour icon with ≥16 colours,
-            │                     ECal                      │  mono otherwise; name bold, underlined
+            │                  [32×32 icon]                 │  256-colour icon with ≥256 colours,
+            │                     ECal                      │  16 with 16, mono otherwise; name bold
             │                 Version 1.32                  │
             │       Calendar for the Atari ST, TT, Falcon   │  tagline: one line, ≤ 44 characters
             │  ───────────────────────────────────────────  │
@@ -648,8 +648,10 @@ CONTACTS.TXT when the user chooses it (below).
   makes from them:
   - the desktop's `icons/NAME.RSC` (a G_CICON with the three depths and their selected images);
   - the ICN files;
-  - `icon.h` and `icon16.h` for the About box (1.3) and the iconified window (5.1), whose
-    `icon16_px` is in TOS's 16 VDI pens, drawn as they are;
+  - `icon.h`, `icon16.h` and `icon256.h` for the About box (1.3) and the iconified window (5.1):
+    `icon16_px` is in TOS's 16 VDI pens, drawn as they are. With 256 colours or more the About box
+    draws `icon256_px` (Erez, 22 Oct 2026): each of its colours with the pen that has it now (TOS's
+    own, unless an app's theme took some: then the nearest), lending none;
   - the README's pictures.
 
   An app's `make icons` runs it, and the app's own drawing scripts are removed. A change to an icon
