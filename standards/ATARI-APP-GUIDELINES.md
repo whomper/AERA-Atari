@@ -604,6 +604,20 @@ CONTACTS.TXT when the user chooses it (below).
   - All text drawing goes through the shared bidi code, including alerts.
   - The Hebrew keyboard works the same way in every app (shared `key_char` table).
 
+### 5.4 Text fields (must)
+- **A text field holds more than it shows** (Erez, 22 Oct 2026). What it takes is set by what goes
+  into it, not by its width on the screen: the field shows a window of its text and scrolls it with
+  the cursor. GEM's own fields (TOS 1 to 4, EmuTOS) take only as much as they show: EUpdate 1.2's
+  token field, 30 wide, took 30 of a GitHub token's 93 characters.
+- **As much as the setting holds:** a GitHub token 99 (a fine-grained one has 93), a folder or a file's
+  path as long as the app keeps it, a server's address, a name, a search.
+- **The keys:** letters type at the cursor (the Hebrew keyboard too), Backspace and Delete, the cursor
+  keys left and right (with Shift: to the start or the end), ClrHome; ^C ^X ^V take and give the
+  whole text (4.4). A password shows stars and is never copied out; pasting into it works.
+- **Reference:** `common/ui/field.c`. `lf_init()` on a `G_FTEXT` or `G_FBOXTEXT` field, its template
+  as wide as it shows; `dlg_do` and `dlg_modal` (`common/ui/dialog.c`) then take its keys, and a
+  dialog loop of the app's own calls `lf_enter()` and `lf_key()`. Tested in `common/tests/dialog`.
+
 ---
 
 ## 6. Settings, files, errors
@@ -831,6 +845,7 @@ checked by its session.
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 6.5 Disk: user's changes at once, bulk work through memory, one open per file per job | ✓ (2.13: ECAL.INF read once a start with no look; 3 looks a job; caches read in 16/32 KB pieces; a refresh gathered and written 16/32 KB at a time, ALARMS.IDX once; 10 changed: 6 opens and 8 looks, 2.11 8 and 34; idle 0; acc_files.py budgets) | ✓ (1.51: the photos in one pack, CACHE\PHOTOS.PAK; a job gathered in memory and written a buffer at a time; 192 photos: Falcon accessory 23 opens, program 17, a 4 MB ST's accessory 103 at Erez's 64 KB (1.49: 127 for 25); a refresh with 10 changed 52 to 5; reads and writes in 16/32 KB pieces, through ST RAM without _FRB; the log held for a job; on a 1 MB ST photos are not synced in the accessory; acc_files.py budgets) | ✓ (1.42: the bodies in one pack per folder, gathered in memory: Download all 53 in 5 opens and lookups, 166 before; FOLDERS.LST once per job; disk_test.py budgets) | ✓ (1.42: one open per file, the date set on the handle, 64 KB writes and reads from TT or ST RAM, no lookup per file, Dfree once per job; disk_audit.py) | ✓ (1.13: a file looked at once and opened once a job, size and date from the open file; the INF read once a start; the index read in 32 KB pieces (16 KB on a 68000) and written in one go; acc_files.py budgets) | ✓ (1.49: Save to disk gathered in memory, one write on an ST, four on a 1 MB ST, 569 in 1.48; Attach in 16/32 KB pieces; the font list one safe save; disk_budget.sh) | ✓ (0.12: EWEB.FNT open start to quit, INF written only when changed, ZOOM at once; a later session's first secure page 2 opens and 2 looks; disk_files.py budgets) |
+| 5.4 Text fields hold more than they show (22 Oct) | ? | ? | ? | ? | ? | ? | ? (EUpdate ✗ so far: its token field takes 30) |
 | 6.1 INF: an empty line after every setting (22 Oct) | ✓ (calstore.c) | ✓ (abook.c) | ✓ (store.c) | ✓ (store.c) | ✓ (inf_put) | ✓ | ✓ (d0735abb, in 0.27; EUpdate ✓ f399852, in 1.2) |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
