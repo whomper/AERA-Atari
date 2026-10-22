@@ -168,7 +168,7 @@ START    LDA #<BSS          ; zero BSS..BSSEND
 ### 3.2 Family keys (must)
 | Key | Does |
 |---|---|
-| HELP (or ?) | the keys, then the About lines (1.4) |
+| HELP (or ?) | the keys, then the About lines (1.4); a screen that already lists every key with its command, as EDOS's menu does, shows only the About lines |
 | ESC | back or stop; cancel at a question or prompt (3.4); never quits |
 | RETURN | open, confirm |
 | Q at a menu, ^Q where letters are typed | quit to DOS |
@@ -325,10 +325,10 @@ the directory and the VTOC at 19,200 baud, so:
   - Highlights (with "The commands" or "What it does");
   - Getting started;
   - How it reaches the servers, when it does;
-  - Building;
+  - Building (with how a release is made, as the template has it; a Releases section of its own
+    after Tests, as EFTP_XL has, does as well);
   - Source;
   - Tests;
-  - Releases;
   - EDOS's "The story behind it";
   - Licence;
   - the family footer.
