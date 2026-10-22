@@ -103,7 +103,10 @@ way working.
   - **On a 1 MB ST, one big program or accessory at a time** (Erez, 19 Oct 2026): EMAIL.PRG (a
     422 KB image) doesn't start beside EContact's accessory (ECONTST.ACC holds 440–665 KB there:
     the program found about 120 KB free). The READMEs say so: EMail with EContact's accessory needs
-    2 MB or more; on a 1 MB ST, EMail with ECONTACT.PRG.
+    2 MB or more; on a 1 MB ST, EMail with ECONTACT.PRG. Two of the ST accessories don't fit
+    either (22 Oct 2026): TOS 1.04 leaves about 920 KB, and ECALST.ACC (433 KB with its BSS)
+    and ECONTST.ACC (487 KB) both load, leaving the AES nothing, so the ST halts at boot
+    ("double bus error"). On a 1 MB ST, one of them; the other as a program.
   - **All three accessories at once** (Erez, 19 Oct 2026): ECal, EContact and EHypView, their latest
     releases, loaded together on a 4 MB machine, `ST` (TOS 1.04, the ST editions) and `Falcon-4`
     (TOS 4.04, with and without NVDI): `common/tests/family/acc_all.py`, run by the hub.
