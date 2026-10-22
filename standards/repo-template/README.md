@@ -5,7 +5,7 @@ placeholders (`EName`, `ENAME`, `WHAT-IT-SHOWS`…), then work through the check
 
 | File | What it's for |
 |---|---|
-| `README.md` | the README skeleton: header, Highlights, Getting started, How it reaches the servers, Building, Source, Tests, Licence, family footer |
+| `README.md` | the README skeleton: header, Highlights, Getting started, How it reaches the servers, Building, Source, Tests, Licence, family footer; an app may add "In more detail" after How it reaches the servers (EMail, EFTP) |
 | `CLAUDE.md` | rules for Claude sessions working in the repo, so every session keeps the family consistent |
 | `COPYING` | GPL v2 text (the apps are GPL-2.0-or-later) |
 | `.gitignore` | build output (`binary/`, `dist/`), Python caches, and files the program writes when run: `*.KEY`, `CRASH.LOG` |

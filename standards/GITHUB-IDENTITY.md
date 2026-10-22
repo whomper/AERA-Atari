@@ -65,9 +65,10 @@ Every app README starts the same way (see [repo-template/files/README.md](repo-t
 ECal and EContact are missing the icon today.
 
 ### 3. Family footer
-Every app README ends with the same line, so a visitor can reach the rest of the family:
+Every app README ends with the same line, so a visitor can reach the rest of the family (EWeb, EUpdate
+and AERA-Gateway added 22 Oct 2026):
 
-> Part of **AERA** for Atari: [ECal](https://github.com/whomper/ECal) · [EContact](https://github.com/whomper/EContact) · [EMail](https://github.com/whomper/EMail) · [EFTP](https://github.com/whomper/EFTP) · [EHypView](https://github.com/whomper/EHypView) · [ClaudeST](https://github.com/whomper/ClaudeST) · 8-bit: [EDOS](https://github.com/whomper/EDOS) · [EFTP_XL](https://github.com/whomper/EFTP_XL)
+> Part of **AERA** for Atari: [ECal](https://github.com/whomper/ECal) · [EContact](https://github.com/whomper/EContact) · [EMail](https://github.com/whomper/EMail) · [EFTP](https://github.com/whomper/EFTP) · [EHypView](https://github.com/whomper/EHypView) · [ClaudeST](https://github.com/whomper/ClaudeST) · [EWeb](https://github.com/whomper/EWeb) · [EUpdate](https://github.com/whomper/EUpdate) · 8-bit: [EDOS](https://github.com/whomper/EDOS) · [EFTP_XL](https://github.com/whomper/EFTP_XL) · Pi: [AERA-Gateway](https://github.com/whomper/AERA-Gateway)
 
 ### 4. Profile README
 `whomper/whomper` doesn't exist yet. Create it as a public repo with that exact name, and its README
