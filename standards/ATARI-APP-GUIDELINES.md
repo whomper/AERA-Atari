@@ -591,10 +591,11 @@ CONTACTS.TXT when the user chooses it (below).
   - Pens 0–15 are only borrowed by the About box (1.3).
   - **A colour the app uses but does not set itself comes from pens 0–15 only** (23 Oct 2026). That
     covers greys, lines and calendar colours. Take the colour it has in TOS's standard palette and
-    match it to the colours pens 0–15 really have now (`vq_color`): NVDI's 16 are not TOS's. Never
-    read pens 16 and up for such a colour. Other programs, or something writing the hardware
-    palette directly, may have changed them. On Erez's Falcon EContact's greys from pens 21 and 25
-    came out green with nothing else running. EContact 1.62 and ECal 2.23 do it this way.
+    match it to the colours pens 0–15 really have now (`vq_color`): NVDI's 16 are not TOS's. Don't
+    search pens 16 and up for such a colour: they hold whatever palette is loaded (NVDI's, a
+    saved one, EWeb's while it runs), and EContact 1.61's greys found there came out green on
+    Erez's Falcon under NVDI. EContact 1.62 and ECal 2.23 do it this way. Pictures may still be
+    matched against all 256 pens.
 - **Never rely on colour alone.** Every state also shows in mono, e.g. a selected row is inverted.
 
 ### 5.3 Fonts and text
