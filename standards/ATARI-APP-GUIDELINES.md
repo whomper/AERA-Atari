@@ -676,7 +676,12 @@ CONTACTS.TXT when the user chooses it (below).
     read both ways: EFTP's arrows are white with an outline, and the lifebuoy's red is a grey.
 - **One source, one tool:** the drawings are `common/icons/NAME.txt`. `common/tools/appicon.py`
   makes from them:
-  - the desktop's `icons/NAME.RSC` (a G_CICON with the three depths and their selected images);
+  - the desktop's `icons/NAME.RSC`: a G_ICON for TOS 1 and 2, and a G_CICON with the monochrome
+    and 16-colour images and their selected ones. It has no 256-colour image (23 Oct 2026). The
+    desktop draws a pixel as a hardware register, and NVDI's 256 colours share only 4 registers
+    with TOS's, so a 256-colour desktop icon comes out in wrong colours under NVDI. Registers 0–15
+    hold the same 16 colours, near enough, under TOS, EmuTOS and NVDI, and the desktop shows the
+    16-colour image in 256 colours too;
   - the ICN files;
   - `icon.h`, `icon16.h` and `icon256.h` for the About box (1.3) and the iconified window (5.1):
     `icon16_px` is in TOS's 16 VDI pens, drawn as they are. With 256 colours or more the About box
@@ -918,6 +923,7 @@ checked by its session.
 | 5.2 Colours not set by the app come from pens 0–15, matched by TOS's colour (23 Oct) | ✓ (d8b1447f, 2.23) | ✓ (09e69cf2, 1.62) | ? | ✓ (939f2e5c, 1.47) | ✓ (b65c550c, 1.23) | ✓ (1f5e894b, 1.60) | ? (EUpdate ✓ none found, 6f3e720) |
 | 5.2 Pens' colours read with `vq_color_seen`, not `vq_color` (23 Oct) | ? | ? | ? | ? | ? | ? | ? (EUpdate ?) |
 | 5.5 The family's icon from `common/icons` (appicon.py: RSC, ICN, icon.h, README pictures; 22 Oct) | ✓ (cebd1930, in 2.22) | ✓ (db0e0d15, in 1.61) | ✓ (5df39bb8, in 1.52) | ✓ (f8a7953a, in 1.46) | ✓ (f099e6e6, in 1.22) | ✓ (b19bcbbb, in 1.58; 256-colour About icon a0c1fd35, in 1.59) | ✓ (9dacc2ed, 256-colour About icon 2d71a75e, in 0.27; EUpdate ✓ febb9d6, in 1.4) |
+| 5.5 Desktop RSC without the 256-colour image (appicon.py, 23 Oct): `make icons`, released | ? | ? | ? | ? | ? | ? | ? (EUpdate ?) |
 | 6.1 INF: an empty line after every setting (22 Oct) | ✓ (calstore.c) | ✓ (abook.c) | ✓ (store.c) | ✓ (store.c) | ✓ (inf_put) | ✓ | ✓ (d0735abb, in 0.27; EUpdate ✓ f399852, in 1.2) |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
