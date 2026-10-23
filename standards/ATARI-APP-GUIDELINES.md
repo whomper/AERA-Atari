@@ -914,7 +914,7 @@ checked by its session.
 | 7.3 README and guide carry the Pi's install steps (21 Oct) | ✓ (f97a703, in 2.21) | ✓ (b188b65) | ✓ (36a8c59) | ✓ (fa54f74) | n/a | ✓ (7a7e83e) | ✓ (8089f49, in 0.24) |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ |
-| 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ? | ✓ (dd24bbab) | ✓ (4597cfd7) | ? | ? | ? | ? (EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) |
+| 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ? | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ? | ? | ? (EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) |
