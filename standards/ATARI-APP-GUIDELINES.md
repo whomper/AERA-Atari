@@ -94,7 +94,7 @@ way working.
     Falcon's screen mode, which a real TOS 4 takes from `C:\NEWDESK.INF`.
   - The app sessions test on EmuTOS 1.4 (fetched and checked by `machines.py`). Erez's own TOS
     images (TOS 1.04 from his ST, TOS 4.04 from his Falcon) stay with the hub, outside git: the hub
-    runs each release candidate on them before Erez is asked for his yes.
+    runs each release candidate on them before it is released.
   - The network on any machine and TOS: `m.network()` puts FAKESTNG in `C:\AUTO` and starts
     `serial_bridge.py` on the serial port. FAKESTNG makes the cookie jar TOS 1.04 lacks and turns off
     the XON/XOFF TOS 1.04 starts with (it took 0x13 bytes out of the frames).
@@ -151,13 +151,26 @@ way working.
   publishes nothing. If a release doesn't work, roll back with a release: revert on `main`, release the
   next number (never reuse or delete one), and mark the bad release's notes as withdrawn, naming the one
   to use.
+- **Releases go out without asking Erez** (Erez's decision, 23 Oct 2026). When work on `main` is ready,
+  the app's session releases it on its own:
+  - the repo's own checks pass;
+  - the rigs on Erez's TOS images and NVDI pass, where the repo's CLAUDE.md asks for them;
+  - the hub's family checks pass (`acc_all.py`, for the GEM programs).
+
+  It doesn't wait for a yes, and it releases as soon as the work is done rather than collecting it.
+  The session then gives Erez the release's link in one line, with anything he has to do (the Pi's
+  `./update-pi.sh`, say), and sends the hub the link. A bad release is rolled back the same way,
+  without asking. Decisions that are Erez's still go to him before the work: a design choice, a new
+  package on the Pi, a change to what a user sees that wasn't asked for, a port. The release itself
+  is not one of them. A change to the docs alone needs no release of its own: it goes out with the
+  next one.
 - **Text-only changes take the short path** (Erez's decision, 18 Oct 2026). A change to the docs alone
   (README, `docs/`, the guide the help file is made from, CLAUDE.md) is pushed to `main` as soon as
   it reads right and the help file still builds and says the program's version (`make help`, or
   what the repo's own docs check runs). It needs no Hatari rigs, no `make itest`, no machine matrix
   and no run on Erez's TOS, and it doesn't wait for code that is still being tested: push it ahead
-  on its own commits. A release that changes only the docs and the help file goes out the same way,
-  with Erez's yes; the release workflow's own checks still run.
+  on its own commits. A release that changes only the docs and the help file goes out the same way
+  (without asking, as every release); the release workflow's own checks still run.
 - **A test that needs another AERA program uses that program's latest release** (Erez's decision,
   17 Oct 2026), what Erez runs, not a build of its `main`: `common/tools/getrelease.py APP DIR FILE...`
   fetches it (and `APP@vX.Y` a given one) and writes which release it was. A report names the release
@@ -901,6 +914,7 @@ checked by its session.
 | 7.3 README and guide carry the Pi's install steps (21 Oct) | ✓ (f97a703, in 2.21) | ✓ (b188b65) | ✓ (36a8c59) | ✓ (fa54f74) | n/a | ✓ (7a7e83e) | ✓ (8089f49, in 0.24) |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ |
+| 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ? | ? | ? | ? | ? | ? | ? |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) |

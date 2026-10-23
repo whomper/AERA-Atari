@@ -55,6 +55,7 @@ file, a name or a rule, every program moves in its next release and the old way 
   - a test that needs another AERA program uses its latest release, not a build of its `main`;
   - never reuse a number;
   - a bad release is rolled back with a new one.
+  - releases go out without asking Erez, once the checks pass (23 Oct 2026).
 - **The Release workflow** (`xl/workflows/release.yml`, the same in every program, section 9):
   - runs on `main` with the notes as its input (or, left empty, `release-notes/vX.Y.md`), or from a
     pushed `git tag -a vX.Y` with the tag's message;
@@ -388,6 +389,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 |---|---|---|
 | 1.1 the program is NAME.COM | ✓ (EDOS.COM) | ✓ 1.5 |
 | 1.2 version in one place, checked | ✓ 3.3 (TTL2, the headers and About checked) | ✓ 1.2 |
+| 1.2 releases go out without asking Erez (23 Oct 2026) | ? | ? |
 | 1.3 release files, AERA.FNT | ✓ 3.3 | ✓ 1.2 |
 | 1.4 About lines, title "(C) AERA 2026" | ✓ 3.3 (on `?`) | ✓ 1.2 |
 | 2.1 source form | ✓ 3.3 (largest file UTILS, 16,070 tokenised) | ✓ 1.2 |
