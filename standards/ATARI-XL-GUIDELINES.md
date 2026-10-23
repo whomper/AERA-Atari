@@ -389,7 +389,7 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 |---|---|---|
 | 1.1 the program is NAME.COM | ✓ (EDOS.COM) | ✓ 1.5 |
 | 1.2 version in one place, checked | ✓ 3.3 (TTL2, the headers and About checked) | ✓ 1.2 |
-| 1.2 releases go out without asking Erez (23 Oct 2026) | ? | ✓ (42fb621) |
+| 1.2 releases go out without asking Erez (23 Oct 2026) | ✓ (3f7617c) | ✓ (42fb621) |
 | 1.3 release files, AERA.FNT | ✓ 3.3 | ✓ 1.2 |
 | 1.4 About lines, title "(C) AERA 2026" | ✓ 3.3 (on `?`) | ✓ 1.2 |
 | 2.1 source form | ✓ 3.3 (largest file UTILS, 16,070 tokenised) | ✓ 1.2 |
