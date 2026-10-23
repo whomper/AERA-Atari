@@ -175,8 +175,14 @@ try:
             break
         prev = shutil.copy(cur, os.path.join(shots, "boot-prev.png"))
     desk = shot("0-desktop")
-    check(hatari.poll() is None and os.path.getsize(desk) > 0,
-          "%s's window came" % prg if prg else "the desktop came")
+    # a program that says in the log that it started: without that line
+    # TOS's "not enough memory" alert over the desktop passed for its
+    # window (EWeb found it on a 4 MB Falcon)
+    said = {"EWEB": "EWEB ready", "EMAIL": "EMail: v_opnvwk"}.get(prg.upper() if prg else "")
+    ran = not said or said in open(work + "/hatari.log", errors="replace").read()
+    check(hatari.poll() is None and os.path.getsize(desk) > 0 and ran,
+          ("%s's window came" % prg if ran else "%s started (no \"%s\" in the log: see 0-desktop.png, "
+           "TOS's memory alert?)" % (prg, said)) if prg else "the desktop came")
     if prg:
         # the program's own "can't open its screen" (guideline 2.1) is right
         # when the accessories hold the memory, but then it never ran: say so
