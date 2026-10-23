@@ -34,7 +34,9 @@ way working.
 
 - **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
   or a cartridge network adapter, the Pi gateway for encryption. Every 68000 build runs here, and the
-  ST editions are made for it.
+  ST editions are made for it. One exception (Erez, 23 Oct 2026): EWeb's ST edition (EWEBST.PRG) is
+  made for a 4 MB ST (the `ST` machine), not 1 MB; a browser needs the memory. Every other app's ST
+  edition still runs on a 1 MB ST (`ST-1`).
   - **Every 68000 build compiles with `-fdisable-tree-bswap`** (EHypView, 17 Oct 2026). GCC 13's
     bswap pass joins byte reads into one word or long read (`p[0]<<24 | p[1]<<16 | ...`,
     neighbouring byte fields), even with `-mstrict-align`; on a 68000 that is an address error
@@ -78,7 +80,7 @@ way working.
   | Name | Machine | Screens (first: the default) | Erez's TOS |
   |---|---|---|---|
   | `ST` | Erez's 1040 ST: 68000 at 8 MHz, 4 MB | `mono`, `med`, `low` | 1.04 |
-  | `ST-1` | the same with 1 MB, the smallest the family runs on | `mono`, `med`, `low` | 1.04 |
+  | `ST-1` | the same with 1 MB, the smallest the family runs on (EWeb's ST edition: `ST`, 4 MB) | `mono`, `med`, `low` | 1.04 |
   | `TT` | TT030: 68030 at 32 MHz, 68882, 4 MB ST RAM + 16 MB TT RAM | `ttmed`, `mono`, `med` | none (EmuTOS) |
   | `Falcon` | Erez's Falcon with the DFB1: 68030 + 68882, 14 MB ST RAM + 128 MB TT RAM, DSP, VGA | `16`, `256` | 4.04 |
   | `Falcon-4` | a Falcon030 as sold: 68030 at 16 MHz, no FPU, 4 MB ST RAM, no TT RAM, VGA | `16`, `256` | 4.04 |
