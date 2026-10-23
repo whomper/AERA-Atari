@@ -35,7 +35,10 @@ way working.
 - **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
   or a cartridge network adapter, the Pi gateway for encryption. Every 68000 build runs here, and the
   ST editions are made for it. One exception (Erez, 23 Oct 2026): EWeb's ST edition (EWEBST.PRG) is
-  made for a 4 MB ST (the `ST` machine), not 1 MB; a browser needs the memory. It still shares that
+  made for a 4 MB ST (the `ST` machine), not 1 MB; a browser needs the memory. EWeb's program
+  (EWEB.PRG) runs on every Falcon from 0.28, the stock 4 MB one (`Falcon-4`) included, but there on
+  its own: beside the three accessories about 1.1 MB is left and TOS won't start it (as EMail under
+  NVDI); with them it takes 14 MB or TT RAM. It still shares that
   4 MB with the family: it runs with ECal's, EContact's and EHypView's accessories loaded and EMail
   or EFTP beside it, so the hub's `acc_all.py --prg EWeb` on `ST` must pass. Every other app's ST
   edition still runs on a 1 MB ST (`ST-1`).
