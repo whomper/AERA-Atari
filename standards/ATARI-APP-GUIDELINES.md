@@ -673,7 +673,14 @@ CONTACTS.TXT when the user chooses it (below).
     read both ways: EFTP's arrows are white with an outline, and the lifebuoy's red is a grey.
 - **One source, one tool:** the drawings are `common/icons/NAME.txt`. `common/tools/appicon.py`
   makes from them:
-  - the desktop's `icons/NAME.RSC` (a G_CICON with the three depths and their selected images);
+  - the desktop's `icons/NAME.RSC` (a G_CICON with the three depths and their selected images),
+    in TOS's 256 colours: for TOS, EmuTOS, and NVDI with TOS's palette loaded (COLORVDI.CPX);
+  - `icons/NAMENV.RSC` (`--rscnv`, Erez, 23 Oct 2026), the same with the 256-colour image on NVDI's
+    own palette. The desktop draws a pixel as a hardware register, and NVDI's 256 colours share
+    only 4 registers with TOS's, so `NAME.RSC` comes out in other colours under NVDI without a
+    palette loaded. The release carries both, and the README says which to take. The name keeps
+    to 8.3: `ECALNV.RSC`, `ECONTNV.RSC`, `EMAILNV.RSC`, `EFTPNV.RSC`, `EHYPVNV.RSC`, `CLSTNV.RSC`,
+    `EWEBNV.RSC`, `EUPDNV.RSC`;
   - the ICN files;
   - `icon.h`, `icon16.h` and `icon256.h` for the About box (1.3) and the iconified window (5.1):
     `icon16_px` is in TOS's 16 VDI pens, drawn as they are. With 256 colours or more the About box
@@ -914,6 +921,7 @@ checked by its session.
 | 5.4 Text fields hold more than they show (22 Oct) | ✓ (5e02c1a8, in 2.22: its own fields, as long as their settings: Server 399, Invite 255, Location 199; field_test.py) | ✓ (4f318ed7: its own fields, as long as their settings: server 399, phone 99, dlg_ask 63; long_field.py) | ✓ (17bf752c, in 1.51: accounts 63-95, signature rows 78, folders 199 and 63, passwords masked LFIELDs; field_test.py) | ✓ (aad64570, common at 6da68e1: Site Manager and Quick connect 63, folders 159, Rename 199 on the server; field_test.py on Falcon and ST-1) | ✓ (135ad790, in 1.20: Settings > Library PATHS= 128; gui-test on Falcon and ST:mono) | ✓ (125cb200, in 1.57: its own VDI fields, Rename and New project 71; long_field.sh) | ✓ (0e37396f, in 0.27: SEARCH= 255, GATE= 63, prompt() 255; EUpdate ✓ 3e85328, in 1.3) |
 | 5.2 Colours not set by the app come from pens 0–15, matched by TOS's colour (23 Oct) | ✓ (d8b1447f, 2.23) | ✓ (09e69cf2, 1.62) | ✓ (1ee7bb49, 1.53) | ✓ (939f2e5c, 1.47) | ✓ (b65c550c, 1.23) | ✓ (1f5e894b, 1.60) | ? (EUpdate ✓ none found, 6f3e720) |
 | 5.5 The family's icon from `common/icons` (appicon.py: RSC, ICN, icon.h, README pictures; 22 Oct) | ✓ (cebd1930, in 2.22) | ✓ (db0e0d15, in 1.61) | ✓ (5df39bb8, in 1.52) | ✓ (f8a7953a, in 1.46) | ✓ (f099e6e6, in 1.22) | ✓ (b19bcbbb, in 1.58; 256-colour About icon a0c1fd35, in 1.59) | ✓ (9dacc2ed, 256-colour About icon 2d71a75e, in 0.27; EUpdate ✓ febb9d6, in 1.4) |
+| 5.5 `NAMENV.RSC` (NVDI's own 256 colours) beside `NAME.RSC`, in `make icons` and the release (23 Oct) | ? | ? | ? | ? | ? | ? | ? (EUpdate ?) |
 | 6.1 INF: an empty line after every setting (22 Oct) | ✓ (calstore.c) | ✓ (abook.c) | ✓ (store.c) | ✓ (store.c) | ✓ (inf_put) | ✓ | ✓ (d0735abb, in 0.27; EUpdate ✓ f399852, in 1.2) |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
