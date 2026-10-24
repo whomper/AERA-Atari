@@ -595,7 +595,9 @@ CONTACTS.TXT when the user chooses it (below).
     AES's look (TOS's dotted bar, the 3D look where 5.6's tick is on, XaAES's theme). It is as
     wide as the AES's own slider column (`wind_calc`: 19 pixels on TOS 1.04 in ST high, 23 on
     TOS 4 in VGA, 20 under XaAES; `graf_handle`'s box is only XaAES's character cell) and its
-    arrows as high as the AES's gadgets. `pb_click` does the arrows (held: some 15 rows a
+    arrows as high as the AES's gadgets. What scrolls sideways has a bar across its foot
+    (`across`: as high as the AES's slider row, `wind_calc` again), and `pb_corner` fills the
+    square where a bar down meets one across, in their ground. `pb_click` does the arrows (held: some 15 rows a
     second), the track (a page at a time until the slider reaches the pointer) and the slider
     (dragged); `pb_moved` names what to draw again after a scroll. An app that draws its window
     off the screen first (ECal, EContact) draws the bars after the copy, in the same rectangles.
