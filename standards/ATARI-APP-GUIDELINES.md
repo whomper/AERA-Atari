@@ -225,9 +225,12 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 ## 2. Program and desk accessory
 
 ### 2.1 Editions
-- **Whether an app has an ACC is the app's choice.** ECal, EContact and EHypView ship both; EMail,
-  EFTP and ClaudeST are programs only. The rest of section 2, and 6.1's settings in the root, are for
-  the apps that have an ACC.
+- **Whether an app has an ACC is the app's choice.** ECal, EContact and EHypView ship both; EFTP and
+  ClaudeST are programs only. EMail is a program with a separate, smaller accessory beside it
+  (Erez, 24 Oct 2026): `EMAILCHK.ACC`, EMail check, which looks for new mail while EMail isn't
+  running, from EMail's own settings and folders, writing nothing of EMail's. It is another
+  program, not `EMAIL.ACC`, so "one binary" below doesn't apply to it; everything else for an ACC
+  does. The rest of section 2, and 6.1's settings in the root, are for the apps that have an ACC.
 - **One source tree, one binary.** `crt0.S` tells PRG from ACC (`a0 != 0` at start: ECal's crt0).
   `NAME.ACC` and `NAME.PRG` are the same file under two names.
 - **ACC memory comes from a fixed heap**, taken once before the first event call and then measured
@@ -719,6 +722,12 @@ CONTACTS.TXT when the user chooses it (below).
   In the INF it is `DIALOGS3D=1` (0: flat everywhere), with its note above and an empty line
   after (6.1). The app sets `dlg_3d_on` from it at start, before its first dialog, and again
   when the setting changes; the next dialog shown follows it.
+- **A choice is never marked by `SELECTED` on a background object** (a page in a Settings
+  sidebar, say): in 3D the AES inverts the grey, which comes out dark green in EmuTOS's 256
+  colours (EUpdate, 24 Oct 2026). Mark it with a black bar, as the title band is drawn
+  (`te_color` 0x1071), or with a radio button.
+- **Exit buttons one under another get room between them** (half a line) when 3D is on: raised,
+  they grow by a few pixels and touch.
 - **Dialogs an app draws itself** (ECal's and EContact's) follow the same look where
   `dlg_3d_ok() && dlg_3d_on`: the AES's 3D background colour, raised exit buttons, white fields.
   Their sessions propose how before doing it.
@@ -962,14 +971,14 @@ checked by its session.
 | 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) | ✓ |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ | ✓ |
-| 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | n/a (PRG only) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) |
-| 2.2 ACC ignores AP_TERM | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
-| 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | n/a | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
+| 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | PRG, and EMAILCHK.ACC beside it (1.57) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) |
+| 2.2 ACC ignores AP_TERM | ✓ | ✓ | ? (EMAILCHK.ACC, 1.57) | n/a | ✓ | n/a | n/a |
+| 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | ? (EMAILCHK.ACC, 1.57: its INF only before the first event call, checks from START=, through bg_may_work) | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a |
 | 2.1 v_opnvwk checked: handle 0 said, never drawn with (20 Oct) | ✓ 2.17 | ✓ 1.55 | ✓ 1.48 | ✓ 1.45 | ✓ 1.16 | ✓ 1.55 | ✓ 0.16 |
-| 2.1 ACC memory: accmem.c, a fair first share, then MEMKB= as measured (20 Oct) | ✓ 2.17 | ✓ 1.55 | n/a | n/a | ✓ 1.16 (160 KB first start, no picture block) | n/a | n/a |
-| 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✓ (2.12: caches read per fill, writes and downloads in 8 KB pieces, CACERT.PEM through tls_read_at, GDOS at boot) | ✓ (1.49: pf_park before every event call, GDOS at boot) | n/a | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
+| 2.1 ACC memory: accmem.c, a fair first share, then MEMKB= as measured (20 Oct) | ✓ 2.17 | ✓ 1.55 | ? (EMAILCHK.ACC, 1.57: acc_heap_take, MEMKB= 80 gateway, 313 Direct) | n/a | ✓ 1.16 (160 KB first start, no picture block) | n/a | n/a |
+| 2.2 ACC: no file open and no GEMDOS memory taken across an event call; GDOS fonts only at boot | ✓ (2.12: caches read per fill, writes and downloads in 8 KB pieces, CACERT.PEM through tls_read_at, GDOS at boot) | ✓ (1.49: pf_park before every event call, GDOS at boot) | ? (EMAILCHK.ACC, 1.57) | n/a | ✓ (1.12: index file per step, About box in acc_heap, GDOS at boot) | n/a | n/a |
 | 2.2 ACC fonts: under NVDI loaded at boot, the program's Font... list (19 Oct) | ✓ 2.16 (passed under NVDI on Falcon and Falcon-4, TOS 4.04; 2.14 withdrawn) | ✓ 1.53 (passed under NVDI on Falcon and Falcon-4, TOS 4.04) | n/a | n/a | ✓ 1.14 (PR #32; passed under NVDI on Falcon and Falcon-4, TOS 4.04) | n/a | n/a |
-| 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a |
+| 2.3 One edition at a time, files read again, safe writes | ✓ | ✓ | ? (EMAILCHK.ACC stands aside while EMAIL.PRG runs: twin_init) | n/a | ✓ | n/a | n/a |
 | 3.1 PRG menu bar | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.2 Family shortcuts | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 3.3 Context menus (shared popup) | ✓ | ✓ | ✓ | ✓ | ✓ (Back first) | ✓ | ✓ (Back first; a link's menu; the address field's) |
