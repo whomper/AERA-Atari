@@ -1,0 +1,23 @@
+name: TLS.OVL
+
+# common/tlsovl/TLS.OVL is what its sources build, byte for byte, and
+# its loader passes its tests (common/tlsovl/Makefile)
+on:
+  push:
+    branches: [main]
+    paths: ["common/**", ".github/workflows/tlsovl.yml"]
+  pull_request:
+    paths: ["common/**", ".github/workflows/tlsovl.yml"]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: The cross compiler
+        run: sudo apt-get update && sudo apt-get install -y gcc-m68k-linux-gnu
+      - name: TLS.OVL is its sources' build
+        run: make -C common/tlsovl check
+      - name: The loader
+        run: make -C common/tests/tlsovl test

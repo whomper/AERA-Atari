@@ -47,7 +47,7 @@ $(OBJDIR)/version.c: FORCE | $(OBJDIR)
 FORCE:
 .PHONY: FORCE
 
-DIST  := binary/ENAME.PRG binary/ENAME.ACC binary/ENAMEST.ACC binary/ENAME.HYP binary/ENAME.REF \
+DIST  := binary/ENAME.PRG binary/ENAME.ACC binary/TLS.OVL binary/ENAME.HYP binary/ENAME.REF \
          binary/CACERT.PEM binary/ROOTS.DAT
 ICONS := icons/ENAME.RSC icons/ENAME.ICN icons/ENAMEMK.ICN
 dist: all help

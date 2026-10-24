@@ -20,7 +20,10 @@ Words used here:
 - **should**: expected, unless the app has a stated reason not to.
 - **PRG**: the program started from the desktop.
 - **ACC**: the desk accessory.
-- **ST edition**: the build without TLS (`NAMEST.PRG` / `NAMEST.ACC`).
+- **Direct connection**: TLS on the Atari itself, without the Pi (until 24 Oct 2026 "Falcon mode"):
+  `TLS.OVL`, 7.4.
+- **ST edition**: the build without TLS (`NAMEST.PRG` / `NAMEST.ACC`), until TLS.OVL took its place
+  (7.4); EWeb keeps `EWEBST.PRG`, the whole browser built for the 68000.
 
 The last section lists where each app stands today. Step 4 of the roadmap works through it.
 
@@ -33,8 +36,8 @@ way working.
 ### The machines
 
 - **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
-  or a cartridge network adapter, the Pi gateway for encryption. Every 68000 build runs here, and the
-  ST editions are made for it. One exception (Erez, 23 Oct 2026): EWeb's ST edition (EWEBST.PRG) is
+  or a cartridge network adapter, the Pi gateway for encryption. Every 68000 build runs here, and every
+  program is made for it (TLS.OVL stays on the disk, 7.4). One exception (Erez, 23 Oct 2026): EWeb's ST edition (EWEBST.PRG) is
   made for a 4 MB ST (the `ST` machine), not 1 MB; a browser needs the memory. EWeb's program
   (EWEB.PRG) runs on every Falcon from 0.28, the stock 4 MB one (`Falcon-4`) included, but there on
   its own: beside the three accessories about 1.1 MB is left and TOS won't start it (as EMail under
@@ -56,7 +59,7 @@ way working.
   - code and data belong in TT RAM (`PRGFLAGS=7`; the heap prefers it already). Only what the
     hardware reads stays in ST RAM: the screen, and bitmaps the VDI copies (`st_ram()`; the blitter
     can't reach TT RAM);
-  - Falcon mode (TLS on the Atari) is the way out, without the Pi: EMail's `tools/tlsbench` measured
+  - a Direct connection (TLS on the Atari, 7.4) is the way out, without the Pi: EMail's `tools/tlsbench` measured
     a 5 s handshake on a 50 MHz 68030 in fast RAM, and about 1.5 s with RSA on the DSP;
   - a 68030 build has the CPU's own 32-bit multiply and divide (the 68000 build calls routines in
     `tos.c`) and reads longs at any address; the 68882 helps floating point only, which no app uses
@@ -115,7 +118,7 @@ way working.
     and ECONTST.ACC (487 KB) both load, leaving the AES nothing, so the ST halts at boot
     ("double bus error"). On a 1 MB ST, one of them; the other as a program.
   - **All three accessories at once** (Erez, 19 Oct 2026): ECal, EContact and EHypView, their latest
-    releases, loaded together on a 4 MB machine, `ST` (TOS 1.04, the ST editions) and `Falcon-4`
+    releases, loaded together on a 4 MB machine, `ST` (TOS 1.04) and `Falcon-4`
     (TOS 4.04, with and without NVDI): `common/tests/family/acc_all.py`, run by the hub.
 - **A 68000 and a 68030 build** (Erez's question, 16 Oct 2026): each app is measuring what a build
   for the Falcon above would gain over the 68000 one. The family's names and rules for two builds
@@ -131,8 +134,10 @@ way working.
   box, Desk menu, help file.
 - **Files.** Upper-case 8.3 names from one stem:
   - `ECAL.PRG`, `ECAL.ACC`, `ECAL.HYP`, `ECAL.INF`, `ECAL.KEY`.
-  - The ST edition adds `ST`, shortening the stem to keep 8 characters: `ECALST.ACC`, `ECONTST.ACC`,
-    `EFTPST.PRG`, `EMAILST.PRG`.
+  - `TLS.OVL`, the family's, under that name next to every program that makes secure connections
+    (7.4).
+  - EWeb's ST edition adds `ST`: `EWEBST.PRG`. (The others' ST editions, `ECALST.ACC`, `ECONTST.ACC`,
+    `EFTPST.PRG` and `EMAILST.PRG`, end with TLS.OVL.)
 - **Desk menu entry.** Two spaces plus the product name: `"  ECal"`, `"  EContact"`. Not a
   description ("Contacts") and not a longer name ("ECalendar").
 
@@ -197,7 +202,7 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
             │           Created by AERA | Erez Yaary        │
             │            © 2026 AERA | Erez Yaary           │
             │                                               │
-            │     Falcon mode (TLS) • 3.1 MB free           │  status line: app-specific, optional
+            │   Direct connection (TLS.OVL 1.0) • 3.1 MB    │  status line: app-specific, optional
             │                                               │
             │   Free software under the GNU GPL, version 2  │  fine print, small font
             │   or later. github.com/whomper/ECal           │  + "not affiliated with …" / trademark
@@ -713,8 +718,8 @@ CONTACTS.TXT when the user chooses it (below).
   - The program writes it back keeping comments and unknown lines.
 - **One Settings… dialog** (^,), with a sidebar of pages in this order, leaving out what doesn't apply:
   **General · Accounts/Servers · Secure · Appearance · Advanced**.
-  - The **Secure** page is the same in every networked app: "Falcon mode (TLS on this Atari)" or
-    "Through the Pi gateway: address, port".
+  - The **Secure** page is the same in every networked app: "Direct connection: TLS on this Atari
+    (68020 or better)" or "Through the Pi gateway: address, port".
   - Step 3 picks one dialog engine from the two in use today: FIELD in ECal/EContact, OBJECT +
     `form_do` in EMail/EFTP.
 
@@ -765,7 +770,7 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   ST RAM didn't stop the Falcon's crash at exit, so it is not the cause. TOS 3.06 and 4.0x set
   `_FRB` themselves when there is TT RAM, so the copy is for unusual driver set-ups: it matters
   for bulk reads and writes; small, rare ones (the clipboard, CRASH.LOG) go straight.
-- **The buffer has a fixed size.** The ST editions run in 1 MB, so the buffer is sized from what is
+- **The buffer has a fixed size.** The programs run in 1 MB, so the buffer is sized from what is
   free. A job that outgrows it writes a buffer at a time, each piece one open, write and close. A
   program edition writing a big file (EFTP's transfers) may keep that one file open for the whole
   job and write it in big pieces.
@@ -800,12 +805,12 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 - **DNS:** STinG's resolver, else the built-in one with a **random transaction ID**. Every count
   and length in the reply is checked against what came (`atari/dns.h`, tested and fuzzed in
   `tests/dns`).
-- **Falcon/TT editions do TLS 1.2 on the Atari:**
-  - BearSSL, with RSA on the DSP.
+- **A Direct connection does TLS 1.2 on the Atari** (a TT, a Falcon, any 68020 or better; TLS.OVL, 7.4):
+  - BearSSL, with RSA and the curves on the Falcon's DSP.
   - The chain, host name and date are always checked against `ROOTS.DAT`, which is built from
     `CACERT.PEM`.
   - **There is no "ignore certificate" option**, now or later.
-- **ST editions go through a Pi gateway**, which does the same checks.
+- **A 68000, or anyone who chooses, goes through a Pi gateway**, which does the same checks.
 - **Connections time out after 60 s, and every network operation can be stopped:**
   - Esc or Undo while the busy bee shows (`ui/busy.c`: the keys are read while `conn` waits, and
     any other key is kept for afterwards), or the app's own Stop button (EFTP).
@@ -871,6 +876,38 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
     ~/AERA-Gateway/update-pi.sh --allow ATARI_IP [--mail IMAP SMTP[:587] [POP3]] [--browser]
   ```
 
+### 7.4 Direct connection: TLS.OVL (must, 24 Oct 2026)
+- **One program for every Atari** (Erez, 24 Oct 2026). TLS on the Atari (BearSSL, the DSP's RSA and
+  curves, 68030 code: about 140 KB) is not in the program but in `TLS.OVL` next to it. An ST never
+  loads it and keeps the memory; a TT, a Falcon or an accelerated ST (68020 or better) loads it the
+  first time a Direct connection needs it, into the program's own memory (an accessory's heap, 2.2;
+  its `MEMKB=` measure counts it). So there are no ST editions (`NAMEST.*`), except EWeb's, which is
+  the whole browser built for the 68000.
+- **One file for the family.** `common/tlsovl/TLS.OVL` is built in AERA-Atari from common's sources
+  (`make -C common/tlsovl`). The build is reproducible, and CI checks that the committed file is its
+  sources' build (`make check`). Every app takes it with `common/`, as it takes `certs/CACERT.PEM`,
+  copies it to `binary/` and ships it unchanged in its release and zip, beside the program. No app
+  builds its own.
+- **Versions.** `common/tlsovl/VERSION`, 1.0 first. A new TLS.OVL raises it (`make release`) and is
+  committed with it; the hub then tells every app, which syncs `common/` and releases. The program and
+  TLS.OVL meet through two tables (`src/tlsovl.h`) that only grow at the end, so an older TLS.OVL works
+  with a newer program and the other way round. A change that can't be an addition raises
+  `TLSOVL_MAJOR`, and a program refuses a TLS.OVL of another major.
+- **Saying what's wrong.** A missing, damaged or unsuitable TLS.OVL, or a 68000, gives
+  `tls_ovl_load`'s error in an alert, never a crash. The program calls `tls_ovl_load` when Direct
+  connection is ticked in Settings, so the user hears at once, not at the first connection. The log
+  says "TLS.OVL 1.0 loaded, 139 KB, 50 ms"; the About box names `tls_ovl_version()` beside the
+  connection.
+- **The name.** The user sees **Direct connection** (Erez, 24 Oct 2026) in the menu, Settings' Secure
+  page, alerts, the help file and the README, never "Falcon mode", which a TT owner doesn't relate to.
+  The INF keeps `FALCON=` (its note says Direct connection), so settings carry over.
+- **In a program:** link `atari/tls_ovl.c`, `src/ovl.c` and `ui/dsp_ovl.c` in place of `src/tls.c`,
+  BearSSL, `ui/dsp.c`, `ui/dsp_ec.c`, `src/ecdsp.c`, `atari/dsprsa.c` and `atari/dspec.c`, and set
+  `tls_ovl_path` (the program's folder and `TLS.OVL`) where `CACERT.PEM`'s path is set. Builds on the
+  build machine (`make test`, `make itest`) keep linking `src/tls.c`, which answers the same calls.
+  Rigs copy `binary/TLS.OVL` next to the program; the Direct connection rigs run on a TT or Falcon
+  and the gateway rigs on the 1 MB ST, with the same program.
+
 ---
 
 ## 8. Where each app stands (October 2026)
@@ -928,6 +965,7 @@ checked by its session.
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | n/a (no passwords in 0.11) |
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) | n/a |
 | 7.3 README and guide carry the Pi's install steps (21 Oct) | ✓ (f97a703, in 2.21) | ✓ (b188b65) | ✓ (36a8c59) | ✓ (fa54f74) | n/a | ✓ (7a7e83e) | ✓ (8089f49, in 0.24) |
+| 7.4 One program; TLS in TLS.OVL; "Direct connection" (24 Oct) | ? | ? | ? | ? | n/a | n/a | ? (the name; EWEBST.PRG stays; EUpdate ?) |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ |
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) |

@@ -22,10 +22,10 @@ Download the latest `ENAME-x.y.zip` from **[Releases](../../releases/latest)** a
 
 | File | What it is |
 |---|---|
-| `ENAME.PRG` / `ENAME.ACC` | Falcon and TT: with Falcon mode (TLS, DSP) |
-| `ENAMEST.PRG` / `ENAMEST.ACC` | ST and STE: the same without TLS, through the Pi gateway |
+| `ENAME.PRG` / `ENAME.ACC` | the program, for every ST, STE, TT and Falcon |
+| `TLS.OVL` | the Direct connection (TLS on a TT or Falcon, RSA on the DSP), loaded only when used; an ST leaves it on the disk |
 | `ENAME.HYP`, `ENAME.REF` | the help, for EHypView or ST-Guide |
-| `CACERT.PEM`, `ROOTS.DAT` | root certificates for Falcon mode |
+| `CACERT.PEM`, `ROOTS.DAT` | root certificates for a Direct connection |
 
 1. Copy `ENAME.ACC` to the root of your boot drive (or start `ENAME.PRG` from anywhere).
 2. ...
@@ -45,11 +45,12 @@ took EFTP's downloads from 40 to 75 KB/s. On a NetUSBee, keep STinG's TCP receiv
 
 ## How it reaches the servers
 
-*(Networked apps only.)* Which edition connects how, with the same diagram style as ECal:
+*(Networked apps only.)* Which machine connects how, with the same diagram style as ECal:
 
 ```
-ST, STE:     Atari (ENAMEST) --plain, home LAN--> Raspberry Pi (gateway) --TLS--> the server
-Falcon, TT:  Atari (ENAME, TLS 1.2, RSA on the DSP) ---------------------TLS--> the server
+ST, STE:     Atari (ENAME) --plain, home LAN--> Raspberry Pi (gateway) --TLS--> the server
+Falcon, TT:  Atari (ENAME + TLS.OVL: TLS 1.2, RSA on the DSP) ------------TLS--> the server
+             (a Direct connection; or through the Pi, as an ST)
 ```
 
 The gateway's own README: [`gateway/`](gateway/).
@@ -58,7 +59,7 @@ The gateway's own README: [`gateway/`](gateway/).
 
 ```sh
 sudo apt install gcc-m68k-linux-gnu python3   # Debian/Ubuntu; no MiNTLib needed
-make            # binary/ENAME.PRG, ENAME.ACC, ENAMEST.*
+make            # binary/ENAME.PRG, ENAME.ACC, TLS.OVL (common's, as it is)
 make test       # unit tests on this computer, plus the gateway's tests
 make itest      # against a local server (SERVER-NAME)
 make dist       # dist/ENAME-x.y.zip, as on the Releases page
@@ -101,7 +102,7 @@ It includes, under their own licences (compatible with the GPL):
 
 - [BearSSL](third_party/bearssl) by Thomas Pornin: MIT licence
   ([LICENSE.txt](third_party/bearssl/LICENSE.txt))
-- `CACERT.PEM`, the root certificates for Falcon mode, from Mozilla's CA
+- `CACERT.PEM`, the root certificates for a Direct connection, from Mozilla's CA
   list (Mozilla Public License 2.0)
 
 ---
