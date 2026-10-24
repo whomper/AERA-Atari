@@ -703,6 +703,28 @@ CONTACTS.TXT when the user chooses it (below).
   An app's `make icons` runs it, and the app's own drawing scripts are removed. A change to an icon
   is made in AERA-Atari and reaches the app with `tools/sync-common.sh` and `make icons`.
 
+### 5.6 Dialogs: the 3D look (must; Erez, 24 Oct 2026)
+- **Where the AES draws 3D objects, every dialog and alert has its 3D look.** That is AES 3.4 and
+  newer, asked through `appl_getinfo(13)` where it can be: TOS 4, MagiC, N.AES and XaAES. The box
+  and its text are on the 3D background, exit buttons are raised (activators), radio buttons and
+  toggles show pressed in when chosen (indicators), and text fields stay white. TOS 1 to 3 and
+  EmuTOS keep the flat look: nothing changes there.
+- **The shared code does it:** `dlg_3d(tree)` in `common/ui/dialog.c` sets the flags. `dlg_modal`,
+  `dlg_modal_save` (so `alert()`) and the Font dialog call it themselves. An app that builds a
+  tree and shows it some other way calls it once the tree is built (after `rsrc_obfix`), before
+  it is drawn. No app sets the 3D flags by hand.
+- **A setting turns it off:** a tick, **3D dialogs**, on the Settings page where the app keeps its
+  look (EMail's Look page), on by default. It is greyed where the AES has no 3D (`dlg_3d_ok()`).
+  In the INF it is `DIALOGS3D=1` (0: flat everywhere), with its note above and an empty line
+  after (6.1). The app sets `dlg_3d_on` from it at start, before its first dialog, and again
+  when the setting changes; the next dialog shown follows it.
+- **Dialogs an app draws itself** (ECal's and EContact's) follow the same look where
+  `dlg_3d_ok() && dlg_3d_on`: the AES's 3D background colour, raised exit buttons, white fields.
+  Their sessions propose how before doing it.
+- **Checked:** `common/tests/dialog` (`make test`, the flags for each kind of object, and none
+  with `DIALOGS3D=0`; `run.py`, EmuTOS and `--xaaes`). Each app shows its Settings in Hatari on a
+  Falcon with TOS 4.04, both ways, and on EmuTOS.
+
 ---
 
 ## 6. Settings, files, errors
@@ -970,6 +992,7 @@ checked by its session.
 | 5.2 Colours not set by the app come from pens 0–15, matched by TOS's colour (23 Oct) | ✓ (d8b1447f, 2.23) | ✓ (09e69cf2, 1.62) | ✓ (1ee7bb49, 1.53) | ✓ (939f2e5c, 1.47) | ✓ (b65c550c, 1.23) | ✓ (1f5e894b, 1.60) | ? (EUpdate ✓ none found, 6f3e720) |
 | 5.5 The family's icon from `common/icons` (appicon.py: RSC, ICN, icon.h, README pictures; 22 Oct) | ✓ (cebd1930, in 2.22) | ✓ (db0e0d15, in 1.61) | ✓ (5df39bb8, in 1.52) | ✓ (f8a7953a, in 1.46) | ✓ (f099e6e6, in 1.22) | ✓ (b19bcbbb, in 1.58; 256-colour About icon a0c1fd35, in 1.59) | ✓ (9dacc2ed, 256-colour About icon 2d71a75e, in 0.27; EUpdate ✓ febb9d6, in 1.4) |
 | 5.5 `NAMENV.RSC` (NVDI's own 256 colours) beside `NAME.RSC`, in `make icons` and the release (23 Oct) | ✓ (fc85273, 2.24) | ✓ (cb6ece4d, 1.63) | ✓ (b9973ba, 1.54) | ✓ (97210e83, 1.48) | ✓ (821e4c0a, 1.24) | ✓ (a939cc98, 1.61) | ✓ (0.30; EUpdate ✓ 41b06523, 1.5) |
+| 5.6 3D dialogs where the AES has them (`dlg_3d`), the **3D dialogs** tick, `DIALOGS3D=` (24 Oct) | ? (own dialogs: proposal) | ? (own dialogs: proposal) | ? | ? | ? | ? | ? (EUpdate ?) |
 | 6.1 INF: an empty line after every setting (22 Oct) | ✓ (calstore.c) | ✓ (abook.c) | ✓ (store.c) | ✓ (store.c) | ✓ (inf_put) | ✓ | ✓ (d0735abb, in 0.27; EUpdate ✓ f399852, in 1.2) |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) |
