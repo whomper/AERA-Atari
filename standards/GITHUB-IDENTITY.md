@@ -18,16 +18,17 @@ The colours and type come from the yaary.music site and the AERA video style:
 | Headline type | **Space Grotesk Bold** |
 | Label type | **Space Mono Bold**, as `// CATEGORY //` tags |
 
-The Atari apps add their own mark: the **32×32 SM124-monitor icon**. An Atari-style monitor with a
-symbol on its screen: an envelope for EMail, a folder and arrows for EFTP. It is drawn as pixel art by
-each repo's `tools/icon/make_icon.py`. Step 3 moves the shared frame and palette into one generator.
+Every program adds its own mark: its **32×32 icon**, drawn by hand in `common/icons/NAME.txt` and
+made by `common/tools/appicon.py` (the app guidelines, 5.5): the desktop's RSC for the GEM programs,
+and for all of them `brand/icons/name.png`, which the READMEs, the profile and the social previews use.
+EDOS, EFTP_XL and AERA-Gateway have one too (24 Oct 2026), drawn the same way, for the docs only.
 
 The AERA logos are in [`../brand/`](../brand/) and come in two forms:
 
 | File | Use it for |
 |---|---|
 | [`aera-wordmark.jpg`](../brand/aera-wordmark.jpg): "AERA" over a line with the star | wide spaces: README and profile banners, the corner of social previews |
-| [`aera-star.jpg`](../brand/aera-star.jpg): the four-point star alone | square and small spaces: the GitHub avatar, repos without an Atari icon (EDOS, EFTP_XL, AERA-Gateway, AERA-Atari) |
+| [`aera-star.jpg`](../brand/aera-star.jpg): the four-point star alone | square and small spaces: the GitHub avatar, AERA-Atari (the one repo without a program's icon) |
 
 Both are 500×500 renders of brushed metal on dark stone. They work on the `#040A11` navy because the
 generator fades the dark background out.

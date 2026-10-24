@@ -17,9 +17,9 @@ AERA app repo follows what's here, so the programs feel like one family on the A
 | <img src="brand/icons/claudest.png" width="48" alt="ClaudeST icon"> | [ClaudeST](https://github.com/whomper/ClaudeST) | ST, STE, TT, Falcon | claude.ai client |
 | <img src="brand/icons/eupdate.png" width="48" alt="EUpdate icon"> | [EUpdate](https://github.com/whomper/EUpdate) | Falcon, TT | GitHub releases: find repositories and owners, follow them into folders, update by hand or on a schedule |
 | <img src="brand/icons/eweb.png" width="48" alt="EWeb icon"> | [EWeb](https://github.com/whomper/EWeb) | Falcon, TT (ST edition through the Pi) | web browser: pages with their stylesheets, pictures and forms; TLS on the Falcon |
-| | [EDOS](https://github.com/whomper/EDOS) | 400, 800, XL, XE | Disk Utility Package |
-| | [EFTP_XL](https://github.com/whomper/EFTP_XL) | 400, 800, XL, XE | file transfer over FujiNet |
-| | [AERA-Gateway](https://github.com/whomper/AERA-Gateway) | Raspberry Pi | the gateways for mail, calendars and contacts, FTP, the web and Claude, and their installer |
+| <img src="brand/icons/edos.png" width="48" alt="EDOS icon"> | [EDOS](https://github.com/whomper/EDOS) | 400, 800, XL, XE | Disk Utility Package |
+| <img src="brand/icons/eftpxl.png" width="48" alt="EFTP_XL icon"> | [EFTP_XL](https://github.com/whomper/EFTP_XL) | 400, 800, XL, XE | file transfer over FujiNet |
+| <img src="brand/icons/gateway.png" width="48" alt="AERA-Gateway icon"> | [AERA-Gateway](https://github.com/whomper/AERA-Gateway) | Raspberry Pi | the gateways for mail, calendars and contacts, FTP, the web and Claude, and their installer |
 
 ## What's here
 

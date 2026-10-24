@@ -24,10 +24,12 @@ Music and builds: **[yaary.music](https://yaary.music)** · **[YouTube](https://
 
 #### Atari 400 · 800 · XL · XE
 
-- **[EDOS](https://github.com/whomper/EDOS)**: a menu-driven Disk Utility Package
-- **[EFTP_XL](https://github.com/whomper/EFTP_XL)**: file transfer over FujiNet
+| | | |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/edos.png" width="40" alt=""> | **[EDOS](https://github.com/whomper/EDOS)** | a menu-driven Disk Utility Package |
+| <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/eftpxl.png" width="40" alt=""> | **[EFTP_XL](https://github.com/whomper/EFTP_XL)** | file transfer over FujiNet |
 
 #### Behind the scenes
 
-- **[AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: the Raspberry Pi gateways (mail, calendars and contacts, FTP, the web, Claude) and their installer
+- <img src="https://raw.githubusercontent.com/whomper/AERA-Atari/main/brand/icons/gateway.png" width="24" alt=""> **[AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: the Raspberry Pi gateways (mail, calendars and contacts, FTP, the web, Claude) and their installer
 - **[AERA-Atari](https://github.com/whomper/AERA-Atari)**: how the programs look and behave, and the code they share

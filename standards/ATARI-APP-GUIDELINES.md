@@ -667,6 +667,12 @@ CONTACTS.TXT when the user chooses it (below).
   - EWeb: the globe.
   - EUpdate: git's mark over a disk, with an arrow down. Git's logo is Jason Long's, CC BY 3.0, so
     EUpdate credits it in its README and in its About box's fine print.
+  - EDOS: a screen with its menu, and a 5.25-inch disk (Erez, 24 Oct 2026).
+  - EFTP_XL: a 5.25-inch disk on the air, and a server.
+  - AERA-Gateway: the ST, the Raspberry Pi in its case, and the cloud, connected.
+
+  The last three are drawn the same way, for the READMEs, the profile and the social previews only:
+  the 8-bit programs and the Pi have no GEM desktop, so `make icons` doesn't run there.
 
   A new app's icon is drawn with Erez in the hub, then added to `common/icons`.
 - **Three depths, each drawn by hand:** 256 colours (the master, in TOS 4.04's own palette), TOS's
