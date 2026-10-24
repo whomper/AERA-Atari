@@ -425,8 +425,9 @@ same.
   - empty, meaning "open / top your window"
 - It replies `AV_STARTED` so the sender can free the string.
 - **A sender names every edition of the app it hands work to**, the first one running taking it:
-  `av_send("EMAIL|EMAILST", ...)`, `av_send("ECONTACT|ECONTST", ...)` (`common/ui/av.c`, 20 Oct
-  2026). Otherwise nothing happens when the user runs the other edition.
+  `av_send("EWEB|EWEBST", ...)` (`common/ui/av.c`, 20 Oct 2026). Otherwise nothing happens when the
+  user runs the other edition. Since TLS.OVL (7.4) only EWeb has two; the others are one name each
+  (`av_send("EMAIL", ...)`), and their ST editions' names are gone from the code.
 - **This is the only way family apps hand each other work.** There are no private message numbers
   (EContact's `EC_OPEN`, 0x4543, is gone), except PEOPLE below.
 
@@ -444,7 +445,7 @@ CONTACTS.TXT when the user chooses it (below).
     search); `pick:` and a line per person chosen, or a bare `pick:` when cancelled, closed or quit.
   - `changed:`, from EContact to the askers of the session, when the people or their addresses really
     changed, and when its contacts have finished loading.
-  - ASKER is the asker's AES name (`EMAIL`, `ECAL`, `ECALST`). Answers go to the sender's id (msg[1]);
+  - ASKER is the asker's AES name (`EMAIL`, `ECAL`). Answers go to the sender's id (msg[1]);
     before `changed:`, EContact checks `appl_find(ASKER)` still gives that id.
 - **Rules:**
   - At most 1 KB a string; longer questions and answers are split into whole commands, and a sender
