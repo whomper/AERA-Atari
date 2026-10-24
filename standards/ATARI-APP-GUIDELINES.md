@@ -909,7 +909,7 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   BearSSL, `ui/dsp.c`, `ui/dsp_ec.c`, `src/ecdsp.c`, `atari/dsprsa.c` and `atari/dspec.c`, and set
   `tls_ovl_path` (the program's folder and `TLS.OVL`) where `CACERT.PEM`'s path is set. Builds on the
   build machine (`make test`, `make itest`) keep linking `src/tls.c`, which answers the same calls.
-  Rigs copy `binary/TLS.OVL` next to the program; the Direct connection rigs run on a TT or Falcon
+  Rigs copy `binary/TLS.OVL` beside `CACERT.PEM` (an accessory's folder, not the root); the Direct connection rigs run on a TT or Falcon
   and the gateway rigs on the 1 MB ST, with the same program.
 
 ---
