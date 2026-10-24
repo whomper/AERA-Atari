@@ -590,7 +590,13 @@ CONTACTS.TXT when the user chooses it (below).
     own drawn in the work area.
   - **Where the window's content scrolls as one,** the AES's own sliders (`VSLIDE`, `HSLIDE`,
     the arrows).
-  - **A pane that scrolls on its own** (a list beside a preview, the two sides of EFTP) has a bar
+  - **The pane at the window's right edge uses the AES's own slider column** (Erez, 24 Oct
+    2026): `VSLIDE`, `UPARROW` and `DNARROW` in the window's parts, `WF_VSLIDE` and
+    `WF_VSLSIZE` set from that pane, `WM_ARROWED` and `WM_VSLID` scroll it. With only a `SIZER`
+    the AES keeps that column anyway, empty but for the box (on TOS 1.04 a row at the bottom
+    too), so the pane's own bar would sit beside an empty one. Where two panes are stacked at
+    the right edge, the larger one takes it; the other keeps its own bar.
+  - **Any other pane that scrolls on its own** (a list beside a preview, EFTP's local side) has a bar
     at its right from `common/ui/panebar.c`: AES objects drawn by `objc_draw`, so it takes the
     AES's look (TOS's dotted bar, the 3D look where 5.6's tick is on, XaAES's theme). It is as
     wide as the AES's own slider column (`wind_calc`: 19 pixels on TOS 1.04 in ST high, 23 on
@@ -1026,7 +1032,7 @@ checked by its session.
 | 5.2 Colours not set by the app come from pens 0–15, matched by TOS's colour (23 Oct) | ✓ (d8b1447f, 2.23) | ✓ (09e69cf2, 1.62) | ✓ (1ee7bb49, 1.53) | ✓ (939f2e5c, 1.47) | ✓ (b65c550c, 1.23) | ✓ (1f5e894b, 1.60) | ? (EUpdate ✓ none found, 6f3e720) |
 | 5.5 The family's icon from `common/icons` (appicon.py: RSC, ICN, icon.h, README pictures; 22 Oct) | ✓ (cebd1930, in 2.22) | ✓ (db0e0d15, in 1.61) | ✓ (5df39bb8, in 1.52) | ✓ (f8a7953a, in 1.46) | ✓ (f099e6e6, in 1.22) | ✓ (b19bcbbb, in 1.58; 256-colour About icon a0c1fd35, in 1.59) | ✓ (9dacc2ed, 256-colour About icon 2d71a75e, in 0.27; EUpdate ✓ febb9d6, in 1.4) |
 | 5.5 `NAMENV.RSC` (NVDI's own 256 colours) beside `NAME.RSC`, in `make icons` and the release (23 Oct) | ✓ (fc85273, 2.24) | ✓ (cb6ece4d, 1.63) | ✓ (b9973ba, 1.54) | ✓ (97210e83, 1.48) | ✓ (821e4c0a, 1.24) | ✓ (a939cc98, 1.61) | ✓ (0.30; EUpdate ✓ 41b06523, 1.5) |
-| 5.1 The AES's widgets: its sizer, its sliders, pane bars from `panebar.c` (24 Oct) | n/a (the AES's sizer and slider already; no pane scrolls on its own, f19d1f0) | ? | ? | ✓ (50fb72fe, 1.51: SIZER, three panes' bars) | ? | ? | ✓ (fbdf8ca1, f4282b81, 0.34: SIZER and sliders for the page; a box's bars down and across, pb_corner; EUpdate ✓ 55481d1a, in 1.9: SIZER, both lists' bars) |
+| 5.1 The AES's widgets: its sizer, its sliders (the right-edge pane's too), pane bars from `panebar.c` (24 Oct) | n/a (the AES's sizer and slider already; no pane scrolls on its own, f19d1f0) | ? | ? | ? (50fb72fe, 1.51: SIZER, three panes' bars; the right-edge pane onto the AES's slider to do) | ? | ? | ✓ (fbdf8ca1, f4282b81, 0.34: SIZER and sliders for the page; a box's bars down and across, pb_corner; EUpdate ? 55481d1a, in 1.9: SIZER, both lists' bars; the larger list onto the AES's slider to do) |
 | 5.6 3D dialogs where the AES has them (`dlg_3d`), the **3D dialogs** tick, `DIALOGS3D=` (24 Oct) | ✓ (2814e4e, 2.26: its own dialogs too) | ✓ (2929863, 7184106, 1.66: its own dialogs too) | ? (82cb846, to release in 1.57) | ✓ (2e444e41, 32461bc8, 1.50) | ✓ (6cb6ef0e, 1.25) | ✓ (df6fc990, 1.62; its hand-drawn dialogs next) | ✓ (5bb03fd4, 480498d1, 0.33; EUpdate ✓ 63faf273, f940b5cb, in 1.7) |
 | 6.1 INF: an empty line after every setting (22 Oct) | ✓ (calstore.c) | ✓ (abook.c) | ✓ (store.c) | ✓ (store.c) | ✓ (inf_put) | ✓ | ✓ (d0735abb, in 0.27; EUpdate ✓ f399852, in 1.2) |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
