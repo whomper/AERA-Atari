@@ -969,7 +969,7 @@ checked by its session.
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | n/a (no passwords in 0.11) |
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) | n/a |
 | 7.3 README and guide carry the Pi's install steps (21 Oct) | ✓ (f97a703, in 2.21) | ✓ (b188b65) | ✓ (36a8c59) | ✓ (fa54f74) | n/a | ✓ (7a7e83e) | ✓ (8089f49, in 0.24) |
-| 7.4 One program; TLS in TLS.OVL; "Direct connection" (24 Oct) | ? | ? | ? | ? | n/a | n/a | ? (the name; EWEBST.PRG stays; EUpdate n/a: TLS built in, TT/Falcon only, it updates TLS.OVL for the others) |
+| 7.4 One program; TLS in TLS.OVL; "Direct connection" (24 Oct) | ? | ? | ? | ✓ (b6cb9b16, 1.49) | n/a | n/a | ? (the name; EWEBST.PRG stays; EUpdate n/a: TLS built in, TT/Falcon only; it carries TLS.OVL and replaces ST editions: ✓ a0d1a101, 1.6) |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ |
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) |
