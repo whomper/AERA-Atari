@@ -705,10 +705,11 @@ CONTACTS.TXT when the user chooses it (below).
 
 ### 5.6 Dialogs: the 3D look (must; Erez, 24 Oct 2026)
 - **Where the AES draws 3D objects, every dialog and alert has its 3D look.** That is AES 3.4 and
-  newer, asked through `appl_getinfo(13)` where it can be: TOS 4, MagiC, N.AES and XaAES. The box
-  and its text are on the 3D background, exit buttons are raised (activators), radio buttons and
-  toggles show pressed in when chosen (indicators), and text fields stay white. TOS 1 to 3 and
-  EmuTOS keep the flat look: nothing changes there.
+  newer, asked through `appl_getinfo(13)` where it can be: TOS 4, MagiC, N.AES, XaAES, and
+  EmuTOS's AES in 16 colours or more (EHypView's session found it, 24 Oct 2026). The box and its
+  text are on the 3D background, exit buttons are raised (activators), radio buttons and toggles
+  show pressed in when chosen (indicators), and text fields stay white. TOS 1 to 3 keep the flat
+  look, as does EmuTOS in fewer colours: nothing changes there.
 - **The shared code does it:** `dlg_3d(tree)` in `common/ui/dialog.c` sets the flags. `dlg_modal`,
   `dlg_modal_save` (so `alert()`) and the Font dialog call it themselves. An app that builds a
   tree and shows it some other way calls it once the tree is built (after `rsrc_obfix`), before
@@ -722,8 +723,11 @@ CONTACTS.TXT when the user chooses it (below).
   `dlg_3d_ok() && dlg_3d_on`: the AES's 3D background colour, raised exit buttons, white fields.
   Their sessions propose how before doing it.
 - **Checked:** `common/tests/dialog` (`make test`, the flags for each kind of object, and none
-  with `DIALOGS3D=0`; `run.py`, EmuTOS and `--xaaes`). Each app shows its Settings in Hatari on a
-  Falcon with TOS 4.04, both ways, and on EmuTOS.
+  with `DIALOGS3D=0`; `run.py`, EmuTOS and `--xaaes`). Each app shows its Settings, the Font
+  dialog and an alert in Hatari on a Falcon with TOS 4.04, both ways, and on an ST with TOS 1.04
+  (flat, unchanged). Anything the app draws into a dialog itself (a list, a sample, a line of
+  text) clears its place by drawing the tree there (`objc_draw`), never with white, so it sits
+  on the 3D background.
 
 ---
 
