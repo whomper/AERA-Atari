@@ -710,9 +710,10 @@ CONTACTS.TXT when the user chooses it (below).
 - **Where the AES draws 3D objects, every dialog and alert has its 3D look.** That is AES 3.4 and
   newer, asked through `appl_getinfo(13)` where it can be: TOS 4, MagiC, N.AES, XaAES, and
   EmuTOS's AES in 16 colours or more (EHypView's session found it, 24 Oct 2026). The box and its
-  text are on the 3D background, exit buttons are raised (activators), radio buttons and toggles
-  show pressed in when chosen (indicators), and text fields and lists stay white (a list: a white
-  box with a frame, its rows in it; EFTP, 24 Oct 2026). TOS 1 to 3 keep the flat
+  text are on the 3D background, exit buttons and pop-ups are raised (activators; pop-ups as
+  MagiC's and XaAES's, and ECal's), radio buttons and toggles show pressed in when chosen
+  (indicators), and text fields and lists stay white (a list: a white box with a frame, its rows
+  in it; EFTP, 24 Oct 2026). TOS 1 to 3 keep the flat
   look, as does EmuTOS in fewer colours: nothing changes there.
 - **The shared code does it:** `dlg_3d(tree)` in `common/ui/dialog.c` sets the flags. `dlg_modal`,
   `dlg_modal_save` (so `alert()`) and the Font dialog call it themselves. An app that builds a
