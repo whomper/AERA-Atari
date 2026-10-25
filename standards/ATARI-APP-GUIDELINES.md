@@ -267,6 +267,12 @@ before its first event call (7 s with 6,700 pages).
   the idle loop. Work goes in short steps through `common/ui/bgwork.c`: slices of 40 ms (80 ms on
   a 68000), paused for 2 s after the mouse moves or a key or button is pressed, while the program
   in front keeps the machine, and while the app's own program edition runs.
+  The network counts too: `common/src/conn.c` gives the machine a turn (`pf_idle`) while it
+  waits for data and every 40 ms while data keeps coming, so a reply that trickles in (a serial
+  link, a slow server) never holds it till it is whole (`common/tests/connslice`). The one stretch
+  that can't be cut is a TLS key exchange (RSA on a Falcon's DSP: some 3.5 s): an accessory makes a
+  Direct connection only while the machine is idle (no key or mouse for its idle time), as EMail
+  check does.
 - **No timer of 0** in an accessory's `evnt_multi`; while work waits, 50 ms (`bg_timer()`).
 - **No file open across an event call (must).** An accessory has no process of its own. A file it
   opens belongs to the program in front, whose `Pterm` closes it, and the handle's number can then be
