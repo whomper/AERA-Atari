@@ -272,7 +272,9 @@ before its first event call (7 s with 6,700 pages).
   link, a slow server) never holds it till it is whole (`common/tests/connslice`). The one stretch
   that can't be cut is a TLS key exchange (RSA on a Falcon's DSP: some 3.5 s): an accessory makes a
   Direct connection only while the machine is idle (no key or mouse for its idle time), as EMail
-  check does.
+  check does. An alert the user is to answer (common's `alert()`: the screen saved, the box drawn
+  under `BEG_UPDATE`, as TOS's own `form_alert` does) is the AES's work, not background work, and
+  isn't cut either: 140 ms on an 8 MHz ST, once, when there is news.
 - **No timer of 0** in an accessory's `evnt_multi`; while work waits, 50 ms (`bg_timer()`).
 - **No file open across an event call (must).** An accessory has no process of its own. A file it
   opens belongs to the program in front, whose `Pterm` closes it, and the handle's number can then be
