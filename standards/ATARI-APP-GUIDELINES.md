@@ -430,7 +430,9 @@ same.
   The app's own dialog loops take their events through `dlg_evnt`, draw a changed object with
   `dlg_draw` and ask `dlg_area` where the dialog is (it can be moved); a dialog the app draws itself
   opens with `dlg_open_area`. `dlg_name` gives the window the dialog's own name ("Font",
-  "Account"). What the app draws with the VDI over a dialog's tree (lists, a sample) is registered
+  "Account"). **A dialog's own title band is not shown in a window** (EUpdate, 25 Oct 2026: the
+  name stood twice): `dlg_band(obj)` before `dlg_open` hides it there, moves what was below it up
+  by its height and names the window from its text; over the screen (TOS) the band stays. What the app draws with the VDI over a dialog's tree (lists, a sample) is registered
   with `dlg_more`, so that it is drawn again when the AES asks, and keeps within `dlg_cut` (only the
   piece being drawn; nothing while the dialog is behind another program's window, which then gets
   drawn when it shows). The shared dialogs do all this already: the Font dialog, the people dialog,
