@@ -917,7 +917,10 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 - **A Direct connection does TLS 1.2 on the Atari** (a TT, a Falcon, any 68020 or better; TLS.OVL, 7.4):
   - BearSSL, with RSA and the curves on the Falcon's DSP.
   - The chain, host name and date are always checked against `ROOTS.DAT`, which is built from
-    `CACERT.PEM`.
+    `CACERT.PEM`: once the handshake is over and before any data goes either way (TLS.OVL 1.1,
+    25 Oct 2026). During it only the server's key is taken, so a server that drops a slow handshake
+    (Gmail, on a TT without the DSP: 17 s of checking) isn't kept waiting; a chain that fails ends the
+    connection before anything of the user's is sent.
   - **There is no "ignore certificate" option**, now or later.
 - **A 68000, or anyone who chooses, goes through a Pi gateway**, which does the same checks.
 - **Connections time out after 60 s, and every network operation can be stopped:**
