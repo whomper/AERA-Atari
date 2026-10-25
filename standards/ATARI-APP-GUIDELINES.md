@@ -429,7 +429,14 @@ same.
   EmuTOS `dlg_open` does what form_dial did: the dialog over the screen, the screen and mouse held.
   The app's own dialog loops take their events through `dlg_evnt`, draw a changed object with
   `dlg_draw` and ask `dlg_area` where the dialog is (it can be moved); a dialog the app draws itself
-  opens with `dlg_open_area`. `tests/dialog/run.py --xaaes` checks it under FreeMiNT and XaAES.
+  opens with `dlg_open_area`. `dlg_name` gives the window the dialog's own name ("Font",
+  "Account"). What the app draws with the VDI over a dialog's tree (lists, a sample) is registered
+  with `dlg_more`, so that it is drawn again when the AES asks, and keeps within `dlg_cut` (only the
+  piece being drawn; nothing while the dialog is behind another program's window, which then gets
+  drawn when it shows). The shared dialogs do all this already: the Font dialog, the people dialog,
+  the About box and `text_box`. On TOS they are pixel for pixel as before (EMail's About box and
+  Font dialog on TOS 4.04, 25 Oct 2026). `tests/dialog/run.py --xaaes` checks it under FreeMiNT and
+  XaAES.
 - **Reference:** the shared `alert()` (`common/ui/alert.c`) and dialog loop (`common/ui/dialog.c`).
   TOS's and EmuTOS's `form_alert` take Return but not Esc, so there the alert is drawn and run by our
   own loop.
