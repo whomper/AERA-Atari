@@ -417,9 +417,22 @@ same.
   text as it is and does nothing else; it never closes the window.
 - **The crash alert stays on `form_alert`** (6.4): it has one button, and the crash path stays as
   simple as it can be.
+- **On a multitasking AES the alert is the AES's** (MiNT with XaAES, N.AES or MyAES; MagiC: where
+  `aes_count()`, the AES's `global[1]`, isn't 1; Erez, 25 Oct 2026). There every other program's
+  alerts and dialogs are the AES's own, in its look and in its windows, and ours must look the same:
+  `alert()` hands its text, wrapped as ours is, to `form_alert`, and Esc does there what that AES's
+  alerts do (XaAES's take Return, a click or the underlined letter, not Esc). On TOS and EmuTOS our
+  own stays, with Esc: TOS's alert ignores it and cuts lines at 30 characters.
+- **There a dialog is a window** (the same AESes): `dlg_open` puts it in a window of the AES's with
+  the app's name (`dlg_title`), a closer (as Esc) and a mover, and other programs go on running and
+  drawing while it is open; the app's other windows are drawn through `dlg_redraw_hook`. On TOS and
+  EmuTOS `dlg_open` does what form_dial did: the dialog over the screen, the screen and mouse held.
+  The app's own dialog loops take their events through `dlg_evnt`, draw a changed object with
+  `dlg_draw` and ask `dlg_area` where the dialog is (it can be moved); a dialog the app draws itself
+  opens with `dlg_open_area`. `tests/dialog/run.py --xaaes` checks it under FreeMiNT and XaAES.
 - **Reference:** the shared `alert()` (`common/ui/alert.c`) and dialog loop (`common/ui/dialog.c`).
-  TOS's and EmuTOS's `form_alert` take Return but not Esc, so the alert is drawn and run by our own
-  loop, the same on every AES.
+  TOS's and EmuTOS's `form_alert` take Return but not Esc, so there the alert is drawn and run by our
+  own loop.
   - `alert()`: Esc and Undo give the last button.
   - `dlg_do(tree, start, cancel)` in place of `form_do(tree, start)`, and `dlg_modal(tree, start,
     cancel)` for the whole modal dialog (centred, drawn, run, put away): Esc and Undo give `cancel`,
@@ -814,6 +827,7 @@ CONTACTS.TXT when the user chooses it (below).
 - **Buttons are verbs** ("Delete", "Keep"), at most 3 of up to 10 characters. The default button is the
   safe one, and Cancel comes last.
 - **Esc and Undo pick the last button** (3.5), so it is always Cancel or the button that does nothing.
+- **On a multitasking AES (MiNT, MagiC) it is the AES's `form_alert`**, with the same text (3.5).
 
 ### 6.3 Progress and status
 - **A short status goes on the info line.**
@@ -997,10 +1011,11 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 
 ✓ = done, ✗ = missing or different, ~ = partly done, ? = not reported yet. EWeb's column (0.11, a program for the TT and Falcon) is from its session's report.
 
-Rule 3.5 is ✗ everywhere for now: `form_alert` ignores Esc, so no app's alerts take it yet. The shared
-`alert()` and `dlg_do`/`dlg_modal` take it (17 Oct 2026); an app ticks the row once it has synced
-`common/`, links `dialog.o` and has moved its own dialogs over. Each app's own dialogs are to be
-checked by its session.
+3.5's MiNT and MagiC row (25 Oct 2026): `alert()` follows with a sync of `common/`; an app ticks the
+row once its own dialogs open with `dlg_open` (or `dlg_open_area`) and close with `dlg_close`, its
+dialog loops take their events through `dlg_evnt`, it sets `dlg_title` and `dlg_redraw_hook`, and it
+has been run under XaAES (`common/tests/xaaes`), its dialogs moved, closed and behind another
+program's window.
 
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST | EWeb |
 |---|---|---|---|---|---|---|---|
@@ -1043,6 +1058,7 @@ checked by its session.
 | 5.5 The family's icon from `common/icons` (appicon.py: RSC, ICN, icon.h, README pictures; 22 Oct) | ✓ (cebd1930, in 2.22) | ✓ (db0e0d15, in 1.61) | ✓ (5df39bb8, in 1.52) | ✓ (f8a7953a, in 1.46) | ✓ (f099e6e6, in 1.22) | ✓ (b19bcbbb, in 1.58; 256-colour About icon a0c1fd35, in 1.59) | ✓ (9dacc2ed, 256-colour About icon 2d71a75e, in 0.27; EUpdate ✓ febb9d6, in 1.4) |
 | 5.5 `NAMENV.RSC` (NVDI's own 256 colours) beside `NAME.RSC`, in `make icons` and the release (23 Oct) | ✓ (fc85273, 2.24) | ✓ (cb6ece4d, 1.63) | ✓ (b9973ba, 1.54) | ✓ (97210e83, 1.48) | ✓ (821e4c0a, 1.24) | ✓ (a939cc98, 1.61) | ✓ (0.30; EUpdate ✓ 41b06523, 1.5) |
 | 5.1 The AES's widgets: its sizer, its sliders (the right-edge pane's too), pane bars from `panebar.c` (24 Oct) | n/a (the AES's sizer and slider already; no pane scrolls on its own, f19d1f0) | ✓ (e0842247, df0f1b10, 1.67: the list's bar; the card on the AES's slider) | ✓ (0225fde7, 824631ed, 1.57: SIZER, the folders' and list's bars, the message pane on the AES's slider) | ✓ (50fb72fe, 5ee44b97, 1.52: SIZER, the remote list on the AES's slider, panebar for the local list and transfers) | ✓ (2d0584bd, 1.26: the Subjects pane's bar; the rows on the AES's slider) | ✓ (a0383287, 1.63: the chat list's bar; the conversation on the AES's slider) | ✓ (fbdf8ca1, f4282b81, 0.34: SIZER and sliders for the page; a box's bars down and across, pb_corner; EUpdate ✓ 1a087e23, in 1.10: SIZER, the larger list on the AES's slider, the other's bar) |
+| 3.5 On MiNT and MagiC: the AES's alerts, dialogs in a window (`dlg_open`, `dlg_evnt`; 25 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 5.6 3D dialogs where the AES has them (`dlg_3d`), the **3D dialogs** tick, `DIALOGS3D=` (24 Oct) | ✓ (2814e4e, 2.26: its own dialogs too) | ✓ (2929863, 7184106, 1.66: its own dialogs too) | ✓ (82cb846, 1.57) | ✓ (2e444e41, 32461bc8, 1.50) | ✓ (6cb6ef0e, 1.25) | ✓ (df6fc990, 1.62; its hand-drawn dialogs next) | ✓ (5bb03fd4, 480498d1, 0.33; EUpdate ✓ 63faf273, f940b5cb, in 1.7) |
 | 6.1 INF: an empty line after every setting (22 Oct) | ✓ (calstore.c) | ✓ (abook.c) | ✓ (store.c) | ✓ (store.c) | ✓ (inf_put) | ✓ | ✓ (d0735abb, in 0.27; EUpdate ✓ f399852, in 1.2) |
 | 7.1 Random DNS ID, checked lengths, fuzzed | ✓ | ✓ | ✓ | ✓ | n/a | n/a | ✓ (common's DNS; HTTP and URL parsers fuzzed) |
