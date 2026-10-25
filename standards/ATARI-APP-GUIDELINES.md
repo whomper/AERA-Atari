@@ -266,7 +266,9 @@ before its first event call (7 s with 6,700 pages).
 - **At most 50 ms between event calls** on a 68030 (100 ms on a 68000), in background work and in
   the idle loop. Work goes in short steps through `common/ui/bgwork.c`: slices of 40 ms (80 ms on
   a 68000), paused for 2 s after the mouse moves or a key or button is pressed, while the program
-  in front keeps the machine, and while the app's own program edition runs.
+  in front keeps the machine, and while the app's own program edition runs. A step's cost adds to
+  the slice it ends, so a step known to be long starts only with room for it (`bg_room(ms)`), else
+  first in the next turn (EMail check's `[account]` lines: 30 ms on an ST).
   The network counts too: `common/src/conn.c` gives the machine a turn (`pf_idle`) while it
   waits for data and every 40 ms while data keeps coming, so a reply that trickles in (a serial
   link, a slow server) never holds it till it is whole (`common/tests/connslice`). The one stretch
