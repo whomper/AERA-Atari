@@ -1,7 +1,9 @@
 name: TLS.OVL
 
 # common/tlsovl/TLS.OVL is what its sources build, byte for byte, and
-# its loader passes its tests (common/tlsovl/Makefile)
+# its loader passes its tests (common/tlsovl/Makefile), its 68030
+# assembly gives BearSSL's answers (qemu-m68k), and tls.c's files, retry
+# and signature cache pass theirs (openssl s_server)
 on:
   push:
     branches: [main]
@@ -16,8 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: The cross compiler
-        run: sudo apt-get update && sudo apt-get install -y gcc-m68k-linux-gnu
+        run: sudo apt-get update && sudo apt-get install -y gcc-m68k-linux-gnu qemu-user openssl
       - name: TLS.OVL is its sources' build
         run: make -C common/tlsovl check
       - name: The loader
         run: make -C common/tests/tlsovl test
+      - name: The 68030 assembly against BearSSL's C
+        run: make -C common/tests/tls030 test
+      - name: tls.c's files, retry and signature cache
+        run: make -C common/tests/tlsfiles test
