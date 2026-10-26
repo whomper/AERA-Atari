@@ -214,6 +214,11 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     2026). Copy whole words (x and width on multiples of 16): TOS 1.04 copies a block that
     starts inside a word a bit at a time. An app whose content changed while the box showed
     draws it again itself.
+  - **A box shows whole.** A box of many parts (the About box, `aboutbox.c`) is drawn in memory
+    and copied to the screen at once, never seen being built up (Erez, 26 Oct 2026): with TOS's
+    VDI the logical screen is moved to a buffer of the box's rows while it is drawn, once a test
+    pixel shows the VDI draws there. On an ST plain memory copies of the rows beat the VDI's
+    raster copy, but TOS's fills beat a C loop: measure before moving drawing to the CPU.
   - **The 68000's costs.** Keep these out of every per-pixel, per-character and per-row loop on a
     68000 build:
     - 32-bit `*`, `/` and `%`, which are routines in `tos.c`;
