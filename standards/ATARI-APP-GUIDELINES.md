@@ -197,13 +197,15 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     be blue; EMail), not bold (Erez, 26 Oct 2026: EMail's unread
     messages). Clip the VDI to the AES's rectangle (or the pane in it), never to the one row
     being drawn. The area asked for only chooses what to draw.
-  - **Text through `text_n`.** TOS's VDI draws text the slow way whenever a clip smaller than the
-    screen is set, even text wholly inside it: ten lines of 78 letters took an `ST` 637 ms with
-    the clip round them and 100 ms unclipped, `Falcon-4` 161 against 63 (EHypView, 26 Oct 2026).
-    Every redraw is clipped, so text goes through `common/ui/text.c`: `text_clip` and
-    `text_noclip` in place of `vs_clip`, and `text_n`, which draws the letters wholly inside
-    the clip with clipping off and only the one cut at each side with it on (`ST` 111 ms,
-    `Falcon-4` 60, TT 27; `tests/text` checks the pixels are TOS's). It works for the system
+  - **Text through `text_n`.** TOS's VDI draws text the slow way when the clip's right or bottom
+    edge is less than 2 pixels past it, even text wholly inside the clip: ten lines of 78 letters
+    took an `ST` 637 ms with the clip tight round them and 100 ms unclipped or with room past
+    them, `Falcon-4` 161 against 63 (EHypView and EFTP, 26 Oct 2026). A row redrawn alone, or a
+    redraw's rectangle, often ends right at the text, so text goes through `common/ui/text.c`:
+    `text_clip` and `text_noclip` in place of `vs_clip`, and `text_n`, which leaves text with
+    room as it is and otherwise draws the letters wholly inside the clip with clipping off and
+    only the one cut at each side with it on (`ST` 111 ms, `Falcon-4` 60, TT 27; `tests/text`
+    checks the pixels are TOS's). It works for the system
     font on TOS's own VDI (NVDI clips fast), with text aligned to the cell's top. A row showing fewer than 3 pixels needs no text. Dialogs and popups are put on a multiple of 16 pixels across for the same
     reason (`dialog.c`, `aboutbox.c`, `popup.c`).
   - **A box gives back what it covered.** On TOS a dialog, an alert, a popup or the About box
