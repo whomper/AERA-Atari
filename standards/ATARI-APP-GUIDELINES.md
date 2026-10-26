@@ -180,13 +180,19 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
 
     A vector font stays about three times the system font's cost even in runs.
   - **Text on a byte.** Start text at an x that is a multiple of 8 (a window's work area at x 1
-    isn't one). Measured with `tests/speed/vdt.py`, 39 letters of the system font:
+    isn't one). So a window's work area is put on a multiple of 8 across when it opens and when
+    it is moved or sized (the window lands up to 7 pixels from where it was dropped), text margins
+    are 8 pixels, and columns sit on 8-pixel steps (Erez, 26 Oct 2026). Measured with
+    `tests/speed/vdt.py`, 39 letters of the system font:
     - TOS 1.04 on `ST`: 36.5 ms a pixel off a byte, 5.4 ms on one;
     - TOS 4.04 on `Falcon-4`: 9.1 ms against 3.4 ms;
     - NVDI: no difference.
 
-    Bold and light cost as much as text off a byte (EFTP: bold 45 ms on the ST), so keep them to
-    a few words. Clip the VDI to the AES's rectangle (or the pane in it), never to the one row
+    Bold and light cost as much as text off a byte or more (EFTP: bold 45 ms on the ST; EMail:
+    bold 4 times plain on a stock Falcon, 9 times on an ST, even on a byte), so keep them to a
+    few words, never a list's rows. A row's state (unread, new) is a mark in its first column and
+    the colour blue (pen 4) where there is colour, not bold (Erez, 26 Oct 2026: EMail's unread
+    messages). Clip the VDI to the AES's rectangle (or the pane in it), never to the one row
     being drawn. Text that touches the clip's edge takes the slow way even when nothing is cut
     (EUpdate on EmuTOS: 6 ms for 14 letters, 2 ms with the clip a row further out). The area
     asked for only chooses what to draw. A row showing fewer than 3 pixels needs no text. Dialogs and popups are put on a multiple of 16 pixels across for the same
