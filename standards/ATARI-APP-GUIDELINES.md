@@ -191,7 +191,8 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     Bold and light cost as much as text off a byte or more (EFTP: bold 45 ms on the ST; EMail:
     bold 4 times plain on a stock Falcon, 9 times on an ST, even on a byte), so keep them to a
     few words, never a list's rows. A row's state (unread, new) is a mark in its first column and
-    the colour blue (pen 4) where there is colour, not bold (Erez, 26 Oct 2026: EMail's unread
+    blue where there is colour (the theme's blue, the pen nearest to blue: under NVDI pen 4 needn't
+    be blue; EMail), not bold (Erez, 26 Oct 2026: EMail's unread
     messages). Clip the VDI to the AES's rectangle (or the pane in it), never to the one row
     being drawn. Text that touches the clip's edge takes the slow way even when nothing is cut
     (EUpdate on EmuTOS: 6 ms for 14 letters, 2 ms with the clip a row further out). The area
