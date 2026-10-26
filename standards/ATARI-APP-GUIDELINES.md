@@ -159,8 +159,10 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
 - **How the family meets it:**
   - **Draw only what changed.** Redraw only the AES's rectangles, clipped to them, and only the part
     a change touches: a row, a field, a tick, never the whole window. To scroll, move what stays
-    on the screen (`vro_cpyfm`) and draw only what comes in (EContact's `win_scroll`). An
-    accessory's window is no exception.
+    on the screen (`vro_cpyfm`) and draw only what comes in (EContact's `win_scroll`). Set the
+    clip to the area moved before the copy: TOS's VDI clips raster copies to the last `vs_clip`
+    (TOS 1.04 and 4.04), as NVDI does, so a copy after a row's redraw moves only that row
+    (EFTP's Transfers pane, 26 Oct 2026). An accessory's window is no exception.
   - **Off-screen drawing only where it is faster.** Drawing into memory and copying it to the screen
     (ECal's and EContact's `win.c`) costs a whole copy of the window on every redraw. On
     `Falcon-4:16` that is up to 150 KB through the RAM the screen shares. Each app measures both
@@ -426,9 +428,10 @@ before its first event call (7 s with 6,700 pages).
   **Suspended on 19 Oct 2026 and back the same day:** on Erez's Falcon under NVDI, ECal 2.14's
   accessory stopped redrawing once a GDOS font was chosen in it. The cause was ECal's, not the rule's:
   its font dialog left a clip rectangle on the screen workstation, and NVDI clips raster copies
-  (`vro_cpyfm`, `vrt_cpyfm`) where TOS's VDI doesn't, so ECal's copy of its off-screen bitmap reached
+  (`vro_cpyfm`, `vrt_cpyfm`), so ECal's copy of its off-screen bitmap reached
   only that box. So: **a dialog that sets a clip on the workstation turns it off before it ends**, and
-  a raster copy sets its own clip. ECal 2.16's candidate passed under NVDI on `Falcon` and `Falcon-4`
+  a raster copy sets its own clip. (TOS's VDI clips them too, EFTP found on 26 Oct 2026; this
+  was first taken to be NVDI's alone.) ECal 2.16's candidate passed under NVDI on `Falcon` and `Falcon-4`
   (TOS 4.04): the font chosen in the accessory and in the program, closed and opened again, and a
   font from boot changed.
   Under FONTGDOS or SpeedoGDOS it loads them only when the settings name a GDOS font (`FONT=`):
