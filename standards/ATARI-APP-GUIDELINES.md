@@ -188,15 +188,23 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     - TOS 4.04 on `Falcon-4`: 9.1 ms against 3.4 ms;
     - NVDI: no difference.
 
-    Bold and light cost as much as text off a byte or more (EFTP: bold 45 ms on the ST; EMail:
-    bold 4 times plain on a stock Falcon, 9 times on an ST, even on a byte), so keep them to a
-    few words, never a list's rows. A row's state (unread, new) is a mark in its first column and
+    Bold and light by `vst_effects` cost as much as text off a byte or more (EFTP: bold 45 ms on
+    the ST; EMail: bold 4 times plain on a stock Falcon, 9 times on an ST, even on a byte), so keep
+    them to a few words, never a list's rows. With the system font on TOS's own VDI, bold and
+    underline go through `text_fx` (`common/ui/text.c`): plain text, then a raster copy and a
+    line, the same pixels as TOS's on TOS 1.04, TOS 4.04 and EmuTOS (`tests/text`). A row's state (unread, new) is a mark in its first column and
     blue where there is colour (the theme's blue, the pen nearest to blue: under NVDI pen 4 needn't
     be blue; EMail), not bold (Erez, 26 Oct 2026: EMail's unread
     messages). Clip the VDI to the AES's rectangle (or the pane in it), never to the one row
-    being drawn. Text that touches the clip's edge takes the slow way even when nothing is cut
-    (EUpdate on EmuTOS: 6 ms for 14 letters, 2 ms with the clip a row further out). The area
-    asked for only chooses what to draw. A row showing fewer than 3 pixels needs no text. Dialogs and popups are put on a multiple of 16 pixels across for the same
+    being drawn. The area asked for only chooses what to draw.
+  - **Text through `text_n`.** TOS's VDI draws text the slow way whenever a clip smaller than the
+    screen is set, even text wholly inside it: ten lines of 78 letters took an `ST` 637 ms with
+    the clip round them and 100 ms unclipped, `Falcon-4` 161 against 63 (EHypView, 26 Oct 2026).
+    Every redraw is clipped, so text goes through `common/ui/text.c`: `text_clip` and
+    `text_noclip` in place of `vs_clip`, and `text_n`, which draws the letters wholly inside
+    the clip with clipping off and only the one cut at each side with it on (`ST` 111 ms,
+    `Falcon-4` 60, TT 27; `tests/text` checks the pixels are TOS's). It works for the system
+    font on TOS's own VDI (NVDI clips fast), with text aligned to the cell's top. A row showing fewer than 3 pixels needs no text. Dialogs and popups are put on a multiple of 16 pixels across for the same
     reason (`dialog.c`, `aboutbox.c`, `popup.c`).
   - **A box gives back what it covered.** On TOS a dialog, an alert, a popup or the About box
     keeps the screen under it (`dlg_under`) and puts it back as it closes. The windows under it
@@ -1214,6 +1222,7 @@ program's window.
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ |
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) |
 | Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (EUpdate ✗) |
+| Speed: text through `text_n` and `text_fx` (`common/ui/text.c`), clipping off inside the clip (26 Oct) | ✗ | ✗ | ✗ | ✗ (its own, 1.60's next) | ✗ (its own, e2f417a) | ✗ | ✗ (EUpdate ✗) |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) |
