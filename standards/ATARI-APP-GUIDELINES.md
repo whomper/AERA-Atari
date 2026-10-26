@@ -53,7 +53,8 @@ way working.
     which is not a warning. Not `-fno-expensive-optimizations`: it also stops the pass, but GCC 13.3
     miscompiled EHypView's index scanner with it. Check: `be32()` and neighbouring byte fields
     compile to `move.b` reads.
-- **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware: a Falcon030 with
+- **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware (the speed they are
+  measured by is the stock machines', below): a Falcon030 with
   a **DFB1** accelerator (a 68030 at 50 MHz with a **68882** maths coprocessor and **128 MB of TT
   RAM**), **NetUSBee** for the network, and the Falcon's **DSP**. What follows from it:
   - code and data belong in TT RAM (`PRGFLAGS=7`; the heap prefers it already). Only what the
@@ -123,6 +124,83 @@ way working.
 - **A 68000 and a 68030 build** (Erez's question, 16 Oct 2026): each app is measuring what a build
   for the Falcon above would gain over the 68000 one. The family's names and rules for two builds
   come here once that is known.
+
+### Speed: the stock machines set it (must; Erez, 26 Oct 2026)
+
+Erez, 26 Oct 2026: "I want performance considerations to govern design and implementation across
+all AERA applications as most ST computers out there are not 68030 and not accelerated." He saw the
+apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
+
+- **Design and code are judged on the slow machines:** `ST` and `ST-1` (a 68000 at 8 MHz) and
+  `Falcon-4` (a stock Falcon: a 68030 at 16 MHz, only ST RAM, which it shares with the screen, no
+  FPU). The DFB1 is where a feature must be fast, not where it is measured. A design that can't meet
+  the times below on these machines is changed before it ships. When the change would alter what the
+  user sees (the look, a feature left out on slow machines), it goes to Erez with the numbers: his
+  decision.
+- **What the user waits for: the longest stretch** from the event that started it to the program's
+  next event call (`-DAES_PROFILE`'s `AESGAP` lines, `common/atari/gem.c`). It is measured on
+  `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on `Falcon-4:16` also
+  under NVDI. `Falcon-4:256` is measured where the app draws in 256 colours.
+
+  | The user | Longest stretch |
+  |---|---|
+  | types a letter, moves the cursor, ticks a box, clicks a row or a button | 50 ms |
+  | scrolls one line or row (an arrow, the wheel); held, at least 15 rows a second | 50 ms |
+  | scrolls a page (Page Up/Down, a click in the track) | 150 ms |
+  | opens a menu entry's dialog, a pop-up or an alert | 150 ms |
+  | has the main window drawn whole at its size (opened, topped, uncovered) | 300 ms |
+  | moves or resizes a window: what comes into view drawn | 300 ms |
+  | opens the accessory from the Desk menu: its window drawn | 500 ms |
+  | starts the program from C:: its window drawn | 2 s |
+
+  Longer jobs (a sync, a load, a search through everything, a page laid out) never run as one
+  stretch. They run in slices (`common/ui/bgwork.c`, as 2.2's accessories do), so a key or Esc is
+  answered within 100 ms. Progress is shown at least every 250 ms, and the log says what the job took.
+- **How the family meets it:**
+  - **Draw only what changed.** Redraw only the AES's rectangles, clipped to them, and only the part
+    a change touches: a row, a field, a tick, never the whole window. To scroll, move what stays
+    on the screen (`vro_cpyfm`) and draw only what comes in (EContact's `win_scroll`). An
+    accessory's window is no exception.
+  - **Off-screen drawing only where it is faster.** Drawing into memory and copying it to the screen
+    (ECal's and EContact's `win.c`) costs a whole copy of the window on every redraw. On
+    `Falcon-4:16` that is up to 150 KB through the RAM the screen shares. Each app measures both
+    ways on `Falcon-4` and `ST` and keeps the faster, per machine if they differ. Flicker-free
+    drawing is not worth a slower redraw.
+  - **Text a run at a time.** `v_gtext` gets a whole line or field, not one character at a time.
+    A font's widths are measured once (a table), never with `vqt_extent` per letter, and lines are
+    laid out once and kept until the text or the width changes.
+  - **The 68000's costs.** Keep these out of every per-pixel, per-character and per-row loop on a
+    68000 build:
+    - 32-bit `*`, `/` and `%`, which are routines in `tos.c`;
+    - long shifts by a variable;
+    - floating point;
+    - `snprintf`, which takes an ST 2.9 ms a line (EContact).
+
+    Use tables and work done once instead. And never `malloc` per item: keep a buffer and reuse it.
+  - **The VDI and the AES do the drawing.** Fills, lines, text and copies go through the VDI, which
+    NVDI makes fast. Pixels are poked by hand only where that was measured faster (pictures).
+  - **Work once, keep the result.** Sort once, lay out once, measure once. Change only what changed.
+    Files: 6.5.
+  - **The DSP on a Falcon** takes any work it does faster than the 68030 (TLS's curves and RSA,
+    EWeb's JPEG), with the 68030's own code as the fallback.
+- **Measuring it.**
+  - Each app has a speed rig: `tests/hatari/speed.py`, or common's `tests/speed` when it comes.
+    It builds with `-DAES_PROFILE=20` and does the actions above on the machines above:
+    - starts the program, and opens the accessory;
+    - draws the main window whole (opened, then uncovered);
+    - scrolls a line, then a page;
+    - types in a field;
+    - opens Settings (^,) and closes it with Esc.
+
+    It fails when a stretch is over its time, and prints each action's longest stretch, so the app's
+    notes keep a table of them.
+  - Hatari's CPU is cycle-exact (its default), but the Falcon's sharing of ST RAM with the screen is
+    approximated. Erez's own Falcon with the DFB1 switched off is the referee: when he finds
+    something slow, its numbers go in the app's notes and the rig gets a case for it.
+  - A change that touches drawing, a loop over the data or the start gives its stretches on `ST`
+    and `Falcon-4`, before and after, in its commit message.
+- **Before a release** that changes the GEM side, the speed rig passes on the machines above. If it
+  doesn't, the release notes name what is over and the plan.
 
 ---
 
@@ -1091,6 +1169,7 @@ program's window.
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ |
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) |
+| Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (EUpdate ✗) |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) |
