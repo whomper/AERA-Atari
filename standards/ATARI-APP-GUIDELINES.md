@@ -786,6 +786,11 @@ CONTACTS.TXT when the user chooses it (below).
     saved one, EWeb's while it runs), and EContact 1.61's greys found there came out green on
     Erez's Falcon under NVDI. EContact 1.62 and ECal 2.23 do it this way. Pictures may still be
     matched against all 256 pens.
+  - The same in 16 colours and fewer: a UI colour is never a fixed pen number there either. A
+    TT's 16 have light colours at 9 to 14 where a Falcon's have dark ones (EUpdate's "New release"
+    came out pale yellow on white). Common's `pen_nearest` (`ui/dialog.h`) takes the pen nearest a
+    colour, for text one dark enough to read on white; when two of an app's colours land on one
+    pen, their words still tell them apart (26 Oct 2026).
 - **Never rely on colour alone.** Every state also shows in mono, e.g. a selected row is inverted.
 
 ### 5.3 Fonts and text
