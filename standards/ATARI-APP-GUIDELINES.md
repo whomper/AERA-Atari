@@ -146,7 +146,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   |---|---|
   | types a letter, moves the cursor, ticks a box, clicks a row or a button | 50 ms |
   | scrolls one line or row (an arrow, the wheel); held, at least 15 rows a second | 50 ms |
-  | scrolls a page (Page Up/Down, a click in the track) | 150 ms |
+  | scrolls a page (Shift+arrow, a click in the track) | 150 ms |
   | opens a menu entry's dialog, a pop-up or an alert | 150 ms |
   | has the main window drawn whole at its size (opened, topped, uncovered) | 300 ms |
   | moves or resizes a window: what comes into view drawn | 300 ms |
@@ -184,8 +184,9 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - **The DSP on a Falcon** takes any work it does faster than the 68030 (TLS's curves and RSA,
     EWeb's JPEG), with the 68030's own code as the fallback.
 - **Measuring it.**
-  - Each app has a speed rig: `tests/hatari/speed.py`, or common's `tests/speed` when it comes.
-    It builds with `-DAES_PROFILE=20` and does the actions above on the machines above:
+  - Each app has a speed rig, `tests/hatari/speed.py`, on common's `tests/speed/speed.py`. It
+    builds with `-DAES_PROFILE=20`, which also reports the start as `AESSTART`, and does the actions
+    above on the machines above:
     - starts the program, and opens the accessory;
     - draws the main window whole (opened, then uncovered);
     - scrolls a line, then a page;
