@@ -169,6 +169,31 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - **Text a run at a time.** `v_gtext` gets a whole line or field, not one character at a time.
     A font's widths are measured once (a table), never with `vqt_extent` per letter, and lines are
     laid out once and kept until the text or the width changes.
+  - **A GDOS font too.** Draw a run with one `v_gtext`. When the font's advance is a fraction of a
+    pixel off its cell, use one `v_justified_n`, fitted to the cells (EMail's `cells_mode`). Never
+    draw one letter to a cell. Measured on `Falcon-4:16` under Erez's NVDI, 39 letters
+    (`tests/speed/vdt.py`, 26 Oct 2026):
+    - the system font: 1.1 ms;
+    - FreeMono 10 pt as one run: 3.6 ms;
+    - FreeMono a letter at a time: 19.5 ms;
+    - FreeMono the first time each letter is drawn (NVDI makes its glyphs): 26 ms.
+
+    A vector font stays about three times the system font's cost even in runs.
+  - **Text on a byte.** Start text at an x that is a multiple of 8 (a window's work area at x 1
+    isn't one). Measured with `tests/speed/vdt.py`, 39 letters of the system font:
+    - TOS 1.04 on `ST`: 36.5 ms a pixel off a byte, 5.4 ms on one;
+    - TOS 4.04 on `Falcon-4`: 9.1 ms against 3.4 ms;
+    - NVDI: no difference.
+
+    Bold and light cost as much as text off a byte (EFTP: bold 45 ms on the ST), so keep them to
+    a few words. Dialogs and popups are put on a multiple of 16 pixels across for the same
+    reason (`dialog.c`, `aboutbox.c`, `popup.c`).
+  - **A box gives back what it covered.** On TOS a dialog, an alert, a popup or the About box
+    keeps the screen under it (`dlg_under`) and puts it back as it closes. The windows under it
+    are not drawn again, which used to take seconds on a stock Falcon (Erez's video, 26 Oct
+    2026). Copy whole words (x and width on multiples of 16): TOS 1.04 copies a block that
+    starts inside a word a bit at a time. An app whose content changed while the box showed
+    draws it again itself.
   - **The 68000's costs.** Keep these out of every per-pixel, per-character and per-row loop on a
     68000 build:
     - 32-bit `*`, `/` and `%`, which are routines in `tos.c`;
@@ -197,7 +222,10 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     notes keep a table of them.
   - Hatari's CPU is cycle-exact (its default), but the Falcon's sharing of ST RAM with the screen is
     approximated. Erez's own Falcon with the DFB1 switched off is the referee: when he finds
-    something slow, its numbers go in the app's notes and the rig gets a case for it.
+    something slow, its numbers go in the app's notes and the rig gets a case for it. Every
+    build keeps its four longest stretches, each with what started it (`aes_slowest()`,
+    `common/atari/gem.c`). The app writes them to its log at the end (LOG=1), so his machine
+    says where it waits.
   - A change that touches drawing, a loop over the data or the start gives its stretches on `ST`
     and `Falcon-4`, before and after, in its commit message.
 - **Before a release** that changes the GEM side, the speed rig passes on the machines above. If it
