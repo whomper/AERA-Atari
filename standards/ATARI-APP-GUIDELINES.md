@@ -186,7 +186,10 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     - NVDI: no difference.
 
     Bold and light cost as much as text off a byte (EFTP: bold 45 ms on the ST), so keep them to
-    a few words. Dialogs and popups are put on a multiple of 16 pixels across for the same
+    a few words. Clip the VDI to the AES's rectangle (or the pane in it), never to the one row
+    being drawn. Text that touches the clip's edge takes the slow way even when nothing is cut
+    (EUpdate on EmuTOS: 6 ms for 14 letters, 2 ms with the clip a row further out). The area
+    asked for only chooses what to draw. A row showing fewer than 3 pixels needs no text. Dialogs and popups are put on a multiple of 16 pixels across for the same
     reason (`dialog.c`, `aboutbox.c`, `popup.c`).
   - **A box gives back what it covered.** On TOS a dialog, an alert, a popup or the About box
     keeps the screen under it (`dlg_under`) and puts it back as it closes. The windows under it
