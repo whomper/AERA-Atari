@@ -283,11 +283,10 @@ try:
     time.sleep(1)
     for rnd in (1, 2):
         if rnd == 2 and len(want) == 1:
-            # its window is still on top: closed (^U; an older release's
-            # ^W), so that opening it again draws it
-            xdo("key", "ctrl+u")
-            time.sleep(2)
-            xdo("key", "ctrl+w")
+            # its window is still on top: closed (^Q, which closes an
+            # accessory's window in every release, before and after ^U
+            # took over from ^W), so that opening it again draws it
+            xdo("key", "ctrl+q")
             time.sleep(3)
         for i in range(len(want)):            # the Desk menu's order is the loading order
             before = shot("%d-%d-before" % (rnd, i))
@@ -308,14 +307,14 @@ try:
                 shot("%d-%d-welcomed" % (rnd, i))
             check(n > 2000, "round %d: the Desk menu's accessory %d drew its window (%d pixels)" % (rnd, i + 1, n))
     if prg:
-        # the accessories' windows closed (^U, the top one each time; ^W
-        # for a release from before 27 Oct 2026, where ^W closed), then the
-        # program quit: the desktop must come back
+        # the accessories' windows closed (^Q, the top one each time: an
+        # accessory's ^Q closes its window in every release, while ^W
+        # closed before 27 Oct 2026 and ^U after, and a ^U that reached
+        # the program quit it, the next ^W opening drive W: on the
+        # desktop), then the program quit: the desktop must come back
         for i in range(len(want) - len(alerts & set(want))):
-            xdo("key", "ctrl+u")
-            time.sleep(2)
-            xdo("key", "ctrl+w")
-            time.sleep(2)
+            xdo("key", "ctrl+q")
+            time.sleep(3)
         before = shot("8-accessories-closed")
         xdo("key", "ctrl+q")
         time.sleep(10 if st else 6)
