@@ -17,7 +17,11 @@ long acc_heap_leave = 32L * 1024;
    least this one */
 static int acc_count(void)
 {
-	char dta[44], path[9] = "C:\\*.ACC";
+	/* the DTA in longs: TOS writes its words and longs into it, and a
+	   char array may sit at an odd address, an address error on a
+	   68000 (EMail 1.65's candidate on TOS 1.04, 27 Oct 2026) */
+	long dta[11];
+	char path[9] = "C:\\*.ACC";
 	void *was = Fgetdta();
 	int n = 0;
 	path[0] = (char)('A' + boot_drive());
