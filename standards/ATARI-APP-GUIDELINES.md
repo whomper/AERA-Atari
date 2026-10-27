@@ -210,7 +210,11 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     the ST; EMail: bold 4 times plain on a stock Falcon, 9 times on an ST, even on a byte), so keep
     them to a few words, never a list's rows. With the system font on TOS's own VDI, bold and
     underline go through `text_fx` (`common/ui/text.c`): plain text, then a raster copy and a
-    line, the same pixels as TOS's on TOS 1.04, TOS 4.04 and EmuTOS (`tests/text`). A row's state (unread, new) is a mark in its first column and
+    line, the same pixels as TOS's on TOS 1.04, TOS 4.04 and EmuTOS (`tests/text`). Where
+    `text_fx_fast` says no (NVDI, a GDOS font), text laid out in fixed cells is made bold by
+    `text_bold_strike` (the plain text struck again a pixel to the right, transparent), never by
+    `vst_effects`: NVDI's bold widens each letter, and the next run covers the last ones
+    (EHypView 1.30, 27 Oct 2026). A row's state (unread, new) is a mark in its first column and
     blue where there is colour (the theme's blue, the pen nearest to blue: under NVDI pen 4 needn't
     be blue; EMail), not bold (Erez, 26 Oct 2026: EMail's unread
     messages). Clip the VDI to the AES's rectangle (or the pane in it), never to the one row
