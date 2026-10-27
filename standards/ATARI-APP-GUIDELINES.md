@@ -384,7 +384,7 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 | `AC_OPEN` | open its window, or top it if open |
 | `AC_CLOSE` | forget its window handles (the AES closed them), save settings, keep background work (sync, reminders) going |
 | `AP_TERM` | ignore it; an ACC never returns from `main` (it would land in crt0's `hang` loop) |
-| Window closer / ^W | close the window, stay resident |
+| Window closer / ^U | close the window, stay resident |
 
 **A quiet start (must).** Under plain TOS an accessory runs only while the program in front calls
 the AES, so every moment it holds the machine between its own event calls is a moment nothing else
@@ -477,6 +477,9 @@ time**, so they never write the same file at once. The shared `common/ui/twin.c`
   shared builder (`common/ui/mbar.c`, from EHypView's, which right-aligns the shortcut column).
 - **The ACC has no menu bar.** Its toolbar ≡ menu carries the same commands.
 - **Menu items show their shortcut** as `^N`, `⇧^F`. Commands that open a dialog end in "…".
+- **A command on the app's own items is in that item's menu, New among them** (a tester, Erez 27
+  Oct 2026): EMail's New message is under Message, with Reply and Forward, not under File. File
+  keeps what concerns files and the program (Open, Save, Close, Quit).
 
 ### 3.2 Family shortcuts (must)
 These keys mean the same thing in every app. An app may leave one unused, but **never gives it another
@@ -487,20 +490,27 @@ meaning**.
 | ^N | New (event, contact, message, chat, connection) | ^A | Select all |
 | ^O | Open | ^C ^X ^V | Copy, Cut, Paste (GEM clipboard) |
 | ^S | Save | ^Z / Undo key | Undo (viewers: Back) |
-| ^W | Close window (a one-window PRG: quit) | ^P | Print (reserved) |
-| ^Q | Quit (ACC: close window) | ^I | Get info / properties |
+| ^U | Close window (a one-window PRG: quit) | ^P | Print (reserved) |
+| ^W | Next window: the app's own, in turn (one window: nothing) | ^I | Get info / properties |
+| ^Q | Quit (ACC: close window) | | |
 | ^F | Find | ^, | Settings… |
 | Help | Help for what's on screen (see 4.3) | Insert | Context menu for the selection (see 3.3) |
-| Esc | Dialog or alert: Cancel (3.5). File list: refresh (as the TOS desktop) | Return | Default button / open selection |
+| Esc | A text field: empty it. A dialog without one, an alert: Cancel (3.5). File list: refresh (as the TOS desktop) | Return | Default button / open selection |
+| Undo | Dialog: Cancel (3.5); elsewhere Undo, as ^Z | | |
 
 App commands use the other letters, then ⇧^ for related commands. Where the app copies a Mac app,
 use that app's ⌘ key as ^:
 - ECal: ^R refresh, ^T today.
-- EMail: ^R reply, ⇧^R reply all, ⇧^F forward, ⇧^D send, ⇧^N get mail.
+- EMail: ^R reply, ⇧^R reply all, ⇧^F forward, ⇧^D send, ⇧^N get mail, ⇧^U mark as unread.
 - **Sidebar show/hide is ⇧^S in every app that has a sidebar.**
 
 Alternate+letter is left free, because some country keyboards use it for accented letters. The shortcut
 table in each help file is generated from the menu definition, so it can't drift.
+
+**^U closes, ^W goes to the next window** (a tester, Erez 27 Oct 2026), as the Atari's desktops and
+programs have them (Thing, Gemini, MagiC's desktop): until then the family closed with ^W. ^W tops
+the app's next window of its own (`wind_set(WF_TOP)`), around in turn; with one window open it
+does nothing. An accessory's ^U closes its window, as its closer does (2.2).
 
 **A Control key is `key_ctrl(kstate, key)`** (`common/atari/gem.h`), never `kstate & K_CTRL` alone
 (EMail, 18 Oct 2026): the AES gives the shift keys as they are when the program reads the key, so a
@@ -521,35 +531,41 @@ takes ^A..^Z by their codes (and not Backspace, Tab, Return or Enter, which shar
 - Toolbar buttons have a tooltip after about 1 s, drawn by the shared tooltip code (ECal/EFTP).
 - If BubbleGEM is running, tooltips go through it.
 
-### 3.5 Esc cancels (must)
-**Esc closes any dialog box or alert as if Cancel was clicked** (Erez, 17 Oct 2026). Undo does the
-same.
+### 3.5 Esc and Undo (must)
+**Undo closes any dialog box as if Cancel was clicked; so does Esc, except in a text field, which
+Esc empties, as GEM's `form_do` does** (Erez, 17 Oct 2026; GEM's way since 27 Oct 2026, after a
+tester cancelled an account he was setting up when he meant to empty a field). An alert, which has
+no field, closes on Esc and Undo alike.
 - **The action it was about to do is not done:**
   - nothing is deleted, sent, written, moved or overwritten;
   - no setting changes;
   - what was typed into the dialog is thrown away;
   - the program carries on from where it was before the dialog opened.
-- **Which button Esc picks:**
+- **Which button Undo (and Esc, where no field has the cursor) picks:**
   - **Cancel**, where there is one;
   - otherwise **the button that does nothing**: Keep, Not now, Close;
   - in a dialog that only informs (one OK), Esc closes it.
   - **Esc never picks a button that acts** (Delete, Send, Overwrite, Quit), even when that button is
     the default.
   - So 6.2's order is a rule: Cancel, or the button that does nothing, is always the last button.
-- **In a text field, Esc cancels the dialog; it doesn't clear the field.** GEM's `form_do` clears the
-  field on Esc, so the shared dialog loop catches Esc before it does.
+- **In a text field Esc empties the field, and the dialog stays open.** The field the cursor is
+  in, and only that one: the others keep their text. The shared dialog loop gives Esc to
+  `objc_edit` (and `lf_key` to a long field, 5.4), as `form_do` does. ^[ (ASCII's Esc) is Esc.
+  So a dialog with a text field closes with Undo, Cancel or the window's closer.
 - **The same goes for:**
-  - dialogs in a window or a pane (Find, Settings, a login form). Esc closes them as Cancel does.
+  - dialogs in a window or a pane (Find, Settings, a login form). Undo closes them as Cancel does,
+    and so does Esc where no text field has the cursor.
     Where changes apply as they are made and there is no Cancel, Esc just leaves: it closes the
     dialog's window, or goes back from the Settings pane. It never closes the app's main window or
     quits;
-  - popups and context menus (3.3): Esc closes them with nothing chosen;
+  - popups and context menus (3.3): Esc and Undo close them with nothing chosen;
   - the About box (1.3): Esc closes it;
   - a question asked while something runs: Esc stops the operation (7.1).
-- **Esc never clears text** (Erez, 17 Oct 2026). Only editing keys take text out: Backspace,
-  Delete, ^X and the like. That holds in a text field of a window too, which isn't a dialog: a
-  search field (EHypView's library, a list's filter), a reply line (ClaudeST). There Esc leaves the
-  text as it is and does nothing else; it never closes the window.
+- **A one-line text field of a window empties on Esc too** (EHypView's library search, a list's
+  filter), and Esc does nothing else there: it never closes the window. EWeb's address field is the
+  exception, as every browser's: Esc puts back the page's address. **A text of several lines**
+  (a message being written, ClaudeST's reply) **never empties on Esc:** only editing keys take text
+  out there (Backspace, Delete, ^X, ClaudeST's Shift+Delete).
 - **The crash alert stays on `form_alert`** (6.4): it has one button, and the crash path stays as
   simple as it can be.
 - **On a multitasking AES the alert is the AES's** (MiNT with XaAES, N.AES or MyAES; MagiC: where
@@ -559,7 +575,7 @@ same.
   alerts do (XaAES's take Return, a click or the underlined letter, not Esc). On TOS and EmuTOS our
   own stays, with Esc: TOS's alert ignores it and cuts lines at 30 characters.
 - **There a dialog is a window** (the same AESes): `dlg_open` puts it in a window of the AES's with
-  the app's name (`dlg_title`), a closer (as Esc) and a mover, and other programs go on running and
+  the app's name (`dlg_title`), a closer (as Undo: Cancel) and a mover, and other programs go on running and
   drawing while it is open; the app's other windows are drawn through `dlg_redraw_hook`. On TOS and
   EmuTOS `dlg_open` does what form_dial did: the dialog over the screen, the screen and mouse held.
   The app's own dialog loops take their events through `dlg_evnt`, draw a changed object with
@@ -579,9 +595,14 @@ same.
   own loop.
   - `alert()`: Esc and Undo give the last button.
   - `dlg_do(tree, start, cancel)` in place of `form_do(tree, start)`, and `dlg_modal(tree, start,
-    cancel)` for the whole modal dialog (centred, drawn, run, put away): Esc and Undo give `cancel`,
-    and a text field keeps its text. A dialog with no button that does nothing passes -1 and gets -1
-    back.
+    cancel)` for the whole modal dialog (centred, drawn, run, put away): Undo gives `cancel`, and so
+    does Esc in a dialog without a text field; in a field Esc empties it. A dialog with no button
+    that does nothing passes -1 and gets -1 back.
+  - A dialog loop of the app's own asks `dlg_cancel_key(key, in_field)`: 1 for Undo, and for Esc
+    when no text field has the cursor. `dlg_undo(key)` is Undo alone; `dlg_esc(key)` is still Esc
+    or Undo, for lists and boxes without a field (the Font dialog, the people dialog).
+  - Checked: `common/tests/dialog` (`make test`; `run.py` on EmuTOS and `--xaaes`, where the AES's
+    own `objc_edit` empties the field).
 
 ---
 
@@ -681,7 +702,15 @@ CONTACTS.TXT when the user chooses it (below).
 
 ### 4.3 Help
 - **Help opens the app's `.HYP` at the page for what's on screen.** The help launcher (shared) tries, in
-  this order, `EHYPVIEW`, `ST-GUIDE`, `HYPVIEW`, `HYP_VIEW`, using `VA_START "*:\NAME.HYP page"`.
+  this order, the viewer `STGUIDE=` names, then `EHYPVIEW`, `ST-GUIDE`, `HYPVIEW`, `HYP_VIEW`, using
+  `VA_START "*:\NAME.HYP page"`.
+- **`STGUIDE=` is the user's own viewer** (a tester, Erez 27 Oct 2026): MiNT's and MagiC's users
+  name the hypertext viewer they use in the AES's environment (`setenv STGUIDE C:\HYPVIEW\HYPVIEW.APP`
+  in XAAES.CNF, `#_ENV STGUIDE=` in MAGX.INF), as ST-Guide started the custom. `help_show()` reads it
+  with `shel_envrn`: the viewer is asked first where it runs (its AES name is its file's name), and
+  on MiNT and MagiC, where none runs, that program is started beside the app before EHYPVIEW.PRG is
+  tried. A name ending in `.ACC` is an accessory, which runs from boot or not at all.
+  `tests/help/prg_help.py` checks it under XaAES.
 - **The string is in memory the viewer may read.**
   - Use `Mxalloc(size, 0x2B)`: global, readable under MiNT memory protection, TT RAM preferred.
   - On TOS 1.x, where Mxalloc doesn't exist, use a static buffer.
@@ -737,6 +766,30 @@ CONTACTS.TXT when the user chooses it (below).
   dialog's edit field).
 - An app never tells the user to paste somewhere that can't paste.
 
+### 4.5 Notifications through BGEM.NG (should; a tester, Erez 27 Oct 2026)
+- **Where BGEM.NG runs, news that comes by itself is a notification.** BGEM.NG (Jo Even Skarstein,
+  https://atari.joska.no/bgem.ng/) is BubbleGEM made again for MiNT with XaAES or N.AES; its
+  notifications are small windows stacked at the desktop's edge that close by themselves after a
+  while, or on a click, and tell the program which of their buttons was clicked.
+- **What is one:** what the user didn't ask for just then and would want to know: new mail (EMail
+  and EMail check), a reminder (ECal), updates ready (EUpdate), a long transfer or sync finished
+  while the app's window is behind another (EFTP, EContact). Never what answers what the user just
+  did (that is the window's status line), never an error that needs an answer (that stays an
+  alert, 6.2), and never more than one for the same news.
+- **The text:** the app's name as the sender (its AES name), a title of a few words ("New mail"), a
+  line or two ("3 new messages from Ann and Tom"), and at most two buttons, the first the one that
+  shows it ("Open", "Show"), the second "Later" when there is one. A click on the first does what
+  the app's own way of telling did (opens the window, shows the message).
+- **Elsewhere nothing changes:** on TOS, MagiC, or with an old BubbleGEM, `notify_send` gives 0
+  and the app tells it its own way, as before (a bell, an alert, the icon's status).
+- **The shared code:** `common/ui/notify.c`. `notify_init("NAME    ")` at start (an accessory
+  before its first event call: the text is in global memory taken then), `notify_message(msg)` on
+  every message (1: BGEM.NG's, the app leaves it), `notify_send(title, text, buttons, id)`, and
+  `notify_clicked(id, button)` the app's. It asks BGEM.NG what it does first (`BGEMNG_INQUIRE`) and
+  sends only when the answer says notifications. Checked: `common/tests/notify` (`make test` on the
+  host; `notify.py` under XaAES against a stand-in that speaks BGEM.NG's protocol: BGEM.NG 1.02 itself stops
+  with a bus error in the rig's FreeMiNT 1.17.0).
+
 ---
 
 ## 5. Windows, screen, fonts
@@ -772,7 +825,7 @@ CONTACTS.TXT when the user chooses it (below).
     the right edge, the larger one takes it; the other keeps its own bar.
   - **Any other pane that scrolls on its own** (a list beside a preview, EFTP's local side) has a bar
     at its right from `common/ui/panebar.c`: AES objects drawn by `objc_draw`, so it takes the
-    AES's look (TOS's dotted bar, the 3D look where 5.6's tick is on, XaAES's theme). It is as
+    AES's look (TOS's dotted bar, the 3D look where the AES has it (5.6), XaAES's theme). It is as
     wide as the AES's own slider column (`wind_calc`: 19 pixels on TOS 1.04 in ST high, 23 on
     TOS 4 in VGA, 20 under XaAES; `graf_handle`'s box is only XaAES's character cell) and its
     arrows as high as the AES's gadgets. What scrolls sideways has a bar across its foot
@@ -923,11 +976,10 @@ CONTACTS.TXT when the user chooses it (below).
   `dlg_modal_save` (so `alert()`) and the Font dialog call it themselves. An app that builds a
   tree and shows it some other way calls it once the tree is built (after `rsrc_obfix`), before
   it is drawn. No app sets the 3D flags by hand.
-- **A setting turns it off:** a tick, **3D dialogs**, on the Settings page where the app keeps its
-  look (EMail's Look page), on by default. It is greyed where the AES has no 3D (`dlg_3d_ok()`).
-  In the INF it is `DIALOGS3D=1` (0: flat everywhere), with its note above and an empty line
-  after (6.1). The app sets `dlg_3d_on` from it at start, before its first dialog, and again
-  when the setting changes; the next dialog shown follows it.
+- **There is no setting for it** (a tester, Erez 27 Oct 2026: an AES without 3D ignores the
+  flags, so a setting only made dialogs flat where every other program's are 3D). The **3D
+  dialogs** tick and `DIALOGS3D=` (24 Oct) are gone: an INF that still has the line is read
+  without it, and the next save leaves it out. `dlg_3d_on` stays only for the tests.
 - **A choice is never marked by `SELECTED` on a background object** (a page in a Settings
   sidebar, say): in 3D the AES inverts the grey, which comes out dark green in EmuTOS's 256
   colours (EUpdate, 24 Oct 2026). Mark it with a black bar, as the title band is drawn
@@ -935,14 +987,32 @@ CONTACTS.TXT when the user chooses it (below).
 - **Exit buttons one under another get room between them** (half a line) when 3D is on: raised,
   they grow by a few pixels and touch.
 - **Dialogs an app draws itself** (ECal's and EContact's) follow the same look where
-  `dlg_3d_ok() && dlg_3d_on`: the AES's 3D background colour, raised exit buttons, white fields.
+  `dlg_3d_ok()`: the AES's 3D background colour, raised exit buttons, white fields.
   Their sessions propose how before doing it.
-- **Checked:** `common/tests/dialog` (`make test`, the flags for each kind of object, and none
-  with `DIALOGS3D=0`; `run.py`, EmuTOS and `--xaaes`). Each app shows its Settings, the Font
-  dialog and an alert in Hatari on a Falcon with TOS 4.04, both ways, and on an ST with TOS 1.04
-  (flat, unchanged). Anything the app draws into a dialog itself (a list, a sample, a line of
+- **Buttons are the AES's** (a tester, Erez 27 Oct 2026, of EFTP's): an exit button is a
+  `G_BUTTON` with the AES's flags, drawn by the AES, never one drawn by hand or a box made to
+  look like one, so it looks as every other program's buttons do on that AES.
+- **Checked:** `common/tests/dialog` (`make test`, the flags for each kind of object; `run.py`,
+  EmuTOS and `--xaaes`). Each app shows its Settings, the Font dialog and an alert in Hatari on a
+  Falcon with TOS 4.04 (3D), under XaAES, and on an ST with TOS 1.04 (flat, unchanged). Anything the app draws into a dialog itself (a list, a sample, a line of
   text) clears its place by drawing the tree there (`objc_draw`), never with white, so it sits
   on the 3D background.
+
+### 5.7 Pop-up buttons, frames and edges (must; a tester, Erez 27 Oct 2026)
+- **A button with a down arrow opens a pop-up menu there and then:** the shared `popup()` (3.3),
+  over the button, the choice it shows ticked; a click on another choice changes it at once.
+- **A choice from a long list is not a pop-up** (EMail's and ECal's time zones, some 400): its
+  button shows the choice and ends in "…", with no arrow, and opens a dialog with the list (and a
+  field that finds in it). An arrow that opens a dialog promises what it doesn't do.
+- **Every text field you type into has a frame,** in a dialog or in a window: one line round it,
+  white inside, flat or in 3D (a `G_FBOXTEXT`, or the app's own drawn the same). No field without
+  one beside one with it.
+- **Panes meet with one line,** and a pane's bar (5.1, `pb_draw`) sits against that line: its own
+  frame is the line, never a second line beside it, never a gap. Where a pane meets the window's
+  edge, the window's own frame is that line.
+- **Checked:** each app looks at every window and dialog of its own in Hatari on TOS 1.04 (flat),
+  TOS 4.04 (3D) and under XaAES before its release; the hub then lays the releases' windows side by
+  side and sends each app what differs.
 
 ---
 
@@ -1238,3 +1308,9 @@ program's window.
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) |
 | 3.2 Shortcuts take Control through `key_ctrl()` | ✓ (2.11) | ✓ (1.46) | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✓ (1.10) | ✓ (1.47) | ✓ (0.11) |
+| 3.5 Esc empties a text field, Undo cancels; Esc cancels a dialog without a field (GEM's way, 27 Oct; `dlg_cancel_key`) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 3.1/3.2 ^U closes, ^W the next window; New in the item's menu (27 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 4.3 Help: the viewer `STGUIDE=` names (27 Oct; common's `help.c`, comes with the sync) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 4.5 Notifications through BGEM.NG (`notify.c`, 27 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 5.6 No 3D setting: the tick and `DIALOGS3D=` gone; the AES's buttons (27 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 5.7 Pop-up buttons, field frames, pane edges (27 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
