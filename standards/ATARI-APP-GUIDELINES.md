@@ -389,7 +389,10 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
   (`common/ui/accmem.c`, 20 Oct 2026). The first start takes the app's own figure, but at most half
   of what is free, and a quarter when 1 MB or more is free, so two accessories leave half the machine
   to the program in front (on a 4 MB Falcon with NVDI's fonts about 1.5 MB is free when the
-  accessories load; two halves left EMail none for NVDI's workstation). Every app checks
+  accessories load; two halves left EMail none for NVDI's workstation). With more than two `.ACC`
+  files in the boot drive's root, half of what is free is shared out among them on their first start
+  (an eighth each for four): four first starts of a quarter took two thirds of that 1.5 MB, and
+  EUpdate found 0 KB for its screen (27 Oct 2026). Every app checks
   `v_opnvwk`'s handle: 0 means no workstation, and is said, never drawn with. From
   then on the ACC takes what it measured (`MEMKB=`: its busiest since boot, `heap_peak`, plus room),
   at most half; `HEAPKB=` is the user's and wins. Nothing is malloc'd before the heap is taken (libc
