@@ -166,14 +166,24 @@ print("on %s%s; %s%s" % (m.describe(), " with NVDI" if nvdi else "", versions,
                          "; booted again (the accessories at what they measured)" if again else ""), flush=True)
 
 x = machines.xvfb(display)
+fifo = os.path.join(work, "cmd.fifo")
+if os.path.exists(fifo):
+    os.remove(fifo)
 env = m.env(dict(os.environ, DISPLAY=display, SDL_VIDEODRIVER="x11"))
 hatari = subprocess.Popen(["hatari", "--statusbar", "no", "--borders", "no", "--zoom", "1",
-                           "--fast-boot", "yes", "--natfeats", "yes", "--log-level", "warn"] + m.args() + auto, env=env,
+                           "--fast-boot", "yes", "--natfeats", "yes", "--log-level", "warn",
+                           "--cmd-fifo", fifo] + m.args() + auto, env=env,
                           stdout=open(work + "/hatari.log", "w"), stderr=subprocess.STDOUT)
 
 
 def xdo(*a):
     return subprocess.run(["xdotool", *a], env=env, capture_output=True, text=True).stdout
+
+
+def undo():
+    """Undo (scancode 0x61, which X has no key for), through Hatari's fifo"""
+    with open(fifo, "w") as f:
+        f.write("hatari-event keypress 0x61\n")
 
 
 def win():
@@ -235,11 +245,13 @@ try:
                   "its own alert, see 0-desktop.png" % prg)
     if prg and prg.upper() == "EMAIL":
         # a first start's welcome (EMail's "Let's set up your mail account"),
-        # then the account dialog: Esc closes each (only EMail's: in EFTP,
-        # Return opens the drive row A:, and TOS asks for a disk). On a slow
+        # then the account dialog: Undo closes each (Esc cancels the
+        # welcome alert, but in a dialog with a text field it empties the
+        # field since 27 Oct 2026, the guidelines 3.5; and in EFTP Return
+        # opens the drive row A:, and TOS asks for a disk). On a slow
         # machine (a 4 MB Falcon with NVDI) each came later than the keys
         # were sent, and a Return on the dialog would save an empty account:
-        # Esc once the screen is still, again until two Escs change nothing
+        # Undo once the screen is still, again until two change nothing
         def still(name, most=10):
             prev = shot(name)
             for _ in range(most):
@@ -252,9 +264,9 @@ try:
         idle = 0
         for k in range(6):
             before = still("0a-%d" % k)
-            xdo("key", "Escape")
+            undo()
             time.sleep(3)
-            idle = idle + 1 if differs(before, still("0a-%d-esc" % k)) < 500 else 0
+            idle = idle + 1 if differs(before, still("0a-%d-undo" % k)) < 500 else 0
             if idle == 2:
                 break
         desk = shot("0b-%s-ready" % prg.lower())
