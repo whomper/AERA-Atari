@@ -9,6 +9,9 @@ void *calloc(size_t n, size_t m);
 void *realloc(void *p, size_t n);
 void free(void *p);
 void heap_add(void *p, size_t bytes);	/* a fixed heap (accessories) */
+/* a program's GEMDOS blocks that are all free again (but the first) back
+   to TOS; the bytes given back */
+long heap_trim(void);
 /* the heap's bytes in use (whole blocks), and the most since the app last
    set heap_peak (to heap_use, say): what its data really needs */
 extern long heap_use, heap_peak;
