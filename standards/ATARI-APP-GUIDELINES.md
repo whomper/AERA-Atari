@@ -63,6 +63,12 @@ way working.
     prologues, and a Falcon without a 68882 stops with a line-F exception. Only code loaded once
     the `_FPU` cookie says there is one (EWeb's `EWEBJS.OVL`) uses `-m68881`. Check with
     `m68k-linux-gnu-objdump -d` (no `fmove`, `fmovem` or other `f` instruction); TLS.OVL has none.
+  - **A program built for the 68020 or better says so on an ST** (27 Oct 2026: EUPDATE.PRG and
+    EWEB.PRG went back to the desktop on TOS 1.04 without a word, dead in `appl_init`'s 68030
+    binding before their own check). Its `main()` is common's `atari/cpucheck.c`, the one file
+    built `-m68000`: on a 68000 it shows the program's `cpu_alert` and quits, elsewhere it calls
+    `app_main()`. Every such program has a rig on `ST:mono` that sees the alert and the desktop
+    again.
 - **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware (the speed they are
   measured by is the stock machines', below): a Falcon030 with
   a **DFB1** accelerator (a 68030 at 50 MHz with a **68882** maths coprocessor and **128 MB of TT
@@ -1350,6 +1356,7 @@ program's window.
 | Speed: the clip set to the area moved before a scroll's `vro_cpyfm` (26 Oct, EFTP) | to check | ✓ (1.70: no change needed) | ✓ (1.62: scroll_copy, as it was) | ✓ (1.62: 71432ab9d) | to check | ✓ (1.66: text_noclip before each copy) | ✓ (0.43: clip_on before both scrolls; EUpdate ✓ 1.15: 39ffae04a) | — |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) | — |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) | — |
+| Machines: a 68020+ program says so on an ST (`cpucheck.c`, 27 Oct) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | ✗ (EWEB.PRG; EUpdate ✓ ec8851c39, its own copy, not yet released) | — |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) | — |
 | 3.2 Shortcuts take Control through `key_ctrl()` | ✓ (2.11) | ✓ (1.46) | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✓ (1.10) | ✓ (1.47) | ✓ (0.11) | — |
 | 3.5 Esc empties a text field, Undo cancels; Esc cancels a dialog without a field (GEM's way, 27 Oct; `dlg_cancel_key`) | ✓ (e918efde, 2.31) | ✓ (123d2791, 1.72) | ✓ (a10c706f6, 983af248b; 1.64: Esc in a message being written does nothing) | ✓ (aa652f00, 15b0bec4; 1.64) | ✓ (f8095de, 1.29: Esc empties the library search) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, 0.46: Esc in the address field puts the page's address back; EUpdate ✓ 375e2c0a8, 1.18) | — |
