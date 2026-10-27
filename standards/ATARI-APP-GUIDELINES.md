@@ -63,6 +63,12 @@ way working.
     prologues, and a Falcon without a 68882 stops with a line-F exception. Only code loaded once
     the `_FPU` cookie says there is one (EWeb's `EWEBJS.OVL`) uses `-m68881`. Check with
     `m68k-linux-gnu-objdump -d` (no `fmove`, `fmovem` or other `f` instruction); TLS.OVL has none.
+  - **No word or long at an odd stack offset** (27 Oct 2026). GCC fills an initialised char array
+    on the stack with long moves, and clears its tail with `clr.w`, at the array's own offset,
+    odd or not, `-fno-store-merging` notwithstanding: an address error on a 68000 when the code
+    runs (common's accmem at boot, EMail's Settings). An initialised char array on the stack
+    gets `__attribute__((aligned(4)))`, or is filled by `strcpy`. `make test` runs
+    `common/tools/oddaccess.py` over every 68000 ELF it builds and fails on any find.
   - **A program built for the 68020 or better says so on an ST** (27 Oct 2026: EUPDATE.PRG and
     EWEB.PRG went back to the desktop on TOS 1.04 without a word, dead in `appl_init`'s 68030
     binding before their own check). Its `main()` is common's `atari/cpucheck.c`, the one file
@@ -1361,6 +1367,7 @@ program's window.
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) | — |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) | — |
 | Machines: a 68020+ program says so on an ST (`cpucheck.c`, 27 Oct) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | ✗ (EWEB.PRG; EUpdate ✓ ec8851c39, its own copy, not yet released) | — |
+| Machines: `oddaccess.py` in `make test`, no odd stack access (27 Oct) | ✗ | ✗ | ✗ (dlg_settings, 1.65 candidate) | ✗ | ✗ | ✗ | ✗ (EWEBST.PRG; EUpdate n/a, 68030) | — |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) | — |
 | 3.2 Shortcuts take Control through `key_ctrl()` | ✓ (2.11) | ✓ (1.46) | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✓ (1.10) | ✓ (1.47) | ✓ (0.11) | — |
 | 3.5 Esc empties a text field, Undo cancels; Esc cancels a dialog without a field (GEM's way, 27 Oct; `dlg_cancel_key`) | ✓ (e918efde, 2.31) | ✓ (123d2791, 1.72) | ✓ (a10c706f6, 983af248b; 1.64: Esc in a message being written does nothing) | ✓ (aa652f00, 15b0bec4; 1.64) | ✓ (f8095de, 1.29: Esc empties the library search) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, 0.46: Esc in the address field puts the page's address back; EUpdate ✓ 375e2c0a8, 1.18) | — |
