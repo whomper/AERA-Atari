@@ -825,7 +825,10 @@ CONTACTS.TXT when the user chooses it (below).
     the right edge, the larger one takes it; the other keeps its own bar.
   - **Any other pane that scrolls on its own** (a list beside a preview, EFTP's local side) has a bar
     at its right from `common/ui/panebar.c`: AES objects drawn by `objc_draw`, so it takes the
-    AES's look (TOS's dotted bar, the 3D look where the AES has it (5.6), XaAES's theme). It is as
+    AES's look for a window's own sliders, so it matches the bar beside it: TOS's dotted track
+    and white slider on TOS and EmuTOS, even TOS 4's, which draws dialogs in 3D but window
+    sliders flat (Erez's EContact on TOS 4.04, 27 Oct 2026: the list's bar 3D beside the card's
+    flat one); 3D where the AES draws its windows so (MagiC, XaAES, N.AES, MyAES). It is as
     wide as the AES's own slider column (`wind_calc`: 19 pixels on TOS 1.04 in ST high, 23 on
     TOS 4 in VGA, 20 under XaAES; `graf_handle`'s box is only XaAES's character cell) and its
     arrows as high as the AES's gadgets. What scrolls sideways has a bar across its foot
