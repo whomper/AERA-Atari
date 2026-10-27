@@ -504,7 +504,9 @@ time**, so they never write the same file at once. The shared `common/ui/twin.c`
 
 ### 3.1 Menu bar
 - **Every PRG has a menu bar** with these titles, in this order, leaving out empty ones:
-  **Desk · File · Edit · View · [app titles] · Options · Help**. The menu bar is built at run time by the
+  **Desk · File · Edit · View · [app titles] · Options · Help**. The Desk title shows the program's
+  name (" EMail ", " ClaudeST "), as in every app of the family, never the word "Desk"; its menu
+  is About and the accessories. The menu bar is built at run time by the
   shared builder (`common/ui/mbar.c`, from EHypView's, which right-aligns the shortcut column).
 - **The ACC has no menu bar.** Its toolbar ≡ menu carries the same commands.
 - **Menu items show their shortcut** as `^N`, `⇧^F`. Commands that open a dialog end in "…".
