@@ -118,20 +118,20 @@ Per repo:
 - **Settings → Actions → General:** workflow permissions "Read and write". The release workflow needs it
   to publish.
 
-## Where each repo stands (15 Oct 2026)
+## Where each repo stands (15 Oct 2026; EPDF 27 Oct)
 
 ✓ = done, ~ = under way, ✗ = missing, ? = not checked (needs the repo's settings page).
 
-| Item | ECal | EContact | EMail | EFTP | EHypView | ClaudeST |
-|---|---|---|---|---|---|---|
-| `.gitignore`, `.gitattributes` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Version from `VERSION`, no `-dev` label | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (`st/claudest.c`) |
-| `binary/` not committed, icons in `icons/`, `make dist` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| CI and Release workflows; a release out | ✓ 1.97 | ✓ 1.33 | ✓ 1.30 | ✓ 1.31 | ✓ 1.0 | ✓ 1.34 |
-| Bug report form | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| README in the skeleton's order, family footer | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| CLAUDE.md: the shared section, then the repo's | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| SPDX line on every own source file | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Description (paste-ready list in GITHUB-IDENTITY.md) | ✓ | ✓ | ✓ | ✓ | ~ (drop FireBee) | ✓ |
-| Topics | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
-| Social preview, auto-delete head branches | ? | ? | ? | ? | ? | ? |
+| Item | ECal | EContact | EMail | EFTP | EHypView | ClaudeST | EPDF |
+|---|---|---|---|---|---|---|---|
+| `.gitignore`, `.gitattributes` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Version from `VERSION`, no `-dev` label | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (`st/claudest.c`) | ✓ (0.1) |
+| `binary/` not committed, icons in `icons/`, `make dist` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — (no program yet) |
+| CI and Release workflows; a release out | ✓ 1.97 | ✓ 1.33 | ✓ 1.30 | ✓ 1.31 | ✓ 1.0 | ✓ 1.34 | ~ (the workflows; no release yet) |
+| Bug report form | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| README in the skeleton's order, family footer | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| CLAUDE.md: the shared section, then the repo's | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| SPDX line on every own source file | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — (no sources yet) |
+| Description (paste-ready list in GITHUB-IDENTITY.md) | ✓ | ✓ | ✓ | ✓ | ~ (drop FireBee) | ✓ | ? |
+| Topics | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Social preview, auto-delete head branches | ? | ? | ? | ? | ? | ? | ? |
