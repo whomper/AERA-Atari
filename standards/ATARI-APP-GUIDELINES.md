@@ -1033,6 +1033,11 @@ CONTACTS.TXT when the user chooses it (below).
 - **Panes meet with one line,** and a pane's bar (5.1, `pb_draw`) sits against that line: its own
   frame is the line, never a second line beside it, never a gap. Where a pane meets the window's
   edge, the window's own frame is that line.
+- **A splitter is not a gap** (EFTP, 27 Oct 2026): where panes can be resized by dragging between
+  them, the 4-pixel splitter stays (EMail's and EFTP's `DIV`: the panel grey in colour, dotted in
+  mono, grabbed a little wider than it is drawn), as Atari programs have them. A pane bar beside
+  it touches it, its own frame its edge on that side: no white pixels and no second line between
+  the bar and the splitter.
 - **Checked:** each app looks at every window and dialog of its own in Hatari on TOS 1.04 (flat),
   TOS 4.04 (3D) and under XaAES before its release; the hub then lays the releases' windows side by
   side and sends each app what differs.
