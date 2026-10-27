@@ -57,10 +57,12 @@ way working.
     common's `atari/tos.c` (`__mulsi3`, the divisions, `__clzsi2` and `__ctzsi2` for
     `__builtin_clz`/`__builtin_ctz`), never libgcc's, which fault on an ST (`bfffo`: an illegal
     instruction). Check a build for `.short` and 68020 instructions with
-    `m68k-linux-gnu-objdump -d -m m68k:68000`. **68030 code that runs on a stock Falcon** compiles
-    with `-msoft-float`: without it GCC saves FPU registers in prologues, and a Falcon without
-    a 68882 stops with a line-F exception. Only code loaded once the `_FPU` cookie says there is
-    one (EWeb's `EWEBJS.OVL`) uses `-m68881`.
+    `m68k-linux-gnu-objdump -d -m m68k:68000`. **68030 code that runs on a stock Falcon has no
+    FPU instruction:** `-m68030` alone means a 68881, so code with floating point in it (EPDF's
+    FreeType) compiles with `-msoft-float`, or GCC uses the FPU and saves its registers in
+    prologues, and a Falcon without a 68882 stops with a line-F exception. Only code loaded once
+    the `_FPU` cookie says there is one (EWeb's `EWEBJS.OVL`) uses `-m68881`. Check with
+    `m68k-linux-gnu-objdump -d` (no `fmove`, `fmovem` or other `f` instruction); TLS.OVL has none.
 - **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware (the speed they are
   measured by is the stock machines', below): a Falcon030 with
   a **DFB1** accelerator (a 68030 at 50 MHz with a **68882** maths coprocessor and **128 MB of TT
