@@ -1368,7 +1368,7 @@ program's window.
 | Speed: the clip set to the area moved before a scroll's `vro_cpyfm` (26 Oct, EFTP) | to check | ✓ (1.70: no change needed) | ✓ (1.62: scroll_copy, as it was) | ✓ (1.62: 71432ab9d) | to check | ✓ (1.66: text_noclip before each copy) | ✓ (0.43: clip_on before both scrolls; EUpdate ✓ 1.15: 39ffae04a) | — |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) | — |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) | — |
-| Machines: a 68020+ program says so on an ST (`cpucheck.c`, 27 Oct) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | ✗ (EWEB.PRG; EUpdate ✓ ec8851c39, its own copy, not yet released) | — |
+| Machines: a 68020+ program says so on an ST (`cpucheck.c`, 27 Oct) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | ✗ (EWEB.PRG: 2b3cc3d47, next release; EUpdate ✓ ec8851c39, 52e737a1d, 1.19) | — |
 | Machines: `oddaccess.py` in `make test`, no odd stack access (27 Oct) | ✗ | ✗ | ✗ (dlg_settings, 1.65 candidate) | ✗ | ✗ | ✗ | ✗ (EWEBST.PRG; EUpdate n/a, 68030) | — |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) | — |
 | 3.2 Shortcuts take Control through `key_ctrl()` | ✓ (2.11) | ✓ (1.46) | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✓ (1.10) | ✓ (1.47) | ✓ (0.11) | — |
