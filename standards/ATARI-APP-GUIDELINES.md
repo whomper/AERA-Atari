@@ -336,7 +336,9 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
             │           Created by AERA | Erez Yaary        │
             │            © 2026 AERA | Erez Yaary           │
             │                                               │
-            │   Direct connection (TLS.OVL 1.0) • 3.1 MB    │  status line: app-specific, optional
+            │      STinG  •  Direct  •  online              │  1. the connection (network apps)
+            │      654 contacts in 2 address books          │  2. the app's own line
+            │      TT RAM  •  Free: 98.2 MB TT, 3.1 MB ST   │  3. the memory
             │                                               │
             │   Free software under the GNU GPL, version 2  │  fine print, small font
             │   or later. github.com/whomper/ECal           │  + "not affiliated with …" / trademark
@@ -346,6 +348,22 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 ```
 
 - It is centred on the screen, not the window, and closes with Return, Esc, Undo or a click on OK.
+- **The status lines say the same things in the same words in every app** (Erez, 27 Oct 2026):
+  at most three, in this order, a line left out where it has nothing to say.
+  1. **The connection**, in apps that use the network: the network stack (STinG, MiNTnet, or "No
+     network"), how the app reaches its servers ("Direct", "Pi gateway", "No gateway"; ClaudeST:
+     "Serial port, 19200 baud") and its state ("online" with a connection open, "ready",
+     "offline" when Work offline is ticked). Nothing else: TLS.OVL's version and the DSP matter
+     only when something goes wrong, and the app's log has them.
+  2. **The app's own line:** one thing it holds or is doing, in a few words. ECal its events and
+     calendars, EContact its contacts and address books, EMail its accounts and unread mail, EFTP
+     "Connected to ftp.example.com" or "Not connected", EHypView its hypertexts and font, EWeb its
+     screen mode, EUpdate GitHub's requests left this hour.
+  3. **The memory:** where the program and its data are ("TT RAM", "ST RAM", "TT and ST RAM") and
+     what is free ("Free: 98.2 MB TT, 3.1 MB ST"; on a machine without TT RAM "Free: 3.1 MB").
+  Lines 1 and 3 come from `common/ui/aboutline.c` (`about_net_line`, `about_mem_line`), so the
+  words can't drift; the app writes line 2 only. The items are joined by the family's bullet with
+  two spaces each side. `common/tests/about` checks them.
 - **It opens from the first menu item, "About ECal…".**
   - With a menu bar: the first entry under the Desk title.
   - Without one (an ACC, or a PRG in a window-only layout): the first entry of the toolbar's ≡ menu.
@@ -783,10 +801,12 @@ CONTACTS.TXT when the user chooses it (below).
 - **Elsewhere nothing changes:** on TOS, MagiC, or with an old BubbleGEM, `notify_send` gives 0
   and the app tells it its own way, as before (a bell, an alert, the icon's status).
 - **The shared code:** `common/ui/notify.c`. `notify_init("NAME    ")` at start (an accessory
-  before its first event call: the text is in global memory taken then), `notify_message(msg)` on
-  every message (1: BGEM.NG's, the app leaves it), `notify_send(title, text, buttons, id)`, and
-  `notify_clicked(id, button)` the app's. It asks BGEM.NG what it does first (`BGEMNG_INQUIRE`) and
-  sends only when the answer says notifications. Checked: `common/tests/notify` (`make test` on the
+  before its first event call: the text is in global memory taken then), then `notify_ask()`,
+  which asks BGEM.NG what it does (`BGEMNG_INQUIRE`); `notify_message(msg)` on every message (1:
+  BGEM.NG's, the app leaves it), `notify_send(title, text, buttons, id)`, and
+  `notify_clicked(id, button)` the app's. `notify_send` gives 0 until the answer has said
+  notifications: an old BubbleGEM never answers, and a notification waiting for an answer that
+  never came would be lost (ECal's reminders, 27 Oct 2026). Checked: `common/tests/notify` (`make test` on the
   host; `notify.py` under XaAES against a stand-in that speaks BGEM.NG's protocol: BGEM.NG 1.02 itself stops
   with a bus error in the rig's FreeMiNT 1.17.0).
 
@@ -1317,3 +1337,4 @@ program's window.
 | 4.5 Notifications through BGEM.NG (`notify.c`, 27 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 5.6 No 3D setting: the tick and `DIALOGS3D=` gone; the AES's buttons (27 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 5.7 Pop-up buttons, field frames, pane edges (27 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 1.3 About box: the three status lines, connection and memory from `aboutline.c` (27 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
