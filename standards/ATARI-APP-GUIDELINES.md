@@ -1284,11 +1284,11 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 - **The name.** The user sees **Direct connection** (Erez, 24 Oct 2026) in the menu, Settings' Secure
   page, alerts, the help file and the README, never "Falcon mode", which a TT owner doesn't relate to.
   The INF keeps `FALCON=` (its note says Direct connection), so settings carry over.
-- **EUpdate keeps its TLS built in** (`src/tls.c`, the same sources, with TLS.OVL's 68030 code under
-  `-DTLS_030` and `SIGS.DAT`, 1.13): it runs only on a TT or Falcon
-  and needs TLS for every check, and the updater mustn't depend on a file it may have to replace. It
-  puts TLS.OVL next to each app it updates, and an app's single program in place of a hand-copied
-  ST edition.
+- **EUpdate uses TLS.OVL too** (Erez, 27 Oct 2026; 1.20): it loads the family's TLS.OVL at its
+  first job, once its window is drawn, and a missing or damaged TLS.OVL gives an alert and a line in
+  the log, with nothing asked of GitHub. Its program at start went from 423 KB to 278 KB. It brings
+  TLS.OVL in each zip it unpacks, its own included, puts TLS.OVL next to each app it updates, and an
+  app's single program in place of a hand-copied ST edition. (Until 1.19 it kept its TLS built in.)
 - **In a program:** link `atari/tls_ovl.c`, `src/ovl.c` and `ui/dsp_ovl.c` in place of `src/tls.c`,
   BearSSL, `ui/dsp.c`, `ui/dsp_ec.c`, `src/ecdsp.c`, `atari/dsprsa.c` and `atari/dspec.c`, and set
   `tls_ovl_path` (the program's folder and `TLS.OVL`) where `CACERT.PEM`'s path is set. Builds on the
@@ -1359,7 +1359,7 @@ program's window.
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | n/a (no passwords in 0.11) | — |
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) | n/a | — |
 | 7.3 README and guide carry the Pi's install steps (21 Oct) | ✓ (f97a703, in 2.21) | ✓ (b188b65) | ✓ (36a8c59) | ✓ (fa54f74) | n/a | ✓ (7a7e83e) | ✓ (8089f49, in 0.24) | — |
-| 7.4 One program; TLS in TLS.OVL; "Direct connection" (24 Oct) | ✓ (a9b9d77, 80ef99d, 2.25) | ✓ (0d310f0b5, 1.64) | ✓ (06dfac1, 1.56) | ✓ (b6cb9b16, 1.49) | n/a | n/a | ✓ (the name: 16fd3b8e, 0.31; EWEBST.PRG stays; EUpdate n/a: TLS built in, TT/Falcon only; it carries TLS.OVL and replaces ST editions: ✓ a0d1a101, 1.6) | — |
+| 7.4 One program; TLS in TLS.OVL; "Direct connection" (24 Oct) | ✓ (a9b9d77, 80ef99d, 2.25) | ✓ (0d310f0b5, 1.64) | ✓ (06dfac1, 1.56) | ✓ (b6cb9b16, 1.49) | n/a | n/a | ✓ (the name: 16fd3b8e, 0.31; EWEBST.PRG stays; EUpdate ✓ 83905f8f1, 1.20: TLS.OVL in place of its own TLS; it carries TLS.OVL and replaces ST editions since a0d1a101, 1.6) | — |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ | — |
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) | — |
