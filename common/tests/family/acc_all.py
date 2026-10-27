@@ -19,7 +19,8 @@ of that name, for the hub's run before the release; the report names it. --accs 
 --prg APP starts that program's latest release (EMAIL.PRG; APP:FILE[:MORE...] for another
 edition and the files it needs, as EWeb:EWEBST.PRG:EWEB.FNT on an ST) first, as Erez works: the accessories
 are then opened from its own Desk menu, and at the end the program is quit (^Q) and must give
-the desktop back. The Atari boots to the desktop,
+the desktop back; the program's own accessory (EHYPVIEW.ACC with --prg EHypView) is left
+out, since it hands over to the program. The Atari boots to the desktop,
 each accessory is opened from the Desk menu in turn, the three windows
 left open over each other, then each opened again; the Desk menu and every
 step are screenshots in WORK/shots. Checks: the desktop came, the Desk
@@ -116,6 +117,13 @@ repo = {"EMailCheck": "EMail"}
 # accessories whose Desk entry shows an alert rather than a window: Esc
 # closes it again, each round (EMail check's [Check now|About|OK])
 alerts = {"EMailCheck"}
+# the program's own accessory is left out: with the program running it
+# hands over to it (its twin, the guidelines 2.1) and draws no window of
+# its own, and a ^Q too many would quit the program
+twin = prg.split(":")[0] if prg else None
+if twin in accs:
+    accs.remove(twin)
+    print("note  %s's accessory left out: it hands over to %s's program in front" % (twin, twin), flush=True)
 want = {a: (f[0] if st and f[1] not in use else f[1], f[1]) for a, f in want.items() if a in accs}
 for app, (f, one) in list(want.items()):
     if not get(repo.get(app, app), [f]):
