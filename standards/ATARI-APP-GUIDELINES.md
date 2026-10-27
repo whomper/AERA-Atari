@@ -1168,7 +1168,9 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   (renamed `FOLDR400.PRG`) first in `AUTO` (the repo template).
 - **Checked:** the rigs count each job's opens and lookups from Hatari's GEMDOS trace (EContact's
   and EHypView's `tests/hatari/acc_files.py`) and fail above the job's budget: about one open per
-  file the job touches, plus a safe save's rename.
+  file the job touches, plus a safe save's rename. An accessory's first boot (no `MEMKB=` or
+  `HEAPKB=` in its INF yet) has one look more: common's `acc_heap_take` lists the boot root's
+  `*.ACC` once to share the memory free among them (2.1); every later boot reads only its INF.
 
 ---
 
