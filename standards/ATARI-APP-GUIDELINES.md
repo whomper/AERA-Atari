@@ -1085,6 +1085,13 @@ CONTACTS.TXT when the user chooses it (below).
     (ECal/EContact's `find_workdir` and `locate_folder`). A root (`C:\`) is a folder too.
   - An INF left next to the PRG by an older version is copied to the root the first time.
   - A PRG-only app keeps its INF and key next to the program.
+  - **"The folder it was started from" is `app_dir()`** (`atari/gem.c`, from the command `shel_read`
+    gives), never the current folder (Erez, 28 Oct 2026). TOS 1.04 and 4.04 start a program that
+    another program starts with `shel_write` in the desktop's folder, whatever folder the caller set
+    (EMail starting EWeb: EWeb missed its fonts). EmuTOS, MagiC and MiNT set it, so the emulated
+    rigs never showed it; `common/tests/appdir` checks it on a real FAT floppy. Every file a program
+    keeps beside itself (INF, key, fonts, `TLS.OVL`, `CACERT.PEM`, help) is found from there. An
+    accessory has no command of its own: it keeps `FOLDER=`.
 - **The INF is plain text:**
   - One `NAME=value` per line, CR/LF line ends.
   - `;` comment lines that explain each setting.
@@ -1379,3 +1386,4 @@ program's window.
 | 5.6 No 3D setting: the tick and `DIALOGS3D=` gone; the AES's buttons (27 Oct) | ✓ (e918efde, 2.31: its own dialogs' buttons the AES's) | ✓ (123d2791, 1.72: its own dialogs' buttons the AES's) | ✓ (6f9124b79, 1.64) | ✓ (4882999e, 1.64: the toolbar the AES's G_BUTTONs) | ✓ (f8095de, 1.29: the library's buttons the AES's) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, f8ca126f7; 0.46; EUpdate ✓ ee71a1d0f, 1.18) | — |
 | 5.7 Pop-up buttons, field frames, pane edges (27 Oct) | ✓ (e918efde, 2.31) | ✓ (123d2791, 706b8301; 1.72) | ✓ (f20fa202b, 1.64) | ✓ (64965ec4, 1.64) | ✓ (f8095de, 1.29) | ✓ (51562d826, 1.67) | ✓ (0.46: nothing to change; EUpdate ✓ 2dc657d58, 1.18) | — |
 | 1.3 About box: the three status lines, connection and memory from `aboutline.c` (27 Oct) | ✓ (e918efde, 2.31) | ✓ (706b8301, 1.72) | ✓ (7465bb209, 1.64) | ✓ (89137bcf, 1.64) | ✓ (2038e9b, 1.31: no line 1, no network) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, 0.46; EUpdate ✓ cbdc756d9, d1048f647, 1.18) | — |
+| 6.1 A program's own files from `app_dir()` (`shel_read`), not the current folder (28 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (EUpdate ✗) | — |
