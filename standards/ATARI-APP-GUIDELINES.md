@@ -1353,7 +1353,7 @@ program's window.
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ | ✓ | — |
 | 4.3 Help front page (banner, window, diagram, contents) | ✓ (2.9) | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ✓ (1.37; the picture a column in, 59a8d98, with the next) | ✓ (1.11) | ✓ (1.44) | ✓ (0.11) | — |
 | 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
-| 5.1 One click on a window's arrow or track, one step: the AES's second WM_ARROWED dropped by common's `evnt_multi_` (28 Oct; TOS 1.04 too, 7a37019) | ✓ (1622a020, 197b4f4b, 2.34; TOS 1.04 too) | ✓ (4eb13c80, 89c6dedd, 1.74; TOS 1.04's with the next sync) | ✗ (next sync) | ✓ (748710146, 1.68; TOS 1.04's with the next sync) | ✓ (b7f290a, 66c8e52, 1.33; TOS 1.04: e185040, 1.34) | ✓ (1b33e50f, 198a9530, 1.69; TOS 1.04 too) | ✗ (next sync; EUpdate ✓ c88eab48d, 1.22) | — |
+| 5.1 One click on a window's arrow or track, one step: the AES's second WM_ARROWED dropped by common's `evnt_multi_` (28 Oct; TOS 1.04 too, 7a37019) | ✓ (1622a020, 197b4f4b, 2.34; TOS 1.04 too) | ✓ (4eb13c80, 89c6dedd, 1.74; TOS 1.04's with the next sync) | ✓ (caff63437, 00bd5a7a0, 1.68; TOS 1.04 too) | ✓ (748710146, 1.68; TOS 1.04's with the next sync) | ✓ (b7f290a, 66c8e52, 1.33; TOS 1.04: e185040, 1.34) | ✓ (1b33e50f, 198a9530, 1.69; TOS 1.04 too) | ✗ (next sync; EUpdate ✓ c88eab48d, 1.22) | — |
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
