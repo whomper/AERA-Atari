@@ -879,8 +879,9 @@ CONTACTS.TXT when the user chooses it (below).
     too), so the pane's own bar would sit beside an empty one. Where two panes are stacked at
     the right edge, the larger one takes it; the other keeps its own bar.
   - **One click, one step** (Erez, 28 Oct 2026): a click on a window's arrow or slider track
-    moves it a line or a page, once. TOS 3 and 4's AES sends such a click twice (a second
-    `WM_ARROWED`, the same, queued by the time the program asks again, the button let go);
+    moves it a line or a page, once. The AES sends such a click twice (a second
+    `WM_ARROWED`, the same, the next event, the button let go): TOS 4.04 every click, TOS 1.04
+    now and then when the program draws between the messages;
     common's `evnt_multi_` drops it, so every program built on common has it with its next
     sync. A button held down repeats, as the AES does. `common/tests/arrowed` checks it.
   - **Any other pane that scrolls on its own** (a list beside a preview, EFTP's local side) has a bar
