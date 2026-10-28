@@ -75,6 +75,10 @@ way working.
     built `-m68000`: on a 68000 it shows the program's `cpu_alert` and quits, elsewhere it calls
     `app_main()`. Every such program has a rig on `ST:mono` that sees the alert and the desktop
     again.
+  - **`appl_getinfo` only where the AES has it** (28 Oct 2026): TOS 4.04's AES (3.40) answers it
+    with "Illegal AES function call" (EMail's first try at an `SW_DEFDIR` start). Common's
+    `appl_getinfo()` asks only on AES 4.0 and later, with the `?AGI` cookie or under MagiC, and
+    gives 0 elsewhere; call it, never the AES trap directly.
 - **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware (the speed they are
   measured by is the stock machines', below): a Falcon030 with
   a **DFB1** accelerator (a 68030 at 50 MHz with a **68882** maths coprocessor and **128 MB of TT
