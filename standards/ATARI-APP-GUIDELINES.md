@@ -878,6 +878,11 @@ CONTACTS.TXT when the user chooses it (below).
     the AES keeps that column anyway, empty but for the box (on TOS 1.04 a row at the bottom
     too), so the pane's own bar would sit beside an empty one. Where two panes are stacked at
     the right edge, the larger one takes it; the other keeps its own bar.
+  - **One click, one step** (Erez, 28 Oct 2026): a click on a window's arrow or slider track
+    moves it a line or a page, once. TOS 3 and 4's AES sends such a click twice (a second
+    `WM_ARROWED`, the same, queued by the time the program asks again, the button let go);
+    common's `evnt_multi_` drops it, so every program built on common has it with its next
+    sync. A button held down repeats, as the AES does. `common/tests/arrowed` checks it.
   - **Any other pane that scrolls on its own** (a list beside a preview, EFTP's local side) has a bar
     at its right from `common/ui/panebar.c`: AES objects drawn by `objc_draw`, so it takes the
     AES's look for a window's own sliders, so it matches the bar beside it: TOS's dotted track
@@ -1347,6 +1352,7 @@ program's window.
 | 4.3 Help launcher (EHypView first, 0x2B memory) | ✓ | ✓ | ✓ | ✓ | n/a | ✓ | ✓ | — |
 | 4.3 Help front page (banner, window, diagram, contents) | ✓ (2.9) | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ✓ (1.37; the picture a column in, 59a8d98, with the next) | ✓ (1.11) | ✓ (1.44) | ✓ (0.11) | — |
 | 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
+| 5.1 One click on a window's arrow or track, one step: TOS 4's second WM_ARROWED dropped by common's `evnt_multi_` (28 Oct) | ✗ (next sync) | ✗ (next sync) | ✗ (next sync) | ✗ (next sync) | ✗ (next sync) | ✗ (next sync) | ✗ (next sync; EUpdate ✗) | — |
 | 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
