@@ -980,7 +980,10 @@ CONTACTS.TXT when the user chooses it (below).
 - **One family of icons** (Erez, 22 Oct 2026): each app's own object, alone, with no frame, monitor or
   badge round it. The family is in how they are drawn: 32 × 32, light from the top left, a
   near-black outline, a lighter top-left edge and a darker bottom-right one on every body, each
-  colour a step of one hue's ramp, no text. Every pixel is drawn, not reduced from a bigger picture.
+  colour a step of one hue's ramp, no text (EPDF's "PDF" is the one exception: Erez, 30 Oct 2026).
+  Every pixel is drawn, not reduced from a bigger picture. The [256] drawing is shaded as a
+  256-colour picture is, with the grey and red ramps' many steps (appicon.py's letters), not only
+  the 16 colours' few (Erez, 30 Oct 2026).
 - **The icons:**
   - ECal: a desk calendar with a clock.
   - EContact: an address card.
@@ -989,6 +992,8 @@ CONTACTS.TXT when the user chooses it (below).
   - EHypView: a lifebuoy.
   - ClaudeST: a terminal with Claude's spark.
   - EWeb: the globe.
+  - EPDF: a red book with PDF on its cover; its documents get a file icon of their own, a page with
+    its corner turned and a red PDF band (`EPDFDOC`, for the desktop's `*.PDF` entry).
   - EUpdate: git's mark over a disk, with an arrow down. Git's logo is Jason Long's, CC BY 3.0, so
     EUpdate credits it in its README and in its About box's fine print.
   - EDOS: a screen with its menu, and a 5.25-inch disk (Erez, 24 Oct 2026).
@@ -1016,7 +1021,7 @@ CONTACTS.TXT when the user chooses it (below).
     only 4 registers with TOS's, so `NAME.RSC` comes out in other colours under NVDI without a
     palette loaded. The release carries both, and the README says which to take. The name keeps
     to 8.3: `ECALNV.RSC`, `ECONTNV.RSC`, `EMAILNV.RSC`, `EFTPNV.RSC`, `EHYPVNV.RSC`, `CLSTNV.RSC`,
-    `EWEBNV.RSC`, `EUPDNV.RSC`;
+    `EWEBNV.RSC`, `EUPDNV.RSC`, `EPDFNV.RSC` (and `EPDFDNV.RSC`, the file icon's);
   - the ICN files;
   - `icon.h`, `icon16.h` and `icon256.h` for the About box (1.3) and the iconified window (5.1):
     `icon16_px` is in TOS's 16 VDI pens, drawn as they are. With 256 colours or more the About box
