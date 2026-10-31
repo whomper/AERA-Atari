@@ -477,6 +477,108 @@ void scr_rows(short h, const short *p)
 	}
 }
 
+/* n bytes (even) from d on turned over, longs eight at a turn */
+static void xor_row(unsigned char *d, short n)
+{
+	unsigned long *q = (unsigned long *)d;
+	short k;
+
+	for (k = n >> 5; k > 0; k--) {
+		q[0] = ~q[0];
+		q[1] = ~q[1];
+		q[2] = ~q[2];
+		q[3] = ~q[3];
+		q[4] = ~q[4];
+		q[5] = ~q[5];
+		q[6] = ~q[6];
+		q[7] = ~q[7];
+		q += 8;
+	}
+	for (k = (n & 31) >> 2; k > 0; k--, q++)
+		*q = ~*q;
+	if (n & 2)
+		*(unsigned short *)q = (unsigned short)~*(unsigned short *)q;
+}
+
+void scr_xor(short h, const short *p)
+{
+	short x1 = p[0], y1 = p[1], x2 = p[2], y2 = p[3], g0, g1, m0, m1, r, step, k;
+	unsigned short lmask, rmask;
+	unsigned char *row;
+
+	if (sf != 1) {
+		vswr_mode(h, 3);	/* MD_XOR */
+		vsf_interior(h, 1);	/* solid */
+		vsf_color(h, 1);
+		vr_recfl(h, (short *)p);
+		vswr_mode(h, 1);
+		return;
+	}
+	if (x1 > x2) {
+		short t = x1;
+		x1 = x2;
+		x2 = t;
+	}
+	if (y1 > y2) {
+		short t = y1;
+		y1 = y2;
+		y2 = t;
+	}
+	if (clipping) {
+		if (x1 < clip_now[0])
+			x1 = clip_now[0];
+		if (y1 < clip_now[1])
+			y1 = clip_now[1];
+		if (x2 > clip_now[2])
+			x2 = clip_now[2];
+		if (y2 > clip_now[3])
+			y2 = clip_now[3];
+	}
+	if (x1 < 0)
+		x1 = 0;
+	if (y1 < 0)
+		y1 = 0;
+	if (x2 > sf_w - 1)
+		x2 = (short)(sf_w - 1);
+	if (y2 > sf_h - 1)
+		y2 = (short)(sf_h - 1);
+	if (x1 > x2 || y1 > y2)
+		return;
+	step = (short)(sf_planes * 2);
+	g0 = x1 >> 4;
+	g1 = x2 >> 4;
+	lmask = (unsigned short)(0xFFFFu >> (x1 & 15));
+	rmask = (unsigned short)(0xFFFFu << (15 - (x2 & 15)));
+	if (g0 == g1) {
+		lmask &= rmask;
+		rmask = 0;
+	}
+	m0 = lmask == 0xFFFF ? g0 : g0 + 1;
+	m1 = g0 == g1 ? (lmask == 0xFFFF ? g0 : g0 - 1) : rmask == 0xFFFF ? g1 : g1 - 1;
+	row = (unsigned char *)trap14_w(3) + (long)y1 * sf_bpl;	/* Logbase */
+	{
+		long l = (long)g0 * step, m = (long)m0 * step, rr = (long)g1 * step, bpl = sf_bpl;
+		short mid = (short)((m1 - m0 + 1) * step), left = m0 > g0, right = g1 != g0 && m1 < g1;
+
+		for (r = (short)(y2 - y1 + 1); r > 0; r--, row += bpl) {
+			if (left) {
+				unsigned short *w = (unsigned short *)(row + l);
+
+				for (k = 0; k < sf_planes; k++)
+					w[k] ^= lmask;
+			}
+			if (mid > 0)
+				xor_row(row + m, mid);
+			if (right) {
+				unsigned short *w = (unsigned short *)(row + rr);
+
+				for (k = 0; k < sf_planes; k++)
+					w[k] ^= rmask;
+			}
+		}
+	}
+}
+
 void text_bold_strike(short h, short x, short y, const char *s, long n)
 {
 	vswr_mode(h, 2);	/* MD_TRANS */
