@@ -9,8 +9,11 @@
  *   - text_fx (bold, underline, both) against vst_effects, in black and
  *     pen 4, clipped and not (EHypView's FXCMP: row ch - 1, the text's
  *     width + 1);
+ *   - text_plain (plain text into TOS's screen) against v_gtext_n in
+ *     MD_REPLACE, pen 1: on a byte and off it, the same clips as text_n's,
+ *     rows cut at the top and the foot, no clip, all 256 characters;
  *   - the time of ten lines of 78 characters with the clip tight round
- *     them, v_gtext_n against text_n.
+ *     them, v_gtext_n against text_n and text_plain.
  * Lines go to the emulator's console (NatFeats) as "TXT ...", the last
  * "TXT done"; a difference says "TXT DIFFERS".
  */
@@ -90,6 +93,84 @@ static void clip_case(short x, const short *c, short mode)
 	same();
 }
 
+/* text_plain against v_gtext_n (MD_REPLACE, pen 1) with clip c, or none */
+static void plain_case(short x, const short *c, const char *s, long n)
+{
+	short none[4] = { 0, 0, 0, 0 };
+
+	clear();
+	vswr_mode(vh, 1);
+	vst_color(vh, 1);
+	if (c)
+		vs_clip(vh, 1, c);
+	else
+		vs_clip(vh, 0, none);
+	v_gtext_n(vh, x, Y, s, (short)n);
+	grab(buf_a);
+	clear();
+	vswr_mode(vh, 1);
+	vst_color(vh, 1);
+	if (c)
+		text_clip(vh, c);
+	else
+		text_noclip(vh);
+	text_plain(vh, x, Y, s, n);
+	text_noclip(vh);
+	grab(buf_b);
+	if (c)
+		snprintf(what, sizeof(what), "text_plain x %d clip %d,%d-%d,%d \"%.12s\"", x, c[0], c[1], c[2], c[3], s);
+	else
+		snprintf(what, sizeof(what), "text_plain x %d no clip \"%.12s\"", x, s);
+	same();
+}
+
+static void plain_cases(void)
+{
+	static const short xs[] = { 16, 24, 17 };	/* on a byte, and off it: text_n */
+	char all[64];
+	short c[4], k, j;
+	long n = (long)strlen(words);
+
+	for (j = 0; j < 3; j++) {
+		short x = xs[j];
+
+		c[0] = 0;
+		c[1] = Y;
+		c[2] = sw - 1;
+		c[3] = Y + ch - 1;
+		plain_case(x, c, words, n);		/* the whole width, the clip tight */
+		plain_case(x, 0, words, n);		/* no clip */
+		for (k = 0; k < 2 * cw; k++) {
+			c[0] = (short)(40 + k);		/* cut on the left at every pixel */
+			c[2] = (short)(300 + k);	/* and on the right */
+			plain_case(x, c, words, n);
+		}
+		c[0] = 101;
+		c[2] = 104;				/* narrower than a cell */
+		plain_case(x, c, words, n);
+		c[0] = 0;
+		c[2] = sw - 1;
+		for (k = 1; k < ch; k += 3) {
+			c[1] = (short)(Y + k);		/* the top rows cut */
+			c[3] = Y + ch - 1;
+			plain_case(x, c, words, n);
+			c[1] = Y;			/* the foot's (a window's last row) */
+			c[3] = (short)(Y + ch - 1 - k);
+			plain_case(x, c, words, n);
+		}
+	}
+	/* every character the font has, 64 at a time */
+	c[0] = 0;
+	c[1] = Y;
+	c[2] = sw - 1;
+	c[3] = Y + ch - 1;
+	for (j = 0; j < 4; j++) {
+		for (k = 0; k < 64; k++)
+			all[k] = (char)(j * 64 + k);
+		plain_case(16, c, all, 64);
+	}
+}
+
 static void fx_case(const char *s, short fx, short colour, const short *c)
 {
 	long n = (long)strlen(s);
@@ -140,6 +221,12 @@ static void timing(void)
 		for (l = 0; l < 10; l++)
 			text_n(vh, 8, 60 + l * ch, row, 78);
 	snprintf(line, sizeof(line), "TXT time: ten lines of 78, clip tight: text_n %lu ms", (unsigned long)(tos_ms() - t) / 4);
+	say(line);
+	t = tos_ms();
+	for (k = 0; k < 4; k++)
+		for (l = 0; l < 10; l++)
+			text_plain(vh, 8, 60 + l * ch, row, 78);
+	snprintf(line, sizeof(line), "TXT time: ten lines of 78, clip tight: text_plain %lu ms", (unsigned long)(tos_ms() - t) / 4);
 	say(line);
 	text_noclip(vh);
 	/* a clip with room past the text: fast as it is */
@@ -228,6 +315,11 @@ int main(void)
 				fx_case(fxw[k], fxs[m], colour, cut);
 			}
 		}
+	snprintf(line, sizeof(line), "TXT text_plain before: %d", text_plain_state());
+	say(line);
+	plain_cases();
+	snprintf(line, sizeof(line), "TXT text_plain after: %d", text_plain_state());
+	say(line);
 	timing();
 	wind_update(0);
 	graf_mouse(257, 0);
