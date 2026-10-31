@@ -40,8 +40,12 @@ way working.
   program is made for it (TLS.OVL stays on the disk, 7.4). One exception (Erez, 23 Oct 2026): EWeb's ST edition (EWEBST.PRG) is
   made for a 4 MB ST (the `ST` machine), not 1 MB; a browser needs the memory. EWeb's program
   (EWEB.PRG) runs on every Falcon from 0.28, the stock 4 MB one (`Falcon-4`) included, but there on
-  its own: beside the three accessories about 1.1 MB is left and TOS won't start it (as EMail under
-  NVDI); with them it takes 14 MB or TT RAM. It still shares that
+  its own: beside the four accessories 1.5 to 1.6 MB is left and EWEB.PRG needs 1.74 MB to load
+  (EWeb's figures, 31 Oct 2026), so TOS won't start it; with them it takes 14 MB or TT RAM. Erez,
+  31 Oct 2026: the whole family loaded at once on a 4 MB machine is not a goal ("by design it
+  leaves too little for ST software"), so no program is cut down to fit beside all the
+  accessories there, and the hub's `acc_all.py` runs EWEB.PRG on `Falcon` (with the DFB1's
+  memory), not `Falcon-4`. It still shares that
   4 MB with the family: it runs with ECal's, EContact's and EHypView's accessories loaded and EMail
   or EFTP beside it, so the hub's `acc_all.py --prg EWeb` on `ST` must pass. Every other app's ST
   edition still runs on a 1 MB ST (`ST-1`).
