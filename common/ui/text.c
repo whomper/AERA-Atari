@@ -300,6 +300,22 @@ int text_plain_state(void)
 	return sf;
 }
 
+void text_reclip(short h)
+{
+	vs_clip(h, clipping, clip_now);
+}
+
+unsigned char *scr_at(long *bpl, short *planes, short *w, short *h)
+{
+	if (sf != 1)
+		return 0;
+	*bpl = sf_bpl;
+	*planes = sf_planes;
+	*w = sf_w;
+	*h = sf_h;
+	return (unsigned char *)trap14_w(3);	/* Logbase: where the VDI draws now */
+}
+
 void text_plain(short h, short x, short y, const char *s, long n)
 {
 	short cx1, cy1, cx2, cy2, r0, r1;
