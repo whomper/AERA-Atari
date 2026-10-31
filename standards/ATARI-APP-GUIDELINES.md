@@ -290,7 +290,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
 
     Use tables and work done once instead. And never `malloc` per item: keep a buffer and reuse it.
   - **The VDI and the AES do the drawing.** Fills, lines, text and copies go through the VDI, which
-    NVDI makes fast. Pixels are poked by hand only where that was measured faster (pictures).
+    NVDI makes fast. Pixels are poked by hand only where that was measured faster: pictures, and on
+    TOS's own screen (no NVDI, interleaved planes, the system font) common's `text_plain` (plain
+    text, 2.6 times as fast on an 8 MHz ST, a row cut at a window's foot at no extra cost),
+    `scr_rows` (a scroll's rows, 1.6 times) and `scr_xor` (a selection inverted, twice). Each
+    checks once a start that the VDI draws where it writes, gives the VDI's pixels byte for byte
+    (`common/tests/text` on TOS 1.04, 4.04 and EmuTOS), and is the VDI's call everywhere else
+    (EPDF, 31 Oct 2026).
   - **Work once, keep the result.** Sort once, lay out once, measure once. Change only what changed.
     Files: 6.5.
   - **The DSP on a Falcon** takes any work it does faster than the 68030 (TLS's curves and RSA,
@@ -1428,6 +1434,7 @@ program's window.
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ | ✓ (0.1 by the Release workflow) | — |
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) | ✓ | — |
 | Who decides what: Erez's part (new programs, capabilities, how programs work together, the user experience, phases, priorities, conflicts) in CLAUDE.md (31 Oct) | ? | ? | ? | ? | ? | ? | ? | ? | ? |
+| Speed: plain text, scrolls and selections through common's `text_plain`, `scr_rows`, `scr_xor` where the app draws them (31 Oct) | ? | ? | ? | ? | ? | ? | ? | ~ (0.2: in progress) | — |
 | Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (EUpdate ✗) | ✗ (0.1, the hub's run: on ST a line scrolled 155, a page 305, Select all 130, the start 330; Falcon-4 within 35 ms of its times) | — |
 | Speed: text through `text_n` and `text_fx` (`common/ui/text.c`), clipping off inside the clip (26 Oct) | ✗ | ✗ (next round, after 1.70) | ✓ (1.62: cb210535) | ✓ (1.61: 25e66d0) | ✗ (its own, e2f417a) | ✓ (1.66: 387e054) | ✗ (0.43: d89ee7497, with its release; EUpdate ✗) | ✓ (0.1: textwin.c draw_rows) | — |
 | Speed: the clip set to the area moved before a scroll's `vro_cpyfm` (26 Oct, EFTP) | to check | ✓ (1.70: no change needed) | ✓ (1.62: scroll_copy, as it was) | ✓ (1.62: 71432ab9d) | to check | ✓ (1.66: text_noclip before each copy) | ✓ (0.43: clip_on before both scrolls; EUpdate ✓ 1.15: 39ffae04a) | ✓ (0.1: textwin.c moved()) | — |
