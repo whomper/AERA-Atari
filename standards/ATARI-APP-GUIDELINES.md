@@ -33,6 +33,30 @@ setting, a file or a protocol, every app moves in step in its next release and t
 removed in the same change. When the apps get other users, this rule ends and changes keep the old
 way working.
 
+### Who decides what (Erez, 31 Oct 2026)
+
+**Erez's part** goes to him before the work, as a decision with a short context:
+- **New programs and new ideas:** what a program is for, its core capabilities, and how it works with
+  the other programs (what one hands another, the messages between them, what it leaves to another).
+- **The user experience:** what a user sees and does: the look and layout, the way through a task,
+  the words on the screen, the icons, the defaults. A change to it that he didn't ask for goes to
+  him first.
+- **Phases:** each program's plan is a series of phases (EPDF: 0.2 the ST's speed, 0.3 big
+  documents, and so on). A session works inside the phase he approved and moves to the next only
+  when he says so. At a phase's end it sends him one phase report: what the phase set out to do,
+  what was done (the release links), what is left, and the next phase as a proposal.
+- **Priorities and conflicts:** which program, phase or piece of work comes first, and what happens
+  when programs or sessions pull different ways (a shared resource such as the DSP, memory, a key,
+  a port, two plans for one feature). The hub sets out the options and its recommendation; he
+  decides.
+- Packages on the Pi and the ports, as before.
+
+**The team's part** is how it is made, and it is decided and done without asking: the code and its
+structure, the shared code, tests, measurements, fixes, the docs, and releases inside an approved
+phase (1.2). The hub settles a technical choice on its measurements when it changes nothing a
+user sees and no phase or priority, and tells the sessions; if it does change one of those, it is
+Erez's.
+
 ### The machines
 
 - **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
@@ -343,9 +367,10 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   It doesn't wait for a yes, and it releases as soon as the work is done rather than collecting it.
   The session then gives Erez the release's link in one line, with anything he has to do (the Pi's
   `./update-pi.sh`, say), and sends the hub the link. A bad release is rolled back the same way,
-  without asking. Decisions that are Erez's still go to him before the work: a design choice, a new
-  package on the Pi, a change to what a user sees that wasn't asked for, a port. The release itself
-  is not one of them. A change to the docs alone needs no release of its own: it goes out with the
+  without asking. Decisions that are Erez's still go to him before the work ("Who decides what",
+  above: new programs and capabilities, how programs work together, the user experience, phases,
+  priorities and conflicts, Pi packages, ports). A release inside an approved phase is not one of
+  them. A change to the docs alone needs no release of its own: it goes out with the
   next one.
 - **Text-only changes take the short path** (Erez's decision, 18 Oct 2026). A change to the docs alone
   (README, `docs/`, the guide the help file is made from, CLAUDE.md) is pushed to `main` as soon as
@@ -1402,6 +1427,7 @@ program's window.
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ | ✓ (0.1 by the Release workflow) | — |
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) | ✓ | — |
+| Who decides what: Erez's part (new programs, capabilities, how programs work together, the user experience, phases, priorities, conflicts) in CLAUDE.md (31 Oct) | ? | ? | ? | ? | ? | ? | ? | ? | ? |
 | Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (EUpdate ✗) | ✗ (0.1, the hub's run: on ST a line scrolled 155, a page 305, Select all 130, the start 330; Falcon-4 within 35 ms of its times) | — |
 | Speed: text through `text_n` and `text_fx` (`common/ui/text.c`), clipping off inside the clip (26 Oct) | ✗ | ✗ (next round, after 1.70) | ✓ (1.62: cb210535) | ✓ (1.61: 25e66d0) | ✗ (its own, e2f417a) | ✓ (1.66: 387e054) | ✗ (0.43: d89ee7497, with its release; EUpdate ✗) | ✓ (0.1: textwin.c draw_rows) | — |
 | Speed: the clip set to the area moved before a scroll's `vro_cpyfm` (26 Oct, EFTP) | to check | ✓ (1.70: no change needed) | ✓ (1.62: scroll_copy, as it was) | ✓ (1.62: 71432ab9d) | to check | ✓ (1.66: text_noclip before each copy) | ✓ (0.43: clip_on before both scrolls; EUpdate ✓ 1.15: 39ffae04a) | ✓ (0.1: textwin.c moved()) | — |

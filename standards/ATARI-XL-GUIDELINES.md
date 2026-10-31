@@ -20,6 +20,10 @@ Words used here:
 **No compatibility code, for now** (Erez, 17 Oct 2026), as on the ST: when the family changes a
 file, a name or a rule, every program moves in its next release and the old way goes.
 
+**Who decides what** is the ST's ([there](ATARI-APP-GUIDELINES.md#who-decides-what-erez-31-oct-2026); 31 Oct
+2026): new programs, their capabilities and how they work with the others, the user experience,
+phases, priorities and conflicts are Erez's; how it is made is the team's.
+
 ### The machines
 
 - **Any Atari 400, 800, XL or XE with 48K** (XL and XE tried; 400 and 800 expected) and a disk drive, MyDOS, SpartaDOS 3.x or DOS 2.5.
