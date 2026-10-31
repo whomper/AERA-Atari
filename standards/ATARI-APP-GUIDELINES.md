@@ -82,7 +82,9 @@ way working.
 - **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware (the speed they are
   measured by is the stock machines', below): a Falcon030 with
   a **DFB1** accelerator (a 68030 at 50 MHz with a **68882** maths coprocessor and **128 MB of TT
-  RAM**), **NetUSBee** for the network, and the Falcon's **DSP**. What follows from it:
+  RAM**), **NetUSBee** for the network, the Falcon's **DSP**, and for sound a **SoundPool FDI** on
+  the DSP port (S/PDIF out, with its own 44.1 and 48 kHz clocks; its FDI program sets it up at boot;
+  31 Oct 2026). What follows from it:
   - code and data belong in TT RAM (`PRGFLAGS=7`; the heap prefers it already). Only what the
     hardware reads stays in ST RAM: the screen, and bitmaps the VDI copies (`st_ram()`; the blitter
     can't reach TT RAM);
@@ -265,6 +267,14 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     Files: 6.5.
   - **The DSP on a Falcon** takes any work it does faster than the 68030 (TLS's curves and RSA,
     EWeb's JPEG), with the 68030's own code as the fallback.
+  - **The DSP is shared** (Erez, 31 Oct 2026, with EPlay, which holds it while it plays):
+    - a program holds the DSP (`Dsp_Lock`) only while it uses it: a job for its length, a player
+      while it plays, never while paused or stopped;
+    - nobody waits for the DSP or asks another program to let it go: `Dsp_Lock` refused means the
+      68030's code (common's `dspec.c`, `dsprsa.c` and `dspjpeg.c` do so already), slower but never
+      failing;
+    - a program that can't work without the DSP (EPlay's MP3) says so ("The DSP is in use by another
+      program") and doesn't try again in a loop.
 - **Measuring it.**
   - Each app has a speed rig, `tests/hatari/speed.py`, on common's `tests/speed/speed.py`. It
     builds with `-DAES_PROFILE=20`, which also reports the start as `AESSTART`, and does the actions
@@ -1403,3 +1413,4 @@ program's window.
 | 5.7 Pop-up buttons, field frames, pane edges (27 Oct) | ✓ (e918efde, 2.31) | ✓ (123d2791, 706b8301; 1.72) | ✓ (f20fa202b, 1.64) | ✓ (64965ec4, 1.64) | ✓ (f8095de, 1.29) | ✓ (51562d826, 1.67) | ✓ (0.46: nothing to change; EUpdate ✓ 2dc657d58, 1.18) | — |
 | 1.3 About box: the three status lines, connection and memory from `aboutline.c` (27 Oct) | ✓ (e918efde, 2.31) | ✓ (706b8301, 1.72) | ✓ (7465bb209, 1.64) | ✓ (89137bcf, 1.64) | ✓ (2038e9b, 1.31: no line 1, no network) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, 0.46; EUpdate ✓ cbdc756d9, d1048f647, 1.18) | — |
 | 6.1 A program's own files from `app_dir()` (`shel_read`), not the current folder (28 Oct) | ✗ | ✓ (57e480ac, 1.74) | ✓ (909ef989c, 1.67: work_dir()) | ✓ (6f14a42d, 1.67: work_dir()) | ✓ (3b2de1a, 1.32: start_dir) | ✓ (e3e4383, 1.69) | ✓ (890245b6f, 0.49: work_dir(); EUpdate ✓ 25580444d, 1.21) | — |
+| Speed: the DSP shared, `Dsp_Lock` refused means the 68030 (31 Oct) | ✓ (TLS.OVL: common's dspec.c, dsprsa.c) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | n/a (no DSP) | n/a (no DSP) | ✓ (TLS.OVL; dspjpeg.c) | — (no DSP yet; its pictures will use dspjpeg.c) |
