@@ -191,6 +191,13 @@ extern int text_plain_state(void) __attribute__((weak));
 extern void text_reclip(short h) __attribute__((weak));
 extern unsigned char *scr_at(long *bpl, short *planes, short *w, short *h) __attribute__((weak));
 extern void scr_fill(short h, const short *p, short pen) __attribute__((weak));
+extern int scr_pattern(short h, const short *p, const unsigned short *pat) __attribute__((weak));
+
+/* the track's pattern as the screen has it (pat_learn): row y's sixteen
+   pixels tpat[y & 15]; tpat_ok 0 not read yet, 1 read and checked, -1
+   not to be had (the VDI fills it then); for the colour word tpat_spec */
+static unsigned short tpat[16], tpat_spec;
+static short tpat_ok;
 
 void pb_vdi(short h)
 {
@@ -239,6 +246,19 @@ static void fill_as(int across, unsigned short spec, short a1, short k1, short a
 		if (p[0] <= p[2] && p[1] <= p[3])
 			scr_fill(bar_h, p, in == 0 ? 0 : spec & 15);
 		return;
+	}
+	if (in == 2 && mode == 1 && tpat_ok > 0 && spec == tpat_spec && scr_pattern) {
+		/* the track's pattern, read off the screen, by the CPU */
+		if (p[0] < at_clip.x)
+			p[0] = at_clip.x;
+		if (p[1] < at_clip.y)
+			p[1] = at_clip.y;
+		if (p[2] > at_clip.x + at_clip.w - 1)
+			p[2] = at_clip.x + at_clip.w - 1;
+		if (p[3] > at_clip.y + at_clip.h - 1)
+			p[3] = at_clip.y + at_clip.h - 1;
+		if (p[0] > p[2] || p[1] > p[3] || scr_pattern(bar_h, p, tpat))
+			return;
 	}
 	if (mode != at_mode)
 		vswr_mode(bar_h, at_mode = mode);
@@ -328,6 +348,103 @@ static void fast_draw(const PANEBAR *b, const GRECT *c, const OBJECT *t, short t
 	fast_n++;
 }
 
+/* the track's pattern read off the screen, where the bar was just drawn
+   in c (by the AES, or the VDI's pattern by the fast way): 16 rows by 16
+   columns of track with no slider or frame in them, every plane the same
+   (pen 1 on 0), then drawn there again by the CPU and the bytes compared.
+   Nothing yet when c holds no such square (a short list's slider fills
+   its track): the next whole bar tries again */
+static unsigned long box_sum(const GRECT *c);
+
+static void pat_learn(const PANEBAR *b, const GRECT *c, short ty, short th, short sy, short sh, unsigned short ts)
+{
+	int across = b->across != 0;
+	short k1 = across ? b->r.y : b->r.x, k2 = k1 + (across ? b->r.h : b->r.w) - 1;
+	short c0 = across ? c->y : c->x, c1 = c0 + (across ? c->h : c->w) - 1;
+	short ca = across ? c->x : c->y, ce = ca + (across ? c->w : c->h) - 1;
+	short run[2][2], i, a0 = -1, q[4], x, y, planes, sw, shh;
+	long bpl;
+	unsigned char *base;
+	unsigned short pat[16];
+	unsigned long was;
+	GRECT r;
+	if (tpat_ok || !scr_pattern || ((ts >> 4) & 7) == 0 || ((ts >> 4) & 7) == 7 || !(ts & 0x80) ||
+	    (ts & 15) != 1 || k1 + 1 < c0 || k1 + 16 > c1 || k1 + 16 > k2 - 1)
+		return;
+	/* along: the track above and below the slider, its frame left out */
+	run[0][0] = ty;
+	run[0][1] = sh ? sy - 2 : ty + th - 1;
+	run[1][0] = sh ? sy + sh + 1 : 1;
+	run[1][1] = sh ? ty + th - 1 : 0;
+	for (i = 0; i < 2 && a0 < 0; i++) {
+		short s = run[i][0] > ca ? run[i][0] : ca, e = run[i][1] < ce ? run[i][1] : ce;
+		if (e - s + 1 >= 16)
+			a0 = s;
+	}
+	if (a0 < 0)
+		return;
+	r.x = across ? a0 : k1 + 1;
+	r.y = across ? k1 + 1 : a0;
+	r.w = r.h = 16;
+	base = scr_at(&bpl, &planes, &sw, &shh);
+	if (!base || r.x + 16 > sw || r.y + 16 > shh)
+		return;
+	for (i = 0; i < 16; i++)
+		pat[i] = 0;
+	for (y = r.y; y < r.y + 16; y++) {
+		const unsigned short *row = (const unsigned short *)(base + (long)y * bpl);
+		for (x = r.x; x < r.x + 16; x++) {
+			const unsigned short *w = row + (x >> 4) * planes;
+			unsigned short bit = (unsigned short)(0x8000u >> (x & 15));
+			short k, on = (w[0] & bit) != 0;
+			for (k = 1; k < planes; k++)
+				if (((w[k] & bit) != 0) != on) {
+					tpat_ok = -1;	/* not pen 1 on 0 */
+					return;
+				}
+			if (on)
+				pat[y & 15] |= (unsigned short)(0x8000u >> (x & 15));
+		}
+	}
+	was = box_sum(&r);
+	for (i = 0; i < 16; i++)
+		tpat[i] = pat[i];
+	q[0] = r.x;
+	q[1] = r.y;
+	q[2] = r.x + 15;
+	q[3] = r.y + 15;
+	if (!was || !scr_pattern(bar_h, q, tpat))
+		return;
+	tpat_spec = ts;
+	tpat_ok = box_sum(&r) == was ? 1 : -1;
+}
+
+/* the part of c along the bar from a0 to a1 - 1, an arrow and its frame:
+   its box white (the bar's ground, under the arrow's transparent box) by
+   the CPU, then the arrow alone by the AES (its frame and its character);
+   0 when the ground isn't white */
+static int arrow_part(const PANEBAR *b, OBJECT *t, const GRECT *c, short obj, short a0, short a1)
+{
+	int across = b->across != 0;
+	GRECT q = *c;
+	short *a = across ? &q.x : &q.y, *l = across ? &q.w : &q.h, e = *a + *l;
+	short k1 = across ? b->r.y : b->r.x, k2 = k1 + (across ? b->r.h : b->r.w) - 1;
+	unsigned short g = (unsigned short)t[O_BAR].ob_spec;
+	if ((g & 0xF0) != 0x80 || (g & 15))
+		return 0;		/* not an opaque hollow ground (white) */
+	if (*a < a0)
+		*a = a0;
+	if (e > a1)
+		e = a1;
+	*l = e - *a;
+	if (*l <= 0)
+		return 1;
+	at_clip = q;
+	fill_as(across, g, a0 + 1, k1 + 1, a1 - 2, k2 - 1);
+	objc_draw(t, obj, 0, q.x, q.y, q.w, q.h);
+	return 1;
+}
+
 /* the screen's bytes under c, summed (the first box's check) */
 static unsigned long box_sum(const GRECT *c)
 {
@@ -411,13 +528,32 @@ void pb_draw(const PANEBAR *b, const GRECT *clip)
 		t[O_SLIDER].ob_flags |= 0x0600;
 	}
 	if (!d3 && fast > 0 && fast_can(t)) {
+		/* the track and the slider the fast way; an arrow in the box,
+		   its ground white and the arrow alone by the AES (a whole bar
+		   by objc_draw: 70 ms of an 8 MHz ST) */
 		GRECT k = c;
-		if (in_track(b, &k, ty, th) && k.x == c.x && k.y == c.y && k.w == c.w && k.h == c.h) {
-			fast_draw(b, &c, t, ty, th, sy, sh);
+		short ca = b->across ? c.x : c.y, ce = ca + (b->across ? c.w : c.h);
+		short st = start(b), en = st + length(b);
+		int ok = 1;
+		if (ca < ty - 1)
+			ok = arrow_part(b, t, &c, O_UP, st, ty - 1);
+		if (ok && ce > ty + th + 1)
+			ok = arrow_part(b, t, &c, O_DOWN, ty + th + 1, en);
+		if (ok) {
+			if (in_track(b, &k, ty, th)) {
+				fast_draw(b, &k, t, ty, th, sy, sh);
+				if (!tpat_ok)
+					pat_learn(b, &k, ty, th, sy, sh, (unsigned short)t[O_TRACK].ob_spec);
+			}
 			return;
 		}
 	}
 	objc_draw(t, O_BAR, 2, c.x, c.y, c.w, c.h);
+	if (!d3 && !tpat_ok && fast_can(t)) {
+		GRECT k = c;
+		if (in_track(b, &k, ty, th))
+			pat_learn(b, &k, ty, th, sy, sh, (unsigned short)t[O_TRACK].ob_spec);
+	}
 	if (!d3 && !fast && fast_can(t)) {
 		/* the first time: a little of the track the AES drew (round the
 		   slider), drawn again the VDI's way over it, the same bytes or
