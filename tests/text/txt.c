@@ -253,7 +253,7 @@ static void move_cases(void)
 	for (dy = -1; dy <= 1; dy += 2) {
 		move_case(0, (short)(sw - 1), dy);			/* the whole width */
 		for (k = 0; k < 16; k++) {
-			move_case((short)(32 + k), (short)(400 + k), dy);	/* both sides cut */
+			move_case((short)(32 + k), (short)(500 + k), dy);	/* both sides cut (wide enough for the CPU: 384) */
 			move_case((short)(64 + k), (short)(64 + k + 3), dy);	/* inside one group, or two */
 		}
 		move_case(16, 31, dy);					/* one whole group */
