@@ -15,6 +15,12 @@
  *   - scr_rows (a scroll's box moved by the CPU) against vro_cpyfm: up and
  *     down a row, its sides at every pixel of a 16-pixel group, one group
  *     wide and wider, the whole area compared;
+ *   - scr_fill (a box filled white or black by the CPU) against vr_recfl
+ *     in MD_REPLACE, solid, pens 0 and 1: the same boxes as scr_xor's, and
+ *     one with its corners the other way round;
+ *   - scr_stamp (a one-plane bitmap, an icon, by the CPU) against
+ *     vrt_cpyfm in MD_TRANS, pens 0 and 1: at every pixel of a group, and
+ *     cut by the clip on every side;
  *   - scr_xor (a selection inverted by the CPU) against vr_recfl in MD_XOR:
  *     its sides at every pixel of a group, inside one group, one row,
  *     cut by the clip;
@@ -289,6 +295,142 @@ static void xor_case(const short *b, const short *c)
 	}
 }
 
+/* scr_fill against vr_recfl in MD_REPLACE, solid, pen; b the box, c the
+   clip or 0 */
+static void fill_case(const short *b, const short *c, short pen)
+{
+	short none[4] = { 0, 0, 0, 0 }, q[4];
+	memcpy(q, b, sizeof(q));
+	mfill();
+	vs_clip(vh, c ? 1 : 0, c ? c : none);
+	vswr_mode(vh, 1);
+	vsf_interior(vh, 1);
+	vsf_color(vh, pen);
+	vr_recfl(vh, q);
+	mgrab(mbuf_a);
+	mfill();
+	if (c)
+		text_clip(vh, c);
+	else
+		text_noclip(vh);
+	scr_fill(vh, b, pen);
+	text_noclip(vh);
+	mgrab(mbuf_b);
+	checks++;
+	if (memcmp(mbuf_a, mbuf_b, mbytes)) {
+		differ++;
+		snprintf(line, sizeof(line), "TXT DIFFERS scr_fill pen %d %d,%d-%d,%d%s", pen, b[0], b[1], b[2], b[3],
+			 c ? " clipped" : "");
+		say(line);
+	}
+}
+
+/* a 32 by 16 bitmap: its edge pixels set, a diagonal, a block */
+static unsigned short stamp_m[16][2];
+
+static void stamp_make(void)
+{
+	short r;
+	for (r = 0; r < 16; r++) {
+		stamp_m[r][0] = (unsigned short)(0x8000u | (0x8000u >> r) | (r == 0 || r == 15 ? 0xFFFF : 0));
+		stamp_m[r][1] = (unsigned short)(0x0001u | (r >= 4 && r < 12 ? 0x0FF0 : 0) | (r == 0 || r == 15 ? 0xFFFF : 0));
+	}
+}
+
+/* scr_stamp against vrt_cpyfm MD_TRANS in pen, at x, y; c the clip or 0 */
+static void stamp_case(short x, short y, const short *c, short pen)
+{
+	MFDB src;
+	short p[8], col[2] = { pen, 0 }, none[4] = { 0, 0, 0, 0 };
+	memset(&src, 0, sizeof(src));
+	src.fd_addr = stamp_m;
+	src.fd_w = 32;
+	src.fd_h = 16;
+	src.fd_wdwidth = 2;
+	src.fd_nplanes = 1;
+	p[0] = 0;
+	p[1] = 0;
+	p[2] = 31;
+	p[3] = 15;
+	p[4] = x;
+	p[5] = y;
+	p[6] = (short)(x + 31);
+	p[7] = (short)(y + 15);
+	mfill();
+	vs_clip(vh, c ? 1 : 0, c ? c : none);
+	vrt_cpyfm(vh, 2, p, &src, &scr, col);
+	mgrab(mbuf_a);
+	mfill();
+	if (c)
+		text_clip(vh, c);
+	else
+		text_noclip(vh);
+	scr_stamp(vh, &stamp_m[0][0], 2, 16, x, y, pen);
+	text_noclip(vh);
+	mgrab(mbuf_b);
+	checks++;
+	if (memcmp(mbuf_a, mbuf_b, mbytes)) {
+		differ++;
+		snprintf(line, sizeof(line), "TXT DIFFERS scr_stamp pen %d at %d,%d%s", pen, x, y, c ? " clipped" : "");
+		say(line);
+	}
+}
+
+static void stamp_cases(void)
+{
+	short k, pen, c[4];
+	if ((long)mbuf_a <= 0 || (long)mbuf_b <= 0)
+		return;
+	stamp_make();
+	for (pen = 0; pen <= 1; pen++)
+		for (k = 0; k < 16; k++) {
+			stamp_case((short)(48 + k), (short)(MY + ch), 0, pen);	/* at every pixel of a group */
+			c[0] = (short)(50 + k);		/* cut on the left, the right, top and foot */
+			c[1] = (short)(MY + ch + 3);
+			c[2] = (short)(48 + k + 20);
+			c[3] = (short)(MY + ch + 11);
+			stamp_case((short)(48 + k), (short)(MY + ch), c, pen);
+		}
+}
+
+static void fill_cases(void)
+{
+	short b[4], c[4], k, pen;
+	if ((long)mbuf_a <= 0 || (long)mbuf_b <= 0)
+		return;
+	for (pen = 0; pen <= 1; pen++) {
+		for (k = 0; k < 16; k++) {
+			b[0] = (short)(24 + k);		/* both sides at every pixel */
+			b[1] = (short)(MY + ch);
+			b[2] = (short)(500 + k);
+			b[3] = (short)(MY + 3 * ch - 1);
+			fill_case(b, 0, pen);
+			b[0] = (short)(64 + k);		/* inside one group, or two */
+			b[2] = (short)(64 + k + 5);
+			fill_case(b, 0, pen);
+		}
+		b[0] = 0;				/* the whole width, one row */
+		b[1] = (short)(MY + 2 * ch);
+		b[2] = (short)(sw - 1);
+		b[3] = b[1];
+		fill_case(b, 0, pen);
+		b[0] = 400;				/* corners the other way round */
+		b[1] = (short)(MY + 3 * ch);
+		b[2] = 41;
+		b[3] = (short)(MY + ch);
+		fill_case(b, 0, pen);
+		c[0] = 37;				/* cut by the clip on every side */
+		c[1] = (short)(MY + ch + 3);
+		c[2] = 301;
+		c[3] = (short)(MY + 4 * ch - 5);
+		b[0] = 8;
+		b[1] = MY;
+		b[2] = 400;
+		b[3] = (short)(MY + 6 * ch - 1);
+		fill_case(b, c, pen);
+	}
+}
+
 static void xor_cases(void)
 {
 	short b[4], c[4], k;
@@ -421,6 +563,50 @@ static void timing(void)
 			}
 		snprintf(line, sizeof(line), "TXT time: a window's rows inverted: scr_xor %lu ms", (unsigned long)(tos_ms() - t) / 4);
 		say(line);
+		/* a window's rows cleared, each row's box filled white, as a
+		   list's rows are before their text */
+		t = tos_ms();
+		for (k = 0; k < 4; k++)
+			for (l = 1; l < sh_ / ch - 2; l++) {
+				short b[4] = { 16, (short)(l * ch), 16 + 592 - 1, (short)(l * ch + ch - 1) };
+				vswr_mode(vh, 1);
+				vsf_interior(vh, 1);
+				vsf_color(vh, 0);
+				vr_recfl(vh, b);
+			}
+		snprintf(line, sizeof(line), "TXT time: a window's rows cleared: vr_recfl %lu ms", (unsigned long)(tos_ms() - t) / 4);
+		say(line);
+		t = tos_ms();
+		for (k = 0; k < 4; k++)
+			for (l = 1; l < sh_ / ch - 2; l++) {
+				short b[4] = { 16, (short)(l * ch), 16 + 592 - 1, (short)(l * ch + ch - 1) };
+				scr_fill(vh, b, 0);
+			}
+		snprintf(line, sizeof(line), "TXT time: a window's rows cleared: scr_fill %lu ms", (unsigned long)(tos_ms() - t) / 4);
+		say(line);
+		/* a list's icons, one a row */
+		stamp_make();
+		t = tos_ms();
+		for (k = 0; k < 4; k++)
+			for (l = 1; l < sh_ / ch - 2; l++) {
+				MFDB src;
+				short p[8] = { 0, 0, 31, 15, 17, (short)(l * ch), 17 + 31, (short)(l * ch + 15) }, col[2] = { 1, 0 };
+				memset(&src, 0, sizeof(src));
+				src.fd_addr = stamp_m;
+				src.fd_w = 32;
+				src.fd_h = 16;
+				src.fd_wdwidth = 2;
+				src.fd_nplanes = 1;
+				vrt_cpyfm(vh, 2, p, &src, &scr, col);
+			}
+		snprintf(line, sizeof(line), "TXT time: a window's rows' icons: vrt_cpyfm %lu ms", (unsigned long)(tos_ms() - t) / 4);
+		say(line);
+		t = tos_ms();
+		for (k = 0; k < 4; k++)
+			for (l = 1; l < sh_ / ch - 2; l++)
+				scr_stamp(vh, &stamp_m[0][0], 2, 16, 17, (short)(l * ch), 1);
+		snprintf(line, sizeof(line), "TXT time: a window's rows' icons: scr_stamp %lu ms", (unsigned long)(tos_ms() - t) / 4);
+		say(line);
 		text_noclip(vh);
 	}
 	text_noclip(vh);
@@ -518,6 +704,8 @@ int main(void)
 	say(line);
 	move_cases();
 	xor_cases();
+	fill_cases();
+	stamp_cases();
 	timing();
 	wind_update(0);
 	graf_mouse(257, 0);

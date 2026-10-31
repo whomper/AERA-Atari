@@ -66,6 +66,24 @@ void scr_rows(short h, const short *p);
    writing mode MD_REPLACE. The caller hides the mouse, as for the VDI */
 void scr_xor(short h, const short *p);
 
+/* the box p (x1, y1, x2, y2) filled solid in pen (vr_recfl in MD_REPLACE,
+   solid, that pen): pens 0 and 1 (white, black) by the CPU on TOS's screen
+   (where text_plain goes into it), cut to the clip text_clip set, the
+   time of a row's fill on an 8 MHz ST some 2.4 ms by the VDI (EFTP, 31
+   Oct 2026); other pens, and elsewhere, the VDI, which it leaves in
+   MD_REPLACE with a solid fill in pen (the CPU's way changes no VDI
+   setting). The caller hides the mouse */
+void scr_fill(short h, const short *p, short pen);
+
+/* a one-plane bitmap m (wd words a row, rows rows; in ST RAM, for the
+   VDI's way) at (x, y), as vrt_cpyfm in MD_TRANS with the colours pen and
+   0 puts it: its set pixels in pen, the rest left as they are. Pens 0 and
+   1 by the CPU on TOS's screen (where text_plain goes into it), cut to
+   the clip text_clip set: an icon a list's row has, 2.4 ms of an 8 MHz
+   ST by the VDI (EFTP, 31 Oct 2026); other pens, and elsewhere, the VDI.
+   The caller hides the mouse */
+void scr_stamp(short h, const unsigned short *m, short wd, short rows, short x, short y, short pen);
+
 /* the tests' and the logs': 1 text_plain goes into the screen, 0 not
    checked yet; below 0 it is text_n: -1 not the system font or NVDI, or
    the first draw's check failed, -2 a cell neither 8x8 nor 8x16, -3 no
