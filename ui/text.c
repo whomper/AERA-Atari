@@ -689,10 +689,17 @@ void scr_xor(short h, const short *p)
 void scr_fill(short h, const short *p, short pen)
 {
 	if (sf != 1 || (pen != 0 && pen != 1)) {
+		/* the VDI's settings put back after, as the CPU's way leaves
+		   them: ECal, EContact and EMail keep what they set last */
+		short was[5];
+		vqf_attributes(h, was);
 		vswr_mode(h, 1);	/* MD_REPLACE */
 		vsf_interior(h, 1);	/* solid */
 		vsf_color(h, pen);
 		vr_recfl(h, (short *)p);
+		vsf_interior(h, was[0]);
+		vsf_color(h, was[1]);
+		vswr_mode(h, was[3]);
 		return;
 	}
 	box_op(p, pen == 0 ? 1 : 2);
