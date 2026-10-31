@@ -58,6 +58,14 @@ void text_plain(short h, short x, short y, const char *s, long n);
    wind_update, as for the VDI */
 void scr_rows(short h, const short *p);
 
+/* the box p (x1, y1, x2, y2) inverted, as vr_recfl in MD_XOR with a solid
+   fill in pen 1 (every plane of each pixel turned over): a selection
+   shown, or taken off again. On TOS's screen (where text_plain goes into
+   it) by the CPU, cut to the clip text_clip set; elsewhere vswr_mode
+   MD_XOR, vsf_interior solid, vsf_color 1, vr_recfl. It leaves the
+   writing mode MD_REPLACE. The caller hides the mouse, as for the VDI */
+void scr_xor(short h, const short *p);
+
 /* the tests' and the logs': 1 text_plain goes into the screen, 0 not
    checked yet; below 0 it is text_n: -1 not the system font or NVDI, or
    the first draw's check failed, -2 a cell neither 8x8 nor 8x16, -3 no
