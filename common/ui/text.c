@@ -26,6 +26,7 @@ static unsigned long os_magic;
 static int sf;				/* 0 not checked yet, 1 on, -1 off */
 static const unsigned char *glyph;	/* the font's form: row r of c at [r * 256 + c] */
 static short sf_planes, sf_w, sf_h;
+static int sf_rows_cpu;			/* scr_rows by the CPU: a 68000 (on a 68030 TOS's copy is as fast) */
 static long sf_bpl;
 
 static void sup_os(void)
@@ -75,6 +76,7 @@ static int sf_setup(short height)
 		if (off[i] != i * 8)
 			return -5;
 	glyph = dat;
+	sf_rows_cpu = get_cookie(0x5F435055L) < 20;	/* '_CPU' */
 	sf_planes = la[0];		/* v_planes */
 	sf_bpl = la[1];			/* v_lin_wr */
 	sf_w = la[-6];			/* V_REZ_HZ */
@@ -398,7 +400,7 @@ void text_plain(short h, short x, short y, const char *s, long n)
    (0 to 9, by a jump into a run of moves) and a last word when tail.
    The counts are worked out once a scroll, not a row: a short's / 40 is
    a library call on the 68000 */
-static void move_row(unsigned char *d, const unsigned char *s, short blocks, short longs, short tail)
+static inline __attribute__((always_inline)) void move_row(unsigned char *d, const unsigned char *s, short blocks, short longs, short tail)
 {
 	__asm__ volatile("move.w %2,%%d0\n\t"
 			 "bra.s 2f\n"
@@ -460,7 +462,12 @@ void scr_rows(short h, const short *p)
 	unsigned char *base;
 	long bpl;
 
-	if (sf != 1 || p[4] != x1 || p[6] != x2 || p[7] - ty != y2 - y1 || x1 < 0 || x2 < x1 || x2 >= sf_w || y1 < 0 ||
+	/* by the CPU only on a 68000 and a box at least 384 pixels wide: a
+	   row has its overhead and two cut groups, so a narrow box is
+	   faster through TOS's copy (TOS 1.04 ST:mono, 192 wide: vro_cpyfm
+	   27 ms, the CPU 51), and on a 68030 TOS's copy is as fast (Falcon-4:
+	   592 wide, 35 against 36) */
+	if (sf != 1 || !sf_rows_cpu || x2 - x1 < 383 || p[4] != x1 || p[6] != x2 || p[7] - ty != y2 - y1 || x1 < 0 || x2 < x1 || x2 >= sf_w || y1 < 0 ||
 	    y2 < y1 || y2 >= sf_h || ty < 0 || p[7] >= sf_h ||
 	    (clipping && (x1 < clip_now[0] || x2 > clip_now[2] || ty < clip_now[1] || p[7] > clip_now[3]))) {
 		MFDB scr;
