@@ -523,20 +523,38 @@ static void xor_row(unsigned char *d, short n)
 		*(unsigned short *)q = (unsigned short)~*(unsigned short *)q;
 }
 
-void scr_xor(short h, const short *p)
+/* n bytes of a row, every plane's, set to v */
+static void set_row(unsigned char *d, short n, unsigned long v)
+{
+	unsigned long *q = (unsigned long *)d;
+	short k;
+
+	for (k = n >> 5; k > 0; k--) {
+		q[0] = v;
+		q[1] = v;
+		q[2] = v;
+		q[3] = v;
+		q[4] = v;
+		q[5] = v;
+		q[6] = v;
+		q[7] = v;
+		q += 8;
+	}
+	for (k = (n & 31) >> 2; k > 0; k--, q++)
+		*q = v;
+	if (n & 2)
+		*(unsigned short *)q = (unsigned short)v;
+}
+
+/* the box p (x1, y1, x2, y2) cut to the clip and the screen, every plane
+   of each pixel turned over (op 0), cleared (1, pen 0) or set (2, pen 1),
+   by the CPU on TOS's screen (sf 1) */
+static void box_op(const short *p, int op)
 {
 	short x1 = p[0], y1 = p[1], x2 = p[2], y2 = p[3], g0, g1, m0, m1, r, step, k;
 	unsigned short lmask, rmask;
 	unsigned char *row;
 
-	if (sf != 1) {
-		vswr_mode(h, 3);	/* MD_XOR */
-		vsf_interior(h, 1);	/* solid */
-		vsf_color(h, 1);
-		vr_recfl(h, (short *)p);
-		vswr_mode(h, 1);
-		return;
-	}
 	if (x1 > x2) {
 		short t = x1;
 		x1 = x2;
@@ -588,18 +606,131 @@ void scr_xor(short h, const short *p)
 				unsigned short *w = (unsigned short *)(row + l);
 
 				for (k = 0; k < sf_planes; k++)
-					w[k] ^= lmask;
+					w[k] = op == 0 ? w[k] ^ lmask : op == 1 ? w[k] & ~lmask : w[k] | lmask;
 			}
-			if (mid > 0)
-				xor_row(row + m, mid);
+			if (mid > 0) {
+				if (op == 0)
+					xor_row(row + m, mid);
+				else
+					set_row(row + m, mid, op == 1 ? 0 : 0xFFFFFFFFUL);
+			}
 			if (right) {
 				unsigned short *w = (unsigned short *)(row + rr);
 
 				for (k = 0; k < sf_planes; k++)
-					w[k] ^= rmask;
+					w[k] = op == 0 ? w[k] ^ rmask : op == 1 ? w[k] & ~rmask : w[k] | rmask;
 			}
 		}
 	}
+}
+
+void scr_xor(short h, const short *p)
+{
+	if (sf != 1) {
+		vswr_mode(h, 3);	/* MD_XOR */
+		vsf_interior(h, 1);	/* solid */
+		vsf_color(h, 1);
+		vr_recfl(h, (short *)p);
+		vswr_mode(h, 1);
+		return;
+	}
+	box_op(p, 0);
+}
+
+void scr_stamp(short h, const unsigned short *m, short wd, short rows, short x, short y, short pen)
+{
+	short x1 = x, y1 = y, x2 = (short)(x + wd * 16 - 1), y2 = (short)(y + rows - 1), s = x & 15, g, g0, g1, r, k, step;
+	unsigned char *row;
+
+	if (clipping) {
+		if (x1 < clip_now[0])
+			x1 = clip_now[0];
+		if (y1 < clip_now[1])
+			y1 = clip_now[1];
+		if (x2 > clip_now[2])
+			x2 = clip_now[2];
+		if (y2 > clip_now[3])
+			y2 = clip_now[3];
+	}
+	if (sf != 1 || (pen != 0 && pen != 1)) {
+		MFDB src, dst;
+		short p[8], col[2];
+		if (x1 > x2 || y1 > y2)
+			return;
+		memset(&src, 0, sizeof(src));
+		memset(&dst, 0, sizeof(dst));
+		src.fd_addr = (void *)m;
+		src.fd_w = (short)(wd * 16);
+		src.fd_h = rows;
+		src.fd_wdwidth = wd;
+		src.fd_nplanes = 1;
+		p[0] = (short)(x1 - x);
+		p[1] = (short)(y1 - y);
+		p[2] = (short)(x2 - x);
+		p[3] = (short)(y2 - y);
+		p[4] = x1;
+		p[5] = y1;
+		p[6] = x2;
+		p[7] = y2;
+		col[0] = pen;
+		col[1] = 0;
+		vrt_cpyfm(h, 2, p, &src, &dst, col);	/* MD_TRANS */
+		return;
+	}
+	if (x1 < 0)
+		x1 = 0;
+	if (y1 < 0)
+		y1 = 0;
+	if (x2 > sf_w - 1)
+		x2 = (short)(sf_w - 1);
+	if (y2 > sf_h - 1)
+		y2 = (short)(sf_h - 1);
+	if (x1 > x2 || y1 > y2)
+		return;
+	step = (short)(sf_planes * 2);
+	g0 = x1 >> 4;
+	g1 = x2 >> 4;
+	row = (unsigned char *)trap14_w(3) + (long)y1 * sf_bpl;	/* Logbase */
+	m += (long)(y1 - y) * wd;
+	for (r = (short)(y2 - y1 + 1); r > 0; r--, row += sf_bpl, m += wd) {
+		unsigned short *d = (unsigned short *)(row + (long)g0 * step);
+		for (g = g0; g <= g1; g++, d = (unsigned short *)((unsigned char *)d + step)) {
+			/* the bitmap's pixels over this group: its word i's right
+			   part and word i + 1's left (i from the group's left edge) */
+			short i = (short)(((g << 4) - (x & ~15)) >> 4);
+			unsigned short bits = 0, clipm = 0xFFFF;
+			if (s == 0) {
+				if (i >= 0 && i < wd)
+					bits = m[i];
+			} else {
+				if (i - 1 >= 0 && i - 1 < wd)
+					bits = (unsigned short)(m[i - 1] << (16 - s));
+				if (i >= 0 && i < wd)
+					bits |= (unsigned short)(m[i] >> s);
+			}
+			if (g == g0)
+				clipm = (unsigned short)(0xFFFFu >> (x1 & 15));
+			if (g == g1)
+				clipm &= (unsigned short)(0xFFFFu << (15 - (x2 & 15)));
+			bits &= clipm;
+			if (!bits)
+				continue;
+			for (k = 0; k < sf_planes; k++)
+				d[k] = pen ? d[k] | bits : d[k] & (unsigned short)~bits;
+		}
+	}
+}
+
+void scr_fill(short h, const short *p, short pen)
+{
+	if (sf != 1 || (pen != 0 && pen != 1)) {
+		vswr_mode(h, 1);	/* MD_REPLACE */
+		vsf_interior(h, 1);	/* solid */
+		vsf_color(h, pen);
+		vr_recfl(h, (short *)p);
+		return;
+	}
+	box_op(p, pen == 0 ? 1 : 2);
 }
 
 void text_bold_strike(short h, short x, short y, const char *s, long n)
