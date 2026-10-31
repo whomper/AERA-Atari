@@ -190,6 +190,7 @@ static long fast_n;
 extern int text_plain_state(void) __attribute__((weak));
 extern void text_reclip(short h) __attribute__((weak));
 extern unsigned char *scr_at(long *bpl, short *planes, short *w, short *h) __attribute__((weak));
+extern void scr_fill(short h, const short *p, short pen) __attribute__((weak));
 
 void pb_vdi(short h)
 {
@@ -209,6 +210,7 @@ long pb_vdi_count(void)
 /* the VDI's fill attributes as fast_draw last set them (-1: not known,
    each draw sets them afresh): a call costs a 68000 some 0.3 ms */
 static short at_mode, at_int, at_style, at_col;
+static GRECT at_clip;		/* the box fast_draw draws in */
 
 /* from along a1 to a2 and across k1 to k2, filled as the AES fills an
    object whose ob_spec has colour word spec: its interior colour, pattern
@@ -223,6 +225,21 @@ static void fill_as(int across, unsigned short spec, short a1, short k1, short a
 	p[1] = across ? k1 : a1;
 	p[2] = across ? a2 : k2;
 	p[3] = across ? k2 : a2;
+	if (mode == 1 && (in == 0 || (in == 1 && (spec & 15) <= 1))) {
+		/* white or black, solid: by the CPU (scr_fill), cut to the box
+		   here, as the VDI's clip would */
+		if (p[0] < at_clip.x)
+			p[0] = at_clip.x;
+		if (p[1] < at_clip.y)
+			p[1] = at_clip.y;
+		if (p[2] > at_clip.x + at_clip.w - 1)
+			p[2] = at_clip.x + at_clip.w - 1;
+		if (p[3] > at_clip.y + at_clip.h - 1)
+			p[3] = at_clip.y + at_clip.h - 1;
+		if (p[0] <= p[2] && p[1] <= p[3])
+			scr_fill(bar_h, p, in == 0 ? 0 : spec & 15);
+		return;
+	}
 	if (mode != at_mode)
 		vswr_mode(bar_h, at_mode = mode);
 	if (in != at_int)
@@ -245,7 +262,7 @@ static void line_as(int across, unsigned short spec, short a1, short k1, short a
    pixel outside them (thickness -1, the flat look's) */
 static int fast_can(const OBJECT *t)
 {
-	return bar_h > 0 && fast >= 0 && text_plain_state && text_reclip && scr_at && text_plain_state() == 1 &&
+	return bar_h > 0 && fast >= 0 && text_plain_state && text_reclip && scr_at && scr_fill && text_plain_state() == 1 &&
 	       ((t[O_TRACK].ob_spec >> 16) & 0xFF) == 0xFF && ((t[O_SLIDER].ob_spec >> 16) & 0xFF) == 0xFF;
 }
 
@@ -266,7 +283,9 @@ static int in_track(const PANEBAR *b, GRECT *c, short ty, short th)
 /* the box c, inside the track and its end lines (in_track), as the AES
    draws it in the flat look: the track's fill between the bar's edges,
    the edges and its end lines in its frame's colour, and over them the
-   slider's fill and frame */
+   slider's fill and frame. White and black by the CPU (scr_fill: the
+   caller's clip, text_clip's, holds the box, as for any redraw), the
+   track's pattern by the VDI */
 static void fast_draw(const PANEBAR *b, const GRECT *c, const OBJECT *t, short ty, short th, short sy, short sh)
 {
 	int across = b->across != 0;
@@ -282,6 +301,7 @@ static void fast_draw(const PANEBAR *b, const GRECT *c, const OBJECT *t, short t
 	cl[2] = c->x + c->w - 1;
 	cl[3] = c->y + c->h - 1;
 	vs_clip(bar_h, 1, cl);
+	at_clip = *c;
 	at_mode = at_int = at_style = at_col = -1;
 	fill_as(across, ts, a1, k1 + 1, a2, k2 - 1);
 	line_as(across, ts, a1, k1, a2, k1);
