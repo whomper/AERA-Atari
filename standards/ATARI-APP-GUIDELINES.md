@@ -831,7 +831,9 @@ CONTACTS.TXT when the user chooses it (below).
   - a short welcome saying what the program is;
   - the program's window at half size on the right (`helpfront.py thumb` from a Hatari screen
     capture, numbered teal badges, committed as `docs/help/WINDOW.IMG`), its numbered parts
-    explained on the left;
+    explained on the left. It stays a 16-colour picture, while the README's and the docs'
+    screenshots are 256-colour ones (Erez, 31 Oct 2026): ST-Guide shows an 8-plane IMG in the wrong
+    colours on a 16-colour screen;
   - how it reaches its servers, drawn with the hypertext's own `@box` and `@line` (so it lines up in
     any font and in ST-Guide), with links in it;
   - the guide's pages in groups, two side by side, and a footer: name, version, AERA | Erez Yaary and
