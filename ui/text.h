@@ -75,6 +75,16 @@ void scr_xor(short h, const short *p);
    mouse */
 void scr_fill(short h, const short *p, short pen);
 
+/* the box p filled with a 16 by 16 pattern in pens 1 (its set pixels) and
+   0, as vr_recfl in MD_REPLACE with a fill pattern in pen 1 puts it: row
+   y's sixteen pixels pat[y & 15], from the left of each 16-pixel group of
+   the screen (the VDI's patterns lie on the screen's own grid). By the CPU
+   on TOS's screen, where text_plain goes into it, cut to the clip
+   text_clip set; 0, and nothing drawn, elsewhere (the caller uses the
+   VDI). panebar.c's track (a whole bar 76 ms of an 8 MHz ST by the AES).
+   The caller hides the mouse */
+int scr_pattern(short h, const short *p, const unsigned short *pat);
+
 /* the tests' and the logs': 1 text_plain goes into the screen, 0 not
    checked yet; below 0 it is text_n: -1 not the system font or NVDI, or
    the first draw's check failed, -2 a cell neither 8x8 nor 8x16, -3 no

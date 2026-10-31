@@ -598,7 +598,7 @@ static void set_row(unsigned char *d, short n, unsigned long v)
 /* the box p (x1, y1, x2, y2) cut to the clip and the screen, every plane
    of each pixel turned over (op 0), cleared (1, pen 0) or set (2, pen 1),
    by the CPU on TOS's screen (sf 1) */
-static void box_op(const short *p, int op)
+static void box_op(const short *p, int op, const unsigned short *pat)
 {
 	short x1 = p[0], y1 = p[1], x2 = p[2], y2 = p[3], g0, g1, m0, m1, r, step, k;
 	unsigned short lmask, rmask;
@@ -650,24 +650,31 @@ static void box_op(const short *p, int op)
 		long l = (long)g0 * step, m = (long)m0 * step, rr = (long)g1 * step, bpl = sf_bpl;
 		short mid = (short)((m1 - m0 + 1) * step), left = m0 > g0, right = g1 != g0 && m1 < g1;
 
-		for (r = (short)(y2 - y1 + 1); r > 0; r--, row += bpl) {
+		short y = y1;
+		for (r = (short)(y2 - y1 + 1); r > 0; r--, row += bpl, y++) {
+			/* op 3: the pattern's row, its set pixels in every plane
+			   (pen 1), the others in none (pen 0) */
+			unsigned short pw = op == 3 ? pat[y & 15] : 0;
 			if (left) {
 				unsigned short *w = (unsigned short *)(row + l);
 
 				for (k = 0; k < sf_planes; k++)
-					w[k] = op == 0 ? w[k] ^ lmask : op == 1 ? w[k] & ~lmask : w[k] | lmask;
+					w[k] = op == 0 ? w[k] ^ lmask : op == 1 ? w[k] & ~lmask : op == 2 ? w[k] | lmask :
+					       (unsigned short)((w[k] & ~lmask) | (pw & lmask));
 			}
 			if (mid > 0) {
 				if (op == 0)
 					xor_row(row + m, mid);
 				else
-					set_row(row + m, mid, op == 1 ? 0 : 0xFFFFFFFFUL);
+					set_row(row + m, mid, op == 1 ? 0 : op == 2 ? 0xFFFFFFFFUL :
+						((unsigned long)pw << 16) | pw);
 			}
 			if (right) {
 				unsigned short *w = (unsigned short *)(row + rr);
 
 				for (k = 0; k < sf_planes; k++)
-					w[k] = op == 0 ? w[k] ^ rmask : op == 1 ? w[k] & ~rmask : w[k] | rmask;
+					w[k] = op == 0 ? w[k] ^ rmask : op == 1 ? w[k] & ~rmask : op == 2 ? w[k] | rmask :
+					       (unsigned short)((w[k] & ~rmask) | (pw & rmask));
 			}
 		}
 	}
@@ -683,7 +690,7 @@ void scr_xor(short h, const short *p)
 		vswr_mode(h, 1);
 		return;
 	}
-	box_op(p, 0);
+	box_op(p, 0, 0);
 }
 
 void scr_fill(short h, const short *p, short pen)
@@ -702,7 +709,16 @@ void scr_fill(short h, const short *p, short pen)
 		vswr_mode(h, was[3]);
 		return;
 	}
-	box_op(p, pen == 0 ? 1 : 2);
+	box_op(p, pen == 0 ? 1 : 2, 0);
+}
+
+int scr_pattern(short h, const short *p, const unsigned short *pat)
+{
+	(void)h;
+	if (sf != 1)
+		return 0;
+	box_op(p, 3, pat);
+	return 1;
 }
 
 void text_bold_strike(short h, short x, short y, const char *s, long n)
