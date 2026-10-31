@@ -48,6 +48,16 @@ void text_n(short h, short x, short y, const char *s, long n);
    planes, or the first draw's check finding the VDI's pixels elsewhere)
    it is text_n. The caller hides the mouse, as for the VDI */
 void text_plain(short h, short x, short y, const char *s, long n);
+/* a box of the screen moved to another place in the same columns (a
+   scroll), as vro_cpyfm(h, 3, p, screen, screen) with p its eight
+   corners: on TOS's screen (where text_plain goes into it) the rows moved
+   by the CPU, some twice the speed of TOS's copy on an ST (EPDF, 31 Oct
+   2026), a 16-pixel group cut at either side moved by its pixels;
+   elsewhere, or when the box isn't wholly inside the clip text_clip set,
+   vro_cpyfm as before. The caller hides the mouse and holds
+   wind_update, as for the VDI */
+void scr_rows(short h, const short *p);
+
 /* the tests' and the logs': 1 text_plain goes into the screen, 0 not
    checked yet; below 0 it is text_n: -1 not the system font or NVDI, or
    the first draw's check failed, -2 a cell neither 8x8 nor 8x16, -3 no

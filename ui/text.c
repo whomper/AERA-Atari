@@ -387,6 +387,96 @@ void text_plain(short h, short x, short y, const char *s, long n)
 	}
 }
 
+/* n bytes (even) from s to d, 40 a turn by movem, then words */
+static void move_row(unsigned char *d, const unsigned char *s, short n)
+{
+	short blocks = n / 40, words = (short)((n - blocks * 40) >> 1);
+
+	__asm__ volatile("move.w %2,%%d0\n\t"
+			 "bra.s 2f\n"
+			 "1:\tmovem.l (%0)+,%%d1-%%d7/%%a2-%%a4\n\t"
+			 "movem.l %%d1-%%d7/%%a2-%%a4,(%1)\n\t"
+			 "lea 40(%1),%1\n"
+			 "2:\tdbra %%d0,1b\n\t"
+			 "move.w %3,%%d0\n\t"
+			 "bra.s 4f\n"
+			 "3:\tmove.w (%0)+,(%1)+\n"
+			 "4:\tdbra %%d0,3b"
+			 : "+a"(s), "+a"(d)
+			 : "m"(blocks), "m"(words)
+			 : "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "a2", "a3", "a4", "memory", "cc");
+}
+
+/* the planes' words of one 16-pixel group, the pixels in mask */
+static void move_group(unsigned short *d, const unsigned short *s, unsigned short mask)
+{
+	short p;
+
+	for (p = 0; p < sf_planes; p++)
+		d[p] = (unsigned short)((d[p] & ~mask) | (s[p] & mask));
+}
+
+void scr_rows(short h, const short *p)
+{
+	short x1 = p[0], y1 = p[1], x2 = p[2], y2 = p[3], ty = p[5], g0, g1, m0, m1, rows, r, step;
+	unsigned short lmask, rmask;
+	unsigned char *base;
+	long bpl;
+
+	if (sf != 1 || p[4] != x1 || p[6] != x2 || p[7] - ty != y2 - y1 || x1 < 0 || x2 < x1 || x2 >= sf_w || y1 < 0 ||
+	    y2 < y1 || y2 >= sf_h || ty < 0 || p[7] >= sf_h ||
+	    (clipping && (x1 < clip_now[0] || x2 > clip_now[2] || ty < clip_now[1] || p[7] > clip_now[3]))) {
+		MFDB scr;
+
+		memset(&scr, 0, sizeof(scr));
+		vro_cpyfm(h, 3, p, &scr, &scr);
+		return;
+	}
+	base = (unsigned char *)trap14_w(3);	/* Logbase */
+	bpl = sf_bpl;
+	step = (short)(sf_planes * 2);
+	g0 = x1 >> 4;
+	g1 = x2 >> 4;
+	lmask = (unsigned short)(0xFFFFu >> (x1 & 15));
+	rmask = (unsigned short)(0xFFFFu << (15 - (x2 & 15)));
+	if (g0 == g1) {
+		lmask &= rmask;
+		rmask = 0;
+	}
+	/* the whole groups between the cut ones */
+	m0 = lmask == 0xFFFF ? g0 : g0 + 1;
+	m1 = g0 == g1 ? g0 - 1 : rmask == 0xFFFF ? g1 : g1 - 1;
+	if (lmask == 0xFFFF && g0 == g1)
+		m1 = g0;
+	rows = (short)(y2 - y1 + 1);
+	{
+		/* the first row's places worked out once, then a line on (or
+		   back) each row: up the screen from the top row, down it from
+		   the last, so no row is written before it is read */
+		long l = (long)g0 * step, m = (long)m0 * step, rr = (long)g1 * step, line = bpl;
+		short mid = (short)((m1 - m0 + 1) * step), left = m0 > g0 || (g0 == g1 && lmask != 0xFFFF),
+		      right = g1 != g0 && m1 < g1;
+		unsigned char *s, *d;
+
+		if (ty <= y1) {
+			s = base + (long)y1 * bpl;
+			d = base + (long)ty * bpl;
+		} else {
+			s = base + (long)y2 * bpl;
+			d = base + (long)p[7] * bpl;
+			line = -bpl;
+		}
+		for (r = rows; r > 0; r--, s += line, d += line) {
+			if (left)
+				move_group((unsigned short *)(d + l), (const unsigned short *)(s + l), lmask);
+			if (mid > 0)
+				move_row(d + m, s + m, mid);
+			if (right)
+				move_group((unsigned short *)(d + rr), (const unsigned short *)(s + rr), rmask);
+		}
+	}
+}
+
 void text_bold_strike(short h, short x, short y, const char *s, long n)
 {
 	vswr_mode(h, 2);	/* MD_TRANS */

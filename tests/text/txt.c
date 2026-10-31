@@ -12,8 +12,12 @@
  *   - text_plain (plain text into TOS's screen) against v_gtext_n in
  *     MD_REPLACE, pen 1: on a byte and off it, the same clips as text_n's,
  *     rows cut at the top and the foot, no clip, all 256 characters;
+ *   - scr_rows (a scroll's box moved by the CPU) against vro_cpyfm: up and
+ *     down a row, its sides at every pixel of a 16-pixel group, one group
+ *     wide and wider, the whole area compared;
  *   - the time of ten lines of 78 characters with the clip tight round
- *     them, v_gtext_n against text_n and text_plain.
+ *     them, v_gtext_n against text_n and text_plain; of a window's
+ *     scroll, vro_cpyfm against scr_rows.
  * Lines go to the emulator's console (NatFeats) as "TXT ...", the last
  * "TXT done"; a difference says "TXT DIFFERS".
  */
@@ -23,7 +27,7 @@
 #include "gem.h"
 #include "text.h"
 
-static short vh, planes, cw, ch, sw;
+static short vh, planes, cw, ch, sw, sh_;
 static MFDB scr, mem;
 static unsigned char *buf_a, *buf_b;
 static long bytes;
@@ -171,6 +175,88 @@ static void plain_cases(void)
 	}
 }
 
+#define MY 40			/* the moves' area: rows MY to MY + MROWS * ch */
+#define MROWS 8
+static unsigned char *mbuf_a, *mbuf_b;
+static long mbytes;
+
+/* the area of the moves, off the screen */
+static void mgrab(unsigned char *to)
+{
+	short p[8] = { 0, MY, sw - 1, MY + MROWS * ch - 1, 0, 0, sw - 1, MROWS * ch - 1 };
+	short c[4] = { 0, 0, sw - 1, 0 };
+	MFDB m = mem;
+	vs_clip(vh, 0, c);
+	m.fd_addr = to;
+	m.fd_h = MROWS * ch;
+	vro_cpyfm(vh, 3, p, &scr, &m);
+}
+
+/* the area filled with lines of text, each shifted, so every column differs */
+static void mfill(void)
+{
+	short p[4] = { 0, MY, sw - 1, MY + MROWS * ch - 1 }, l;
+	char row[100];
+	vs_clip(vh, 0, p);
+	vswr_mode(vh, 1);
+	vst_color(vh, 1);
+	for (l = 0; l < MROWS; l++) {
+		short k;
+		for (k = 0; k < 100; k++)
+			row[k] = (char)(33 + (k * 7 + l * 13) % 90);
+		v_gtext_n(vh, 0, MY + l * ch, row, (short)(sw / cw));
+	}
+}
+
+/* box x1..x2, rows 1..MROWS-2 of the area, moved by dy rows of cells */
+static void move_case(short x1, short x2, short dy)
+{
+	short p[8];
+	short c[4] = { 0, MY, sw - 1, MY + MROWS * ch - 1 };
+	p[0] = p[4] = x1;
+	p[2] = p[6] = x2;
+	p[1] = (short)(MY + ch);
+	p[3] = (short)(MY + (MROWS - 2) * ch - 1);
+	p[5] = (short)(p[1] + dy * ch);
+	p[7] = (short)(p[3] + dy * ch);
+	mfill();
+	vs_clip(vh, 1, c);
+	vro_cpyfm(vh, 3, p, &scr, &scr);
+	mgrab(mbuf_a);
+	mfill();
+	text_clip(vh, c);
+	scr_rows(vh, p);
+	text_noclip(vh);
+	mgrab(mbuf_b);
+	checks++;
+	if (memcmp(mbuf_a, mbuf_b, mbytes)) {
+		differ++;
+		snprintf(line, sizeof(line), "TXT DIFFERS scr_rows x %d-%d dy %d", x1, x2, dy);
+		say(line);
+	}
+}
+
+static void move_cases(void)
+{
+	short k, dy;
+	mbytes = (long)mem.fd_wdwidth * 2 * MROWS * ch * planes;
+	mbuf_a = (unsigned char *)Malloc(mbytes);
+	mbuf_b = (unsigned char *)Malloc(mbytes);
+	if ((long)mbuf_a <= 0 || (long)mbuf_b <= 0) {
+		say("TXT DIFFERS scr_rows: no memory for the test");
+		differ++;
+		return;
+	}
+	for (dy = -1; dy <= 1; dy += 2) {
+		move_case(0, (short)(sw - 1), dy);			/* the whole width */
+		for (k = 0; k < 16; k++) {
+			move_case((short)(32 + k), (short)(400 + k), dy);	/* both sides cut */
+			move_case((short)(64 + k), (short)(64 + k + 3), dy);	/* inside one group, or two */
+		}
+		move_case(16, 31, dy);					/* one whole group */
+	}
+}
+
 static void fx_case(const char *s, short fx, short colour, const short *c)
 {
 	long n = (long)strlen(s);
@@ -228,6 +314,30 @@ static void timing(void)
 			text_plain(vh, 8, 60 + l * ch, row, 78);
 	snprintf(line, sizeof(line), "TXT time: ten lines of 78, clip tight: text_plain %lu ms", (unsigned long)(tos_ms() - t) / 4);
 	say(line);
+	{
+		/* a window's scroll by a row: 592 pixels across, the screen's
+		   height less three rows */
+		short p[8], cc[4] = { 0, 0, sw - 1, sh_ - 1 };
+		p[0] = p[4] = 16;
+		p[2] = p[6] = 16 + 592 - 1;
+		p[1] = (short)(2 * ch);
+		p[3] = (short)(sh_ - ch - 1);
+		p[5] = ch;
+		p[7] = (short)(sh_ - 2 * ch - 1);
+		vs_clip(vh, 1, cc);
+		t = tos_ms();
+		for (k = 0; k < 4; k++)
+			vro_cpyfm(vh, 3, p, &scr, &scr);
+		snprintf(line, sizeof(line), "TXT time: a window's scroll by a row: vro_cpyfm %lu ms", (unsigned long)(tos_ms() - t) / 4);
+		say(line);
+		text_clip(vh, cc);
+		t = tos_ms();
+		for (k = 0; k < 4; k++)
+			scr_rows(vh, p);
+		snprintf(line, sizeof(line), "TXT time: a window's scroll by a row: scr_rows %lu ms", (unsigned long)(tos_ms() - t) / 4);
+		say(line);
+		text_noclip(vh);
+	}
 	text_noclip(vh);
 	/* a clip with room past the text: fast as it is */
 	c[2] += 8;
@@ -259,6 +369,7 @@ int main(void)
 	vh = v_opnvwk_(graf_handle(&cw, &ch, &d, &d), wo);
 	sw = wo[0] + 1;
 	sh = wo[1] + 1;
+	sh_ = sh;
 	vq_extnd(vh, 1, wo);
 	planes = wo[4];
 	vst_alignment(vh, 0, 5);
@@ -320,6 +431,7 @@ int main(void)
 	plain_cases();
 	snprintf(line, sizeof(line), "TXT text_plain after: %d", text_plain_state());
 	say(line);
+	move_cases();
 	timing();
 	wind_update(0);
 	graf_mouse(257, 0);
