@@ -73,6 +73,15 @@ void scr_xor(short h, const short *p);
    glyph, -6 a screen not of interleaved planes */
 int text_plain_state(void);
 
+/* the clip text_clip or text_noclip set last, given to the VDI again
+   (after something drew with a clip of its own: panebar.c) */
+void text_reclip(short h);
+
+/* TOS's screen as text_plain writes into it, while text_plain_state() is
+   1: its address now (Logbase), bytes a line, planes, width and height;
+   0 otherwise */
+unsigned char *scr_at(long *bpl, short *planes, short *w, short *h);
+
 /* bold (fx 1) and underline (8) on the n characters s of plain text just
    drawn at (x, y) by text_n in pen colour, when text_fx_fast(fx, mode)
    says it can; else draw with vst_effects as before */
