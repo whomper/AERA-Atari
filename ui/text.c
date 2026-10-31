@@ -18,12 +18,13 @@ static short cw = 8, ch = 16;
 static unsigned short os_version;
 static unsigned long os_magic;
 
-/* text_plain's way into the screen: the glyphs a cell at a time, the
-   rows of each one after another (copied once from Line-A's font), the
+/* text_plain's way into the screen: the glyphs read where TOS keeps them
+   (Line-A's font: a form 256 bytes wide, glyph c's row r at r * 256 + c,
+   no copy, so nothing in BSS for programs that never call text_plain), the
    screen's layout from Line-A; on (1) once the first draw's check found
    the VDI's pixels where it would put them, off (-1) for the run else */
 static int sf;				/* 0 not checked yet, 1 on, -1 off */
-static unsigned char glyph[256 * 16];
+static const unsigned char *glyph;	/* the font's form: row r of c at [r * 256 + c] */
 static short sf_planes, sf_w, sf_h;
 static long sf_bpl;
 
@@ -45,14 +46,14 @@ static const short *line_a(const unsigned char *const **fonts)
 	return la;
 }
 
-/* the system font of this cell height from Line-A, its glyphs copied a
-   cell's rows at a time; the screen as Line-A has it: 1, or -1 when it
-   can't be the fast way */
+/* the system font of this cell height from Line-A, its form 256 bytes
+   wide; the screen as Line-A has it: 0 (checked at the first draw), or
+   below 0 when it can't be the fast way */
 static int sf_setup(short height)
 {
 	const unsigned char *const *fonts, *hd, *dat;
 	const short *la = line_a(&fonts), *off;
-	short first, last, fw, i, r;
+	short first, last, fw, i;
 
 	if (height != 8 && height != 16)
 		return -2;
@@ -68,14 +69,12 @@ static int sf_setup(short height)
 	   order (flag 4, as TOS's and EmuTOS's own have it), a form as high
 	   as the cell */
 	if (first != 0 || last != 255 || !off || !dat || !(*(const short *)(hd + 66) & 4) ||
-	    *(const short *)(hd + 82) != height || fw < 256)
+	    *(const short *)(hd + 82) != height || fw != 256)
 		return -4;
 	for (i = 0; i <= 256; i++)
 		if (off[i] != i * 8)
 			return -5;
-	for (i = 0; i < 256; i++)
-		for (r = 0; r < height; r++)
-			glyph[i * height + r] = dat[(long)r * fw + i];
+	glyph = dat;
 	sf_planes = la[0];		/* v_planes */
 	sf_bpl = la[1];			/* v_lin_wr */
 	sf_w = la[-6];			/* V_REZ_HZ */
@@ -180,32 +179,33 @@ static unsigned char *at(unsigned char *base, short x, short y)
 static void cells_st_high(unsigned char *d, const unsigned char *sp, short n)
 {
 	for (; n > 0; n--, d++) {
-		const unsigned char *g = glyph + ((unsigned)*sp++ << 4);
+		const unsigned char *g = glyph + *sp++;
 
-		d[0] = *g++;	d[80] = *g++;	d[160] = *g++;	d[240] = *g++;
-		d[320] = *g++;	d[400] = *g++;	d[480] = *g++;	d[560] = *g++;
-		d[640] = *g++;	d[720] = *g++;	d[800] = *g++;	d[880] = *g++;
-		d[960] = *g++;	d[1040] = *g++;	d[1120] = *g++;	d[1200] = *g;
+		d[0] = g[0];		d[80] = g[256];		d[160] = g[512];	d[240] = g[768];
+		d[320] = g[1024];	d[400] = g[1280];	d[480] = g[1536];	d[560] = g[1792];
+		d[640] = g[2048];	d[720] = g[2304];	d[800] = g[2560];	d[880] = g[2816];
+		d[960] = g[3072];	d[1040] = g[3328];	d[1120] = g[3584];	d[1200] = g[3840];
 	}
 }
 
 /* n whole cells from d on, rows r0 on (nr of them), the first at pixel
    px: the same byte in every plane (pen 1 sets all of a pixel's planes,
    pen 0 none), planes 2, 4 or 8 */
-static void cells_planes(unsigned char *d, const unsigned char *sp, short n, short px, short r0, short nr, short sh,
-			 short step)
+static void cells_planes(unsigned char *d, const unsigned char *sp, short n, short px, short r0, short nr, short step)
 {
 	long bpl = sf_bpl;
 
 	for (; n > 0; n--, px += 8) {
-		const unsigned char *g = glyph + ((unsigned)*sp++ << sh) + r0;
+		const unsigned char *g = glyph + *sp++ + ((unsigned)r0 << 8);
 		unsigned char *e = d;
 		short r;
 
 		switch (step) {
 		case 4:
 			for (r = nr; r > 0; r--, e += bpl) {
-				unsigned char v = *g++;
+				unsigned char v = *g;
+
+				g += 256;
 
 				e[0] = v;
 				e[2] = v;
@@ -213,7 +213,9 @@ static void cells_planes(unsigned char *d, const unsigned char *sp, short n, sho
 			break;
 		case 8:
 			for (r = nr; r > 0; r--, e += bpl) {
-				unsigned char v = *g++;
+				unsigned char v = *g;
+
+				g += 256;
 
 				e[0] = v;
 				e[2] = v;
@@ -223,7 +225,9 @@ static void cells_planes(unsigned char *d, const unsigned char *sp, short n, sho
 			break;
 		default:
 			for (r = nr; r > 0; r--, e += bpl) {
-				unsigned char v = *g++;
+				unsigned char v = *g;
+
+				g += 256;
 
 				e[0] = v;
 				e[2] = v;
@@ -242,10 +246,9 @@ static void cells_planes(unsigned char *d, const unsigned char *sp, short n, sho
 
 /* character c's cell, its rows r0 on (nr of them), at the screen's byte
    d for pixel px, the columns inside cx1..cx2 */
-static void one_cell(unsigned char *d, unsigned char c, short px, short cx1, short cx2, short r0, short nr, short sh,
-		     short step)
+static void one_cell(unsigned char *d, unsigned char c, short px, short cx1, short cx2, short r0, short nr, short step)
 {
-	const unsigned char *g = glyph + ((unsigned)c << sh) + r0;
+	const unsigned char *g = glyph + c + ((unsigned)r0 << 8);
 	unsigned char mask = 0xFF;
 	short r, p;
 
@@ -255,17 +258,21 @@ static void one_cell(unsigned char *d, unsigned char c, short px, short cx1, sho
 		mask &= (unsigned char)(0xFF << (px + 7 - cx2));
 	if (mask == 0xFF && step == 2) {
 		for (r = nr; r > 0; r--, d += sf_bpl)
-			*d = *g++;
+			*d = *g, g += 256;
 	} else if (mask == 0xFF) {
 		for (r = nr; r > 0; r--, d += sf_bpl) {
-			unsigned char v = *g++;
+			unsigned char v = *g;
+
+			g += 256;
 
 			for (p = 0; p < step; p += 2)
 				d[p] = v;
 		}
 	} else {
 		for (r = nr; r > 0; r--, d += sf_bpl) {
-			unsigned char v = *g++;
+			unsigned char v = *g;
+
+			g += 256;
 
 			for (p = 0; p < step; p += 2)
 				d[p] = (unsigned char)((d[p] & ~mask) | (v & mask));
@@ -277,11 +284,11 @@ static void one_cell(unsigned char *d, unsigned char c, short px, short cx1, sho
    VDI in pen 1 on 0? */
 static int cell_is(unsigned char *base, short x, short y, unsigned char c)
 {
-	const unsigned char *g = glyph + (unsigned)c * ch;
+	const unsigned char *g = glyph + c;
 	const unsigned char *d = at(base, x, y);
 	short r, p;
 
-	for (r = 0; r < ch; r++, d += sf_bpl, g++)
+	for (r = 0; r < ch; r++, d += sf_bpl, g += 256)
 		for (p = 0; p < sf_planes; p++)
 			if (d[p * 2] != *g)
 				return 0;
@@ -338,9 +345,9 @@ void text_plain(short h, short x, short y, const char *s, long n)
 			return;
 		for (k = i0; k <= i1; k++) {
 			short kx = (short)(x + k * 8), r;
-			const unsigned char *g = glyph + (unsigned)(unsigned char)s[k] * ch;
+			const unsigned char *g = glyph + (unsigned char)s[k];
 
-			for (r = 0; r < ch && !g[r]; r++)
+			for (r = 0; r < ch && !g[(unsigned)r << 8]; r++)
 				;
 			if (r < ch && kx >= cx1 && kx + 7 <= cx2) {
 				sf = cell_is(base, kx, y, (unsigned char)s[k]) ? 1 : -1;
@@ -353,14 +360,14 @@ void text_plain(short h, short x, short y, const char *s, long n)
 		/* along the row: the screen's byte for pixel px of row y + r0,
 		   then the next cell's, a byte on or the next 16-pixel group's
 		   first */
-		short sh = ch == 16 ? 4 : 3, nr = (short)(r1 - r0 + 1), step = (short)(sf_planes * 2), px;
+		short nr = (short)(r1 - r0 + 1), step = (short)(sf_planes * 2), px;
 		unsigned char *row = base + (long)(y + r0) * sf_bpl, *d;
 		const unsigned char *sp = (const unsigned char *)s + i0;
 
 		px = (short)(x + i0 * 8);
 		d = row + (long)(px >> 4) * step + ((px >> 3) & 1);
 		for (i = i0; i <= i1; i++, px += 8) {
-			if (px >= cx1 && (step > 2 || (sf_bpl == 80 && sh == 4 && nr == 16))) {
+			if (px >= cx1 && (step > 2 || (sf_bpl == 80 && ch == 16 && nr == 16))) {
 				/* the whole cells from here in one run: ST high's
 				   unrolled, or every plane's byte at once */
 				long last = i1, k;
@@ -372,7 +379,7 @@ void text_plain(short h, short x, short y, const char *s, long n)
 					if (step == 2)
 						cells_st_high(d, sp, (short)k);
 					else
-						cells_planes(d, sp, (short)k, px, r0, nr, sh, step);
+						cells_planes(d, sp, (short)k, px, r0, nr, step);
 					sp += k;
 					px = (short)(px + k * 8);
 					d = row + (long)(px >> 4) * step + ((px >> 3) & 1);
@@ -381,7 +388,7 @@ void text_plain(short h, short x, short y, const char *s, long n)
 						break;
 				}
 			}
-			one_cell(d, *sp++, px, cx1, cx2, r0, nr, sh, step);
+			one_cell(d, *sp++, px, cx1, cx2, r0, nr, step);
 			d += (px & 8) ? step - 1 : 1;
 		}
 	}
