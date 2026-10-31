@@ -36,6 +36,7 @@ void vsf_style(short h, short idx) { (void)h; (void)idx; }
 void vsf_color(short h, short color) { (void)h; (void)color; }
 void vsf_perimeter(short h, short on) { (void)h; (void)on; }
 void vr_recfl(short h, const short *pxy) { (void)h; (void)pxy; }
+void vqf_attributes(short h, short *a) { short i; (void)h; for (i = 0; i < 5; i++) a[i] = 1; }
 
 short graf_handle(short *wchar, short *hchar, short *wbox, short *hbox)
 {
