@@ -399,6 +399,24 @@ static void timing(void)
 			scr_rows(vh, p);
 		snprintf(line, sizeof(line), "TXT time: a window's scroll by a row: scr_rows %lu ms", (unsigned long)(tos_ms() - t) / 4);
 		say(line);
+		/* a narrow pane's (EContact's list: 192 wide, x 8 mod 16, a
+		   cut group at each side of every row) */
+		p[0] = p[4] = 24;
+		p[2] = p[6] = 24 + 192 - 1;
+		vs_clip(vh, 1, cc);
+		t = tos_ms();
+		for (k = 0; k < 4; k++)
+			vro_cpyfm(vh, 3, p, &scr, &scr);
+		snprintf(line, sizeof(line), "TXT time: a narrow pane's scroll by a row: vro_cpyfm %lu ms", (unsigned long)(tos_ms() - t) / 4);
+		say(line);
+		text_clip(vh, cc);
+		t = tos_ms();
+		for (k = 0; k < 4; k++)
+			scr_rows(vh, p);
+		snprintf(line, sizeof(line), "TXT time: a narrow pane's scroll by a row: scr_rows %lu ms", (unsigned long)(tos_ms() - t) / 4);
+		say(line);
+		p[0] = p[4] = 16;
+		p[2] = p[6] = 16 + 592 - 1;
 		/* a window's rows selected: each row's box inverted, as a
 		   selection is drawn */
 		t = tos_ms();
