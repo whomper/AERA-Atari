@@ -214,6 +214,11 @@ long pb_vdi_count(void)
 	return fast_n;
 }
 
+int pb_vdi_pattern(void)
+{
+	return tpat_ok;
+}
+
 /* the VDI's fill attributes as fast_draw last set them (-1: not known,
    each draw sets them afresh): a call costs a 68000 some 0.3 ms */
 static short at_mode, at_int, at_style, at_col;
@@ -300,6 +305,92 @@ static int in_track(const PANEBAR *b, GRECT *c, short ty, short th)
 	return *l > 0;
 }
 
+/* a bar down's box c (inside the track and its end lines) a row at a
+   time straight into the screen: across it the edges black and between
+   them the track's pattern (pat_learn), or the slider's white, or black
+   on the track's end lines and the slider's frame; what fast_draw's fills
+   and lines put there, in one pass (as fills, a track's rows each paid
+   box_op's turn some four times over: 53 ms of an 8 MHz ST). 0 when it
+   can't be this way: the pattern not read, the colours not black and
+   white */
+static int down_rows(const PANEBAR *b, const GRECT *c, const OBJECT *t, short ty, short th, short sy, short sh)
+{
+	unsigned short ts = (unsigned short)t[O_TRACK].ob_spec, ss = (unsigned short)t[O_SLIDER].ob_spec;
+	unsigned short im[3], em[3], wm[3];
+	short k1 = b->r.x, k2 = b->r.x + b->r.w - 1, x0 = c->x, x1 = c->x + c->w - 1, g0, g, n, y, planes, sw, shh, k;
+	long bpl;
+	unsigned char *base, *row;
+	if (b->across || tpat_ok <= 0 || ts != tpat_spec || (ts & 0xF000) != 0x1000 || ss != 0x1180 || !scr_at)
+		return 0;
+	if (x0 < k1)
+		x0 = k1;
+	if (x1 > k2)
+		x1 = k2;
+	base = scr_at(&bpl, &planes, &sw, &shh);
+	if (!base || x0 > x1 || c->y < 0 || c->y + c->h > shh || x1 >= sw)
+		return 0;
+	g0 = k1 >> 4;
+	n = (short)((k2 >> 4) - g0 + 1);
+	if (n > 3)
+		return 0;
+	for (g = 0; g < 3; g++) {
+		short gx = (short)((g0 + g) << 4), x;
+		im[g] = em[g] = wm[g] = 0;
+		for (x = gx; x < gx + 16 && g < n; x++) {
+			unsigned short bit = (unsigned short)(0x8000u >> (x & 15));
+			if (x == k1 || x == k2)
+				em[g] |= bit;
+			else if (x > k1 && x < k2)
+				im[g] |= bit;
+			if (x >= x0 && x <= x1)
+				wm[g] |= bit;
+		}
+	}
+	row = base + (long)c->y * bpl + (long)g0 * planes * 2;
+	if (n == 2) {
+		/* a bar 16 to 32 pixels wide over two groups (every bar of TOS's
+		   size): the masks in registers, each plane's pair of words */
+		register unsigned short i0 = im[0], i1 = im[1], e0 = em[0], e1 = em[1], w0 = wm[0], w1 = wm[1];
+		register unsigned short n0 = (unsigned short)~w0, n1 = (unsigned short)~w1;
+		short y1 = (short)(c->y + c->h), ta = ty - 1, tb = ty + th, sa = sh ? sy - 1 : -32000,
+		      sb = sh ? sy + sh : -32000;
+		for (y = c->y; y < y1; y++, row += bpl) {
+			unsigned short inner, v0, v1, *d = (unsigned short *)row;
+			if (y == ta || y == tb || y == sa || y == sb)
+				inner = 0xFFFF;
+			else if (y > sa && y < sb)
+				inner = 0;
+			else
+				inner = tpat[y & 15];
+			v0 = (unsigned short)(((inner & i0) | e0) & w0);
+			v1 = (unsigned short)(((inner & i1) | e1) & w1);
+			for (k = 0; k < planes; k++)
+				d[k] = (unsigned short)((d[k] & n0) | v0);
+			d += planes;
+			for (k = 0; k < planes; k++)
+				d[k] = (unsigned short)((d[k] & n1) | v1);
+		}
+		fast_n++;
+		return 1;
+	}
+	for (y = c->y; y < c->y + c->h; y++, row += bpl) {
+		unsigned short inner, *d = (unsigned short *)row;
+		if (y == ty - 1 || y == ty + th || (sh && (y == sy - 1 || y == sy + sh)))
+			inner = 0xFFFF;
+		else if (sh && y >= sy && y < sy + sh)
+			inner = 0;
+		else
+			inner = tpat[y & 15];
+		for (g = 0; g < n; g++, d += planes) {
+			unsigned short v = (unsigned short)(((inner & im[g]) | em[g]) & wm[g]), m = (unsigned short)~wm[g];
+			for (k = 0; k < planes; k++)
+				d[k] = (unsigned short)((d[k] & m) | v);
+		}
+	}
+	fast_n++;
+	return 1;
+}
+
 /* the box c, inside the track and its end lines (in_track), as the AES
    draws it in the flat look: the track's fill between the bar's edges,
    the edges and its end lines in its frame's colour, and over them the
@@ -313,6 +404,8 @@ static void fast_draw(const PANEBAR *b, const GRECT *c, const OBJECT *t, short t
 	short k1 = across ? b->r.y : b->r.x, k2 = k1 + (across ? b->r.h : b->r.w) - 1;
 	unsigned short ts = (unsigned short)t[O_TRACK].ob_spec, ss = (unsigned short)t[O_SLIDER].ob_spec;
 	short cl[4], was[5];
+	if (down_rows(b, c, t, ty, th, sy, sh))
+		return;
 	/* the app's own fill and writing mode, put back at the end: ECal,
 	   EContact and EMail keep what they set last and don't set it again */
 	vqf_attributes(bar_h, was);

@@ -211,6 +211,27 @@ static void timed_whole(PANEBAR *b, const char *what)
 	snprintf(line, sizeof(line), "PBC time: %s, the whole bar: objc_draw %lu ms, fast %lu ms", what,
 		 (t1 - t0) / 10, (t2 - t1) / 10);
 	say(line);
+	{
+		/* the track alone (no arrow in the box) the fast way */
+		GRECT c = b->r;
+		short a = pb_arrow_h();
+		if (b->across) {
+			c.x += pb_width() + 1;
+			c.w -= 2 * pb_width() + 2;
+		} else {
+			c.y += a + 1;
+			c.h -= 2 * a + 2;
+		}
+		pb_vdi(vdi_h);
+		t0 = tos_ms();
+		for (k = 0; k < 10; k++)
+			pb_draw(b, &c);
+		t1 = tos_ms();
+		pb_vdi(0);
+		snprintf(line, sizeof(line), "PBC time: %s, the track alone, fast %lu ms; the track's pattern %d", what,
+			 (t1 - t0) / 10, pb_vdi_pattern());
+		say(line);
+	}
 }
 
 static void timed(PANEBAR *b, const char *what)
@@ -296,14 +317,21 @@ int main(void)
 	across.r.w = scr_w - 340;
 	across.r.h = pb_height();
 
-	moves(&down, "down");
-	moves(&off, "down, off a group");
-	moves(&across, "across");
+	{
+		long q = Fopen("QUICK", 0);	/* run_cmp.py --quick: the whole bars and the times only */
+		if (q >= 0)
+			Fclose((short)q);
+		else {
+			moves(&down, "down");
+			moves(&off, "down, off a group");
+			moves(&across, "across");
+		}
+	}
 	wholes(&down, "down");
 	wholes(&off, "down, off a group");
 	wholes(&across, "across");
-	snprintf(line, sizeof(line), "PBC %d moves, %d differ; fast way %d, %ld boxes drawn by it", checks, differ,
-		 pb_vdi_state(), pb_vdi_count());
+	snprintf(line, sizeof(line), "PBC %d moves, %d differ; fast way %d, %ld boxes drawn by it, the track's pattern %d",
+		 checks, differ, pb_vdi_state(), pb_vdi_count(), pb_vdi_pattern());
 	say(line);
 	timed(&down, "down");
 	timed(&across, "across");
