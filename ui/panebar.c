@@ -273,7 +273,10 @@ static void fast_draw(const PANEBAR *b, const GRECT *c, const OBJECT *t, short t
 	short a1 = across ? c->x : c->y, a2 = a1 + (across ? c->w : c->h) - 1;
 	short k1 = across ? b->r.y : b->r.x, k2 = k1 + (across ? b->r.h : b->r.w) - 1;
 	unsigned short ts = (unsigned short)t[O_TRACK].ob_spec, ss = (unsigned short)t[O_SLIDER].ob_spec;
-	short cl[4];
+	short cl[4], was[5];
+	/* the app's own fill and writing mode, put back at the end: ECal,
+	   EContact and EMail keep what they set last and don't set it again */
+	vqf_attributes(bar_h, was);
 	cl[0] = c->x;
 	cl[1] = c->y;
 	cl[2] = c->x + c->w - 1;
@@ -297,8 +300,10 @@ static void fast_draw(const PANEBAR *b, const GRECT *c, const OBJECT *t, short t
 			line_as(across, ss, sy, k2, sy + sh - 1, k2);
 		}
 	}
-	if (at_mode != 1)
-		vswr_mode(bar_h, 1);
+	vsf_interior(bar_h, was[0]);
+	vsf_color(bar_h, was[1]);
+	vsf_style(bar_h, was[2]);
+	vswr_mode(bar_h, was[3]);
 	text_reclip(bar_h);
 	fast_n++;
 }

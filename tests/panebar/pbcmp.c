@@ -25,7 +25,7 @@ short vdi_h, cw, ch, scr_w, scr_h, desk_x, desk_y, desk_w, desk_h, planes;
 static MFDB scr, mem;
 static unsigned char *buf_a, *buf_b;
 static long bytes;
-static int differ, checks;
+static int differ, checks, attr_lost;
 static char line[160];
 
 static void say(const char *s)
@@ -65,9 +65,22 @@ static void move(PANEBAR *b, long old, long top, int fast, unsigned char *to)
 	pb_draw(b, &b->r);
 	b->top = top;
 	m = pb_moved(b, old);
+	/* the app's own fill and mode, as an app that keeps them would have
+	   them: the fast way must leave them so (ECal, EContact, EMail) */
+	vswr_mode(vdi_h, 2);
+	vsf_interior(vdi_h, 2);
+	vsf_style(vdi_h, 4);
+	vsf_color(vdi_h, 1);
 	pb_vdi(fast ? vdi_h : 0);
 	pb_draw(b, &m);
 	pb_vdi(0);
+	{
+		short a[5];
+		vqf_attributes(vdi_h, a);
+		if (a[0] != 2 || a[1] != 1 || a[2] != 4 || a[3] != 2)
+			attr_lost++;
+	}
+	vswr_mode(vdi_h, 1);
 	grab(b, to);
 }
 
@@ -210,7 +223,9 @@ int main(void)
 	timed(&across, "across");
 	wind_update(0);
 	graf_mouse(257, 0);
-	say(differ || pb_vdi_state() != 1 ? "PBC FAILED" : "PBC all the same");
+	snprintf(line, sizeof(line), "PBC the app's fill and mode changed after %d moves", attr_lost);
+	say(line);
+	say(differ || attr_lost || pb_vdi_state() != 1 ? "PBC FAILED" : "PBC all the same");
 	say("PBC done");
 	v_clsvwk(vdi_h);
 	appl_exit();
