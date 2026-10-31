@@ -1208,6 +1208,8 @@ static int decode_dsp(LJ *j, PIC *p, SCALER *sc, int k, int *why, jvirt_barray_p
 	}
 	j->dsp_on = 1;
 	pic_dsp_failed = 0;
+	if (pic_poll != NULL)
+		pic_poll();	/* (its program loaded, 30 to 45 ms of a stock Falcon: a turn; a stop is seen at the rows) */
 
 	/* the setup: the variables (jpeg.a56's V_M to V_TB) */
 	memset(w, 0, sizeof w);
@@ -2468,14 +2470,16 @@ void pic_dither_close(PIC_DITHER *dt)
 }
 
 /* a whole picture, a row at a time (the 68000's and the 68030's: the DSP's
-   is checked against it); pic_poll every 16 rows */
+   is checked against it); pic_poll every 4 rows (the DSP's check's 12
+   rows of 40, each pen looked for the first time, were a stock Falcon's
+   95 ms: EWeb's speed rig, 31 Oct 2026) */
 static int dither_whole(const PIC *p, PIC_PAL *pal, unsigned char *out)
 {
 	PIC_DITHER dt;
 	long y;
 	dither_init(&dt, p->w, pal);
 	for (y = 0; y < p->h; y++) {
-		if (pic_poll != NULL && y > 0 && (y & 15) == 0 && !pic_poll()) {
+		if (pic_poll != NULL && y > 0 && (y & 3) == 0 && !pic_poll()) {
 			free(dt.rows);
 			return 0;
 		}
@@ -2589,6 +2593,8 @@ static int dither_dsp(const PIC *p, PIC_PAL *pal, unsigned char *out)
 	long w = p->w, wo = (w + 2) / 3, y;
 	unsigned long h[4];
 	int got = pic_dsp->begin(PIC_DSP_DITHER);
+	if (got && pic_poll != NULL)
+		pic_poll();	/* (its program loaded: 30 to 45 ms of a stock Falcon) */
 	if (!got)
 		return 0;
 	pic_dsp_failed = 0;
@@ -2603,6 +2609,13 @@ static int dither_dsp(const PIC *p, PIC_PAL *pal, unsigned char *out)
 	   last word's spare bytes go to the next row's start, written over
 	   when it comes; the last row's through last) */
 	for (y = 0; y <= p->h && !pic_dsp_failed; y++) {
+		/* pic_poll's turn every 4 rows (a 192 by 128 photo's dither was
+		   a stock Falcon's 0.2 s in one go, and 16 of the home page's
+		   77-wide globe's rows 50 ms: EWeb's speed rig, 31 Oct 2026); a
+		   stop isn't taken here: the DSP's job ends cleanly and the
+		   caller sees the stop after */
+		if (pic_poll != NULL && y > 0 && (y & 3) == 0)
+			pic_poll();
 		if (y < p->h) {
 			static const unsigned long pad[2] = { 1, 1 };
 			pic_dsp->putpx(p->px + y * w, p->alpha != NULL ? p->alpha + y * w : NULL, w);
@@ -2621,6 +2634,14 @@ static int dither_dsp(const PIC *p, PIC_PAL *pal, unsigned char *out)
 		dd_n = 0;
 		return -1;
 	}
+	return 1;
+}
+
+static int (*dd_poll)(void);
+
+static int dd_turn(void)
+{
+	dd_poll();
 	return 1;
 }
 
@@ -2647,10 +2668,12 @@ static int dd_check(PIC_PAL *pal)
 	if (r == 0)
 		return -1;
 	{
-		int (*poll)(void) = pic_poll;	/* 12 rows: no turn, and not stopped */
-		pic_poll = NULL;
+		/* turns, but not stopped (the check's answer is kept) */
+		dd_poll = pic_poll;
+		if (pic_poll != NULL)
+			pic_poll = dd_turn;
 		dither_many(&t, pal, b);
-		pic_poll = poll;
+		pic_poll = dd_poll;
 	}
 	return r > 0 && memcmp(a, b, sizeof a) == 0;
 }
