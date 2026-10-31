@@ -246,6 +246,11 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     - TOS 4.04 on `Falcon-4`: 9.1 ms against 3.4 ms;
     - NVDI: no difference.
 
+    Alignment comes first (Erez, 31 Oct 2026): where text is laid out by the AES or lines up with
+    other text (a dialog's labels, tabs, buttons), it stays where it is, and the speed comes from
+    drawing it faster there (common's text routines at any x), never from moving a label a few
+    pixels onto a byte.
+
     Bold and light by `vst_effects` cost as much as text off a byte or more (EFTP: bold 45 ms on
     the ST; EMail: bold 4 times plain on a stock Falcon, 9 times on an ST, even on a byte), so keep
     them to a few words, never a list's rows. With the system font on TOS's own VDI, bold and
