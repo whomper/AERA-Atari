@@ -302,6 +302,22 @@ int text_plain_state(void)
 	return sf;
 }
 
+void text_reclip(short h)
+{
+	vs_clip(h, clipping, clip_now);
+}
+
+unsigned char *scr_at(long *bpl, short *planes, short *w, short *h)
+{
+	if (sf != 1)
+		return 0;
+	*bpl = sf_bpl;
+	*planes = sf_planes;
+	*w = sf_w;
+	*h = sf_h;
+	return (unsigned char *)trap14_w(3);	/* Logbase: where the VDI draws now */
+}
+
 void text_plain(short h, short x, short y, const char *s, long n)
 {
 	short cx1, cy1, cx2, cy2, r0, r1;
@@ -556,20 +572,38 @@ static void xor_row(unsigned char *d, short n)
 		*(unsigned short *)q = (unsigned short)~*(unsigned short *)q;
 }
 
-void scr_xor(short h, const short *p)
+/* n bytes of a row, every plane's, set to v */
+static void set_row(unsigned char *d, short n, unsigned long v)
+{
+	unsigned long *q = (unsigned long *)d;
+	short k;
+
+	for (k = n >> 5; k > 0; k--) {
+		q[0] = v;
+		q[1] = v;
+		q[2] = v;
+		q[3] = v;
+		q[4] = v;
+		q[5] = v;
+		q[6] = v;
+		q[7] = v;
+		q += 8;
+	}
+	for (k = (n & 31) >> 2; k > 0; k--, q++)
+		*q = v;
+	if (n & 2)
+		*(unsigned short *)q = (unsigned short)v;
+}
+
+/* the box p (x1, y1, x2, y2) cut to the clip and the screen, every plane
+   of each pixel turned over (op 0), cleared (1, pen 0) or set (2, pen 1),
+   by the CPU on TOS's screen (sf 1) */
+static void box_op(const short *p, int op)
 {
 	short x1 = p[0], y1 = p[1], x2 = p[2], y2 = p[3], g0, g1, m0, m1, r, step, k;
 	unsigned short lmask, rmask;
 	unsigned char *row;
 
-	if (sf != 1) {
-		vswr_mode(h, 3);	/* MD_XOR */
-		vsf_interior(h, 1);	/* solid */
-		vsf_color(h, 1);
-		vr_recfl(h, (short *)p);
-		vswr_mode(h, 1);
-		return;
-	}
 	if (x1 > x2) {
 		short t = x1;
 		x1 = x2;
@@ -621,18 +655,54 @@ void scr_xor(short h, const short *p)
 				unsigned short *w = (unsigned short *)(row + l);
 
 				for (k = 0; k < sf_planes; k++)
-					w[k] ^= lmask;
+					w[k] = op == 0 ? w[k] ^ lmask : op == 1 ? w[k] & ~lmask : w[k] | lmask;
 			}
-			if (mid > 0)
-				xor_row(row + m, mid);
+			if (mid > 0) {
+				if (op == 0)
+					xor_row(row + m, mid);
+				else
+					set_row(row + m, mid, op == 1 ? 0 : 0xFFFFFFFFUL);
+			}
 			if (right) {
 				unsigned short *w = (unsigned short *)(row + rr);
 
 				for (k = 0; k < sf_planes; k++)
-					w[k] ^= rmask;
+					w[k] = op == 0 ? w[k] ^ rmask : op == 1 ? w[k] & ~rmask : w[k] | rmask;
 			}
 		}
 	}
+}
+
+void scr_xor(short h, const short *p)
+{
+	if (sf != 1) {
+		vswr_mode(h, 3);	/* MD_XOR */
+		vsf_interior(h, 1);	/* solid */
+		vsf_color(h, 1);
+		vr_recfl(h, (short *)p);
+		vswr_mode(h, 1);
+		return;
+	}
+	box_op(p, 0);
+}
+
+void scr_fill(short h, const short *p, short pen)
+{
+	if (sf != 1 || (pen != 0 && pen != 1)) {
+		/* the VDI's settings put back after, as the CPU's way leaves
+		   them: ECal, EContact and EMail keep what they set last */
+		short was[5];
+		vqf_attributes(h, was);
+		vswr_mode(h, 1);	/* MD_REPLACE */
+		vsf_interior(h, 1);	/* solid */
+		vsf_color(h, pen);
+		vr_recfl(h, (short *)p);
+		vsf_interior(h, was[0]);
+		vsf_color(h, was[1]);
+		vswr_mode(h, was[3]);
+		return;
+	}
+	box_op(p, pen == 0 ? 1 : 2);
 }
 
 void text_bold_strike(short h, short x, short y, const char *s, long n)
