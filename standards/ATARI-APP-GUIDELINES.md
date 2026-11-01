@@ -1190,6 +1190,9 @@ document's pages, a playlist.
   details, the page) when the button is let go over the same row. Let go elsewhere, the selection
   stays and nothing else happens. Moved a few pixels while held, it is a drag (4.2), with no
   action at the end of it.
+- **A list whose chosen row is what the window shows** (a folder list, a sidebar's books and
+  groups): let go elsewhere, the old row is drawn chosen again, as a button let go elsewhere, so
+  the row shown chosen is always the one shown (EContact's case, 1 Nov 2026).
 - **Shift or Control held:** the selection changes on press (3.2's ranges and single rows), and
   nothing is opened on release.
 - **A double click:** the first click as above; the double-click action runs when the second click
