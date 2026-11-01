@@ -150,6 +150,18 @@ int off_begin(short vh, short x, short y, short w, short h)
 	}
 	p.scr = scr;
 	setscreen(buf - (long)y * bpl);	/* the screen's row y at the buffer's start */
+	{
+		/* the VDI clipped to the piece from here: a draw outside its rows
+		   would go to the memory round the buffer, not to the screen
+		   (the hub's review, 1 Nov 2026). The caller's own clip, set
+		   after this, may be smaller; the AES's objc_draw takes its own */
+		short c[4];
+		c[0] = x;
+		c[1] = y;
+		c[2] = x + w - 1;
+		c[3] = y + h - 1;
+		vs_clip(vh, 1, c);
+	}
 	return 1;
 }
 
