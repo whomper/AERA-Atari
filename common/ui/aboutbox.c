@@ -399,11 +399,13 @@ static void button(short x, short y, short w, short h, const char *label)
 	text_b(on_byte(x + (w - n * cw) / 2), y + (h - ch) / 2, label, n, TX_BOLD);
 }
 
+/* until no button is down: the VDI's view of the mouse (vq_mouse), not
+   graf_mkstate's, an AES call of 4.9 ms on TOS 1.04 as the box opens */
 static void wait_up(void)
 {
-	short mx, my, mb, ks;
+	short mx, my, mb;
 	do {
-		graf_mkstate(&mx, &my, &mb, &ks);
+		vq_mouse(vdi_h, &mb, &mx, &my);
 		if (mb & 3)
 			evnt_timer_(10);
 	} while (mb & 3);
