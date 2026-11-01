@@ -389,6 +389,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     `--gc-sections` did; the 68000 shows none of it. Any code change moves the rest, so a
     "nothing slower" comparison on a 68030 allows 10 ms, or times each build at two placements,
     before calling a difference a regression. The flags stay: they save memory at no average cost.
+  - **The mouse is hidden through the AES** (`graf_mouse(M_OFF)`/`M_ON`) around drawing, even
+    where the VDI's `v_hide_c` would save a few ms (EPDF, 1 Nov 2026: about 5 ms a pair on TOS
+    1.04). A multitasking AES (XaAES, MagiC) tracks each program's hide and gives the mouse back
+    when it ends or crashes; a hide through the VDI leaves the pointer gone for everyone. Nor is
+    the hide skipped because the pointer is elsewhere: the VBL draws the sprite during the blit,
+    and a pointer moved in leaves a stale block.
 - **Before a release** that changes the GEM side, the speed rig passes on the machines above. If it
   doesn't, the release notes name what is over and the plan.
 
