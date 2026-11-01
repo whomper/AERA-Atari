@@ -47,6 +47,11 @@ int press_double(short id, short x, short y);
 int press_track(const GRECT *r, short x, short y, void (*idle)(void), void (*msg)(short *m), short *dx,
 		short *dy);
 
+/* this press kept for the next press_double as if let go now, where
+   the caller acts on the press and doesn't wait for its release (a
+   dialog's list, dlg_do) */
+void press_note(void);
+
 /* the double-click time, ms: the desktop's (evnt_dclick) unless set; and
    the last press forgotten (a list rebuilt under it) */
 void press_set_dclick(unsigned long ms);

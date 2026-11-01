@@ -60,6 +60,15 @@ int press_double(short id, short x, short y)
 	return second;
 }
 
+void press_note(void)
+{
+	last.valid = !cur.second;
+	last.id = cur.id;
+	last.x = cur.x;
+	last.y = cur.y;
+	last.up = tos_ms();
+}
+
 int press_track(const GRECT *r, short x, short y, void (*idle)(void), void (*msg)(short *m), short *dx,
 		short *dy)
 {
@@ -73,13 +82,8 @@ int press_track(const GRECT *r, short x, short y, void (*idle)(void), void (*msg
 		if (which & MU_BUTTON) {
 			/* let go (a move and the release in one event: the release) */
 			int in = e.mx >= r->x && e.mx < r->x + r->w && e.my >= r->y && e.my < r->y + r->h;
-			if (in) {
-				last.valid = !cur.second;
-				last.id = cur.id;
-				last.x = cur.x;
-				last.y = cur.y;
-				last.up = tos_ms();
-			}
+			if (in)
+				press_note();
 			return in ? PRESS_IN : PRESS_OUT;
 		}
 		if (which & MU_M1) {
