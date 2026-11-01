@@ -171,10 +171,14 @@ long dlg_fast_count(void);
    on the press, or the object | 0x8000 when the press was the second of
    a double click and was let go over it, as form_button gave for two
    clicks. The next dlg_evnt first waits for a row's press to be let go
-   (the AES would give a button still down as another press) */
+   (the AES would give a button still down as another press).
+   dlg_touch_up waits for it now, for a loop that acts on the release
+   (5.8: the row drawn on the press, the rest on the release): PRESS_IN,
+   PRESS_OUT or PRESS_DRAG (click.h), or -1 when no row is held */
 #ifdef DLG_CLICK
 #define DLG_CLICKS 1
 void dlg_touch(OBJECT *tree, short *next, short x, short y);
+int dlg_touch_up(void);
 #else
 #define DLG_CLICKS 2
 #endif
