@@ -78,6 +78,12 @@ static int build(HUFF *h, const unsigned char *len, int n)
 	short offs[16];
 	int i, l, code, left = 1;
 	memset(h->count, 0, sizeof(h->count));
+	/* the table empty first: a code with no symbols (legal for
+	   distances) returns before it is filled, and its tables are
+	   malloc'd now (576929d), so what was there would be read as codes
+	   (EUpdate's fuzz_http: a length past the bits there, nbits -3) */
+	memset(h->fast, 0, sizeof(h->fast));
+	h->first = h->index = 0;
 	for (i = 0; i < n; i++)
 		h->count[len[i]]++;
 	if (h->count[0] == n)
@@ -97,7 +103,6 @@ static int build(HUFF *h, const unsigned char *len, int n)
 	   every slot it prefixes. (A code reversed through rev8: bit by bit,
 	   two shifts by a count each, it took 190,000 cycles a table on an
 	   8 MHz ST, three tables a stream: EWeb's 16 font faces 1.1 s) */
-	memset(h->fast, 0, sizeof(h->fast));
 	code = 0;
 	{
 		int idx = 0;
