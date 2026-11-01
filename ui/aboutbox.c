@@ -107,6 +107,10 @@ static void line(short x1, short y1, short x2, short y2)
 static void rect_fill(short x1, short y1, short x2, short y2, short color)
 {
 	GRECT r;
+	if (cpu_base && (color == 0 || color == 1)) {
+		cpu_rect(x1, y1, x2, y2, color);	/* in the buffer: the shadow's strips (vr_recfl's 15 ms) */
+		return;
+	}
 	r.x = x1;
 	r.y = y1;
 	r.w = x2 - x1 + 1;
