@@ -389,6 +389,11 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 
 ## 10. Where each program stands (October 2026)
 
+**Maintenance (Erez, 1 Nov 2026).** EDOS and EFTP_XL are in maintenance mode while EWeb, EPDF and
+EPlay go to 1.0 (ATARI-APP-GUIDELINES.md, section 8): no new features or catching up with rules or
+`xl/`, a release only for a fault or something Erez reports, and nothing run in the background. Only
+Erez ends it, explicitly.
+
 | Rule | EDOS | EFTP_XL |
 |---|---|---|
 | 1.1 the program is NAME.COM | ✓ (EDOS.COM) | ✓ 1.5 |

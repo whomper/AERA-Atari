@@ -1466,6 +1466,20 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 
 ## 8. Where each app stands (October 2026)
 
+**Focus and maintenance (Erez, 1 Nov 2026).** EWeb, EPDF and EPlay have the family's effort until
+they reach 1.0. Every other app (ECal, EContact, EMail, EFTP, EHypView, ClaudeST, EUpdate, and
+AERA-Gateway, EDOS and EFTP_XL) is in maintenance mode:
+- no new features, speed rounds, clean-ups, or catching up with a new or changed rule here;
+- no sync of `common/`, `xl/` or `gateway/`: shared code moving is no reason to rebuild or release;
+- a release only for a security or data-loss fault, a crash or breakage Erez reports, something
+  outside that stops it working (a certificate, a server), or something EWeb, EPDF or EPlay need from
+  it; such a release takes only that fix (one change from `common/`, not a sync) and says why;
+- its session runs nothing in the background and waits for Erez or the hub.
+
+Only Erez ends it, by saying so explicitly (for instance, that every app is to take the latest
+shared code and release). Until then this table's ✗ and ? for those apps stay as they are; a rule
+added or changed here applies to the three focus apps.
+
 ✓ = done, ✗ = missing or different, ~ = partly done, ? = not reported yet. EWeb's column (0.11, a program for the TT and Falcon) is from its session's report. EPDF's
 (from 0.1, 31 Oct 2026) is from its session's report and the hub's runs; ? where not reported yet. EPlay's (31 Oct 2026: a program for the Falcon and TT, `EPLAYST.PRG` for the STE; 1 Nov: MP3 on any 68030 too, by the 68030, the DSP or the FDI, chosen in its settings, Auto by default) is — until its first release.
 
@@ -1477,6 +1491,7 @@ program's window.
 
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST | EWeb | EPDF | EPlay |
 |---|---|---|---|---|---|---|---|---|---|
+| Mode (Erez, 1 Nov 2026) | maintenance (2.41) | maintenance (1.76) | maintenance (1.71) | maintenance (1.75) | maintenance (1.38) | maintenance (1.73) | focus | focus | focus |
 | 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a (program only) | n/a (program only) | — |
 | 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) | ✓ | ✓ (0.1) | — |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (common's, 0.1) | — |
