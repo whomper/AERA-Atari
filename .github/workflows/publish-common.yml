@@ -18,6 +18,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Host tests (a failure keeps the common branch as it was)
+        run: make -C common/tests/qsort test
       - name: Split common/ into the common branch
         run: |
           git subtree split --prefix=common -b common
