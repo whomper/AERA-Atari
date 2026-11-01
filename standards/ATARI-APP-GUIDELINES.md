@@ -1185,7 +1185,9 @@ CONTACTS.TXT when the user chooses it (below).
 Every list works this way: folders, messages, files, contacts, events, a library's entries, a
 document's pages, a playlist.
 - **Mouse down:** the row is shown selected at once, before anything else. Only the old and the
-  new rows are drawn, within the 50 ms of the Speed table, and nothing waits for the action.
+  new rows are drawn, within the 50 ms of the Speed table, and nothing waits for the action. Where
+  both don't fit in 50 ms (an 8 MHz ST), the pressed row is drawn in the press's own turn and the old
+  row in the next turn, before the release's action (ClaudeST, 1 Nov 2026).
 - **Mouse up:** the action starts (the folder opened, the message or card shown, the file's
   details, the page) when the button is let go over the same row. Let go elsewhere, the selection
   stays and nothing else happens. Moved a few pixels while held, it is a drag (4.2), with no
