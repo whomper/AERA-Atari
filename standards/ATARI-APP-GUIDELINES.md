@@ -322,6 +322,22 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
       and doesn't try again in a loop. EPlay's MP3 has a 68030 way since phase 2 (Erez, 1 Nov
       2026: the TT, any 68030, a Falcon whose DSP is busy; its quality following the machine, half
       rate or mono on a stock Falcon or TT, so the music never breaks up), so it plays anyway.
+- **Common's fast paths, in every app** (Erez, 1 Nov 2026: "all apps using the fast drawing code").
+  Each app uses each of these wherever it draws that thing, and each one only where it is faster.
+  The test is the app's speed rig, which must show no action slower than in the release before.
+  It is run on `ST:mono` and `Falcon-4:16`, under NVDI, and under NVDI with a GDOS font as Erez
+  runs it (Courier 14).
+  EMail 1.69's lesson: `text_plain` called where `text_plain_state()` is below 0 (NVDI, a GDOS font,
+  a multitasking AES) falls back to `text_n` in replace mode, which can be slower than the app's own
+  way was. So each fast call is guarded, or its fallback is exactly what the app did before.
+  - Plain text: `text_plain` (`text_n_fast`) when `text_plain_state() >= 0`.
+  - Bold and underline: `text_fx`, `text_bold_strike`.
+  - A scroll: `scr_rows`.
+  - Pen 0/1 fills and lines: `scr_fill`, `scr_xor`.
+  - Pane bars by the VDI: `pb_vdi(vdi_h)` after `vq_extnd`.
+  - Dialogs on an ST: `-DDLG_CPU` in a program that runs on an ST, never in an accessory.
+  - Steady redraws in place (progress rows, clocks, headers): `offdraw`.
+  - The About box: common's.
 - **Measuring it.**
   - Each app has a speed rig, `tests/hatari/speed.py`, on common's `tests/speed/speed.py`. It
     builds with `-DAES_PROFILE=20`, which also reports the start as `AESSTART`, and does the actions
@@ -1493,3 +1509,4 @@ program's window.
 | 6.1 A program's own files from `app_dir()` (`shel_read`), not the current folder (28 Oct) | ✗ | ✓ (57e480ac, 1.74) | ✓ (909ef989c, 1.67: work_dir()) | ✓ (6f14a42d, 1.67: work_dir()) | ✓ (3b2de1a, 1.32: start_dir) | ✓ (e3e4383, 1.69) | ✓ (890245b6f, 0.49: work_dir(); EUpdate ✓ 25580444d, 1.21) | ✓ (0.1) | — |
 | Speed: the DSP shared, `Dsp_Lock` refused means the 68030 (31 Oct) | ✓ (TLS.OVL: common's dspec.c, dsprsa.c) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | n/a (no DSP) | n/a (no DSP) | ✓ (TLS.OVL; dspjpeg.c) | — (no DSP yet; its pictures will use dspjpeg.c) | — |
 | 5.8 A list click: selected on press, done on release (1 Nov) | — | — | — | — | — | — | — | — | — |
+| Speed: common's fast paths used (text_plain, text_fx, scr_rows, scr_fill, pb_vdi, DLG_CPU, offdraw), none slower under NVDI with a GDOS font (1 Nov) | — | — | — | — | — | — | — | — | — |
