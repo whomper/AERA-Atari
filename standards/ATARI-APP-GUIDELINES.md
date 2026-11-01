@@ -1489,7 +1489,8 @@ AERA-Gateway, EDOS and EFTP_XL) is in maintenance mode:
 
 Only Erez ends it, by saying so explicitly (for instance, that every app is to take the latest
 shared code and release). Until then this table's ✗ and ? for those apps stay as they are; a rule
-added or changed here applies to the three focus apps.
+added or changed here applies to the three focus apps. What the frozen apps would do next is kept
+in [PARKED.md](PARKED.md), to go through with Erez when the three reach 1.0.
 
 ✓ = done, ✗ = missing or different, ~ = partly done, ? = not reported yet. EWeb's column (0.11, a program for the TT and Falcon) is from its session's report. EPDF's
 (from 0.1, 31 Oct 2026) is from its session's report and the hub's runs; ? where not reported yet. EPlay's (31 Oct 2026: a program for the Falcon and TT, `EPLAYST.PRG` for the STE; 1 Nov: MP3 on any 68030 too, by the 68030, the DSP or the FDI, chosen in its settings, Auto by default) is — until its first release.
