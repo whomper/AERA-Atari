@@ -97,6 +97,12 @@ Erez's.
     runs (common's accmem at boot, EMail's Settings). An initialised char array on the stack
     gets `__attribute__((aligned(4)))`, or is filled by `strcpy`. `make test` runs
     `common/tools/oddaccess.py` over every 68000 ELF it builds and fails on any find.
+  - **Only the code that is called is linked** (1 Nov 2026): every program and accessory is built
+    with `-ffunction-sections -fdata-sections` and linked with `--gc-sections`. common's drawing
+    paths (text.c, panebar.c, dialog.c's DLG_CPU, offdraw, click.c) grew EMAIL.PRG by 20 KB in
+    1.72, enough to bring a 1 MB ST with EMail's accessory under EMail's 300 KB; the flags took
+    10 KB of it back (ECal's accessory 8.6 KB). A release says its resident size (text + data +
+    bss) against the last one's.
   - **A program built for the 68020 or better says so on an ST** (27 Oct 2026: EUPDATE.PRG and
     EWEB.PRG went back to the desktop on TOS 1.04 without a word, dead in `appl_init`'s 68030
     binding before their own check). Its `main()` is common's `atari/cpucheck.c`, the one file
@@ -1519,6 +1525,7 @@ program's window.
 | Speed: the clip set to the area moved before a scroll's `vro_cpyfm` (26 Oct, EFTP) | to check | ✓ (1.70: no change needed) | ✓ (1.62: scroll_copy, as it was) | ✓ (1.62: 71432ab9d) | to check | ✓ (1.66: text_noclip before each copy) | ✓ (0.43: clip_on before both scrolls; EUpdate ✓ 1.15: 39ffae04a) | ✓ (0.1: textwin.c moved()) | — |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) | n/a | — |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) | ✓ (0.1) | — |
+| Machines: `-ffunction-sections -fdata-sections`, `--gc-sections` for every program and accessory (1 Nov) | ✓ (2.39: ECAL.ACC; ECAL.PRG to check) | ✓ (1.76) | ~ (EMAILCHK.ACC; EMAIL.PRG with 1.72) | to check | to check | to check | to check | to check | to check |
 | Machines: a 68020+ program says so on an ST (`cpucheck.c`, 27 Oct) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | ✓ (EWEB.PRG: 2b3cc3d47, 0.47; EUpdate ✓ ec8851c39, 52e737a1d, 1.19) | n/a (a 68000 program) | — |
 | Machines: `oddaccess.py` in `make test`, no odd stack access (27 Oct) | ✓ (2.32: cal.elf and fakeguide.elf, 0 found; CI's `make oddaccess`) | ✓ (e0f1de1d, 1.73) | ✓ (f7b6b3a79, 1.65: pdir_pick fixed) | ✓ (1b0e7402, 1.66) | ✓ (0432c99, 1.31: in make atari) | ✓ (61d07b827, 1.68) | ✓ (EWEBST.PRG: 82bf60544, 0.47; EUpdate n/a, 68030) | ✓ (0.1) | — |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) | ✓ | — |
