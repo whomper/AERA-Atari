@@ -1162,6 +1162,10 @@ document's pages, a playlist.
   nothing is opened on release.
 - **A double click:** the first click as above; the double-click action runs when the second click
   is released.
+- **The right button** opens the context menu on press, on the row it selects (3.3), as now.
+- **No waiting for a second click:** the event loop asks for one click (evnt_multi's clicks 1), so
+  the AES hands the press over at once; a loop asking for two holds every single press back for
+  the double-click time. The program times the double click itself (evnt_dclick's setting).
 - The action's work runs after the release in slices, as any long job does (Speed). The rigs time
   the two apart: press to row drawn (50 ms) and release to the action's first stretch.
 
