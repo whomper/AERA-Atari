@@ -486,6 +486,15 @@ short menu_ienable(OBJECT *tree, short item, short enable)
 	return aes(32, 2, 1, 1, 0);
 }
 
+/* the double click's speed, 0 (slow) to 4 (fast), the desktop's own;
+   setit 1 sets it to rate */
+short evnt_dclick(short rate, short setit)
+{
+	aintin[0] = rate;
+	aintin[1] = setit;
+	return aes(26, 2, 1, 0, 0);
+}
+
 short evnt_timer_(unsigned long ms)
 {
 	aintin[0] = (short)(ms & 0xffff);

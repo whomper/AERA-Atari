@@ -170,6 +170,7 @@ short graf_rubberbox(short x, short y, short minw, short minh, short *w, short *
 short graf_dragbox(short w, short h, short x, short y, short bx, short by, short bw, short bh,
 		   short *nx, short *ny);
 void evnt_set_m1(short leave, short x, short y, short w, short h);
+short evnt_dclick(short rate, short setit);
 short menu_bar(OBJECT *tree, short show);
 short menu_tnormal(OBJECT *tree, short title, short normal);
 short menu_register(short apid, const char *name);
