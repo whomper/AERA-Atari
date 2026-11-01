@@ -1206,11 +1206,11 @@ document's pages, a playlist.
 - **No waiting for a second click:** the event loop asks for one click (evnt_multi's clicks 1), so
   the AES hands the press over at once; a loop asking for two holds every single press back for
   the double-click time. The program times the double click itself (evnt_dclick's setting).
-  An accessory under TOS is the exception: the AES counts its clicks for the desktop (which asks
-  for two) before the accessory sees a press, and takes a double click's second press into that
-  count, so an accessory that asks for one never sees it. An accessory keeps asking for two and
-  uses evnt_multi's count (breturn); a program asks for one (ECal, 1 Nov 2026, TOS 1.04; as
-  ECal's 862046c found on 12 Oct).
+  Accessories do the same (EContact, ECal, 1 Nov 2026, TOS 1.04 and 4.04, over the desktop and
+  over EMail). The one cost: a double click begun while the app is inside a stretch (not in
+  evnt_multi) loses its second press, since the first is fetched after it was let go and the AES
+  hands over no other; asking for two clicks (breturn) would keep it but hold every press back,
+  which is what this rule is against. Short stretches (Speed) keep that window small.
 - The action's work runs after the release in slices, as any long job does (Speed). The rigs time
   the two apart: press to row drawn (50 ms) and release to the action's first stretch.
 
