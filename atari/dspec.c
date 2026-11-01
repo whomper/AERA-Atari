@@ -43,6 +43,8 @@ static void pause_ms(unsigned long ms)
 static long run_ssp;			/* Super(0)'s, while a job runs */
 static unsigned long turn_at;
 static int turns_on;			/* the program loaded, the job's commands going */
+unsigned short dspec_turns;
+unsigned long dspec_turn_ms;
 
 /* a turn for GEM: back to user mode on the same stack, pf_idle, and
    supervisor mode again. Super(ssp) from supervisor mode leaves the user
@@ -52,7 +54,8 @@ static int turns_on;			/* the program loaded, the job's commands going */
    whatever TOS did with it. Super(0) then takes the user stack as it is */
 static void turn(void)
 {
-	if (!turns_on || !pf_idle || pf_ms() - turn_at < 40)
+	unsigned long t0;
+	if (!turns_on || !pf_idle || (t0 = pf_ms()) - turn_at < 40)
 		return;
 	__asm__ volatile(
 		"move.l %1,%%a3\n\t"
@@ -72,6 +75,8 @@ static void turn(void)
 		: "m"(pf_idle)
 		: "d0", "d1", "d2", "a0", "a1", "a2", "a3", "a4", "memory", "cc");
 	turn_at = pf_ms();
+	dspec_turns++;
+	dspec_turn_ms += turn_at - t0;
 }
 
 /* in supervisor mode. Each word waits at most a second: a product takes
@@ -131,6 +136,8 @@ static int run(void (*fn)(void *), void *ctx)
 	   on whatever system stack Supexec is given */
 	run_ssp = trap1_wl(0x20, 0L);
 	turn_at = pf_ms();
+	dspec_turns = 0;
+	dspec_turn_ms = 0;
 	for (i = 0; i < 512; i++)		/* the bootstrap loads 512 words and starts them */
 		put(dsp_ec_prog[i]);
 	if (!ecdsp_failed) {
