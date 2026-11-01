@@ -1212,11 +1212,14 @@ document's pages, a playlist.
 - **No waiting for a second click:** the event loop asks for one click (evnt_multi's clicks 1), so
   the AES hands the press over at once; a loop asking for two holds every single press back for
   the double-click time. The program times the double click itself (evnt_dclick's setting).
-  Accessories do the same (EContact, ECal, 1 Nov 2026, TOS 1.04 and 4.04, over the desktop and
-  over EMail). The one cost: a double click begun while the app is inside a stretch (not in
-  evnt_multi) loses its second press, since the first is fetched after it was let go and the AES
-  hands over no other; asking for two clicks (breturn) would keep it but hold every press back,
-  which is what this rule is against. Short stretches (Speed) keep that window small.
+  An accessory under TOS that waits for the release as an `MU_BUTTON` event (common's
+  `press_track`) loses a double click's second press most times when it asks for one click (ECal,
+  1 Nov 2026, TOS 1.04: 2 runs in 3, idle), so such an accessory keeps asking for two and uses
+  evnt_multi's count (`breturn`) until `press_track`'s release by `graf_mkstate`
+  (`hub/press-poll`) is proven; EContact's accessory, which waits for the release with
+  `graf_mkstate`, asks for one. Programs ask for one. Either way a double click begun while the
+  app is inside a stretch can lose its second press: short stretches (Speed) keep that window
+  small.
 - **The press drawn at once, not at the release** (EHypView, 1 Nov 2026): TOS's AES (1.04 and
   4.04) holds `wind_update(BEG_UPDATE)` back while the left button is held still, so a row drawn
   "on press" under it showed only when the button was let go or the mouse moved (1.4 s for a
