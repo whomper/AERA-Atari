@@ -330,7 +330,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   EMail 1.69's lesson: `text_plain` called where `text_plain_state()` is below 0 (NVDI, a GDOS font,
   a multitasking AES) falls back to `text_n` in replace mode, which can be slower than the app's own
   way was. So each fast call is guarded, or its fallback is exactly what the app did before.
-  - Plain text: `text_plain` (`text_n_fast`) when `text_plain_state() >= 0`.
+  - Plain text: `text_plain` when `text_plain_state() >= 0`.
   - Bold and underline: `text_fx`, `text_bold_strike`.
   - A scroll: `scr_rows`.
   - Pen 0/1 fills and lines: `scr_fill`, `scr_xor`. Their VDI fallback reads the fill attributes and
