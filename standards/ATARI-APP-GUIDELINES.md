@@ -204,10 +204,16 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   | scrolls one line or row (an arrow, the wheel); held, at least 15 rows a second | 50 ms |
   | scrolls a page (Shift+arrow, a click in the track) | 150 ms |
   | opens a menu entry's dialog, a pop-up or an alert | 150 ms |
+  | on an 8 MHz ST (`ST`, `ST-1`), opens a dialog that covers about half the screen or more (Settings) | 300 ms |
   | has the main window drawn whole at its size (opened, topped, uncovered) | 300 ms |
   | moves or resizes a window: what comes into view drawn | 300 ms |
   | opens the accessory from the Desk menu: its window drawn | 500 ms |
   | starts the program from C:: its window drawn | 2 s |
+
+  The big dialog's time is Erez's (1 Nov 2026): saving and filling the screen under a dialog the
+  size of EFTP's Settings takes some 85 ms of an 8 MHz ST's memory speed alone, and the CPU's drawing
+  (common's `dialog.c`) brought Settings from 370 to 270 ms. It stays 150 ms on the Falcon, and for
+  smaller dialogs on the ST.
 
   Longer jobs (a sync, a load, a search through everything, a page laid out) never run as one
   stretch. They run in slices (`common/ui/bgwork.c`, as 2.2's accessories do), so a key or Esc is
