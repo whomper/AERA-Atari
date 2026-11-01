@@ -51,10 +51,10 @@ void pic_free(PIC *p);
    whole in memory (TJpgDec's builds: a 1 MB ST's): fill(fu, buf, n) gives
    the file's next bytes (0 at the end), row(ru, y, px, alpha) each row
    shown, y from 0 to h - 1 (px w pixels 5-6-5, alpha w bytes), the same
-   pixels as pic_decode's. coarse: unpacked at 1/8 at most (a preview: the
-   blocks' averages, no IDCT). 1 done; 0 not (why); -1 not a JPEG made
+   pixels as pic_decode's: a program can show them as they come, the
+   picture from the top down. 1 done; 0 not (why); -1 not a JPEG made
    this way (progressive, CMYK, ...; libjpeg's builds): pic_decode */
-int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h, int coarse,
+int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h,
 		  void (*row)(void *u, long y, const unsigned short *px, const unsigned char *alpha), void *ru, int *why);
 #ifdef PIC_CHECK_HEADERS
 /* the tests' (libjpeg's builds): JPEGs whose headers libjpeg and pic.c's
