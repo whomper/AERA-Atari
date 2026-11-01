@@ -6,7 +6,7 @@
  * elsewhere, a drag reported while the button is still down, the idle
  * call each timer turn, messages passed on, the double click timed from
  * evnt_dclick (too slow, too far, another object, a third press, after a
- * drag), and what evnt_multi was asked for.
+ * drag), press_note for a press acted on at once, and what evnt_multi was asked for.
  */
 #include <stdio.h>
 #include <string.h>
@@ -151,6 +151,15 @@ int main(void)
 	press_forget();
 	now += 50;
 	CHECK(press_double(3, 50, 105) == 0, "press_forget: the last press gone");
+
+	now += 2000;
+	press_double(4, 50, 105);
+	press_note();			/* acted on at press, the release not waited for */
+	now += 200;
+	CHECK(press_double(4, 51, 105) == 1, "press_note: the press kept, the next one soon after a double click");
+	press_note();
+	now += 100;
+	CHECK(press_double(4, 51, 105) == 0, "and a third after a noted second starts afresh");
 
 	printf("%d checks, %d failed\n", checks, failed);
 	return failed != 0;
