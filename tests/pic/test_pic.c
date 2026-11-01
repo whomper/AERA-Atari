@@ -377,6 +377,13 @@ static int rows(int argc, char **argv)
 		free(d);
 	}
 	printf("a row at a time: %ld tried, %ld whole (progressive, CMYK...), %ld failed\n", tried, whole, bad);
+#ifdef PIC_CHECK_HEADERS
+	/* the DSP's headers read both ways (libjpeg's, pic.c's own) */
+	printf("headers both ways: %ld the same, %ld libjpeg's only (extended), %ld differ\n", pic_hdr_same,
+	       pic_hdr_lj_only, pic_hdr_differ);
+	if (pic_hdr_differ)
+		bad++;
+#endif
 	return bad != 0;
 }
 
