@@ -2246,10 +2246,10 @@ static int decode_jpeg(const unsigned char *d, long n, PIC *p, SCALER *sc, int *
 }
 
 /* libjpeg's builds take a JPEG whole (pic_decode) */
-int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h, int coarse,
+int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h,
 		  void (*row)(void *u, long y, const unsigned short *px, const unsigned char *alpha), void *ru, int *why)
 {
-	(void) fill; (void) fu; (void) w; (void) h; (void) coarse; (void) row; (void) ru; (void) why;
+	(void) fill; (void) fu; (void) w; (void) h; (void) row; (void) ru; (void) why;
 	return -1;
 }
 
@@ -2493,7 +2493,7 @@ static int decode_jpeg(const unsigned char *d, long n, PIC *p, SCALER *sc, int *
 	}
 }
 
-int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h, int coarse,
+int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h,
 		  void (*row)(void *u, long y, const unsigned short *px, const unsigned char *alpha), void *ru, int *why)
 {
 	JDEC jd;
@@ -2517,7 +2517,7 @@ int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, i
 	j.fill = fill;
 	j.fu = fu;
 #ifdef PIC_TJPGD_DSP
-	if (pic_dsp != NULL && !coarse && dsp_testing != 2 && (jh = calloc(1, sizeof *jh)) != NULL) {
+	if (pic_dsp != NULL && dsp_testing != 2 && (jh = calloc(1, sizeof *jh)) != NULL) {
 		/* on the DSP when it takes the picture; else TJpgDec, the headers
 		   read given again */
 		jh->fill = fill;
@@ -2563,11 +2563,9 @@ int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, i
 			*why = rc == JDR_MEM1 ? PIC_MEMORY : PIC_DAMAGED;
 		goto done;
 	}
-	if (coarse)
-		scale = 3;		/* the preview: an eighth, the blocks' averages (no IDCT) */
-	else
-		while (scale < 3 && (jd.width >> (scale + 1)) >= w && (jd.height >> (scale + 1)) >= h)
-			scale++;
+	/* as small as it can be unpacked and still be as big as shown */
+	while (scale < 3 && (jd.width >> (scale + 1)) >= w && (jd.height >> (scale + 1)) >= h)
+		scale++;
 	sw = scaled(jd.width, jd.msx * 8, scale);
 	sh = scaled(jd.height, jd.msy * 8, scale);
 	p.w = w;

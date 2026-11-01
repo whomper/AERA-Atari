@@ -278,8 +278,7 @@ static int slices(int argc, char **argv)
 
 /* a row at a time (pic_jpeg_rows): each JPEG pic_decode makes, read in
    pieces of 1 to 997 bytes, comes out as the same rows, each once and in
-   order; at its size, a third, 61 x 37 and twice its size; coarse too
-   (rows, in order) */
+   order; at its size, a third, 61 x 37 and twice its size */
 typedef struct {
 	const unsigned char *d;
 	long n, at, k;
@@ -301,7 +300,6 @@ static long feed(void *u, unsigned char *buf, long n)
 typedef struct {
 	const PIC *p;
 	long next, bad;
-	int coarse;
 } TAKE;
 
 static void take(void *u, long y, const unsigned short *px, const unsigned char *alpha)
@@ -313,7 +311,7 @@ static void take(void *u, long y, const unsigned short *px, const unsigned char 
 		t->bad++;
 		return;
 	}
-	if (t->coarse || p == NULL)
+	if (p == NULL)
 		return;
 	if (memcmp(px, p->px + y * p->w, (size_t) p->w * 2) != 0)
 		t->bad++;
@@ -336,28 +334,25 @@ static int rows(int argc, char **argv)
 			free(d);
 			continue;
 		}
-		for (k = 0; k < 5; k++) {
+		for (k = 0; k < 4; k++) {
 			int why = 0, r, w = (int) sw, h = (int) sh;
 			FEED f = { d, n, 0, (long) a * 31 + k };
 			TAKE t;
 			PIC *p = NULL;
 			if (k == 1)
 				w = (int) (sw / 3 > 0 ? sw / 3 : 1), h = (int) (sh / 3 > 0 ? sh / 3 : 1);
-			else if (k == 2 || k == 4)
+			else if (k == 2)
 				w = 61, h = 37;
 			else if (k == 3)
 				w = (int) sw * 2, h = (int) sh * 2;
 			if ((long) w * h > (4L << 20))
 				continue;
-			if (k < 4) {
-				p = pic_decode(d, n, w, h, 4L << 20, &why);
-				if (p == NULL)
-					continue;
-			}
+			p = pic_decode(d, n, w, h, 4L << 20, &why);
+			if (p == NULL)
+				continue;
 			memset(&t, 0, sizeof t);
 			t.p = p;
-			t.coarse = k == 4;
-			r = pic_jpeg_rows(feed, &f, w, h, k == 4, take, &t, &why);
+			r = pic_jpeg_rows(feed, &f, w, h, take, &t, &why);
 			tried++;
 			if (r < 0) {
 				whole++;
@@ -368,7 +363,7 @@ static int rows(int argc, char **argv)
 				}
 #endif
 			} else if (r == 0 || t.bad || t.next != h) {
-				printf("FAIL %s %dx%d%s: %s, %ld rows of %d, %ld wrong\n", argv[a], w, h, k == 4 ? " coarse" : "",
+				printf("FAIL %s %dx%d: %s, %ld rows of %d, %ld wrong\n", argv[a], w, h,
 				       r ? "made" : pic_why_text(why), t.next, h, t.bad);
 				bad++;
 			}
