@@ -1215,9 +1215,10 @@ document's pages, a playlist.
   An accessory under TOS that waits for the release as an `MU_BUTTON` event (common's
   `press_track`) loses a double click's second press most times when it asks for one click (ECal,
   1 Nov 2026, TOS 1.04: 2 runs in 3, idle), so such an accessory keeps asking for two and uses
-  evnt_multi's count (`breturn`) until `press_track`'s release by `graf_mkstate`
-  (`hub/press-poll`) is proven; EContact's accessory, which waits for the release with
-  `graf_mkstate`, asks for one. Programs ask for one. Either way a double click begun while the
+  evnt_multi's count (`breturn`). Waiting for the release by `graf_mkstate` instead didn't cure
+  it (ECal: 4 runs in 5): the loss follows a first press handed over while the button is still
+  down, after which TOS gives the second press to no one asking for one click. EContact's
+  accessory asks for one and loses a double click only when one begins inside a stretch. Programs ask for one. Either way a double click begun while the
   app is inside a stretch can lose its second press: short stretches (Speed) keep that window
   small.
 - **The press drawn at once, not at the release** (EHypView, 1 Nov 2026): TOS's AES (1.04 and
