@@ -1217,6 +1217,14 @@ document's pages, a playlist.
   evnt_multi) loses its second press, since the first is fetched after it was let go and the AES
   hands over no other; asking for two clicks (breturn) would keep it but hold every press back,
   which is what this rule is against. Short stretches (Speed) keep that window small.
+- **The press drawn at once, not at the release** (EHypView, 1 Nov 2026): TOS's AES (1.04 and
+  4.04) holds `wind_update(BEG_UPDATE)` back while the left button is held still, so a row drawn
+  "on press" under it showed only when the button was let go or the mouse moved (1.4 s for a
+  1.5 s press, hidden from AESGAP, being inside an AES call). A press is drawn between common's
+  `press_update_begin()` and `press_update_end()` (`click.h`): on a single-tasking AES they skip
+  the lock while the button is down (nothing of another program's runs while we make no event
+  call); a multitasking AES keeps it. The rigs check a held, still press by its pixels, not only
+  by its stretch.
 - The action's work runs after the release in slices, as any long job does (Speed). The rigs time
   the two apart: press to row drawn (50 ms) and release to the action's first stretch.
 
