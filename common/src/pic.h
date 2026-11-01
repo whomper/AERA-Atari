@@ -56,6 +56,12 @@ void pic_free(PIC *p);
    this way (progressive, CMYK, ...; libjpeg's builds): pic_decode */
 int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h, int coarse,
 		  void (*row)(void *u, long y, const unsigned short *px, const unsigned char *alpha), void *ru, int *why);
+#ifdef PIC_CHECK_HEADERS
+/* the tests' (libjpeg's builds): JPEGs whose headers libjpeg and pic.c's
+   own reader for the DSP (a TJpgDec build's) read the same, those only
+   libjpeg gives the DSP (extended sequential), those that differ */
+extern long pic_hdr_same, pic_hdr_lj_only, pic_hdr_differ;
+#endif
 /* called now and then while decoding; 0 stops it (PIC_STOPPED). NULL:
    never */
 extern int (*pic_poll)(void);
