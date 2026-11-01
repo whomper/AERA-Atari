@@ -1156,10 +1156,82 @@ void dlg_draw(OBJECT *tree, short obj)
 		objc_draw(tree, 0, 8, x, y, w, h);
 }
 
+#ifdef DLG_CLICK
+#include "click.h"
+
+/* a message that comes while a row is held, as dlg_evnt would take it:
+   the dialog window's own redraw drawn, the app's other windows' given to
+   dlg_redraw_hook (in a window only: on TOS the dialog is over them),
+   the rest kept for when the dialog is gone */
+static void held_msg(short *msg)
+{
+	short k, i = ndw - 1;
+	for (k = 0; k <= i && dw[k].h != msg[3]; k++)
+		;
+	if (msg[0] == WM_REDRAW && k <= i && dw[k].h > 0) {
+		wind_update(END_UPDATE);
+		win_paint(k, msg[4], msg[5], msg[6], msg[7]);
+		wind_update(BEG_UPDATE);
+	} else if (msg[0] == WM_REDRAW && dlg_redraw_hook && dlg_in_window()) {
+		wind_update(END_UPDATE);
+		dlg_redraw_hook(msg);
+		wind_update(BEG_UPDATE);
+	} else if (msg[0] == WM_REDRAW) {
+		keep_redraw(msg);
+	} else if (!(k <= i && dw[k].h > 0)) {
+		keep_msg(msg);
+	}
+}
+
+/* a row's first press, handed back at once: its release still to come */
+static struct {
+	int on;
+	GRECT r;
+	short x, y;
+} held;
+
+/* the release of a row handed back on its press, waited for before the
+   next press is asked for (the AES gives a button still down as a new
+   press); let go over the row, it may begin a double click */
+static void touch_up(void)
+{
+	short m[8];
+	AEVENT e;
+	if (!held.on)
+		return;
+	held.on = 0;
+	if (press_track(&held.r, held.x, held.y, 0, held_msg, 0, 0) == PRESS_DRAG)
+		evnt_multi_(MU_BUTTON, 1, 1, 0, 0, m, &e);	/* moved off: just its release */
+}
+
+void dlg_touch(OBJECT *tree, short *next, short x, short y)
+{
+	short o = (short)(*next & 0x7fff);
+	GRECT r;
+	if (o <= 0 || !(tree[o].ob_flags & TOUCHEXIT))
+		return;
+	*next = o;
+	objc_offset(tree, o, &r.x, &r.y);
+	r.w = tree[o].ob_width;
+	r.h = tree[o].ob_height;
+	if (!press_double(o, x, y)) {
+		held.on = 1;		/* the caller acts on the press; touch_up waits */
+		held.r = r;
+		held.x = x;
+		held.y = y;
+	} else if (press_track(&r, x, y, 0, held_msg, 0, 0) == PRESS_IN) {
+		*next = (short)(o | 0x8000);
+	}
+}
+#endif
+
 short dlg_evnt(short flags, short clicks, short mask, short state,
 	       unsigned long timer, short *msg, AEVENT *e)
 {
 	short i, k, top, d1;
+#ifdef DLG_CLICK
+	touch_up();
+#endif
 	if (!dlg_in_window())
 		return evnt_multi_(flags, clicks, mask, state, timer, msg, e);
 	i = ndw - 1;
@@ -1222,52 +1294,6 @@ short dlg_evnt(short flags, short clicks, short mask, short state,
 			return e->which;
 	}
 }
-
-#ifdef DLG_CLICK
-#include "click.h"
-
-/* a message that comes while a row is held, as dlg_evnt would take it:
-   the dialog window's own redraw drawn, the app's other windows' given to
-   dlg_redraw_hook (in a window only: on TOS the dialog is over them),
-   the rest kept for when the dialog is gone */
-static void held_msg(short *msg)
-{
-	short k, i = ndw - 1;
-	for (k = 0; k <= i && dw[k].h != msg[3]; k++)
-		;
-	if (msg[0] == WM_REDRAW && k <= i && dw[k].h > 0) {
-		wind_update(END_UPDATE);
-		win_paint(k, msg[4], msg[5], msg[6], msg[7]);
-		wind_update(BEG_UPDATE);
-	} else if (msg[0] == WM_REDRAW && dlg_redraw_hook && dlg_in_window()) {
-		wind_update(END_UPDATE);
-		dlg_redraw_hook(msg);
-		wind_update(BEG_UPDATE);
-	} else if (msg[0] == WM_REDRAW) {
-		keep_redraw(msg);
-	} else if (!(k <= i && dw[k].h > 0)) {
-		keep_msg(msg);
-	}
-}
-
-void dlg_touch(OBJECT *tree, short *next, short x, short y)
-{
-	short o = (short)(*next & 0x7fff);
-	GRECT r;
-	if (o <= 0 || !(tree[o].ob_flags & TOUCHEXIT))
-		return;
-	*next = o;
-	if (!press_double(o, x, y)) {
-		press_note();		/* the caller acts on the press itself */
-		return;
-	}
-	objc_offset(tree, o, &r.x, &r.y);
-	r.w = tree[o].ob_width;
-	r.h = tree[o].ob_height;
-	if (press_track(&r, x, y, 0, held_msg, 0, 0) == PRESS_IN)
-		*next = (short)(o | 0x8000);
-}
-#endif
 
 short dlg_do(OBJECT *tree, short start, short cancel)
 {

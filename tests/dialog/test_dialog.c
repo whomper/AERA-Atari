@@ -274,10 +274,9 @@ short wind_update(short mode)
 /* click.c stood in for (common/tests/click tests it): what press_double
    says, what press_track gives back, and what dlg_touch asked */
 #include "click.h"
-static int fake_dbl, fake_track, notes, tracks;
+static int fake_dbl, fake_track, tracks;
 static GRECT tracked;
 int press_double(short id, short x, short y) { (void)id, (void)x, (void)y; return fake_dbl; }
-void press_note(void) { notes++; }
 int press_track(const GRECT *r, short x, short y, void (*idle)(void), void (*msg)(short *m), short *dx, short *dy)
 {
 	(void)x, (void)y, (void)idle, (void)msg, (void)dx, (void)dy;
@@ -927,24 +926,29 @@ int main(void)
 	   click timed by click.c and counted when let go over the row */
 	setup();
 	{
-		static const STEP s[] = { CLICK(ROW), END };
-		fake_dbl = 0, notes = 0, tracks = 0;
+		static const STEP s[] = { CLICK(ROW), END }, s2[] = { KEY(KEY_RETURN), END };
+		short x, y;
+		fake_dbl = 0, fake_track = PRESS_IN, tracks = 0;
 		r = run(0, CANCEL, s);
 		check(asked_clicks == 1, "DLG_CLICK: the AES asked for one click, so a press comes at once");
-		check(r == ROW && notes == 1 && tracks == 0,
-		      "a first press on a TOUCHEXIT row: its number at once, the press noted for the next");
+		check(r == ROW && tracks == 0, "a first press on a TOUCHEXIT row: its number at once, on the press");
+		setup();
+		r = run(0, CANCEL, s2);
+		objc_offset(tree, ROW, &x, &y);
+		check(r == OK && tracks == 1 && tracked.x == x && tracked.y == y && tracked.w == tree[ROW].ob_width &&
+		      tracked.h == tree[ROW].ob_height,
+		      "... its release waited for over the row before the next press is asked for");
 	}
 	setup();
 	{
-		static const STEP s[] = { CLICK(ROW), END };
-		short x, y;
-		fake_dbl = 1, fake_track = PRESS_IN, notes = 0, tracks = 0;
+		static const STEP s[] = { CLICK(ROW), END }, s2[] = { KEY(KEY_RETURN), END };
+		fake_dbl = 1, fake_track = PRESS_IN, tracks = 0;
 		r = run(0, CANCEL, s);
-		objc_offset(tree, ROW, &x, &y);
-		check(r == (short)(ROW | 0x8000) && tracks == 1 && notes == 0,
+		check(r == (short)(ROW | 0x8000) && tracks == 1,
 		      "a double click's second, let go over the row: its number with the high bit");
-		check(tracked.x == x && tracked.y == y && tracked.w == tree[ROW].ob_width &&
-		      tracked.h == tree[ROW].ob_height, "... the release waited for over the row");
+		setup();
+		run(0, CANCEL, s2);
+		check(tracks == 1, "... its release already waited for: nothing more to wait for");
 	}
 	setup();
 	{
