@@ -318,8 +318,10 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     - nobody waits for the DSP or asks another program to let it go: `Dsp_Lock` refused means the
       68030's code (common's `dspec.c`, `dsprsa.c` and `dspjpeg.c` do so already), slower but never
       failing;
-    - a program that can't work without the DSP (EPlay's MP3) says so ("The DSP is in use by another
-      program") and doesn't try again in a loop.
+    - a program that can't work without the DSP says so ("The DSP is in use by another program")
+      and doesn't try again in a loop. EPlay's MP3 has a 68030 way since phase 2 (Erez, 1 Nov
+      2026: the TT, any 68030, a Falcon whose DSP is busy; its quality following the machine, half
+      rate or mono on a stock Falcon or TT, so the music never breaks up), so it plays anyway.
 - **Measuring it.**
   - Each app has a speed rig, `tests/hatari/speed.py`, on common's `tests/speed/speed.py`. It
     builds with `-DAES_PROFILE=20`, which also reports the start as `AESSTART`, and does the actions
@@ -1407,7 +1409,7 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 ## 8. Where each app stands (October 2026)
 
 ✓ = done, ✗ = missing or different, ~ = partly done, ? = not reported yet. EWeb's column (0.11, a program for the TT and Falcon) is from its session's report. EPDF's
-(from 0.1, 31 Oct 2026) is from its session's report and the hub's runs; ? where not reported yet. EPlay's (31 Oct 2026: a program for the Falcon and TT, `EPLAYST.PRG` for the STE) is — until its first release.
+(from 0.1, 31 Oct 2026) is from its session's report and the hub's runs; ? where not reported yet. EPlay's (31 Oct 2026: a program for the Falcon and TT, `EPLAYST.PRG` for the STE; 1 Nov: MP3 on any 68030 too, by the 68030, the DSP or the FDI, chosen in its settings, Auto by default) is — until its first release.
 
 3.5's MiNT and MagiC row (25 Oct 2026): `alert()` follows with a sync of `common/`; an app ticks the
 row once its own dialogs open with `dlg_open` (or `dlg_open_area`) and close with `dlg_close`, its
