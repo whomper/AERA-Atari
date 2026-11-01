@@ -1262,13 +1262,18 @@ static struct {
 
 int dlg_touch_up(void)
 {
+	return dlg_touch_up_idle(0);
+}
+
+int dlg_touch_up_idle(void (*idle)(void))
+{
 	short m[8];
 	AEVENT e;
 	int r;
 	if (!held.on)
 		return -1;
 	held.on = 0;
-	r = press_track(&held.r, held.x, held.y, 0, held_msg, 0, 0);
+	r = press_track(&held.r, held.x, held.y, idle, held_msg, 0, 0);
 	if (r == PRESS_DRAG)
 		evnt_multi_(MU_BUTTON, 1, 1, 0, 0, m, &e);	/* moved off: just its release */
 	return r;
