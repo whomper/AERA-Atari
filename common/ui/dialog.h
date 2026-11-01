@@ -167,9 +167,11 @@ long dlg_fast_count(void);
    two held every press back for the double-click time). DLG_CLICKS is
    what a dialog loop asks dlg_evnt for. A loop of the app's own calls
    dlg_touch after form_button ended the dialog on a press at x, y:
-   on a TOUCHEXIT object (a list's row) *next is the object, or the object
-   | 0x8000 when the press was the second of a double click and was let
-   go over it, as form_button gave for two clicks */
+   on a TOUCHEXIT object (a list's row) *next is the object, handed back
+   on the press, or the object | 0x8000 when the press was the second of
+   a double click and was let go over it, as form_button gave for two
+   clicks. The next dlg_evnt first waits for a row's press to be let go
+   (the AES would give a button still down as another press) */
 #ifdef DLG_CLICK
 #define DLG_CLICKS 1
 void dlg_touch(OBJECT *tree, short *next, short x, short y);
