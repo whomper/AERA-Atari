@@ -333,10 +333,15 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - Plain text: `text_plain` when `text_plain_state() >= 0`.
   - Bold and underline: `text_fx`, `text_bold_strike`.
   - A scroll: `scr_rows`.
-  - Pen 0/1 fills and lines: `scr_fill`, `scr_xor`. Their VDI fallback reads the fill attributes and
-    puts them back (`vqf_attributes`), more traps than an app that keeps its own attributes cached:
-    such an app calls them only when `text_plain_state() > 0` and keeps its own fill otherwise
-    (ECal's finding, 1 Nov 2026).
+  - Inverting (selections, a pressed row): `scr_xor` when `text_plain_state() > 0`. It beats TOS's
+    fill on every machine (tests/text, a window's rows: ST 50 ms against 96, Falcon-4 41 against 56).
+  - Pen 0/1 fills: `scr_fill` when `scr_cpu_wins()` (TOS's screen and a 68000); the app's own
+    `vr_recfl` otherwise, its fill attributes set once. On a 68030 TOS 4.04's fill is as fast or
+    faster (EMail 1.72: the long letter 100 -> 120 ms with scr_fill on Falcon-4; tests/text, a
+    window's rows: 28 against 37), and scr_fill's VDI fallback reads and puts back the fill
+    attributes (`vqf_attributes`), more traps than an app that keeps them (ECal's finding).
+    On an ST it wins at any size since AERA-Atari's fill-rows fix (ST:mono, a window's rows 58
+    against 76, 320 boxes of 16 x 16 375 against 425).
   - Pane bars by the VDI: `pb_vdi(vdi_h)` after `vq_extnd`.
   - Dialogs on an ST: `-DDLG_CPU` in a program that runs on an ST, never in an accessory.
   - Steady redraws in place (progress rows, clocks, headers): `offdraw`.
