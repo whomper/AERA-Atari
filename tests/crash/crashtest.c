@@ -377,5 +377,7 @@ int main(void)
 	}
 	nf_debug("CRASHT no crash\n");
 	crash_remove();
+	if (emu_block)
+		Supexec(emu_unhook);	/* (TOS 1.0x: the emulator ran it) */
 	return 2;
 }
