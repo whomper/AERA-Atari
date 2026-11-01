@@ -334,7 +334,8 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
       spurious interrupts, a looping click and a stall on Erez's Falcon (EPlay 0.6: 111 in 10 s), and
       none with the FDI on its own clocks. Feed the DSP from a timer and poll the host port (EPlay 0.7,
       Timer A at 500 a second; common's `dspec.c`, `dsprsa.c` and `dspjpeg.c` poll already), and keep
-      a guard for a spurious interrupt.
+      a guard for a spurious interrupt. Erez's Falcon with 0.7: 234 s at 44.1 kHz on the S/PDIF clock,
+      no spurious interrupt, 15 granules late of 8,979 frames.
   - **The DSP's time is measured on `Falcon-4` only** (EPlay, 1 Nov 2026): Hatari runs the DSP at
     the 68030's pace, so on the 32 MHz `Falcon` profile it has some 3 times the spare time it has on
     `Falcon-4`, where both run as on Erez's stock Falcon. A DSP figure (a job's ms, a player's spare
