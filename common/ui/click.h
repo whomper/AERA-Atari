@@ -26,6 +26,12 @@
  * handled as the loop would); either may be 0. It sets evnt_multi's first
  * rectangle, which the loop sets again for its own use.
  *
+ * An accessory under TOS gets a press only after the AES has counted
+ * clicks for the desktop, which takes a double click's second press: an
+ * accessory keeps asking evnt_multi for two clicks and uses its count
+ * (breturn) in place of press_double; press_track serves it as it is
+ * (ECal, TOS 1.04).
+ *
  * press_double times the double click itself, from the desktop's setting
  * (evnt_dclick): 1 when the last press_track that came back PRESS_IN was
  * on the same id, within CLICK_SLOP pixels, and let go no longer ago than
