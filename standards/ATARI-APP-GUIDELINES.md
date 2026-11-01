@@ -383,6 +383,11 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     says where it waits.
   - A change that touches drawing, a loop over the data or the start gives its stretches on `ST`
     and `Falcon-4`, before and after, in its commit message.
+  - **Where the code lands moves a 68030's times** (EMail, 1 Nov 2026): on `Falcon-4` the same
+    code shifted by 4 bytes moved EMail's start by 10 ms and a letter by 5, as much as
+    `--gc-sections` did; the 68000 shows none of it. Any code change moves the rest, so a
+    "nothing slower" comparison on a 68030 allows 10 ms, or times each build at two placements,
+    before calling a difference a regression. The flags stay: they save memory at no average cost.
 - **Before a release** that changes the GEM side, the speed rig passes on the machines above. If it
   doesn't, the release notes name what is over and the plan.
 
