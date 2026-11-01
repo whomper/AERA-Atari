@@ -322,6 +322,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
       and doesn't try again in a loop. EPlay's MP3 has a 68030 way since phase 2 (Erez, 1 Nov
       2026: the TT, any 68030, a Falcon whose DSP is busy; its quality following the machine, half
       rate or mono on a stock Falcon or TT, so the music never breaks up), so it plays anyway.
+    - a program that takes the DSP's host interrupt (EPlay's player: vector, IVR, ICR) gives it
+      back at stop, at quit and on the crash handler's way out, before `Dsp_Unlock`.
+  - **The DSP's time is measured on `Falcon-4` only** (EPlay, 1 Nov 2026): Hatari runs the DSP at
+    the 68030's pace, so on the 32 MHz `Falcon` profile it has some 3 times the spare time it has on
+    `Falcon-4`, where both run as on Erez's stock Falcon. A DSP figure (a job's ms, a player's spare
+    time) is taken from `Falcon-4`, and the real chip's from Erez's logs.
 - **Common's fast paths, in every app** (Erez, 1 Nov 2026: "all apps using the fast drawing code").
   Each app uses each of these wherever it draws that thing, and each one only where it is faster.
   The test is the app's speed rig, which must show no action slower than in the release before.
