@@ -225,6 +225,7 @@ const char *app_dir(void);
 short wind_find(short x, short y);
 OBJECT *rsrc_tree(short index);
 short objc_draw(OBJECT *tree, short start, short depth, short x, short y, short w, short h);
+short objc_change(OBJECT *tree, short obj, short x, short y, short w, short h, short state, short redraw);
 short form_dial(short flag, short x, short y, short w, short h);
 #define FMD_START  0
 #define FMD_FINISH 3

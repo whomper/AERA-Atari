@@ -1190,18 +1190,18 @@ static struct {
 	short x, y;
 } held;
 
-/* the release of a row handed back on its press, waited for before the
-   next press is asked for (the AES gives a button still down as a new
-   press); let go over the row, it may begin a double click */
-static void touch_up(void)
+int dlg_touch_up(void)
 {
 	short m[8];
 	AEVENT e;
+	int r;
 	if (!held.on)
-		return;
+		return -1;
 	held.on = 0;
-	if (press_track(&held.r, held.x, held.y, 0, held_msg, 0, 0) == PRESS_DRAG)
+	r = press_track(&held.r, held.x, held.y, 0, held_msg, 0, 0);
+	if (r == PRESS_DRAG)
 		evnt_multi_(MU_BUTTON, 1, 1, 0, 0, m, &e);	/* moved off: just its release */
+	return r;
 }
 
 void dlg_touch(OBJECT *tree, short *next, short x, short y)
@@ -1219,8 +1219,14 @@ void dlg_touch(OBJECT *tree, short *next, short x, short y)
 		held.r = r;
 		held.x = x;
 		held.y = y;
-	} else if (press_track(&r, x, y, 0, held_msg, 0, 0) == PRESS_IN) {
-		*next = (short)(o | 0x8000);
+	} else {
+		int t = press_track(&r, x, y, 0, held_msg, 0, 0);
+		short m[8];
+		AEVENT e;
+		if (t == PRESS_IN)
+			*next = (short)(o | 0x8000);
+		else if (t == PRESS_DRAG)	/* no drag in a dialog: its release, not a press elsewhere */
+			evnt_multi_(MU_BUTTON, 1, 1, 0, 0, m, &e);
 	}
 }
 #endif
@@ -1230,7 +1236,7 @@ short dlg_evnt(short flags, short clicks, short mask, short state,
 {
 	short i, k, top, d1;
 #ifdef DLG_CLICK
-	touch_up();
+	dlg_touch_up();
 #endif
 	if (!dlg_in_window())
 		return evnt_multi_(flags, clicks, mask, state, timer, msg, e);
