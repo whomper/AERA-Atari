@@ -1,58 +1,56 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
  * Copyright (C) 2026 AERA | Erez Yaary */
 /*
- * click.h - a click in a list, or on a button the program draws itself,
- * selected on press and done on release (the guidelines, 5.8; Erez,
- * 1 Nov 2026), while the event loop keeps turning.
+ * click.h - a press on a list's row, or on a button the program draws
+ * itself, selected on press and done on release (the guidelines, 5.8;
+ * Erez, 1 Nov 2026), while the program's own work goes on.
  *
- * The loop asks evnt_multi for one click (click_want's clicks, mask and
- * state), so the AES hands a press over at once: a loop asking for two
- * held every single press back for the double-click time. Then:
+ * The event loop asks evnt_multi for one click, so the AES hands a press
+ * over at once (asking for two held every single press back for the
+ * double-click time). On a left press at (x, y) on an object (a row, a
+ * button):
  *
- *   - a press on row r of a list: the program draws r selected at once,
- *     calls click_press(list, r, x, y, now); it answers 1 when this press
- *     is a double click's second (the same row, near, within the
- *     desktop's double-click time of the first's release);
- *   - while the button is held the loop asks for its release instead
- *     (click_want) and for the mouse leaving a box round the press point
- *     (click_m1: evnt_multi's first rectangle, leave);
- *   - the mouse left that box: click_moved() says CL_DRAG once, the hold
- *     ends, and the program drags (4.2), with no action after it;
- *   - the release: click_release(list, row_under, now) says CL_SAME (let
- *     go over the row pressed: its action), CL_DOUBLE (the same, and it
- *     ended a double click: the double click's action) or CL_ELSEWHERE
- *     (nothing more).
+ *     dbl = press_double(id, x, y);     the second of a double click?
+ *     ... draw the row selected, the button pressed ...
+ *     switch (press_track(&r, x, y, idle, msg, &dx, &dy)) {
+ *     case PRESS_IN:   let go over r: its action (dbl: the double click's)
+ *     case PRESS_OUT:  let go elsewhere: nothing more
+ *     case PRESS_DRAG: moved CLICK_SLOP pixels or more, the button still
+ *                      down: a drag (4.2), with no action after it
+ *     }
  *
- * The times are the caller's (ms, any clock that counts up). Only the
- * left button is followed; the right one opens its menu on press (3.3).
+ * press_track waits for the release with evnt_multi (the left button
+ * up, the mouse leaving a box round the press, a timer of 20 ms, the
+ * messages), calling idle() each turn (a slice of background work) and
+ * msg() for each message that comes meanwhile (WM_REDRAW and the rest,
+ * handled as the loop would); either may be 0. It sets evnt_multi's first
+ * rectangle, which the loop sets again for its own use.
+ *
+ * press_double times the double click itself, from the desktop's setting
+ * (evnt_dclick): 1 when the last press_track that came back PRESS_IN was
+ * on the same id, within CLICK_SLOP pixels, and let go no longer ago than
+ * the double-click time. It is called before press_track for each press,
+ * which then keeps its id for the next one.
  */
 #ifndef CLICK_H
 #define CLICK_H
 
-#define CL_NONE 0
-#define CL_SAME 1		/* let go over the row pressed */
-#define CL_DOUBLE 2		/* the same, the second release of a double click */
-#define CL_ELSEWHERE 3		/* let go elsewhere */
-#define CL_DRAG 4		/* moved while held */
+#include "gemui.h"
 
-#define CL_SLOP 4		/* pixels the mouse may move while held, and between a double click's presses */
+#define PRESS_OUT 0		/* let go elsewhere */
+#define PRESS_IN 1		/* let go over r */
+#define PRESS_DRAG 2		/* moved while held, the button still down */
 
-/* evnt_multi's clicks, mask and state: a press of either button, or the
-   left one's release while a press is held */
-void click_want(short *clicks, short *mask, short *state);
-/* 1 while a press is held, with the box the mouse leaving makes a drag
-   (evnt_multi's first rectangle, to be left); 0: the program's own */
-int click_m1(short *x, short *y, short *w, short *h);
-int click_press(const void *list, long row, short x, short y, unsigned long now);
-int click_release(const void *list, long row, unsigned long now);
-int click_moved(void);
-int click_held(void);
-/* the list and row of the press held, or 0 */
-const void *click_list(long *row);
-/* the hold forgotten (a dialog opened over the list, the list rebuilt) */
-void click_cancel(void);
-/* the double-click time, ms: the desktop's (evnt_dclick) unless set */
-void click_set_dclick(unsigned long ms);
-unsigned long click_dclick(void);
+#define CLICK_SLOP 4		/* pixels the mouse may move while held, and between a double click's presses */
+
+int press_double(short id, short x, short y);
+int press_track(const GRECT *r, short x, short y, void (*idle)(void), void (*msg)(short *m), short *dx,
+		short *dy);
+
+/* the double-click time, ms: the desktop's (evnt_dclick) unless set; and
+   the last press forgotten (a list rebuilt under it) */
+void press_set_dclick(unsigned long ms);
+unsigned long press_dclick(void);
+void press_forget(void);
 
 #endif
