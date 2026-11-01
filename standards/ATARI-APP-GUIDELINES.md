@@ -1162,6 +1162,9 @@ document's pages, a playlist.
   nothing is opened on release.
 - **A double click:** the first click as above; the double-click action runs when the second click
   is released.
+- **Buttons the program draws itself** (toolbars, tabs, a Continue strip, a sidebar's entries, a
+  player's Play and Stop) the same way: drawn pressed on press, their action on release over them,
+  nothing if let go elsewhere, as GEM's own buttons in a dialog do.
 - **The right button** opens the context menu on press, on the row it selects (3.3), as now.
 - **No waiting for a second click:** the event loop asks for one click (evnt_multi's clicks 1), so
   the AES hands the press over at once; a loop asking for two holds every single press back for
