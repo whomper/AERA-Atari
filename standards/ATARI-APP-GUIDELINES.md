@@ -333,7 +333,10 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - Plain text: `text_plain` (`text_n_fast`) when `text_plain_state() >= 0`.
   - Bold and underline: `text_fx`, `text_bold_strike`.
   - A scroll: `scr_rows`.
-  - Pen 0/1 fills and lines: `scr_fill`, `scr_xor`.
+  - Pen 0/1 fills and lines: `scr_fill`, `scr_xor`. Their VDI fallback reads the fill attributes and
+    puts them back (`vqf_attributes`), more traps than an app that keeps its own attributes cached:
+    such an app calls them only when `text_plain_state() > 0` and keeps its own fill otherwise
+    (ECal's finding, 1 Nov 2026).
   - Pane bars by the VDI: `pb_vdi(vdi_h)` after `vq_extnd`.
   - Dialogs on an ST: `-DDLG_CPU` in a program that runs on an ST, never in an accessory.
   - Steady redraws in place (progress rows, clocks, headers): `offdraw`.
