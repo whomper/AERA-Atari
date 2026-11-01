@@ -486,6 +486,20 @@ short menu_ienable(OBJECT *tree, short item, short enable)
 	return aes(32, 2, 1, 1, 0);
 }
 
+/* a button the program draws itself, held: shown in instate while the
+   mouse is over it, outstate when not, until the button comes up; 1 let
+   go over it (the guidelines' 5.8: done on release, as GEM's own buttons
+   in a dialog) */
+short graf_watchbox(OBJECT *tree, short obj, short instate, short outstate)
+{
+	aintin[0] = 0;
+	aintin[1] = obj;
+	aintin[2] = instate;
+	aintin[3] = outstate;
+	addrin[0] = tree;
+	return aes(75, 4, 1, 1, 0);
+}
+
 /* the double click's speed, 0 (slow) to 4 (fast), the desktop's own;
    setit 1 sets it to rate */
 short evnt_dclick(short rate, short setit)

@@ -171,6 +171,7 @@ short graf_dragbox(short w, short h, short x, short y, short bx, short by, short
 		   short *nx, short *ny);
 void evnt_set_m1(short leave, short x, short y, short w, short h);
 short evnt_dclick(short rate, short setit);
+short graf_watchbox(OBJECT *tree, short obj, short instate, short outstate);
 short menu_bar(OBJECT *tree, short show);
 short menu_tnormal(OBJECT *tree, short title, short normal);
 short menu_register(short apid, const char *name);
