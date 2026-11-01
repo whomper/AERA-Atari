@@ -1148,6 +1148,23 @@ CONTACTS.TXT when the user chooses it (below).
   TOS 4.04 (3D) and under XaAES before its release; the hub then lays the releases' windows side by
   side and sends each app what differs.
 
+
+### 5.8 A click in a list: selected on press, done on release (must; Erez, 1 Nov 2026)
+Every list works this way: folders, messages, files, contacts, events, a library's entries, a
+document's pages, a playlist.
+- **Mouse down:** the row is shown selected at once, before anything else. Only the old and the
+  new rows are drawn, within the 50 ms of the Speed table, and nothing waits for the action.
+- **Mouse up:** the action starts (the folder opened, the message or card shown, the file's
+  details, the page) when the button is let go over the same row. Let go elsewhere, the selection
+  stays and nothing else happens. Moved a few pixels while held, it is a drag (4.2), with no
+  action at the end of it.
+- **Shift or Control held:** the selection changes on press (3.2's ranges and single rows), and
+  nothing is opened on release.
+- **A double click:** the first click as above; the double-click action runs when the second click
+  is released.
+- The action's work runs after the release in slices, as any long job does (Speed). The rigs time
+  the two apart: press to row drawn (50 ms) and release to the action's first stretch.
+
 ---
 
 ## 6. Settings, files, errors
@@ -1466,3 +1483,4 @@ program's window.
 | 1.3 About box: the three status lines, connection and memory from `aboutline.c` (27 Oct) | ✓ (e918efde, 2.31) | ✓ (706b8301, 1.72) | ✓ (7465bb209, 1.64) | ✓ (89137bcf, 1.64) | ✓ (2038e9b, 1.31: no line 1, no network) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, 0.46; EUpdate ✓ cbdc756d9, d1048f647, 1.18) | ✓ (0.1: no line 1, no network) | — |
 | 6.1 A program's own files from `app_dir()` (`shel_read`), not the current folder (28 Oct) | ✗ | ✓ (57e480ac, 1.74) | ✓ (909ef989c, 1.67: work_dir()) | ✓ (6f14a42d, 1.67: work_dir()) | ✓ (3b2de1a, 1.32: start_dir) | ✓ (e3e4383, 1.69) | ✓ (890245b6f, 0.49: work_dir(); EUpdate ✓ 25580444d, 1.21) | ✓ (0.1) | — |
 | Speed: the DSP shared, `Dsp_Lock` refused means the 68030 (31 Oct) | ✓ (TLS.OVL: common's dspec.c, dsprsa.c) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | n/a (no DSP) | n/a (no DSP) | ✓ (TLS.OVL; dspjpeg.c) | — (no DSP yet; its pictures will use dspjpeg.c) | — |
+| 5.8 A list click: selected on press, done on release (1 Nov) | — | — | — | — | — | — | — | — | — |
