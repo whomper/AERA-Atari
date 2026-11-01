@@ -21,8 +21,12 @@
  * first time: the VDI follows the logical screen; NVDI may not), and for
  * a piece of at most OFF_ROWS rows. The caller holds wind_update and has
  * the mouse hidden from off_begin to off_end (its pointer is drawn into
- * the logical screen), and sets its clip after off_begin. The buffer, in
- * ST RAM, is taken at the first use and kept.
+ * the logical screen). off_begin sets vh's clip to the piece; the caller
+ * may narrow it, never widen it, and clips everything else it draws in
+ * between to the piece: objc_draw's clip, its own raster copies (the
+ * VDI's ignore the clip). A draw outside the piece's rows goes to the
+ * memory round the buffer. The buffer, in ST RAM, is taken at the first
+ * use and kept.
  */
 #ifndef OFFDRAW_H
 #define OFFDRAW_H
