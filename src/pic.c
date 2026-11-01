@@ -183,7 +183,24 @@ typedef struct {
 	int ny;				/* rows in the sums */
 	int maxcw;
 	unsigned char *rgb;		/* sw * 3: an opaque R G B A row as R G B */
+	/* rows mode (pic_jpeg_rows): the picture holds one row, and each row
+	   made goes to row() as it is finished; NULL: the whole picture */
+	void (*row)(void *u, long y, const unsigned short *px, const unsigned char *alpha);
+	void *ru;
+	long next;			/* rows mode: the next row to hand on */
 } SCALER;
+
+/* where row y is in the picture: in rows mode the picture is one row */
+#define AT(s, y) ((s)->row != NULL ? 0L : (long) (y) * (s)->pic->w)
+
+/* rows mode: row y, made, handed on */
+static void handed(SCALER *s, long y)
+{
+	if (s->row != NULL && y == s->next) {
+		s->row(s->ru, y, s->pic->px, s->pic->alpha);
+		s->next++;
+	}
+}
 
 /* a 16 x 16 product: a 68000's mulu.w (GCC calls its 32-bit routine for
    one followed by a shift, though both are 16 bits) */
@@ -292,9 +309,9 @@ static void put(SCALER *s, long i, int r, int g, int b, int a)
 static unsigned short recip[258];
 
 /* the sums made into row dy, and cleared */
-static void flush(SCALER *s, long dy)
+static void flush_in(SCALER *s, long dy)
 {
-	long x, i = dy * s->pic->w;
+	long x, i = AT(s, dy);
 	unsigned long *q = s->sum;
 	if (recip[2] == 0)
 		for (x = 2; x < 258; x++)
@@ -381,6 +398,12 @@ static void flush(SCALER *s, long dy)
 	}
 }
 
+static void flush(SCALER *s, long dy)
+{
+	flush_in(s, dy);
+	handed(s, dy);
+}
+
 /* enlarging n rows to m: the first row shown whose source is row i or
    later, the least d with centre(d, m, n) >= i */
 static long first_shown(long i, long n, long m)
@@ -436,11 +459,13 @@ static int sc_row_rgb(SCALER *s, const unsigned char *rgb)
 		return 1;
 	}
 	if (s->sw == w && s->sh == s->pic->h) {
-		unsigned short *o = s->pic->px + mul16((unsigned short) s->y, (unsigned short) w);
+		long at = s->row != NULL ? 0L : (long) mul16((unsigned short) s->y, (unsigned short) w);
+		unsigned short *o = s->pic->px + at;
 		for (x = 0; x < w; x++, rgb += 3)
 			o[x] = (unsigned short) (((rgb[0] & 0xF8) << 8) | ((rgb[1] & 0xFC) << 3) | (rgb[2] >> 3));
 		/* solid, for when clear rows follow (a JPEG cut short) */
-		memset(s->pic->alpha + mul16((unsigned short) s->y, (unsigned short) w), 255, (size_t) w);
+		memset(s->pic->alpha + at, 255, (size_t) w);
+		handed(s, s->y);
 		s->y++;
 		return 1;
 	}
@@ -511,8 +536,8 @@ rgba:
 	if (s->sw == w && s->sh == s->pic->h) {
 		/* the size it is: as it is */
 		const unsigned char *q = rgba;
-		unsigned short *o = s->pic->px + s->y * w;
-		unsigned char *a = s->pic->alpha + s->y * w;
+		unsigned short *o = s->pic->px + AT(s, s->y);
+		unsigned char *a = s->pic->alpha + AT(s, s->y);
 		unsigned all = 255;
 		for (x = 0; x < w; x++, q += 4) {
 			o[x] = (unsigned short) (((q[0] & 0xF8) << 8) | ((q[1] & 0xFC) << 3) | (q[2] >> 3));
@@ -521,6 +546,7 @@ rgba:
 		}
 		if (all != 255)
 			s->any_alpha = 1;
+		handed(s, s->y);
 		s->y++;
 		return 1;
 	}
@@ -588,8 +614,11 @@ static void sc_rows(SCALER *s)
 		if (dy1 > dy0) {
 			flush(s, dy0);
 			for (dy = dy0 + 1; dy < dy1; dy++)
-				memcpy(s->pic->px + dy * w, s->pic->px + dy0 * w, (size_t) w * 2),
-				memcpy(s->pic->alpha + dy * w, s->pic->alpha + dy0 * w, (size_t) w);
+				if (s->row != NULL)
+					handed(s, dy);	/* the row is still the one made */
+				else
+					memcpy(s->pic->px + dy * w, s->pic->px + dy0 * w, (size_t) w * 2),
+					memcpy(s->pic->alpha + dy * w, s->pic->alpha + dy0 * w, (size_t) w);
 		} else if (s->s16) {
 			memset(s->sum16, 0, (size_t) w * 3 * sizeof *s->sum16);
 			s->ny = 0;
@@ -1607,6 +1636,14 @@ static int decode_jpeg(const unsigned char *d, long n, PIC *p, SCALER *sc, int *
 	return ok;
 }
 
+/* libjpeg's builds take a JPEG whole (pic_decode) */
+int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h, int coarse,
+		  void (*row)(void *u, long y, const unsigned short *px, const unsigned char *alpha), void *ru, int *why)
+{
+	(void) fill; (void) fu; (void) w; (void) h; (void) coarse; (void) row; (void) ru; (void) why;
+	return -1;
+}
+
 #else
 
 const PIC_DSP *pic_dsp;			/* (no DSP for TJpgDec's builds) */
@@ -1631,6 +1668,9 @@ const char *pic_dither_state(void)
 typedef struct {
 	const unsigned char *p;
 	long left;
+	/* pic_jpeg_rows: the file from fill a piece at a time (p, left unused) */
+	long (*fill)(void *u, unsigned char *buf, long n);
+	void *fu;
 	SCALER *sc;
 	unsigned char *strip;		/* an MCU row of the unpacked picture, R G B */
 	long sw;
@@ -1641,6 +1681,21 @@ typedef struct {
 static size_t jin(JDEC *jd, uint8_t *buf, size_t n)
 {
 	JPG *j = jd->device;
+	if (j->fill != NULL) {
+		/* TJpgDec asks for 512 bytes at most; NULL: skip them */
+		unsigned char skip[512];
+		size_t got = 0;
+		while (got < n) {
+			long want = (long) (n - got), k;
+			if (buf == NULL && want > (long) sizeof skip)
+				want = (long) sizeof skip;
+			k = j->fill(j->fu, buf != NULL ? buf + got : skip, want);
+			if (k <= 0)
+				break;
+			got += (size_t) k;
+		}
+		return got;
+	}
 	if ((long) n > j->left)
 		n = (size_t) j->left;
 	if (buf != NULL)
@@ -1800,6 +1855,81 @@ static int decode_jpeg(const unsigned char *d, long n, PIC *p, SCALER *sc, int *
 		jdc_free(c);
 		return 1;
 	}
+}
+
+int pic_jpeg_rows(long (*fill)(void *u, unsigned char *buf, long n), void *fu, int w, int h, int coarse,
+		  void (*row)(void *u, long y, const unsigned short *px, const unsigned char *alpha), void *ru, int *why)
+{
+	JDEC jd;
+	JPG j;
+	SCALER sc;
+	PIC p;
+	void *pool;
+	int scale = 0, rc, ok = 0;
+	long sw, sh;
+	if (w <= 0 || h <= 0 || w > 0x7fff || h > 0x7fff) {
+		*why = PIC_TOO_BIG;
+		return 0;
+	}
+	memset(&j, 0, sizeof j);
+	memset(&sc, 0, sizeof sc);
+	memset(&p, 0, sizeof p);
+	j.fill = fill;
+	j.fu = fu;
+	pool = malloc(POOL);
+	if (pool == NULL) {
+		*why = PIC_MEMORY;
+		return 0;
+	}
+	rc = jd_prepare(&jd, jin, pool, (size_t) POOL, &j);
+	if (rc != JDR_OK) {
+		free(pool);
+		if (rc == JDR_FMT3)
+			return -1;		/* progressive, CMYK...: pic_decode, from the averages */
+		*why = rc == JDR_MEM1 ? PIC_MEMORY : PIC_DAMAGED;
+		return 0;
+	}
+	if (coarse)
+		scale = 3;		/* the preview: an eighth, the blocks' averages (no IDCT) */
+	else
+		while (scale < 3 && (jd.width >> (scale + 1)) >= w && (jd.height >> (scale + 1)) >= h)
+			scale++;
+	sw = scaled(jd.width, jd.msx * 8, scale);
+	sh = scaled(jd.height, jd.msy * 8, scale);
+	p.w = w;
+	p.h = h;
+	p.px = malloc((size_t) w * 2);
+	p.alpha = malloc((size_t) w);
+	j.sw = sw;
+	j.strip = malloc((size_t) sw * 16 * 3);
+	if (p.px == NULL || p.alpha == NULL || j.strip == NULL || !sc_init(&sc, &p, sw, sh)) {
+		*why = PIC_MEMORY;
+		goto done;
+	}
+	sc.row = row;
+	sc.ru = ru;
+	j.sc = &sc;
+	rc = jd_decomp(&jd, jout, (uint8_t) scale);
+	if (rc == JDR_OK || (rc == JDR_INP && sc.y > 0)) {
+		/* a picture cut short: the last row made stands, the rest clear */
+		if (sc.down_y && sc.y < sc.sh && sc.dy >= 0)
+			flush(&sc, sc.dy);
+		memset(p.px, 0, (size_t) w * 2);
+		memset(p.alpha, 0, (size_t) w);
+		while (sc.next < h) {
+			row(ru, sc.next, p.px, p.alpha);
+			sc.next++;
+		}
+		ok = 1;
+	} else
+		*why = j.stopped ? PIC_STOPPED : PIC_DAMAGED;
+done:
+	sc_free(&sc);
+	free(j.strip);
+	free(p.px);
+	free(p.alpha);
+	free(pool);
+	return ok;
 }
 
 #endif
