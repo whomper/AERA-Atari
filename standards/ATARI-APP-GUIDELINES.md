@@ -210,6 +210,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   | scrolls one line or row (an arrow, the wheel); held, at least 15 rows a second | 50 ms |
   | scrolls a page (Shift+arrow, a click in the track) | 150 ms |
   | opens a menu entry's dialog, a pop-up or an alert | 150 ms |
+  | on an 8 MHz ST in low or medium resolution (`ST:low`, `ST:med`), opens the About box | 200 ms |
   | on an 8 MHz ST (`ST`, `ST-1`), opens a dialog that covers about half the screen or more (Settings) | 300 ms |
   | has the main window drawn whole at its size (opened, topped, uncovered) | 300 ms |
   | moves or resizes a window: what comes into view drawn | 300 ms |
@@ -220,6 +221,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   size of EFTP's Settings takes some 85 ms of an 8 MHz ST's memory speed alone, and the CPU's drawing
   (common's `dialog.c`) brought Settings from 370 to 270 ms. It stays 150 ms on the Falcon, and for
   smaller dialogs on the ST.
+
+  The About box's time on an ST in colour is Erez's too (2 Nov 2026): its picture and frame cost an
+  8 MHz ST four planes' worth of memory where ST high has one, and common's `aboutbox.c`, drawn in
+  memory and shown whole, opens in 140 ms in ST high and some 185 ms in ST medium (EPDF 0.5). The
+  other way to 150 ms, drawing straight onto the screen, would show the box build up. It stays
+  150 ms in ST high and on the Falcon.
 
   Longer jobs (a sync, a load, a search through everything, a page laid out) never run as one
   stretch. They run in slices (`common/ui/bgwork.c`, as 2.2's accessories do), so a key or Esc is
@@ -1565,7 +1572,7 @@ program's window.
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) | ✓ | — |
 | Who decides what: Erez's part (new programs, capabilities, how programs work together, the user experience, phases, priorities, conflicts) in CLAUDE.md (31 Oct; EUpdate ✓ c6c69ddad; AERA-Gateway ✓ 226cb5c, committed by Erez) | ✓ (094b9afb) | ✓ (8a9d7888) | ✓ (16e2674b5) | ✓ (c844b2975) | ✓ (738d72c) | ✓ (e192cb83) | ✓ (d7893a129, 0.56) | ✓ (b90c64c) | ✓ (0e26f57) |
 | Speed: plain text, scrolls and selections through common's `text_plain`, `scr_rows`, `scr_xor` where the app draws them (31 Oct) | ✓ 2.35 (text_plain, scr_rows; selections are fills) | ✓ 1.75 (text_plain; its list, 240 px at most, keeps TOS's copy) | ✓ 1.69 (text_plain, scr_rows; scr_xor for the editor's cursor) | ✓ 1.70 (text_plain, scr_rows; selections are fills) | ✓ 1.35 (text_plain, scr_rows; scr_xor for the toolbar's pressed button) | ✓ 1.71 (text_plain, scr_rows; no XOR selections) | ? | ✓ 0.2 (text_plain, scr_rows, scr_xor) | — |
-| Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ (exception, Erez 31 Oct: a line scrolled on ST:mono 115-155 ms, glide steps kept) | ✗ | ✗ | ✗ | ✗ | ✗ | ~ (0.56: the ST floor recorded, DESIGN.md 076f9a7c1, Erez 31 Oct; Falcon-4: 3 actions still over; EUpdate ✗) | ~ (0.2, the hub's run on TOS 1.04/4.04: ST a line 80, Select all 85, next page 310, a page 145 ✓; Falcon-4 all within but Select all 55) | — |
+| Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ (exception, Erez 31 Oct: a line scrolled on ST:mono 115-155 ms, glide steps kept) | ✗ | ✗ | ✗ | ✗ | ✗ | ~ (0.56: the ST floor recorded, DESIGN.md 076f9a7c1, Erez 31 Oct; Falcon-4: 3 actions still over; EUpdate ✗) | ✓ (0.5, the hub's run on TOS 1.04/4.04: ST:mono, ST:med and Falcon-4, plain and under NVDI with Courier 14, all within; About 185 on ST:med, under 2 Nov's 200) | — |
 | Speed: text through `text_n` and `text_fx` (`common/ui/text.c`), clipping off inside the clip (26 Oct) | ✗ | ✗ (next round, after 1.70) | ✓ (1.62: cb210535) | ✓ (1.61: 25e66d0) | ✗ (its own, e2f417a) | ✓ (1.66: 387e054) | ✗ (0.43: d89ee7497, with its release; EUpdate ✗) | ✓ (0.1: textwin.c draw_rows) | — |
 | Speed: the clip set to the area moved before a scroll's `vro_cpyfm` (26 Oct, EFTP) | to check | ✓ (1.70: no change needed) | ✓ (1.62: scroll_copy, as it was) | ✓ (1.62: 71432ab9d) | to check | ✓ (1.66: text_noclip before each copy) | ✓ (0.43: clip_on before both scrolls; EUpdate ✓ 1.15: 39ffae04a) | ✓ (0.1: textwin.c moved()) | — |
 | 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) | n/a | — |
