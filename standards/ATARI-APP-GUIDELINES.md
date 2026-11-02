@@ -201,8 +201,9 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   decision.
 - **What the user waits for: the longest stretch** from the event that started it to the program's
   next event call (`-DAES_PROFILE`'s `AESGAP` lines, `common/atari/gem.c`). It is measured on
-  `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on `Falcon-4:16` also
-  under NVDI. `Falcon-4:256` is measured where the app draws in 256 colours.
+  `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on all three also under
+  NVDI with one of its GDOS fonts: the Atari community runs NVDI on its STs too (Erez, 2 Nov 2026).
+  `Falcon-4:256` is measured where the app draws in 256 colours.
 
   | The user | Longest stretch |
   |---|---|
