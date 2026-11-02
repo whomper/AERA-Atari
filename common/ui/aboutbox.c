@@ -765,16 +765,32 @@ static int draw_off(void (*draw)(int framed))
 			/* the box's rows: their edge words a row at a time, then
 			   the middle of every row at once (text.c's scr_set_rows:
 			   a row at a time in C was some 400 cycles a row more) */
-			short nw = dh < ob.rows ? dh : ob.rows;
-			unsigned short *dd = d;
-			const unsigned short *uu = u;
+			short nw = dh < ob.rows ? dh : ob.rows, k;
+			unsigned short *dl = d, *dr = d + rw, rk0 = rkeep[0], rk1 = rkeep[1];
+			const unsigned short *ul = u, *ur = u + rw;
 
-			for (r = 0; r < nw; r++, dd += ds, uu += us) {
-				for (i = 0; i < lw; i++)
-					dd[i] = uu[i] & lkeep;
-				for (i = rw; i < rw + 2 * g; i++)
-					dd[i] = uu[i] & rkeep[(i - rw) >= g];
+			/* pointers stepped a row, no index worked out in the loop: in
+			   one plane (ST high) three words a row, the loop's own work
+			   most of the 21 ms it took an ST (the hub's gemprof, TOS 1.04) */
+			if (g == 1) {
+				if (lw)
+					for (k = nw; k > 0; k--, dl += ds, ul += us)
+						*dl = (unsigned short)(*ul & lkeep);
+				for (k = nw; k > 0; k--, dr += ds, ur += us) {
+					dr[0] = (unsigned short)(ur[0] & rk0);
+					dr[1] = (unsigned short)(ur[1] & rk1);
+				}
+			} else {
+				for (k = nw; k > 0; k--, dl += ds, ul += us, dr += ds, ur += us) {
+					for (i = 0; i < lw; i++)
+						dl[i] = (unsigned short)(ul[i] & lkeep);
+					for (i = 0; i < g; i++) {
+						dr[i] = (unsigned short)(ur[i] & rk0);
+						dr[g + i] = (unsigned short)(ur[g + i] & rk1);
+					}
+				}
 			}
+			r = nw;
 			scr_set_rows((unsigned char *)(d + lw), ds * 2, nw, (short)((rw - lw) * 2), 0);
 			d += (long)nw * ds;
 			u += (long)nw * us;
