@@ -1363,6 +1363,32 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   `HEAPKB=` in its INF yet) has one look more: common's `acc_heap_take` lists the boot root's
   `*.ACC` once to share the memory free among them (2.1); every later boot reads only its INF.
 
+### 6.6 File names in lowercase (must)
+On MiNT a drive can be case-sensitive (ext2, minix): there `EWEB.INF` and `eweb.inf` are two
+files, and a program that asks for one doesn't find the other. A tester found the family's programs
+missing their own files on an ext2 drive (24 Oct and 2 Nov 2026). Erez's decision, 2 Nov 2026:
+every name the family gives a file or a folder is in lowercase, in the code and in the releases,
+for every app (the ones in maintenance too: section 8).
+- **In the code**, every file and folder a program opens, creates, looks for, renames or deletes by
+  a name of its own is written in lowercase: its INF, logs, caches and their folders, `tls.ovl`,
+  `cacert.pem`, `roots.dat`, `seed.dat`, `sigs.dat`, `crash.log`, its help file and resource file,
+  and another AERA program it starts (`ehypview.prg`). TOS's FAT, EmuTOS's and MagiC's take a name
+  whatever its case, so nothing changes there.
+- **In a release**, every file the release and its zip carry, and every folder in the zip, has a
+  lowercase name (`eweb.prg`, `eweb.hyp`, `tls.ovl`). EUpdate installs them under those names.
+- **Not file names**, and they stay as they are: AES program names (`appl_find("EWEB    ")`, the AV
+  and VA_START names), drag-and-drop data types (`.TXT`), the clipboard's `SCRAP.*` (every GEM
+  program's convention, on the boot drive), and names shown to the user in texts, alerts and help
+  pages, where Atari users write them in capitals (`EWEB.INF`).
+- **Names from outside** (a file chosen in the file selector, dropped, given by VA_START or found in
+  a folder's listing) are used exactly as they came.
+- **What is on a disk already** isn't looked for under its old name (Erez, 2 Nov 2026: a fresh
+  start): someone who installed an earlier release on an ext2 drive deletes its folder and installs
+  the new one, which each app's first release under this rule says once in its notes.
+- **Checks.** The hub runs each app's release under FreeMiNT with its folder on an ext2 drive.
+  Hatari's emulated drive keeps the case a program writes, so a rig that reads a program's files
+  from the host looks for them whatever their case (`ci_path` in `common/tools/machines.py`).
+
 ---
 
 ## 7. Networking and security
@@ -1501,6 +1527,9 @@ AERA-Gateway, EDOS and EFTP_XL) is in maintenance mode:
   it; such a release takes only that fix (one change from `common/`, not a sync) and says why;
 - its session runs nothing in the background and waits for Erez or the hub.
 
+One change goes to every app all the same (Erez, 2 Nov 2026): file names in lowercase (6.6), with
+the shared code it needs and a release each.
+
 Only Erez ends it, by saying so explicitly (for instance, that every app is to take the latest
 shared code and release). Until then this table's ✗ and ? for those apps stay as they are; a rule
 added or changed here applies to the three focus apps. What the frozen apps would do next is kept
@@ -1553,6 +1582,7 @@ program's window.
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (0.1) | — |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | 6.5 Disk: user's changes at once, bulk work through memory, one open per file per job | ✓ (2.13: ECAL.INF read once a start with no look; 3 looks a job; caches read in 16/32 KB pieces; a refresh gathered and written 16/32 KB at a time, ALARMS.IDX once; 10 changed: 6 opens and 8 looks, 2.11 8 and 34; idle 0; acc_files.py budgets; 2.32: written pieces count as read ones, ST-1 19/19, ST:mono 18/18) | ✓ (1.51: the photos in one pack, CACHE\PHOTOS.PAK; a job gathered in memory and written a buffer at a time; 192 photos: Falcon accessory 23 opens, program 17, a 4 MB ST's accessory 103 at Erez's 64 KB (1.49: 127 for 25); a refresh with 10 changed 52 to 5; reads and writes in 16/32 KB pieces, through ST RAM without _FRB; the log held for a job; on a 1 MB ST photos are not synced in the accessory; acc_files.py budgets) | ✓ (1.42: the bodies in one pack per folder, gathered in memory: Download all 53 in 5 opens and lookups, 166 before; FOLDERS.LST once per job; disk_test.py budgets) | ✓ (1.42: one open per file, the date set on the handle, 64 KB writes and reads from TT or ST RAM, no lookup per file, Dfree once per job; disk_audit.py) | ✓ (1.13: a file looked at once and opened once a job, size and date from the open file; the INF read once a start; the index read in 32 KB pieces (16 KB on a 68000) and written in one go; acc_files.py budgets) | ✓ (1.49: Save to disk gathered in memory, one write on an ST, four on a 1 MB ST, 569 in 1.48; Attach in 16/32 KB pieces; the font list one safe save; disk_budget.sh) | ✓ (0.12: EWEB.FNT open start to quit, INF written only when changed, ZOOM at once; a later session's first secure page 2 opens and 2 looks; disk_files.py budgets) | ✓ (0.2: EPDF.TXC opened once a document; 16/32 KB reads; files-test counts the opens) | — |
+| 6.6 File names in lowercase, in the code and the release (Erez, 2 Nov 2026; every app) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 5.4 Text fields hold more than they show (22 Oct) | ✓ (5e02c1a8, in 2.22: its own fields, as long as their settings: Server 399, Invite 255, Location 199; field_test.py) | ✓ (4f318ed7: its own fields, as long as their settings: server 399, phone 99, dlg_ask 63; long_field.py) | ✓ (17bf752c, in 1.51: accounts 63-95, signature rows 78, folders 199 and 63, passwords masked LFIELDs; field_test.py) | ✓ (aad64570, common at 6da68e1: Site Manager and Quick connect 63, folders 159, Rename 199 on the server; field_test.py on Falcon and ST-1) | ✓ (135ad790, in 1.20: Settings > Library PATHS= 128; gui-test on Falcon and ST:mono) | ✓ (125cb200, in 1.57: its own VDI fields, Rename and New project 71; long_field.sh) | ✓ (0e37396f, in 0.27: SEARCH= 255, GATE= 63, prompt() 255; EUpdate ✓ 3e85328, in 1.3) | ✓ (0.1: Find holds 64 in a 32-wide view) | — |
 | 5.2 Colours not set by the app come from pens 0–15, matched by TOS's colour (23 Oct) | ✓ (d8b1447f, 2.23) | ✓ (09e69cf2, 1.62) | ✓ (1ee7bb49, 1.53) | ✓ (939f2e5c, 1.47) | ✓ (b65c550c, 1.23) | ✓ (1f5e894b, 1.60) | ? (EUpdate ✓ none found, 6f3e720) | ✓ (0.1: pens 0 and 1; pictures their own palette) | — |
 | 5.5 The family's icon from `common/icons` (appicon.py: RSC, ICN, icon.h, README pictures; 22 Oct) | ✓ (cebd1930, in 2.22) | ✓ (db0e0d15, in 1.61) | ✓ (5df39bb8, in 1.52) | ✓ (f8a7953a, in 1.46) | ✓ (f099e6e6, in 1.22) | ✓ (b19bcbbb, in 1.58; 256-colour About icon a0c1fd35, in 1.59) | ✓ (9dacc2ed, 256-colour About icon 2d71a75e, in 0.27; EUpdate ✓ febb9d6, in 1.4) | ✓ (EPDF and EPDFDOC, 0.1) | — |
