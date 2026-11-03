@@ -1257,6 +1257,28 @@ document's pages, a playlist.
 - The action's work runs after the release in slices, as any long job does (Speed). The rigs time
   the two apart: press to row drawn (50 ms) and release to the action's first stretch.
 
+
+### 5.9 The progress bar (must; Erez, 3 Nov 2026)
+One bar for a whole job, at the foot of the status bar, filling from left to right: common's
+`progbar` (`ui/progbar.h`). Its colours are fixed along its width, so filling it reveals them, and a
+bar nearly full shows them all:
+- **256 colours: blue,** dark navy at the left edge to light sky blue at the right. The blues are
+  the ones the palette loaded has, sorted dark to light and spread along the bar (TOS 4's 256 has no
+  light blue, NVDI's and EWeb's do), up to 16 of them; never the bar's ground. A bar's pens are the
+  exception to 5.2's "pens 0–15 only": `progbar_pens` reads them from the palette as it is, at the
+  start and again whenever the app changes pens 16 and up.
+- **16 colours: pens 1 to 15 in order,** left to right, less any pen the colour of the bar's own
+  ground (white, the bar's light grey), so every part shows.
+- **Every other screen** (mono, 4 colours, true colour): **black.**
+- **One bar for the whole job,** not one a phase: the words beside it say what is being done
+  ("Reading the page...", "Laying the page out..."). It is drawn only where it grew since the last
+  turn (`progbar_fill` from..to, the Speed rule), and the app draws the ground beyond it.
+- `common/tests/progbar`: `make test` (the pens in each kind of screen, against TOS's, a TT's,
+  NVDI's and EWeb's palettes; a bar drawn in pieces is the bar drawn whole) and `run.py WORK
+  MACHINE [--nvdi]` (PRBTEST.PRG's screenshot).
+- EPDF and EWeb now (their status bars, Erez); EPlay and the apps in maintenance when they next draw
+  progress (section 8).
+
 ---
 
 ## 6. Settings, files, errors
@@ -1623,4 +1645,5 @@ program's window.
 | 6.1 A program's own files from `app_dir()` (`shel_read`), not the current folder (28 Oct) | ✗ | ✓ (57e480ac, 1.74) | ✓ (909ef989c, 1.67: work_dir()) | ✓ (6f14a42d, 1.67: work_dir()) | ✓ (3b2de1a, 1.32: start_dir) | ✓ (e3e4383, 1.69) | ✓ (890245b6f, 0.49: work_dir(); EUpdate ✓ 25580444d, 1.21) | ✓ (0.1) | — |
 | Speed: the DSP shared, `Dsp_Lock` refused means the 68030 (31 Oct) | ✓ (TLS.OVL: common's dspec.c, dsprsa.c) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | n/a (no DSP) | n/a (no DSP) | ✓ (TLS.OVL; dspjpeg.c) | — (no DSP yet; its pictures will use dspjpeg.c) | — |
 | 5.8 A list click: selected on press, done on release (1 Nov) | ✓ (2.41: the program on one click; the accessory on two, its presses drawn while held) | ✓ (1.76: list, buttons and tabs on the release; the accessory one click too) | — | ✓ (1.74: panes and the Site Manager on press, drawn while held) | — | — | — | ✓ (0.4: a press selects at once, drawn while held; the word on release) | ✓ (0.4: its buttons drawn pressed on press, act on release over them) |
+| 5.9 The progress bar: blue in 256, pens 1–15 in 16, black otherwise (`progbar`; 3 Nov) | — | — | — | — | — | — | ✗ | ✗ | — |
 | Speed: common's fast paths used (text_plain, text_fx, scr_rows, scr_fill, pb_vdi, DLG_CPU, offdraw), none slower under NVDI with a GDOS font (1 Nov) | ✓ (2.40: text_fx; scr_fill under scr_cpu_wins(); scr_xor under text_plain_state() > 0) | ✓ (1.76: its own audit; offdraw for the window) | — | — | — | — | — | — | — |
