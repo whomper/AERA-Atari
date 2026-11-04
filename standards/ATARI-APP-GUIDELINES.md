@@ -69,10 +69,12 @@ Erez's.
   31 Oct 2026: the whole family loaded at once on a 4 MB machine is not a goal ("by design it
   leaves too little for ST software"), so no program is cut down to fit beside all the
   accessories there, and the hub's `acc_all.py` runs EWEB.PRG on `Falcon` (with the DFB1's
-  memory), not `Falcon-4`. It still shares that
-  4 MB with the family: it runs with ECal's, EContact's and EHypView's accessories loaded and EMail
-  or EFTP beside it, so the hub's `acc_all.py --prg EWeb` on `ST` must pass. Every other app's ST
-  edition still runs on a 1 MB ST (`ST-1`).
+  memory), not `Falcon-4`. Every other app's ST edition still runs on a 1 MB ST (`ST-1`).
+  **The accessories are not run on a 4 MB machine at all** (Erez, 4 Nov 2026, "remove accessories run
+  in 4M machine"): the 4 MB `ST` and `Falcon-4` stay targets for the programs (each runs there on its
+  own and meets its speed times), but nothing is made to fit beside ECal's, EContact's, EHypView's and
+  EMail's accessories on them, and the hub's `acc_all.py` no longer runs there. EWeb stays the one
+  exception on the ST side (its ST edition, 4 MB `ST` only, frozen after 1.0, section 8).
   - **Every 68000 build compiles with `-fdisable-tree-bswap`** (EHypView, 17 Oct 2026). GCC 13's
     bswap pass joins byte reads into one word or long read (`p[0]<<24 | p[1]<<16 | ...`,
     neighbouring byte fields), even with `-mstrict-align`; on a 68000 that is an address error
@@ -180,9 +182,10 @@ Erez's.
     either (22 Oct 2026): TOS 1.04 leaves about 920 KB, and ECALST.ACC (433 KB with its BSS)
     and ECONTST.ACC (487 KB) both load, leaving the AES nothing, so the ST halts at boot
     ("double bus error"). On a 1 MB ST, one of them; the other as a program.
-  - **All three accessories at once** (Erez, 19 Oct 2026): ECal, EContact and EHypView, their latest
-    releases, loaded together on a 4 MB machine, `ST` (TOS 1.04) and `Falcon-4`
-    (TOS 4.04, with and without NVDI): `common/tests/family/acc_all.py`, run by the hub.
+  - **All the accessories at once** (Erez, 19 Oct 2026; changed 4 Nov 2026): ECal, EContact, EHypView
+    and EMail's, their latest releases, loaded together on `Falcon` (14 MB ST RAM + TT RAM, TOS 4.04,
+    with and without NVDI): `common/tests/family/acc_all.py`, run by the hub. Not on the 4 MB machines
+    (`ST`, `Falcon-4`) any more: see the 68000 machines above.
 - **A 68000 and a 68030 build** (Erez's question, 16 Oct 2026): each app is measuring what a build
   for the Falcon above would gain over the 68000 one. The family's names and rules for two builds
   come here once that is known.
