@@ -235,6 +235,29 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   Longer jobs (a sync, a load, a search through everything, a page laid out) never run as one
   stretch. They run in slices (`common/ui/bgwork.c`, as 2.2's accessories do), so a key or Esc is
   answered within 100 ms. Progress is shown at least every 250 ms, and the log says what the job took.
+
+  **Drawing is not such a job: it runs in one piece, as fast as it can be (Erez, 4 Nov 2026).**
+  Erez: "We have an issue with a family rule of accepting keyboard and other interrupts while
+  drawing on screen. It creates a problematic user experience. Drawing on screen should be the
+  fastest possible across all applications."
+  - A redraw (a window, a pane, a list page, a dialog, a message shown, the About box, what a scroll
+    or a move brings into view) is drawn from start to end with no event call, no `bg_step` and no
+    "a band, a line or a pane a turn" in between. Keys and clicks that come meanwhile wait in the
+    AES's queue and are answered when the picture is whole. The user sees the picture appear once,
+    never build up, and never sees a half-drawn window answer a key.
+  - Drawing is made fast, not split: draw only what changed, common's fast paths (`text_plain`,
+    `scr_rows`, `scr_fill`, `scr_xor`, `text_n`), off-screen where it measures faster, each pane's
+    work done once. The times in the table are what the rig measures and what an app aims at, not
+    a reason to cut a picture into turns. When a picture takes longer than its time, the app makes
+    the drawing cheaper and reports the number and what it tried to the hub; it does not slice it.
+    Every change to drawing still gives its `AESGAP` stretches before and after.
+  - What stays in slices is work that is not drawing: a sync, a load, a search, a page laid out,
+    a folder's tags, a decode. Its result is drawn in one piece when ready, or one finished part at
+    a time, each part in one piece.
+  - Drawing that was split across turns for the old rule (EContact's `win_redraw_bands`,
+    `win_open_bands`, `uncover_bands`; EMail's message shown "in the next turns"; a pane drawn a
+    text line a turn) is drawn whole instead: in the apps in focus now, in the others when Erez says
+    (section 8, maintenance).
 - **How the family meets it:**
   - **Draw only what changed.** Redraw only the AES's rectangles, clipped to them, and only the part
     a change touches: a row, a field, a tick, never the whole window. To scroll, move what stays
@@ -1662,3 +1685,4 @@ program's window.
 | 5.8 A list click: selected on press, done on release (1 Nov) | ✓ (2.41: the program on one click; the accessory on two, its presses drawn while held) | ✓ (1.76: list, buttons and tabs on the release; the accessory one click too) | — | ✓ (1.74: panes and the Site Manager on press, drawn while held) | — | — | — | ✓ (0.4: a press selects at once, drawn while held; the word on release) | ✓ (0.4: its buttons drawn pressed on press, act on release over them) |
 | 5.9 The progress bar: blue in 256, pens 1–15 in 16, black otherwise (`progbar`; 3 Nov) | — | — | — | — | — | — | ✓ (0.63) | ✓ (0.6) | — |
 | Speed: common's fast paths used (text_plain, text_fx, scr_rows, scr_fill, pb_vdi, DLG_CPU, offdraw), none slower under NVDI with a GDOS font (1 Nov) | ✓ (2.40: text_fx; scr_fill under scr_cpu_wins(); scr_xor under text_plain_state() > 0) | ✓ (1.76: its own audit; offdraw for the window) | — | — | — | — | — | — | — |
+| Speed: a redraw is drawn in one piece, none split across event calls (Erez, 4 Nov) | maintenance | maintenance (win_redraw_bands) | maintenance (message in next turns) | to check | — | — | to check | to check | to check |
