@@ -1563,7 +1563,7 @@ the shared code it needs and a release each.
 
 EWeb's ST edition (`EWEBST.PRG`) is frozen after 1.0 (Erez, 4 Nov 2026, from EWeb's session): bug
 fixes only, no new features; it stays in every release as 1.0 has it. Its rigs (the 1040 ST in
-`hatarigui`, `acc_all` on the ST, the 68000 checks) run for a release, not for each change, and the
+`hatarigui`, the 68000 checks) run for a release, not for each change (the accessories are not run beside it any more: 4 Nov 2026), and the
 family's newer ST rules (the About box's 200 ms, NVDI on the ST of 2 Nov) apply to it as to an app in
 maintenance: with its next release, if there is one. `EWEB.PRG` (Falcon and TT) is unchanged.
 
