@@ -251,6 +251,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     a reason to cut a picture into turns. When a picture takes longer than its time, the app makes
     the drawing cheaper and reports the number and what it tried to the hub; it does not slice it.
     Every change to drawing still gives its `AESGAP` stretches before and after.
+  - **A rule never costs speed** (Erez, 4 Nov 2026: "The rules I am setting must not collide with
+    performance, rather improve it"). Drawing whole is done together with drawing that is at least
+    as fast as before: a row of the speed rig that gets slower by the change (a line scrolled, a page
+    scrolled, a page shown, Select all) is not a finished change. The app makes the drawing cheaper
+    until the row is no worse than before the change, on `ST:mono`, `ST:med`, `Falcon-4:16` and
+    `Falcon-4:256` where it draws in 256 colours, and the hub does not clear a candidate that is
+    slower. What a change could not recover goes to Erez with the numbers.
   - What stays in slices is work that is not drawing: a sync, a load, a search, a page laid out,
     a folder's tags, a decode. Its result is drawn in one piece when ready, or one finished part at
     a time, each part in one piece.
