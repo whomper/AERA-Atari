@@ -274,6 +274,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     whole, a key or click answered between pieces. The app measures both ways on `ST:mono` and
     `Falcon-4:16` and reports the total time to the finished picture, whole against pieces: the
     pieces may cost no more than 10 % in total.
+    **Exception, EWeb's ST edition (Erez, 4 Nov 2026):** its pieces are up to 300 ms, the Falcon's
+    stay 100 ms. EWeb measured the cost: on an 8 MHz ST each turn between pieces is about 40 ms
+    (screen lock, mouse, rectangle list, the AES's turn) against about 45 ms of drawing in a
+    100 ms piece, so pieces of 100 ms cost +58 to +105 % in total (ST:mono: news 3310 whole,
+    5819 in pieces), where the Falcon's cost +2 to +9 %. An app whose pieces cannot meet the
+    10 % at 100 ms measures larger pieces and puts the figures to Erez.
   - What stays in slices is work that is not drawing: a sync, a load, a search, a page laid out,
     a folder's tags, a decode. Its result is drawn in one piece when ready, or one finished part at
     a time, each part in one piece.
