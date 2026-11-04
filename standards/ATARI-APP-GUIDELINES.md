@@ -258,6 +258,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     until the row is no worse than before the change, on `ST:mono`, `ST:med`, `Falcon-4:16` and
     `Falcon-4:256` where it draws in 256 colours, and the hub does not clear a candidate that is
     slower. What a change could not recover goes to Erez with the numbers.
+    "No slower" is the user's wait: the time from the key or click to the moment the result is on
+    the screen whole (for a draw in pieces, to the last piece). A whole draw's single stretch is
+    at least its drawing, so the stretch of a row that was split before may grow; that is not a
+    slower row while the time until the result shows is no longer than before. The rig prints both
+    (the longest stretch and the time until the result shows), and a candidate gives both, before
+    and after (EPDF, 4 Nov 2026).
   - **A draw longer than 300 ms is drawn in pieces** (Erez, 4 Nov 2026: option B, after the
     EWeb ST edition's numbers: whole, a page load or scroll on an 8 MHz ST froze the program for
     1.3 to 3.3 s; sliced, the same work builds up while keys are answered within 0.1 s, at the
