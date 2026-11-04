@@ -1243,7 +1243,13 @@ document's pages, a playlist.
   evnt_multi's count (`breturn`). Waiting for the release by `graf_mkstate` instead didn't cure
   it (ECal: 4 runs in 5): the loss follows a first press handed over while the button is still
   down, after which TOS gives the second press to no one asking for one click. EContact's
-  accessory asks for one and loses a double click only when one begins inside a stretch. Programs ask for one. Either way a double click begun while the
+  accessory asks for one and loses a double click only when one begins inside a stretch. Programs ask for one.
+  **A multitasking AES** (XaAES under MiNT, rig of 4 Nov 2026) holds a double click's presses back
+  and gives the pair to no one who asked for one click: EFTP's lists did nothing at all on a CT63,
+  not even the first press selected. There common's `evnt_multi_` asks the AES for two (0x102,
+  as the accessories do under TOS) whenever a program asks 0x101, and a pair the AES counted as
+  two is the second press of a double click (`aes_double`, read by `press_double`): programs change
+  nothing. A single press there selects after the double-click time. TOS is asked for one as before. Either way a double click begun while the
   app is inside a stretch can lose its second press: short stretches (Speed) keep that window
   small.
 - **The press drawn at once, not at the release** (EHypView, 1 Nov 2026): TOS's AES (1.04 and
