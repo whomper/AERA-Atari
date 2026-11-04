@@ -1558,6 +1558,12 @@ AERA-Gateway, EDOS and EFTP_XL) is in maintenance mode:
 One change goes to every app all the same (Erez, 2 Nov 2026): file names in lowercase (6.6), with
 the shared code it needs and a release each.
 
+EWeb's ST edition (`EWEBST.PRG`) is frozen after 1.0 (Erez, 4 Nov 2026, from EWeb's session): bug
+fixes only, no new features; it stays in every release as 1.0 has it. Its rigs (the 1040 ST in
+`hatarigui`, `acc_all` on the ST, the 68000 checks) run for a release, not for each change, and the
+family's newer ST rules (the About box's 200 ms, NVDI on the ST of 2 Nov) apply to it as to an app in
+maintenance: with its next release, if there is one. `EWEB.PRG` (Falcon and TT) is unchanged.
+
 Only Erez ends it, by saying so explicitly (for instance, that every app is to take the latest
 shared code and release). Until then this table's ✗ and ? for those apps stay as they are; a rule
 added or changed here applies to the three focus apps. What the frozen apps would do next is kept
