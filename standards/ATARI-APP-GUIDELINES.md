@@ -274,6 +274,14 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     whole, a key or click answered between pieces. The app measures both ways on `ST:mono` and
     `Falcon-4:16` and reports the total time to the finished picture, whole against pieces: the
     pieces may cost no more than 10 % in total.
+    **Pieces are in effect only where they are no slower** (Erez, 4 Nov 2026, later: "If the
+    today's family decision slows down EWeb page display, it is something we need to actively
+    decide. Performance must not go backwards or bad, just for the better always."). Where a
+    draw in pieces finishes later than the same draw whole, even by the 10 % above, the app draws
+    whole until its drawing is faster and the pieces are no slower, then switches them on; a
+    slowdown is accepted only when Erez decides it with the numbers in front of him. **EWeb draws
+    pages whole (as 0.69) for now**; its pieces' code stays, off, and its speed build measures
+    them (`DRAWPIECES=1`, `speed.py --pieces`). The hub takes EWeb's figures whole.
     **Exception, EWeb's ST edition (Erez, 4 Nov 2026):** its pieces are up to 300 ms, the Falcon's
     stay 100 ms. EWeb measured the cost: on an 8 MHz ST each turn between pieces is about 40 ms
     (screen lock, mouse, rectangle list, the AES's turn) against about 45 ms of drawing in a
