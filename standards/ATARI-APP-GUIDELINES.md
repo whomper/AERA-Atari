@@ -264,6 +264,11 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     slower row while the time until the result shows is no longer than before. The rig prints both
     (the longest stretch and the time until the result shows), and a candidate gives both, before
     and after (EPDF, 4 Nov 2026).
+    A row that is one redraw (a row played, Next, Delete, a folder opened) is therefore judged by
+    that time until the result shows, which may not be later than the version before, and its
+    stretch limit is 300 ms; rows that are not a redraw (a key answered, a button pressed) keep
+    their 50 ms (EPlay 0.23, 4 Nov 2026: time to the whole picture 45 to 165 ms, equal or shorter
+    than 0.22; its stretches rose to 50 to 90 ms because the pieces are now one).
   - **A draw longer than 300 ms is drawn in pieces** (Erez, 4 Nov 2026: option B, after the
     EWeb ST edition's numbers: whole, a page load or scroll on an 8 MHz ST froze the program for
     1.3 to 3.3 s; sliced, the same work builds up while keys are answered within 0.1 s, at the
