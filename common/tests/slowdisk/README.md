@@ -5,8 +5,9 @@ emulated time, so a speed-rig stretch never contains a disk wait. The
 tables here are what `common/tests/calib` (CALIB.PRG, release rigtools-1)
 measured on the real machines, microseconds a call:
 
-- `falcon.txt`: Erez's Falcon (TOS 4.04, GEMDOS 0.30), 4 Nov 2026.
-- `st.txt`: his ST, when it arrives.
+- `falcon-bluescsi.txt`: Erez's Falcon (TOS 4.04, GEMDOS 0.30), BlueSCSI SD card, 4 Nov 2026.
+- `falcon-idecf.txt`: the same Falcon with an IDE CF card, when it arrives.
+- `st-*.txt`: his ST, with the card it uses, when it arrives.
 
 The shim (an AUTO-folder program hooking trap #1) charges these times in
 emulated time. Read the table as: sequential reads are cheap, everything
