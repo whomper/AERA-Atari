@@ -258,6 +258,16 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     until the row is no worse than before the change, on `ST:mono`, `ST:med`, `Falcon-4:16` and
     `Falcon-4:256` where it draws in 256 colours, and the hub does not clear a candidate that is
     slower. What a change could not recover goes to Erez with the numbers.
+  - **A draw longer than 300 ms is drawn in pieces** (Erez, 4 Nov 2026: option B, after the
+    EWeb ST edition's numbers: whole, a page load or scroll on an 8 MHz ST froze the program for
+    1.3 to 3.3 s; sliced, the same work builds up while keys are answered within 0.1 s, at the
+    same total time plus a small pause cost). So the rule above is for draws of 300 ms or less:
+    those are drawn whole, in one stretch. A draw whose whole stretch would pass 300 ms on the
+    machine it runs on (the app knows from the rows and the machine: the ST's page loads and
+    scrolls, a stock Falcon's biggest pages) is drawn in pieces of at most 100 ms, each piece
+    whole, a key or click answered between pieces. The app measures both ways on `ST:mono` and
+    `Falcon-4:16` and reports the total time to the finished picture, whole against pieces: the
+    pieces may cost no more than 10 % in total.
   - What stays in slices is work that is not drawing: a sync, a load, a search, a page laid out,
     a folder's tags, a decode. Its result is drawn in one piece when ready, or one finished part at
     a time, each part in one piece.
@@ -1692,4 +1702,4 @@ program's window.
 | 5.8 A list click: selected on press, done on release (1 Nov) | ✓ (2.41: the program on one click; the accessory on two, its presses drawn while held) | ✓ (1.76: list, buttons and tabs on the release; the accessory one click too) | — | ✓ (1.74: panes and the Site Manager on press, drawn while held) | — | — | — | ✓ (0.4: a press selects at once, drawn while held; the word on release) | ✓ (0.4: its buttons drawn pressed on press, act on release over them) |
 | 5.9 The progress bar: blue in 256, pens 1–15 in 16, black otherwise (`progbar`; 3 Nov) | — | — | — | — | — | — | ✓ (0.63) | ✓ (0.6) | — |
 | Speed: common's fast paths used (text_plain, text_fx, scr_rows, scr_fill, pb_vdi, DLG_CPU, offdraw), none slower under NVDI with a GDOS font (1 Nov) | ✓ (2.40: text_fx; scr_fill under scr_cpu_wins(); scr_xor under text_plain_state() > 0) | ✓ (1.76: its own audit; offdraw for the window) | — | — | — | — | — | — | — |
-| Speed: a redraw is drawn in one piece, none split across event calls (Erez, 4 Nov) | maintenance | maintenance (win_redraw_bands) | maintenance (message in next turns) | to check | — | — | to check | to check | to check |
+| Speed: a redraw of 300 ms or less is drawn in one piece, a longer one in pieces of at most 100 ms (Erez, 4 Nov) | maintenance | maintenance (win_redraw_bands) | maintenance (message in next turns) | to check | — | — | to check | to check | to check |
