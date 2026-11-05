@@ -1448,6 +1448,25 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   file is read once per start.
 - **No disk while idle.** Whether a file changed is checked when the window opens or a job starts,
   never on a timer.
+- **What a call costs on Erez's Falcon** (CALIB.PRG, 4 and 5 Nov 2026; `common/tests/slowdisk`),
+  per call, TOS 4.04, a file of 1 to 32 KB:
+
+  | call | IDE, stock 16 MHz | IDE, DFB1 50 MHz | BlueSCSI SD, 16 MHz |
+  |---|---|---|---|
+  | create, rename, delete | 245 ms | 75 to 115 ms | 480 ms |
+  | make or remove a folder | 300 to 380 ms | 270 to 315 ms | 1.4 to 2 s |
+  | close after a write | 270 to 340 ms | 35 to 140 ms | 1.3 to 2.9 s |
+  | open and close, a lookup | 2.8 ms, 1.3 ms | 1.5 ms, 0.65 ms | 2.7 ms, 1.2 ms |
+  | read 32 KB, in one piece | 20 ms | 18 ms | 83 ms |
+  | seek and read 1 KB | 9 ms | 8 ms | 190 ms |
+
+  Reading is cheap and writing that changes the folder or the FAT is not: a new file is half a
+  second on the stock Falcon's IDE and up to three on the BlueSCSI card, a seek twenty times
+  that on the BlueSCSI. So: few files, each written once, in one piece; no file made, renamed or
+  deleted where one written in place does (EWeb's two-slot files); a pack's index read once and
+  its records read in pieces, not seeked one by one. The speed rig charges these times
+  (`slowdisk`): the stock IDE column on `Falcon-4`, the DFB1's on `Falcon`, the BlueSCSI as a
+  report.
 - **TOS's pool:** every open file and every folder looked into takes an entry in TOS's small
   internal pool, and folders keep theirs; when it runs out TOS halts ("OUT OF INTERNAL MEMORY", on
   Erez's Falcon with the family's accessories, 19 Oct 2026). Fewer opens and fewer folders are
