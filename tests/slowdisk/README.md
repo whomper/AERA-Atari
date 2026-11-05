@@ -6,7 +6,8 @@ tables here are what `common/tests/calib` (CALIB.PRG, release rigtools-1)
 measured on the real machines, microseconds a call:
 
 - `falcon-bluescsi.txt`: Erez's Falcon (TOS 4.04, GEMDOS 0.30), BlueSCSI SD card, 4 Nov 2026.
-- `falcon-idecf.txt`: the same Falcon with an IDE CF card, when it arrives.
+- `falcon-ide16.txt`: the same Falcon, stock 16 MHz, IDE (the card in its IDE port), 5 Nov 2026.
+- `falcon-ide50-dfb1.txt`: the same, with the DFB1 at 50 MHz, IDE, 5 Nov 2026.
 - `st-*.txt`: his ST, with the card it uses, when it arrives.
 
 The shim (an AUTO-folder program hooking trap #1) charges these times in
