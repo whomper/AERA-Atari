@@ -534,6 +534,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   message one sends and the other answers): then test against the other's `main` at a named commit,
   say so in the report, and test again against its release once it is out. Shared code (`common/`,
   `xl/`, `gateway/`) is taken as source by design; this rule is about programs.
+- **A new capability goes to the hub first** (Erez, 5 Nov 2026). Before an app builds anything the family
+  might share (a keyboard layout, a dialog, a file format, a protocol, a drawing or timing helper, a
+  setting), its session asks the hub (the AERA-Atari session) whether `common/`, `xl/` or `gateway/`
+  has it or should get it, and says what it needs. The hub answers with the existing code, or builds
+  it in AERA-Atari with the app's tests, and the app takes it with `tools/sync-common.sh`. An app
+  never writes its own copy of something shared; a copy found later is replaced by the shared code.
+  The Hebrew keyboard is the example: one `common/ui/hebkey.c` for every app.
 - Built programs are published as **GitHub Releases**, not committed, with the help file, the
   certificates and the desktop icon: each file on its own and all in a zip, built by the release
   workflow (run by hand on `main`, or from a pushed `vX.Y` tag). See

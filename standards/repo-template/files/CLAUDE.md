@@ -24,6 +24,7 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
   drawing, a loop over the data or the start gives its `AESGAP` stretches on `ST` and `Falcon-4`,
   before and after, in its commit message. A GEM release passes the speed rig within the
   guidelines' times.
+- **A new capability goes to the hub first** (Erez, 5 Nov 2026; guidelines 1.2): before building anything the family might share (a keyboard, a dialog, a format, a protocol, a helper, a setting), ask the hub whether `common/` has it or should get it. Never write your own copy.
 - **Shared code lives in [AERA-Atari](https://github.com/whomper/AERA-Atari).** Files under `common/` come from it. Change them
   there, not here, and pull them in with `tools/sync-common.sh`. A fix made only in this repo will drift
   again.
