@@ -36,6 +36,9 @@ extern int dlg_fast_on;
 LFIELD *lf_of(OBJECT *tree, short obj) __attribute__((weak));
 void lf_enter(LFIELD *f, short *idx) __attribute__((weak));
 int lf_key(LFIELD *f, short key, short ch, short kstate, short *idx) __attribute__((weak));
+/* the Hebrew keyboard (hebkey.c), in an app that has it: a key types what key_char
+   says; without it, the key's own character */
+unsigned char key_char(short kstate, short key) __attribute__((weak));
 
 #define BEG_MCTRL 3
 #define END_MCTRL 2
@@ -1427,7 +1430,7 @@ short dlg_do(OBJECT *tree, short start, short cancel)
 		if (e.which & MU_KEYBD) {
 			if (dlg_esc(e.kreturn) && !dlg_undo(e.kreturn))
 				e.kreturn = 0x011b;	/* ^[ too: the key objc_edit empties a field on */
-			if (lf && !dlg_undo(e.kreturn) && lf_key(lf, e.kreturn, e.kreturn & 0xff, e.kstate, &idx)) {
+			if (lf && !dlg_undo(e.kreturn) && lf_key(lf, e.kreturn, key_char ? key_char(e.kstate, e.kreturn) : e.kreturn & 0xff, e.kstate, &idx)) {
 				/* the long field took it (Esc empties it) */
 			} else if (dlg_cancel_key(e.kreturn, edit > 0)) {
 				/* Cancel: the field isn't given the key, so it keeps its text */

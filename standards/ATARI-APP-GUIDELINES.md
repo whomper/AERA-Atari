@@ -1148,7 +1148,14 @@ CONTACTS.TXT when the user chooses it (below).
   selection follows a click, never the pointer's rest (ClaudeST's stray row).
 - **Hebrew:**
   - All text drawing goes through the shared bidi code, including alerts.
-  - The Hebrew keyboard works the same way in every app (shared `key_char` table).
+  - The Hebrew keyboard works the same way in every app: `common/ui/hebkey.c` holds the SI-1452
+    `key_char` table, `hebrew_kbd` and `set_hebrew_kbd` (the four copies in ECal, EMail, EFTP and
+    Claude ST were the same table; the common definitions are weak, so an app keeps its own until
+    it drops them), F10 switches it, and `dlg_do` types dialogs through `key_char`. While it is on
+    the app shows it: a dialog's title bar carries the badge "\xD3\xC3" (the letters "ayin bet",
+    as ECal's and EContact's `field.c`); a main window's info line says "Hebrew keyboard (F10)"
+    in ECal, EContact and EFTP today (Erez, 5 Nov: a badge in the info line instead is to be
+    decided).
 
 ### 5.4 Text fields (must)
 - **A text field holds more than it shows** (Erez, 22 Oct 2026). What it takes is set by what goes
