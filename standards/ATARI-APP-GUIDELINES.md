@@ -1151,8 +1151,10 @@ CONTACTS.TXT when the user chooses it (below).
   - The Hebrew keyboard works the same way in every app: `common/ui/hebkey.c` holds the SI-1452
     `key_char` table, `hebrew_kbd` and `set_hebrew_kbd` (the four copies in ECal, EMail, EFTP and
     Claude ST were the same table; the common definitions are weak, so an app keeps its own until
-    it drops them), F10 switches it, and `dlg_do` types dialogs through `key_char`. While it is on
-    the app shows it: a dialog's title bar carries the badge "\xD3\xC3" (the letters "ayin bet",
+    it drops them), F10 switches it (in a `dlg_do` dialog too), and `dlg_do` types dialogs through
+    `key_char` (plain GEM fields as well). While it is on
+    the app shows it (`hebrew_badge()` draws the two letters in the app's own font: the AES's
+    title bars have none): a dialog's title bar carries the badge "\xD3\xC3" (the letters "ayin bet",
     as ECal's and EContact's `field.c`); a main window's info line says "Hebrew keyboard (F10)"
     in ECal, EContact and EFTP today (Erez, 5 Nov: a badge in the info line instead is to be
     decided).
