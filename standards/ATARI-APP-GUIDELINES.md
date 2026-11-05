@@ -1160,8 +1160,8 @@ CONTACTS.TXT when the user chooses it (below).
     Claude ST were the same table; the common definitions are weak, so an app keeps its own until
     it drops them), F10 switches it (in a `dlg_do` dialog too), and `dlg_do` types dialogs through
     `key_char` (plain GEM fields as well). While it is on
-    the app shows it (`hebrew_badge()` draws the two letters in the app's own font: the AES's
-    title bars have none): a dialog's title bar carries the badge "\xD3\xC3" (the letters "ayin bet",
+    the app shows it (`hebrew_badge()` draws the letters ayin and bet as a bitmap, 16 x 16 or 16 x 8, in any app and
+    font: the AES's title bars and many VDI fonts have no Hebrew): a dialog's title bar carries the badge "\xD3\xC3" (the letters "ayin bet",
     as ECal's and EContact's `field.c`); a main window's info line says "Hebrew keyboard (F10)"
     in ECal, EContact and EFTP today (Erez, 5 Nov: a badge in the info line instead is to be
     decided).
