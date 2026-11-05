@@ -1461,7 +1461,7 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   | seek and read 1 KB | 9 ms | 8 ms | 190 ms |
 
   Reading is cheap and writing that changes the folder or the FAT is not: a new file is half a
-  second on the stock Falcon's IDE and up to three on the BlueSCSI card, a seek twenty times
+  second on the stock Falcon's IDE and up to three and a half on the BlueSCSI card, a seek twenty times
   that on the BlueSCSI. So: few files, each written once, in one piece; no file made, renamed or
   deleted where one written in place does (EWeb's two-slot files); a pack's index read once and
   its records read in pieces, not seeked one by one. The speed rig charges these times
