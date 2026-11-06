@@ -1160,11 +1160,14 @@ CONTACTS.TXT when the user chooses it (below).
     Claude ST were the same table; the common definitions are weak, so an app keeps its own until
     it drops them), F10 switches it (in a `dlg_do` dialog too), and `dlg_do` types dialogs through
     `key_char` (plain GEM fields as well). While it is on
-    the app shows it (`hebrew_badge()` draws the letters ayin and bet as a bitmap, 16 x 16 or 16 x 8, in any app and
-    font: the AES's title bars and many VDI fonts have no Hebrew): a dialog's title bar carries the badge "\xD3\xC3" (the letters "ayin bet",
-    as ECal's and EContact's `field.c`); a main window's info line says "Hebrew keyboard (F10)"
-    in ECal, EContact and EFTP today (Erez, 5 Nov: a badge in the info line instead is to be
-    decided).
+    the app shows it, the same way in every app (Erez, 6 Nov 2026): the **badge** (the letters ayin
+    and bet as a bitmap, 16 x 16 or 16 x 8, in any app and font: the AES's title bars and many VDI
+    fonts have no Hebrew) at the **right end of a dialog's title band and of a main window's info
+    line**, drawn by `hebrew_badge_right(vdi, x, y, w, h, colour)` (3 pixels in from the edge,
+    centred up and down); the words "Hebrew keyboard (F10)" are gone. Pressing F10 redraws the
+    band or line. In a dialog window under a multitasking AES the title is the AES's, so there the
+    info line is the only place. ECal's and EContact's `field.c` drew "\xD3\xC3" as text (tsadi and
+    bet, not ayin and bet); they switch to the common badge.
 
 ### 5.4 Text fields (must)
 - **A text field holds more than it shows** (Erez, 22 Oct 2026). What it takes is set by what goes
