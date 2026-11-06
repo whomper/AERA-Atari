@@ -1164,7 +1164,9 @@ CONTACTS.TXT when the user chooses it (below).
     and bet as a bitmap, 16 x 16 or 16 x 8, in any app and font: the AES's title bars and many VDI
     fonts have no Hebrew) at the **right end of a dialog's title band and of a main window's info
     line**, drawn by `hebrew_badge_right(vdi, x, y, w, h, colour)` (3 pixels in from the edge,
-    centred up and down); the words "Hebrew keyboard (F10)" are gone. Pressing F10 redraws the
+    centred up and down); the words "Hebrew keyboard (F10)" are gone. Where the info line is the AES's
+    own (`WF_INFO`, which the AES redraws without telling the app), the badge goes at the right end of the
+    toolbar row instead, the window's top right, which the app draws itself (EUpdate, 6 Nov). Pressing F10 redraws the
     band or line. In a dialog window under a multitasking AES the title is the AES's, so there the
     info line is the only place. ECal's and EContact's `field.c` drew "\xD3\xC3" as text (tsadi and
     bet, not ayin and bet); they switch to the common badge.
