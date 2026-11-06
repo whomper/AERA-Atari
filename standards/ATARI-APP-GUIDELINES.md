@@ -541,6 +541,32 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   it in AERA-Atari with the app's tests, and the app takes it with `tools/sync-common.sh`. An app
   never writes its own copy of something shared; a copy found later is replaced by the shared code.
   The Hebrew keyboard is the example: one `common/ui/hebkey.c` for every app.
+- **Checks by what changed** (Erez, 6 Nov 2026: "Yes to all"; faster releases, same quality). The
+  checks a candidate gets depend on its change, and a session says which kind it is:
+  1. *Docs, tests or settings only* (README, `docs/`, CLAUDE.md, `.claude/`, a test): no rigs, no
+     speed run. The built programs are byte for byte the same as the release's, which the build
+     shows (`cmp`).
+  2. *Shared code that draws or loops over nothing in the default state* (for example the Hebrew
+     badge, drawn only while the keyboard is on): `make` and `make test`, one screenshot
+     comparison with the feature off (the screen is identical), acc_all once (plain Falcon:16),
+     and the feature's own screenshots. No full speed rig.
+  3. *Anything that draws, scrolls, starts or loops over data*: the full set, the speed rig on
+     `ST`, `ST-1` and `Falcon-4` (and `--nvdi`), acc_all plain, NVDI and again.
+  A result for a binary that is byte for byte the one already measured, on the same machine,
+  TOS and rig version, stands and is not run again (the build output's SHA-256 names it).
+- **The speed rule in steps.** The rig moves in 5 ms steps and a row swings by about one step
+  between runs, so a row is **slower** only when the candidate's median is 10 ms or more above the
+  version before's and every candidate run is above every run of the version before
+  (`common/tools/speedcmp.py --base A.log [A2.log] --cand B.log [B2.log]` decides, and lists only
+  those rows and the rows newly over their time). One step, or runs that overlap, is noise and
+  needs no new candidate. A row that really is slower is fixed, or its cost goes to Erez with the
+  numbers, as before. Compare against a run of the version before made in the same session,
+  back to back with the candidate, not against an old log.
+- **Changes the whole family takes are batched.** A change that every app takes, but that does
+  not change what a maintenance-mode app does or draws by default (the Hebrew badge was the
+  case), goes into that app with its next release, which is for a fault. It is not released on
+  its own in each app unless Erez asks for that. The shared code is on `main` in AERA-Atari the
+  moment it is ready, with its tests.
 - Built programs are published as **GitHub Releases**, not committed, with the help file, the
   certificates and the desktop icon: each file on its own and all in a zip, built by the release
   workflow (run by hand on `main`, or from a pushed `vX.Y` tag). See
