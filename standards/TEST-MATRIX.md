@@ -46,7 +46,7 @@ row catches. The hub merges, removes duplicates and sends back the table for Ere
 | hold.py | ST:mono | 1 | 2 | a held key against a whole redraw |
 | prepared.py | ST:mono, Falcon:16, Falcon:256 (+EDOS) | 3 (4) | 3 each | converted PDFs in mono / 16 / 256 |
 | files.py | ST-1 | 1 | 4 | GEMDOS opens against the 6.5 budget |
-| big.py | ST-1 | 1 | 40 | the corpus on 1 MB: memory refused and recovered |
+| big.py | ST-1 | 1 | 40 | **dropped (Erez, 7 Nov): performance is judged from simpler files that cost far less time.** What it alone covered, memory refused and recovered on 1 MB, is to be covered by a mid-size file on ST-1 with a tight memory limit |
 | econv.py | Falcon-4:16 (+EDOS, +ST:mono) | 1 (+1, +1) | 3 (EDOS 25) | EConvert's conversion, Stop; ST Gateway-only start |
 | econv_speed.py | Falcon-4:16 | 1 | 4 | EConvert's times |
 | econv_fsel.py | Falcon:16, Falcon:256 | 2 | 2 each | the file selector by the mouse |
@@ -57,3 +57,5 @@ judge): big.py and the EDOS conversion weekly or on a reader/converter memory ch
 Falcon:256 and econv_fsel on Falcon:256 only on a class-3 or palette change; gateway.py on Falcon-4:16 only when
 EConvert's 68030 path or EPDF's drawing changes; its Falcon-4 speed rows on EmuTOS dropped if the hub always runs
 Falcon-4 with NVDI (ST:mono stays as the quick gate). No row boots the same test twice.
+
+Erez, 7 Nov 2026: no heavy file in any app's test for performance; simpler files give the same answer for a fraction of the time. EPDF's big.py (40 min) and the EDOS conversion (25 min) go; the hub's runs never used them.
