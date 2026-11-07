@@ -154,7 +154,7 @@ Erez's.
   |---|---|---|---|
   | `ST` | Erez's 1040 ST: 68000 at 8 MHz, 4 MB | `mono`, `med`, `low` | 1.04 |
   | `ST-1` | the same with 1 MB, the smallest the family runs on (EWeb's ST edition: `ST`, 4 MB) | `mono`, `med`, `low` | 1.04 |
-  | `STE` | an STE: 68000 at 8 MHz, 4 MB, 8-bit DMA sound (EPlay's; added 7 Nov 2026) | `mono`, `med`, `low` | none (TOS 1.62 or 2.06 if in `~/.aera/tos`, else EmuTOS) |
+  | `STE` | an STE: 68000 at 8 MHz, 4 MB, 8-bit DMA sound (EPlay's; added 7 Nov 2026) | `mono`, `med`, `low` | 1.62 (Erez, 7 Nov 2026; EmuTOS where `tos162.img` is not in `~/.aera/tos`) |
   | `TT` | TT030: 68030 at 32 MHz, 68882, 4 MB ST RAM + 16 MB TT RAM | `ttmed`, `mono`, `med` | none (EmuTOS) |
   | `Falcon` | Erez's Falcon with the DFB1: 68030 + 68882, 14 MB ST RAM + 128 MB TT RAM, DSP, VGA | `16`, `256` | 4.04 |
   | `Falcon-4` | a Falcon030 as sold: 68030 at 16 MHz, no FPU, 4 MB ST RAM, no TT RAM, VGA | `16`, `256` | 4.04 |
