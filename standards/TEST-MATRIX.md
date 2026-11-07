@@ -33,3 +33,27 @@ machine, the whole EPlay set about 30 min); an app's own column is that session'
 Each session sends: every script or command it runs before it asks the hub (make, test, itest, each
 Hatari rig), with machines/screens, NVDI or not, TOS, boots, minutes, and what it catches that no other
 row catches. The hub merges, removes duplicates and sends back the table for Erez.
+
+### EPDF (its own checks, all on EmuTOS 1.4: that container has no TOS images or NVDI; minutes in that container)
+
+| Row | Machine, screen | Boots | Min | Catches that no other row does |
+|---|---|---|---|---|
+| make | host and m68k builds | - | 2 | warnings, link, no-FPU check, odd-access check |
+| make test | host | - | 1 | layout, store, view, INF, search, CCITT, object table, glyphwise, convtext |
+| make pi-test | host + pdfgate.py | - | 0.5 | the Gateway exchange byte for byte, stop, refusal, a log naming no file |
+| speed.py | ST:mono, ST:med, Falcon-4:16, Falcon-4:256 | 4 | 8 each | the guidelines' times, the About box, held keys |
+| gui.py | ST:mono, Falcon:16 | 2 | 3 each | menus, dialogs, keys, Find, Copy, context menu |
+| hold.py | ST:mono | 1 | 2 | a held key against a whole redraw |
+| prepared.py | ST:mono, Falcon:16, Falcon:256 (+EDOS) | 3 (4) | 3 each | converted PDFs in mono / 16 / 256 |
+| files.py | ST-1 | 1 | 4 | GEMDOS opens against the 6.5 budget |
+| big.py | ST-1 | 1 | 40 | the corpus on 1 MB: memory refused and recovered |
+| econv.py | Falcon-4:16 (+EDOS, +ST:mono) | 1 (+1, +1) | 3 (EDOS 25) | EConvert's conversion, Stop; ST Gateway-only start |
+| econv_speed.py | Falcon-4:16 | 1 | 4 | EConvert's times |
+| econv_fsel.py | Falcon:16, Falcon:256 | 2 | 2 each | the file selector by the mouse |
+| gateway.py | ST:mono (+Falcon-4:16) | 4 (+2) | 8 | Gateway mode through FAKESTNG to the real pdfgate |
+
+About 30 boots and 2.5 hours for a full run, 65 minutes of it big.py and EDOS econv. EPDF's proposed cuts (hub to
+judge): big.py and the EDOS conversion weekly or on a reader/converter memory change; gui.py on Falcon:16, prepared on
+Falcon:256 and econv_fsel on Falcon:256 only on a class-3 or palette change; gateway.py on Falcon-4:16 only when
+EConvert's 68030 path or EPDF's drawing changes; its Falcon-4 speed rows on EmuTOS dropped if the hub always runs
+Falcon-4 with NVDI (ST:mono stays as the quick gate). No row boots the same test twice.
