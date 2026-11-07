@@ -10,7 +10,7 @@
 #include "charset.h"
 #include "translate.h"
 
-#define TR_TIMEOUT_MS 120000L	/* an engine on a Pi takes seconds a piece */
+#define TR_TIMEOUT_MS 60000L	/* a piece of 2 KB takes seconds on a Pi; the service answers 504 beyond this */
 #define TR_HDRMAX     40	/* header lines read before giving up */
 
 /* ---- the pure parts ---- */
@@ -59,6 +59,9 @@ long translate_split(const char *s, long n, long max)
 		lim--;			/* the cut would fall inside a character */
 	for (i = lim; i >= 2; i--)
 		if (para_end(s, i))
+			return i;
+	for (i = lim; i >= 2; i--)	/* the end of a sentence: . ! ? and then a space or a line end */
+		if ((s[i - 1] == ' ' || s[i - 1] == '\n') && (s[i - 2] == '.' || s[i - 2] == '!' || s[i - 2] == '?'))
 			return i;
 	for (i = lim; i >= 1; i--)
 		if (s[i - 1] == '\n')
@@ -199,7 +202,7 @@ static void put_err(char *err, int errlen, const char *s)
    usable answer, err says why); the body of a 200 is appended to body (at
    most maxbody bytes); from_hdr (TR_LANG) gets X-Translate-From. */
 static int http(const char *host, unsigned short port, const SBUF *req, const char *what,
-		SBUF *body, long maxbody, char *from_hdr, char *err, int errlen)
+		SBUF *body, long maxbody, char *from_hdr, int *same, char *err, int errlen)
 {
 	CONN *c;
 	SBUF line;
@@ -209,6 +212,8 @@ static int http(const char *host, unsigned short port, const SBUF *req, const ch
 
 	if (from_hdr)
 		from_hdr[0] = 0;
+	if (same)
+		*same = 0;
 	c = conn_open("TRANSLATE", host, port, 4096, SEC_PLAIN, msg, sizeof(msg));
 	if (!c) {
 		put_err(err, errlen, msg);
@@ -246,7 +251,12 @@ static int http(const char *host, unsigned short port, const SBUF *req, const ch
 			break;
 		if (ieq(line.s, "content-length:"))
 			clen = atol(line.s + 15);
-		else if (from_hdr && ieq(line.s, "x-translate-from:")) {
+		else if (same && ieq(line.s, "x-translate-same:")) {
+			const char *v = line.s + 17;
+			while (*v == ' ')
+				v++;
+			*same = *v == '1';
+		} else if (from_hdr && ieq(line.s, "x-translate-from:")) {
 			const char *v = line.s + 17;
 			while (*v == ' ')
 				v++;
@@ -316,7 +326,7 @@ static int get(const char *host, unsigned short port, const char *path, SBUF *bo
 		sb_free(&req);
 		return 0;
 	}
-	code = http(host, port, &req, path, body, maxbody, NULL, err, errlen);
+	code = http(host, port, &req, path, body, maxbody, NULL, NULL, err, errlen);
 	sb_free(&req);
 	return code == 200;
 }
@@ -368,15 +378,17 @@ int translate_languages(const char *host, unsigned short port, SBUF *out, char *
 }
 
 int translate_piece(const char *host, unsigned short port, const char *to, const char *from,
-		    const char *utf8, long n, SBUF *out, char *from_used, char *err, int errlen)
+		    const char *utf8, long n, SBUF *out, char *from_used, int *same, char *err, int errlen)
 {
 	SBUF req, what;
 	char fr[TR_LANG];
 	long start = out->len;
-	int code;
+	int code, same_ans = 0;
 
 	if (from_used)
 		from_used[0] = 0;
+	if (same)
+		*same = 0;
 	if (n <= 0 || n > TR_PIECE) {
 		put_err(err, errlen, "nothing to translate");
 		return 0;
@@ -389,13 +401,22 @@ int translate_piece(const char *host, unsigned short port, const char *to, const
 	}
 	sb_init(&what);
 	sb_printf(&what, "%s>%s, %ld bytes", from && from[0] ? from : "auto", to, n);
-	code = http(host, port, &req, what.s ? what.s : "", out, 4 * n + 64, fr, err, errlen);
+	code = http(host, port, &req, what.s ? what.s : "", out, 4 * n + 64, fr, &same_ans, err, errlen);
 	sb_free(&req);
 	sb_free(&what);
 	if (code != 200)
 		return 0;
-	if (!utf8_ok((const unsigned char *)out->s + start, out->len - start) ||
-	    count_paras(out->s + start, out->len - start) > count_paras(utf8, n) + 1) {
+	if (same_ans) {
+		/* already in the target language: the Pi sends no body, the text stands as it was */
+		out->len = start;
+		if (!sb_add(out, utf8, n)) {
+			put_err(err, errlen, "out of memory");
+			return 0;
+		}
+		if (same)
+			*same = 1;
+	} else if (!utf8_ok((const unsigned char *)out->s + start, out->len - start) ||
+		   count_paras(out->s + start, out->len - start) > count_paras(utf8, n) + 1) {
 		out->len = start;
 		put_err(err, errlen, "the Pi's answer breaks the protocol");
 		return 0;
@@ -405,61 +426,110 @@ int translate_piece(const char *host, unsigned short port, const char *to, const
 	return 1;
 }
 
-char *translate_atari(const char *host, unsigned short port, const char *to, const char *from,
-		      const char *atari, long n, translate_turn_fn turn, char *from_used,
-		      long *outlen, char *err, int errlen)
+/* ---- the text in pieces ---- */
+
+void translate_begin(TRANSLATE *t, const char *host, unsigned short port, const char *to,
+		     const char *from, const char *utf8, long n)
 {
+	memset(t, 0, sizeof(*t));
+	str_copy(t->host, host ? host : "", sizeof(t->host));
+	t->port = port;
+	str_copy(t->to, to ? to : "", sizeof(t->to));
+	str_copy(t->from, from ? from : "", sizeof(t->from));
+	t->text = utf8;
+	t->len = n;
+	t->piece = TR_PIECE_DEFAULT;
+}
+
+int translate_step(TRANSLATE *t, SBUF *out)
+{
+	long k;
+	int same = 0;
+	char fr[TR_LANG];
+	if (t->pos >= t->len)
+		return 0;
+	k = translate_split(t->text + t->pos, t->len - t->pos,
+			    t->piece > 0 && t->piece <= TR_PIECE ? t->piece : TR_PIECE_DEFAULT);
+	t->err[0] = 0;
+	if (!translate_piece(t->host, t->port, t->to, t->from, t->text + t->pos, k, out, fr, &same,
+			     t->err, sizeof(t->err)))
+		return -1;
+	if (!t->from_used[0])
+		str_copy(t->from_used, fr, sizeof(t->from_used));
+	t->same = same;
+	t->pos += k;
+	return 1;
+}
+
+char *translate_utf8(const char *host, unsigned short port, const char *to, const char *from,
+		     const char *utf8, long n, translate_turn_fn turn, char *from_used,
+		     long *outlen, char *err, int errlen)
+{
+	TRANSLATE t;
 	SBUF ans;
-	char *u, *res;
-	long ulen, pos = 0;
+	int r;
 
 	if (outlen)
 		*outlen = 0;
 	if (from_used)
 		from_used[0] = 0;
+	translate_begin(&t, host, port, to, from, utf8, n);
+	sb_init(&ans);
+	for (;;) {
+		long a0 = ans.len, e, nl = 0, k0 = t.pos;
+		if (turn && t.pos < t.len && turn(t.pos, t.len)) {
+			put_err(err, errlen, "stopped");
+			sb_free(&ans);
+			return NULL;
+		}
+		r = translate_step(&t, &ans);
+		if (r <= 0)
+			break;
+		/* the line ends a piece ended with come back as they went */
+		while (t.pos - k0 - nl > 0 && (utf8[t.pos - 1 - nl] == '\n' || utf8[t.pos - 1 - nl] == '\r'))
+			nl++;
+		for (e = ans.len; e > a0 && (ans.s[e - 1] == '\n' || ans.s[e - 1] == '\r'); e--)
+			;
+		ans.len = e;
+		if (nl && t.pos < t.len && !sb_add(&ans, utf8 + t.pos - nl, nl)) {
+			put_err(err, errlen, "out of memory");
+			sb_free(&ans);
+			return NULL;
+		}
+	}
+	if (r < 0) {
+		put_err(err, errlen, t.err);
+		sb_free(&ans);
+		return NULL;
+	}
+	if (from_used)
+		str_copy(from_used, t.from_used, TR_LANG);
+	if (outlen)
+		*outlen = ans.len;
+	return sb_steal(&ans);	/* NUL-terminated; for an empty text, ans.s may be NULL */
+}
+
+char *translate_atari(const char *host, unsigned short port, const char *to, const char *from,
+		      const char *atari, long n, translate_turn_fn turn, char *from_used,
+		      long *outlen, char *err, int errlen)
+{
+	char *u, *r, *res;
+	long ulen, rlen = 0;
+
+	if (outlen)
+		*outlen = 0;
 	u = atari_to_utf8(atari, n, &ulen);
 	if (!u) {
 		put_err(err, errlen, "out of memory");
 		return NULL;
 	}
-	sb_init(&ans);
-	while (pos < ulen) {
-		long k = translate_split(u + pos, ulen - pos, TR_PIECE), nl = 0, a0 = ans.len, e;
-		char fr[TR_LANG];
-		if (turn && turn(pos, ulen)) {
-			put_err(err, errlen, "stopped");
-			goto fail;
-		}
-		if (!translate_piece(host, port, to, from, u + pos, k, &ans, fr, err, errlen))
-			goto fail;
-		if (from_used && !from_used[0])
-			strcpy(from_used, fr);
-		/* the line ends a piece ended with come back as they went */
-		while (k - nl > 0 && (u[pos + k - 1 - nl] == '\n' || u[pos + k - 1 - nl] == '\r'))
-			nl++;
-		for (e = ans.len; e > a0 && (ans.s[e - 1] == '\n' || ans.s[e - 1] == '\r'); e--)
-			;
-		ans.len = e;
-		if (nl && pos + k < ulen && !sb_add(&ans, u + pos + k - nl, nl)) {
-			put_err(err, errlen, "out of memory");
-			goto fail;
-		}
-		pos += k;
-	}
+	r = translate_utf8(host, port, to, from, u, ulen, turn, from_used, &rlen, err, errlen);
 	free(u);
-	if (!sb_addc(&ans, 0)) {
-		put_err(err, errlen, "out of memory");
-		sb_free(&ans);
+	if (!r)
 		return NULL;
-	}
-	ans.len--;
-	res = cs_to_atari(ans.s, ans.len, CS_UTF8, outlen);
-	sb_free(&ans);
+	res = cs_to_atari(r, rlen, CS_UTF8, outlen);
+	free(r);
 	if (!res)
 		put_err(err, errlen, "out of memory");
 	return res;
-fail:
-	free(u);
-	sb_free(&ans);
-	return NULL;
 }
