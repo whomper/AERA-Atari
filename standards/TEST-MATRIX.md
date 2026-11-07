@@ -56,15 +56,21 @@ machine, the whole EPlay set about 30 min); an app's own column is that session'
 | 1 | `Falcon-4:16`, NVDI | the stock Falcon (16 MHz 030, 4 MB, no FPU): speed rows and function | every candidate (kind 3) |
 | 2 | `ST:mono`, TOS 1.04 | the 8 MHz ST: speed rows and function (no NVDI) | every candidate |
 | 3 | `ST:med` | ST medium (640x200, 4 colours): speed | kind 3 only |
-| 4 | `Falcon:16`, NVDI | Erez's Falcon (DFB1: 32 MHz, FPU, 14 MB + TT RAM): function, the program's start and quit | every candidate |
-| 5 | `TT:ttmed` (640x480, 16 colours) | the TT: function, TT RAM, 68030 code | every candidate |
-| 6 | MiNT + XaAES on a Falcon | multitasking AES: dialogs in windows, iconify, drag and drop | every candidate |
-| 7 | `Falcon:65536`, NVDI | true colour (16 bits, Motorola order: EWeb's byte-swap bug lived here) | drawing candidates, and monthly |
-| 8 | `TT:mono` (1280x960) | a large screen: layout at that size, full-screen redraw time, buffer memory | drawing candidates, and monthly |
-| 9 | `Falcon:256`, NVDI | 256-colour palettes | palette or picture change, and monthly |
-| 10 | `ST-1` (1 MB) | the smallest memory: file-access budget, memory refused and recovered | file or memory change, and monthly |
-| 11 | `Falcon:16` without NVDI | TOS's own VDI, once | once per drawing candidate |
-| 12 | `acc_all` | the four accessories together | monthly |
+| 4 | **TT, 1280x960 mono, with MiNT + XaAES** (one configuration) | the TT (68030 at 32 MHz, TT RAM) on the large screen, under a multitasking AES: dialogs in windows, iconify, drag and drop, layout at 1280x960 | every candidate |
+| 5 | `Falcon:65536`, NVDI | true colour (16 bits, Motorola order: EWeb's byte-swap bug lived here) | drawing candidates, and monthly |
+| 6 | `ST-1` (1 MB) | the smallest memory: file-access budget, memory refused and recovered | file or memory change, and monthly |
+| 7 | `Falcon:16` without NVDI | TOS's own VDI, once | once per drawing candidate |
+| 8 | `acc_all` | the four accessories together | monthly |
+
+Removed (Erez, 7 Nov): the separate TT 640x480 and MiNT runs (merged into 4); "Falcon:16 NVDI, start and quit"
+(the apps' own tests run on Falcons plenty); the monthly TT 1280x960 (4 has that resolution); the monthly
+Falcon 256 colours (each app's own matrix must include a 256-colour run on a Falcon: EPDF has it in speed,
+prepared and econv_fsel; EWeb, EMail and EPlay to confirm).
+
+Open on row 4: the MiNT rig (`common/tests/xaaes/run.py`) boots a Falcon from an IDE disk image, and
+Hatari's TT has SCSI, not IDE. The TT + MiNT + 1280x960 mono configuration has to be built and shown to
+work (XaAES in mono, MiNT's SCSI driver); until then MiNT stays on the Falcon at 640x480 and the TT runs
+TOS (EmuTOS here: there is no TT image in Erez's folder).
 
 Not covered by emulation, and tested by Erez on his Falcon: the real DFB1 (50 MHz, 128 MB TT RAM), real
 disks, a NetUSBee, graphics cards (1024x768 and up, true colour), and the tester's CT63 (68060 under MiNT).
