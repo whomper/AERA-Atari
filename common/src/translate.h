@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
  * Copyright (C) 2026 AERA | Erez Yaary */
 /*
- * translate.h - the client of the Pi's translation service (translategate;
+ * translate.h - the client of the Gateway's translation service (translategate;
  * standards/TRANSLATION-SERVICE.md). Plain HTTP/1.0 on the home network, UTF-8
  * on the wire, one request and one answer a connection. An app touches this
  * only when its Translate setting is On: with it Off nothing here is called.
@@ -15,7 +15,7 @@
 #include "util.h"
 
 #define TR_PIECE 8192		/* the most the protocol lets a request carry (UTF-8 bytes) */
-#define TR_PIECE_DEFAULT 2048	/* what the client sends at a time: a few paragraphs, seconds on a Pi */
+#define TR_PIECE_DEFAULT 2048	/* what the client sends at a time: a few paragraphs, seconds on the Gateway */
 #define TR_LANG  8		/* a language code with its NUL: "en", "he", "pt-BR" */
 
 /* a turn between pieces: done and total in bytes of the Atari text; non-zero
@@ -41,7 +41,7 @@ int  translate_request(SBUF *out, const char *host, const char *to, const char *
 /* "HTTP/1.0 200 OK" -> 200; 0 if the line isn't a status line */
 int  translate_status_code(const char *line);
 /* what to tell the user for a refusal: "the language pair isn't installed
-   on the Pi" ... (code 400, 413, 422, 503, 504, else the number) */
+   on the Gateway" ... (code 400, 413, 422, 503, 504, else the number) */
 const char *translate_refusal(int code);
 
 /* ---- the network (conn.c: SEC_PLAIN, a turn for the machine while it waits) ---- */
@@ -54,7 +54,7 @@ int  translate_status(const char *host, unsigned short port, char *info, long in
 int  translate_languages(const char *host, unsigned short port, SBUF *out, char *err, int errlen);
 /* one piece (n <= TR_PIECE UTF-8 bytes) appended to out; from_used (TR_LANG
    bytes) gets the language the engine used; *same (may be NULL) is 1 when the
-   text is already in the target language (the Pi sent no body: out then gets the
+   text is already in the target language (the Gateway sent no body: out then gets the
    piece as it was). 0 with err on a refusal, a timeout, a stop (conn_stop) or an
    answer that breaks the protocol (not UTF-8, more than 4 times the request, more
    paragraphs than it). */
@@ -69,7 +69,7 @@ int  translate_piece(const char *host, unsigned short port, const char *to, cons
    draws, and may stop: it just doesn't call again. Inside a step the machine gets
    its turns through pf_idle; to drop a translation at once (the user went to the
    next letter, Esc) the app sets conn_stop from there: the step returns -1 with
-   err "stopped", the connection is closed, and the Pi stops the job when it
+   err "stopped", the connection is closed, and the Gateway stops the job when it
    sees the close. */
 typedef struct {
 	char host[104];
@@ -92,7 +92,7 @@ int  translate_step(TRANSLATE *t, SBUF *out);
 /* UTF-8 in, UTF-8 out (malloc'd, NUL-terminated, *outlen its length): the pieces
    in order, a turn (turn, may be NULL) before each, the line ends a piece ended
    with kept between the answers. NULL with err on the first failure (nothing
-   partial is returned). The Pi decides how the lines inside a paragraph are
+   partial is returned). The Gateway decides how the lines inside a paragraph are
    handled (standards/TRANSLATION-SERVICE.md): the answer's paragraphs are
    the request's; the app wraps the lines. */
 char *translate_utf8(const char *host, unsigned short port, const char *to, const char *from,

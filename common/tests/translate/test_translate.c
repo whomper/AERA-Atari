@@ -214,7 +214,7 @@ int main(void)
 	check(!translate_piece("PI_IP", 8480, "en", NULL, "hello", 5, &out, from, NULL, err, sizeof(err)), "an answer that breaks off: refused");
 	reset();
 	refuse_open = 1;
-	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 1, &out, from, NULL, err, sizeof(err)) && !strcmp(err, "connection refused"), "no Pi: the network's own error");
+	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 1, &out, from, NULL, err, sizeof(err)) && !strcmp(err, "connection refused"), "no Gateway: the network's own error");
 	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 0, &out, from, NULL, err, sizeof(err)) &&
 	      !translate_piece("PI_IP", 8480, "en", NULL, big, TR_PIECE + 1, &out, from, NULL, err, sizeof(err)) &&
 	      !translate_piece("PI_IP", 8480, "EN", NULL, "x", 1, &out, from, NULL, err, sizeof(err)), "empty, too long, bad code: no connection tried");

@@ -20,7 +20,7 @@ Words used here:
 - **should**: expected, unless the app has a stated reason not to.
 - **PRG**: the program started from the desktop.
 - **ACC**: the desk accessory.
-- **Direct connection**: TLS on the Atari itself, without the Pi (until 24 Oct 2026 "Falcon mode"):
+- **Direct connection**: TLS on the Atari itself, without the Gateway (until 24 Oct 2026 "Falcon mode"):
   `TLS.OVL`, 7.4.
 - **ST edition**: the build without TLS (`NAMEST.PRG` / `NAMEST.ACC`), until TLS.OVL took its place
   (7.4); EWeb keeps `EWEBST.PRG`, the whole browser built for the 68000.
@@ -49,7 +49,7 @@ way working.
   when programs or sessions pull different ways (a shared resource such as the DSP, memory, a key,
   a port, two plans for one feature). The hub sets out the options and its recommendation; he
   decides.
-- Packages on the Pi and the ports, as before.
+- Packages on the Gateway and the ports, as before.
 
 **The team's part** is how it is made, and it is decided and done without asking: the code and its
 structure, the shared code, tests, measurements, fixes, the docs, and releases inside an approved
@@ -60,7 +60,7 @@ Erez's.
 ### The machines
 
 - **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
-  or a cartridge network adapter, the Pi gateway for encryption. Every 68000 build runs here, and every
+  or a cartridge network adapter, the Gateway for encryption. Every 68000 build runs here, and every
   program is made for it (TLS.OVL stays on the disk, 7.4). One exception (Erez, 23 Oct 2026): EWeb's ST edition (EWEBST.PRG) is
   made for a 4 MB ST (the `ST` machine), not 1 MB; a browser needs the memory. EWeb's program
   (EWEB.PRG) runs on every Falcon from 0.28, the stock 4 MB one (`Falcon-4`) included, but there on
@@ -124,7 +124,7 @@ Erez's.
   - code and data belong in TT RAM (`PRGFLAGS=7`; the heap prefers it already). Only what the
     hardware reads stays in ST RAM: the screen, and bitmaps the VDI copies (`st_ram()`; the blitter
     can't reach TT RAM);
-  - a Direct connection (TLS on the Atari, 7.4) is the way out, without the Pi: EMail's `tools/tlsbench` measured
+  - a Direct connection (TLS on the Atari, 7.4) is the way out, without the Gateway: EMail's `tools/tlsbench` measured
     a 5 s handshake on a 50 MHz 68030 in fast RAM, and about 1.5 s with RSA on the DSP;
   - a 68030 build has the CPU's own 32-bit multiply and divide (the 68000 build calls routines in
     `tos.c`) and reads longs at any address; the 68882 helps floating point only, which no app uses
@@ -513,11 +513,11 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - the hub's family checks pass (`acc_all.py`, for the GEM programs).
 
   It doesn't wait for a yes, and it releases as soon as the work is done rather than collecting it.
-  The session then gives Erez the release's link in one line, with anything he has to do (the Pi's
+  The session then gives Erez the release's link in one line, with anything he has to do (the Gateway's
   `./update-pi.sh`, say), and sends the hub the link. A bad release is rolled back the same way,
   without asking. Decisions that are Erez's still go to him before the work ("Who decides what",
   above: new programs and capabilities, how programs work together, the user experience, phases,
-  priorities and conflicts, Pi packages, ports). A release inside an approved phase is not one of
+  priorities and conflicts, Gateway packages, ports). A release inside an approved phase is not one of
   them. A change to the docs alone needs no release of its own: it goes out with the
   next one.
 - **Text-only changes take the short path** (Erez's decision, 18 Oct 2026). A change to the docs alone
@@ -601,7 +601,7 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 - **The status lines say the same things in the same words in every app** (Erez, 27 Oct 2026):
   at most three, in this order, a line left out where it has nothing to say.
   1. **The connection**, in apps that use the network: the network stack (STinG, MiNTnet, or "No
-     network"), how the app reaches its servers ("Direct", "Pi gateway", "No gateway"; ClaudeST:
+     network"), how the app reaches its servers ("Direct", "Gateway", "No Gateway"; ClaudeST:
      "Serial port, 19200 baud") and its state ("online" with a connection open, "ready",
      "offline" when Work offline is ticked). Nothing else: TLS.OVL's version and the DSP matter
      only when something goes wrong, and the app's log has them.
@@ -1239,7 +1239,7 @@ CONTACTS.TXT when the user chooses it (below).
   - AERA-Gateway: the ST, the Raspberry Pi in its case, and the cloud, connected.
 
   The last three are drawn the same way, for the READMEs, the profile and the social previews only:
-  the 8-bit programs and the Pi have no GEM desktop, so `make icons` doesn't run there.
+  the 8-bit programs and the Gateway have no GEM desktop, so `make icons` doesn't run there.
 
   A new app's icon is drawn with Erez in the hub, then added to `common/icons`.
 - **Three depths, each drawn by hand:** 256 colours (the master, in TOS 4.04's own palette), TOS's
@@ -1430,7 +1430,7 @@ bar nearly full shows them all:
 - **One Settings… dialog** (^,), with a sidebar of pages in this order, leaving out what doesn't apply:
   **General · Accounts/Servers · Secure · Appearance · Advanced**.
   - The **Secure** page is the same in every networked app: "Direct connection: TLS on this Atari
-    (68020 or better)" or "Through the Pi gateway: address, port".
+    (68020 or better)" or "Through the Gateway: address, port".
   - Step 3 picks one dialog engine from the two in use today: FIELD in ECal/EContact, OBJECT +
     `form_do` in EMail/EFTP.
 
@@ -1570,7 +1570,7 @@ for every app (the ones in maintenance too: section 8).
     (Gmail, on a TT without the DSP: 17 s of checking) isn't kept waiting; a chain that fails ends the
     connection before anything of the user's is sent.
   - **There is no "ignore certificate" option**, now or later.
-- **A 68000, or anyone who chooses, goes through a Pi gateway**, which does the same checks.
+- **A 68000, or anyone who chooses, goes through the Gateway**, which does the same checks.
 - **Connections time out after 60 s, and every network operation can be stopped:**
   - Esc or Undo while the busy bee shows (`ui/busy.c`: the keys are read while `conn` waits, and
     any other key is kept for afterwards), or the app's own Stop button (EFTP).
@@ -1592,13 +1592,13 @@ for every app (the ones in maintenance too: section 8).
   unencrypted").
 - **Never logged**, never in `CRASH.LOG`, never in a screenshot used in docs.
 
-### 7.3 Pi gateways
+### 7.3 The Gateway
 - **They live in [AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: emailgate (EMail),
   ecalgate (ECal and EContact), eftpgate (EFTP), and `aeragate.py`, the rules below in one place.
   The apps carry `gateway/` as a read-only copy (`tools/sync-gateway.sh`), as they carry `common/`.
   ClaudeST's bridge stays in ClaudeST until it moves (Erez, 5 Nov 2026).
 - **The Gateway session owns the gateway as one unit** (Erez, 7 Nov 2026). Everything that runs on
-  the Pi (the services, the installer, `aeragate.py`, the port table, CI, the one `VERSION`, the
+  the Gateway (the services, the installer, `aeragate.py`, the port table, CI, the one `VERSION`, the
   release, `update-pi.sh`) is committed, tested and released by AERA-Gateway's own session. The app
   sessions are the experts: each writes and maintains its service and decides its protocol (EMail
   emailgate, ECal and EContact ecalgate, EFTP eftpgate, EWeb webgate, aerapens and aerajsc, EPDF
@@ -1611,8 +1611,15 @@ for every app (the ones in maintenance too: section 8).
     only, one `VERSION`. It integrates, runs the unit's checks and releases, then gives the link to
     the app session and the hub.
   - An app release that needs a gateway change names the gateway version it needs and goes out after
-    that release; a port or a package on the Pi is Erez's decision first.
+    that release; a port or a package on the Gateway is Erez's decision first.
   - In maintenance mode this is unchanged: what a focus app asks for goes on, through the same path.
+- **The name is Gateway** (Erez, 7 Nov 2026): the user sees **Gateway**, never "Pi" or "Pi gateway",
+  in every app: the status line ("Gateway"), Settings' Secure page ("Through the Gateway: address,
+  port"), menus, alerts ("The Gateway doesn't answer: is it on?"), the About box, the help guide, the
+  README and the release notes. "Raspberry Pi" stays only where the hardware itself is meant (the
+  install steps: "on a Raspberry Pi"). The INF keys (`GATE=`, `GATEPORT=`) and the code's names stay.
+  Each app changes its words with its next release (the apps in maintenance with a release they
+  make anyway, no release of their own for it).
 - **One installer**, `gateway/aera-gateway` (install, update, status, remove): a systemd unit per
   gateway with its own user, `NoNewPrivileges`, `ProtectSystem=strict`, `ProtectHome` and
   `PrivateTmp`. A gateway on ports below 1024 gets `CAP_NET_BIND_SERVICE` and nothing else. An
@@ -1630,9 +1637,9 @@ for every app (the ones in maintenance too: section 8).
   change only with the app's OK.
 - **No test-only switches** such as `--insecure` in the installed service.
 - **Docs and examples use `192.168.1.x`** and `PI_IP` / `ATARI_IP`, never a real home network.
-- **Every app with a gateway says how to set up the Pi** (Erez, 21 Oct 2026), in its README and
-  its help guide alike. It gives the steps from a fresh Pi, with the app's own service line, then how
-  to update and check, then where in the app the Pi's address and port go:
+- **Every app with a gateway says how to set up the Gateway** (Erez, 21 Oct 2026), in its README and
+  its help guide alike. It gives the steps from a fresh Raspberry Pi, with the app's own service line, then how
+  to update and check, then where in the app the Gateway's address and port go:
 
   ```
   sudo apt install -y git                  (Raspberry Pi OS Lite only)
@@ -1778,10 +1785,10 @@ program's window.
 | 7.1 Every network operation can be stopped | ✓ (Esc) | ✓ (Esc) | ✓ (Esc) | ✓ (Stop, Esc) | n/a | n/a | ✓ (Esc, Undo, Stop) | n/a | — |
 | 7.2 No silent plaintext passwords | ✓ | ✓ | ✓ | ✓ | n/a | n/a | n/a (no passwords in 0.11) | n/a | — |
 | 7.3 Gateway in AERA-Gateway, private-only by default | ✓ | ✓ (ecalgate) | ✓ | ✓ | n/a | ✓ (bridge: its own check) | n/a | n/a | — |
-| 7.3 README and guide carry the Pi's install steps (21 Oct) | ✓ (f97a703, in 2.21) | ✓ (b188b65) | ✓ (36a8c59) | ✓ (fa54f74) | n/a | ✓ (7a7e83e) | ✓ (8089f49, in 0.24) | n/a | — |
+| 7.3 README and guide carry the Gateway's install steps (21 Oct) | ✓ (f97a703, in 2.21) | ✓ (b188b65) | ✓ (36a8c59) | ✓ (fa54f74) | n/a | ✓ (7a7e83e) | ✓ (8089f49, in 0.24) | n/a | — |
 | 7.4 One program; TLS in TLS.OVL; "Direct connection" (24 Oct) | ✓ (a9b9d77, 80ef99d, 2.25) | ✓ (0d310f0b5, 1.64) | ✓ (06dfac1, 1.56) | ✓ (b6cb9b16, 1.49) | n/a | n/a | ✓ (the name: 16fd3b8e, 0.31; EWEBST.PRG stays; EUpdate ✓ 83905f8f1, 1.20: TLS.OVL in place of its own TLS; it carries TLS.OVL and replaces ST editions since a0d1a101, 1.6) | n/a | — |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
-| 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Pi too) | ✓ | ✓ (0.1 by the Release workflow) | — |
+| 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Gateway too) | ✓ | ✓ (0.1 by the Release workflow) | — |
 | 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) | ✓ | — |
 | Who decides what: Erez's part (new programs, capabilities, how programs work together, the user experience, phases, priorities, conflicts) in CLAUDE.md (31 Oct; EUpdate ✓ c6c69ddad; AERA-Gateway ✓ 226cb5c, committed by Erez) | ✓ (094b9afb) | ✓ (8a9d7888) | ✓ (16e2674b5) | ✓ (c844b2975) | ✓ (738d72c) | ✓ (e192cb83) | ✓ (d7893a129, 0.56) | ✓ (b90c64c) | ✓ (0e26f57) |
 | Speed: plain text, scrolls and selections through common's `text_plain`, `scr_rows`, `scr_xor` where the app draws them (31 Oct) | ✓ 2.35 (text_plain, scr_rows; selections are fills) | ✓ 1.75 (text_plain; its list, 240 px at most, keeps TOS's copy) | ✓ 1.69 (text_plain, scr_rows; scr_xor for the editor's cursor) | ✓ 1.70 (text_plain, scr_rows; selections are fills) | ✓ 1.35 (text_plain, scr_rows; scr_xor for the toolbar's pressed button) | ✓ 1.71 (text_plain, scr_rows; no XOR selections) | ? | ✓ 0.2 (text_plain, scr_rows, scr_xor) | — |
@@ -1808,3 +1815,4 @@ program's window.
 | 5.9 The progress bar: blue in 256, pens 1–15 in 16, black otherwise (`progbar`; 3 Nov) | — | — | — | — | — | — | ✓ (0.63) | ✓ (0.6) | — |
 | Speed: common's fast paths used (text_plain, text_fx, scr_rows, scr_fill, pb_vdi, DLG_CPU, offdraw), none slower under NVDI with a GDOS font (1 Nov) | ✓ (2.40: text_fx; scr_fill under scr_cpu_wins(); scr_xor under text_plain_state() > 0) | ✓ (1.76: its own audit; offdraw for the window) | — | — | — | — | — | — | — |
 | Speed: a redraw of 300 ms or less is drawn in one piece, a longer one in pieces of at most 100 ms (Erez, 4 Nov) | maintenance | maintenance (win_redraw_bands) | maintenance (message in next turns) | to check | — | — | to check | to check | to check |
+| 7.3 The name is Gateway, never "Pi" or "Pi gateway", in the status line, Settings' Secure page, menus, alerts, About box, guide, README and notes (Erez, 7 Nov) | next release | next release (maintenance: with a release made anyway) | next release | maintenance | maintenance | maintenance (moves into AERA-Gateway) | next release | next release | next release |

@@ -7,14 +7,14 @@ at the end; nothing here is built or released yet.
 
 - Version 1 is a switch and a language: **Translate On/Off** and a **target language**. The main
   target is English. Hebrew (Atari logical order, 0xC2–0xDC) is a first-class source.
-- It runs **headless on the Pi**, with a **local engine**: no text leaves the home network.
+- It runs **headless on the Gateway**, with a **local engine**: no text leaves the home network.
 - **Only with Translate = On does an app touch the gateway.** Off means as today: no connection, no
   new code path run, no speed or memory cost. This is tested (see Tests).
 - A new gateway entry point only for translation; the other gateways do not change.
 - Maintenance mode is opened for EMail and for AERA-Gateway for this service only.
 
 - **EMail's use (Erez, 7 Nov):** a menu item "Translate" with a check mark is the On/Off (no check
-  mark: off; Settings has only the target language; the Pi is the one the accounts use for the
+  mark: off; Settings has only the target language; the Gateway is the one the accounts use for the
   gateway). With it on, every message opened is translated whole, subject and body; the status line
   says "Translating..." and the text is shown when it comes back; translations are kept in memory
   while the app runs, not on disk. The right-click menu has "Translate..." for highlighted words: it
@@ -45,12 +45,12 @@ All text is **UTF-8**. The gateway never sees Atari text. One request, one answe
   with the translation as the body and the line `X-Translate-From: CODE` for the language used.
   - **Paragraphs** (blank lines) are kept exactly: the answer has the same number of paragraphs.
   - **Lines inside a paragraph** (EMail, 7 Nov: mail is hard-wrapped at about 72 columns): the
-    Pi joins them with spaces and translates the paragraph as sentences; the answer has the
+    Gateway joins them with spaces and translates the paragraph as sentences; the answer has the
     paragraph on one line and the app wraps it. A paragraph whose lines are all short (under
     about 40 characters: an address block, a list, a poem) is translated line by line and
-    keeps its lines. The Pi decides this, once, for every app.
-  - **Left as they are**, by the Pi, around the engine: URLs, e-mail addresses, numbers with
-    units and quote markers (`>`). The Pi protects them with placeholders its engine keeps intact
+    keeps its lines. The Gateway decides this, once, for every app.
+  - **Left as they are**, by the Gateway, around the engine: URLs, e-mail addresses, numbers with
+    units and quote markers (`>`). The Gateway protects them with placeholders its engine keeps intact
     and puts them back; the app does nothing.
   - **Already in the target language:** `200`, `X-Translate-From: CODE`, `X-Translate-Same: 1`,
     and an empty body. The app keeps the text it sent. The engine is not run.
@@ -60,9 +60,9 @@ All text is **UTF-8**. The gateway never sees Atari text. One request, one answe
   split at a paragraph, else a sentence end, else a line end, else a space), so the first words
   come back in seconds and Esc waits no longer than a piece; one request at a time per
   connection; **60 seconds** a request, then `504`; the answer is not longer than 4x the request.
-- **A closed connection stops the job:** the Pi watches the socket while the engine works. An app
+- **A closed connection stops the job:** the Gateway watches the socket while the engine works. An app
   that drops a translation (Esc, the user opened the next letter) just closes the connection;
-  the Pi stops translating and keeps nothing.
+  the Gateway stops translating and keeps nothing.
 - **The engine stays loaded** between requests, so a short request (a subject, a few highlighted
   words) is answered in about a second; `503` while it is loading.
 - **No state:** the gateway keeps no text, no cache of text and no session. A request leaves no
@@ -73,13 +73,13 @@ All text is **UTF-8**. The gateway never sees Atari text. One request, one answe
 - **Listening:** the home network only, or `--allow ATARI_IP`, as the other gateways. No connection
   onwards (the engine is local), so no `--allow-local`.
 
-## The engine on the Pi (Erez's decision on packages; recommendation)
+## The engine on the Gateway (Erez's decision on packages; recommendation)
 
-The Pi may only have standard Python plus what Erez approves (guideline 7.3). A neural engine is
+The Gateway may only have standard Python plus what Erez approves (guideline 7.3). A neural engine is
 a package set he must approve. Options, with the hub's recommendation first:
 
 1. **Argos Translate** (CTranslate2, OpenNMT models, MIT/CC licensed, fully offline): good enough
-   for letters and pages, Hebrew–English both ways, about a second or two a sentence on a Pi 4/5,
+   for letters and pages, Hebrew–English both ways, about a second or two a sentence on a Gateway 4/5,
    some hundreds of MB of models on disk and 1–2 GB of RAM while loaded. Installed into its own
    Python virtual environment under `/opt/translategate`, as its own system user; not system-wide.
 2. **Bergamot (Firefox translation models)**: smaller and faster, models per pair, build is more
@@ -88,7 +88,7 @@ a package set he must approve. Options, with the hub's recommendation first:
 
 The Gateway session verifies the choice by running a fixed Hebrew/English test set (a dozen
 letters and sentences of Erez's kind, no private text) and reports the quality, speed and memory
-on the Pi that Erez names, before the first release.
+on the Gateway that Erez names, before the first release.
 
 ## Tests
 
@@ -101,11 +101,14 @@ on the Pi that Erez names, before the first release.
   it On, the speed rig for the translate action (the window stays alive between pieces: stretch
   under the guideline limit) on `ST:mono` and `Falcon-4:16`.
 
-## Open decisions for Erez
+## Decided by Erez (7 Nov 2026)
 
-1. **Port** for translategate (the hub proposes 8480; 143/587/110, 8180, 2121, 30000-30099, 8280,
-   8380 (pdf, pending), 2323 and 8281 on 127.0.0.1 are taken).
-2. **Pi packages**: Argos Translate and CTranslate2 in a virtual environment (needs `python3-venv`,
-   `pip` and the models; downloaded once at install, then offline), and the disk and RAM above.
-3. **Which Pi** runs it (a Pi 4/5 with 4 GB or more is the floor for option 1) and whether one Pi
-   carries all gateways.
+1. **Port 8480** for translategate.
+2. **Argos Translate** (with CTranslate2) in its own Python virtual environment under
+   `/opt/translategate`, as its own user: `python3-venv`, `pip` and the models, downloaded once at
+   install and offline after that.
+3. **A Raspberry Pi 5 with 8 GB, one Gateway machine for all the services.** The Gateway session
+   budgets memory for the engine next to the other gateways and reports quality, speed and memory
+   on it with the fixed Hebrew/English set before the first release.
+4. **The name is Gateway** in everything the user sees (guideline 7.3), so the service is "the
+   Gateway" in alerts and menus, never "the Pi".
