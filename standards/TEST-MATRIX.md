@@ -109,7 +109,7 @@ DSP-only change; the hub ~35 min of speed and ~7 of the monthly accessory test. 
 proposed.
 
 Decisions the hub took on the apps' proposals (all within the team's remit; Erez sees them here):
-- **Accepted:** EPlay row 5 weekly, wavvol into wav, row 7 only when flagged, row 8 monthly; EMail's emailchk on
+- **Accepted:** EPlay row 5 weekly, row 7 only when flagged, row 8 monthly (wavvol stays its own case, 7 Nov: merging it into wav needs a key pressed at a moment the rig cannot pin down, a flaky check to save about 15 s); EMail's emailchk on
   ST-1 only (Falcon monthly), one Falcon:256 run, the ST duplicates dropped, disk_test's mailbox trimmed when next
   touched, rig 5/8/9/10/11/12/13 merged into one boot when next touched; EWeb's cuts (dialogs weekly on EmuTOS, scripts
   as one boot, deep ST weekly, hatarinet TT weekly).
@@ -216,6 +216,6 @@ changes. After: ~60 minutes.
 
 Rows 6, 7, 4's ten GEM cases, 9 and 11 only for a change that draws, starts or loops over data (kind 3); a DSP-only
 change like 0.28 needs rows 1-3 and the ten sound cases of 4. Proposed cuts (EPlay): row 5 weekly (the 32 MHz machine
-has caught nothing Falcon-4 missed in 0.20-0.28; -20 boots); wavvol folded into wav (-1 boot); row 8 dropped as a gate
+has caught nothing Falcon-4 missed in 0.20-0.28; -20 boots); (wavvol folded into wav, withdrawn by EPlay the same day: it stays a case of its own, 20 cases); row 8 dropped as a gate
 (monthly with the hub's accessory test); row 7 only when flagged; row 3b to 6 runs (host time only); row 9 monthly once
 the hub's MiNT+XaAES 1280x960 row exists, unless dialogs or windows change. EPlay's row 4 under NVDI is the hub's run.
