@@ -83,6 +83,19 @@ disks, a NetUSBee, graphics cards (1024x768 and up, true colour), and the tester
 For a large screen with a card, the closest the rig can come is EmuTOS's own VDI at 1024x768 and 16 bits
 (not yet built).
 
+### Erez, 7 Nov 2026, fourth round: NVDI is the norm
+
+**At least 60% of each app's Atari boots per candidate run under NVDI** ("the norm these days"). Counted over all the
+boots of the app's own checks, ST boots included in the count: TOS 1.04 on an ST cannot run NVDI, so on a candidate
+with a fifth of its boots on the ST, 72% of the Falcon and TT boots must. The NVDI copy goes into each of the four
+focus apps' sessions (Erez's decision, replacing "the hub runs every NVDI row"): the apps run their function rigs,
+and their speed rows on the Falcon, with AERA_WITH_NVDI=1 in parallel with each other. The hub keeps the paired speed
+comparison for a candidate, the TT + MiNT run and the true-colour shot. Where a rig cannot run under NVDI (FreeMiNT
+with XaAES: not yet tried; the ST), it stays as it is and counts in the denominator. A run without NVDI stays once
+per candidate on a Falcon (guideline 1.2). EMail's 30 boots become about 18 under NVDI, EPlay's 20 play_test cases
+run under NVDI, EPDF's gui, prepared and econv rigs on Falcon:16 and Falcon:256 too, EWeb's groups already take
+AERA_WITH_NVDI=1. Each app's next matrix names its share.
+
 ## Consolidated matrix (the four focus apps and the hub, 7 Nov 2026)
 
 One row per configuration, one column per app: what runs today per candidate, and what is proposed. "-" = not run.
