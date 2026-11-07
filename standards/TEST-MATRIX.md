@@ -44,6 +44,33 @@ machine, the whole EPlay set about 30 min); an app's own column is that session'
    these four"), and the hub runs it only when asked. Pending Erez's confirmation: it also caught crashes
    and menu clashes when several accessories load, which the TT and MiNT runs do not.
 
+### Erez, 7 Nov 2026, third round, and the recommended configurations
+
+- **A monthly accessory test**: `acc_all` (the four accessories at once, on Falcon:16 under NVDI, first
+  and second boot) once a month, not per candidate.
+- **TT in high resolution** (1280x960, mono) to see how a large screen works with the AERA programs, and
+  **true colour** testing (Falcon, 16 bits, NVDI: `Falcon:65536`, added to machines.py).
+
+| # | Configuration (emulated) | What it is for | When |
+|---|---|---|---|
+| 1 | `Falcon-4:16`, NVDI | the stock Falcon (16 MHz 030, 4 MB, no FPU): speed rows and function | every candidate (kind 3) |
+| 2 | `ST:mono`, TOS 1.04 | the 8 MHz ST: speed rows and function (no NVDI) | every candidate |
+| 3 | `ST:med` | ST medium (640x200, 4 colours): speed | kind 3 only |
+| 4 | `Falcon:16`, NVDI | Erez's Falcon (DFB1: 32 MHz, FPU, 14 MB + TT RAM): function, the program's start and quit | every candidate |
+| 5 | `TT:ttmed` (640x480, 16 colours) | the TT: function, TT RAM, 68030 code | every candidate |
+| 6 | MiNT + XaAES on a Falcon | multitasking AES: dialogs in windows, iconify, drag and drop | every candidate |
+| 7 | `Falcon:65536`, NVDI | true colour (16 bits, Motorola order: EWeb's byte-swap bug lived here) | drawing candidates, and monthly |
+| 8 | `TT:mono` (1280x960) | a large screen: layout at that size, full-screen redraw time, buffer memory | drawing candidates, and monthly |
+| 9 | `Falcon:256`, NVDI | 256-colour palettes | palette or picture change, and monthly |
+| 10 | `ST-1` (1 MB) | the smallest memory: file-access budget, memory refused and recovered | file or memory change, and monthly |
+| 11 | `Falcon:16` without NVDI | TOS's own VDI, once | once per drawing candidate |
+| 12 | `acc_all` | the four accessories together | monthly |
+
+Not covered by emulation, and tested by Erez on his Falcon: the real DFB1 (50 MHz, 128 MB TT RAM), real
+disks, a NetUSBee, graphics cards (1024x768 and up, true colour), and the tester's CT63 (68060 under MiNT).
+For a large screen with a card, the closest the rig can come is EmuTOS's own VDI at 1024x768 and 16 bits
+(not yet built).
+
 ## App's own checks (to be filled by each session)
 
 Each session sends: every script or command it runs before it asks the hub (make, test, itest, each
