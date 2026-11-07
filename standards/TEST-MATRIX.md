@@ -54,13 +54,16 @@ machine, the whole EPlay set about 30 min); an app's own column is that session'
 | # | Configuration (emulated) | What it is for | When |
 |---|---|---|---|
 | 1 | `Falcon-4:16`, NVDI | the stock Falcon (16 MHz 030, 4 MB, no FPU): speed rows and function | every candidate (kind 3) |
-| 2 | `ST:mono`, TOS 1.04 | the 8 MHz ST: speed rows and function (no NVDI) | every candidate |
-| 3 | `ST:med` | ST medium (640x200, 4 colours): speed | kind 3 only |
+| 2 | **`ST-1:mono`, TOS 1.04, 1 MB** | the 8 MHz ST with 1 MB (the smallest the family runs on): speed rows, function, file-access budget, memory refused and recovered | every candidate |
+| 3 | `ST-1:med` | ST medium (640x200, 4 colours) on the same 1 MB machine: speed | kind 3 only |
 | 4 | **TT, 1280x960 mono, with MiNT + XaAES** (one configuration) | the TT (68030 at 32 MHz, TT RAM) on the large screen, under a multitasking AES: dialogs in windows, iconify, drag and drop, layout at 1280x960 | every candidate |
 | 5 | `Falcon:65536`, NVDI | true colour (16 bits, Motorola order: EWeb's byte-swap bug lived here) | drawing candidates, and monthly |
-| 6 | `ST-1` (1 MB) | the smallest memory: file-access budget, memory refused and recovered | file or memory change, and monthly |
-| 7 | `Falcon:16` without NVDI | TOS's own VDI, once | once per drawing candidate |
-| 8 | `acc_all` | the four accessories together | monthly |
+| 6 | `Falcon:16` without NVDI | TOS's own VDI, once | once per drawing candidate |
+| 7 | `acc_all` | the four accessories together | monthly |
+
+ST mono is now the 1 MB machine (Erez, 7 Nov): the separate 1 MB row is gone. **Exception: EWeb's ST edition**
+(`EWEBST.PRG`) has a 4 MB floor since 23 Oct (DESIGN.md), so its ST rows keep the 4 MB `ST:mono` and `ST:med`;
+EPlay has no ST edition. Every other app's ST rows move to `ST-1`.
 
 Removed (Erez, 7 Nov): the separate TT 640x480 and MiNT runs (merged into 4); "Falcon:16 NVDI, start and quit"
 (the apps' own tests run on Falcons plenty); the monthly TT 1280x960 (4 has that resolution); the monthly
