@@ -1596,7 +1596,23 @@ for every app (the ones in maintenance too: section 8).
 - **They live in [AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: emailgate (EMail),
   ecalgate (ECal and EContact), eftpgate (EFTP), and `aeragate.py`, the rules below in one place.
   The apps carry `gateway/` as a read-only copy (`tools/sync-gateway.sh`), as they carry `common/`.
-  ClaudeST's bridge stays in ClaudeST.
+  ClaudeST's bridge stays in ClaudeST until it moves (Erez, 5 Nov 2026).
+- **The Gateway session owns the gateway as one unit** (Erez, 7 Nov 2026). Everything that runs on
+  the Pi (the services, the installer, `aeragate.py`, the port table, CI, the one `VERSION`, the
+  release, `update-pi.sh`) is committed, tested and released by AERA-Gateway's own session. The app
+  sessions are the experts: each writes and maintains its service and decides its protocol (EMail
+  emailgate, ECal and EContact ecalgate, EFTP eftpgate, EWeb webgate, aerapens and aerajsc, EPDF
+  pdfgate and aerapdf, ClaudeST's bridge, a translation service), but works inside the unit:
+  - It hands its code to the Gateway session as a patch (`git format-patch`, plain text) with tests
+    and the reason, or as source copied by a `tools/sync-NAME.sh` from a named commit of its own
+    repository (never edited in AERA-Gateway). It does not push to AERA-Gateway, nor does the hub.
+  - The Gateway session reviews it against the unit: the installer (install, update keeps
+    everything, remove), `tests/systemd.sh`, the port table, 7.3's security rules, standard Python
+    only, one `VERSION`. It integrates, runs the unit's checks and releases, then gives the link to
+    the app session and the hub.
+  - An app release that needs a gateway change names the gateway version it needs and goes out after
+    that release; a port or a package on the Pi is Erez's decision first.
+  - In maintenance mode this is unchanged: what a focus app asks for goes on, through the same path.
 - **One installer**, `gateway/aera-gateway` (install, update, status, remove): a systemd unit per
   gateway with its own user, `NoNewPrivileges`, `ProtectSystem=strict`, `ProtectHome` and
   `PrivateTmp`. A gateway on ports below 1024 gets `CAP_NET_BIND_SERVICE` and nothing else. An
