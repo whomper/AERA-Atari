@@ -108,3 +108,19 @@ EConvert's 68030 path or EPDF's drawing changes; its Falcon-4 speed rows on EmuT
 Falcon-4 with NVDI (ST:mono stays as the quick gate). No row boots the same test twice.
 
 Erez, 7 Nov 2026: no heavy file in any app's test for performance; simpler files give the same answer for a fraction of the time. EPDF's big.py (40 min) and every EDOS_01.PDF row (the conversion 25 min, prepared on the converted copy) go: Erez, 7 Nov, "remove it altogether"; performance comes from generated books (pdfgen's book(n)) and the corpus. The hub's runs never used them.
+
+### EWeb (its own checks; Erez's TOS on every Falcon and TT boot, TOS 1.04 on the ST; no NVDI in its container, every rig takes AERA_WITH_NVDI=1 and the hub runs them so)
+
+| Row | Machine and screen | Boots | Min | What only it catches |
+|---|---|---|---|---|
+| make, make test, make itest | host (ASan, UBSan; local servers + webgate) | 0 | ~6, ~10, ~12 | warnings, FPU/68020 instructions, 43 layout pages, CSS/forms/cookies/cache, Hebrew, svg, fuzz seeds, 157 end-to-end checks |
+| hatarigui, 13 groups | browse Falcon:16; scripts Falcon:16 (4 boots); **screens: Falcon:256, Falcon:16 true colour, TT:ttmed, TT:mono, Falcon:256 palette**; st (ST:mono, ST:med); gateway; falcon (256); falcon4; deep; refresh; details; wide; boxes; dialogs (5 boots) | ~29 | 56 | the GEM side in every mode |
+| hatarifiles | Falcon:16 | ~8 | ~10 | opens and lookups against 6.5's budget |
+| hatarinet | Falcon:16 and TT | ~4 | ~8 | EWGET, TLS.OVL, DSP crypto, Gateway path |
+| hatarispeed | Falcon-4:16, ST:mono (4 boots with --nvdi) | 2-4 | ~15 | AESGAP stretches |
+| appdir.py, h5test, hebtest68k, bc68k, csscmp, urltest, fuzz | Falcon:16 / host / QEMU | 0-1 | 2-5 each | start by another program; parser, bytecode, CSS and URL parity |
+
+EWeb already runs TT:mono (1280x960) and Falcon true colour in its screens group, and Falcon:256 in three groups, on
+every drawing candidate. Its proposed cuts (about 5 boots, 10 minutes a candidate): dialogs on EmuTOS weekly; details on
+ST:mono dropped at 1.0; scripts "all" and "none" as one boot; deep's ST run weekly after 1.0; hatarinet's TT run weekly.
+It would keep speed at the stock 16 colours.
