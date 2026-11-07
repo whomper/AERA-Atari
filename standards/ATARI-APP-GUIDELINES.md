@@ -503,23 +503,32 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
 - **Only formal releases leave the build machine** (Erez's decision, 15 Oct 2026). Nobody is handed a
   test build, a CI artifact or a build from a branch, not even to try a fix: work
   lands on `main`, and a fix to try on real hardware goes out as a release. CI builds and checks but
-  publishes nothing. If a release doesn't work, roll back with a release: revert on `main`, release the
-  next number (never reuse or delete one), and mark the bad release's notes as withdrawn, naming the one
-  to use.
+  publishes nothing. If a release doesn't work, **fix forward** (below): a new release with the next number,
+  never a rollback; a number is never reused or deleted.
 - **Releases go out without asking Erez** (Erez's decision, 23 Oct 2026). When work on `main` is ready,
   the app's session releases it on its own:
   - the repo's own checks pass;
-  - the rigs on Erez's TOS images and NVDI pass, where the repo's CLAUDE.md asks for them;
-  - the hub's family checks pass (`acc_all.py`, for the GEM programs).
+  - the rigs the repo's CLAUDE.md asks for pass (on EmuTOS where the session has nothing else);
+  - the hub's checks follow the release and don't block it (the next bullet).
 
   It doesn't wait for a yes, and it releases as soon as the work is done rather than collecting it.
   The session then gives Erez the release's link in one line, with anything he has to do (the Gateway's
-  `./update-pi.sh`, say), and sends the hub the link. A bad release is rolled back the same way,
-  without asking. Decisions that are Erez's still go to him before the work ("Who decides what",
+  `./update-pi.sh`, say), and sends the hub the link. A bad release is fixed forward, without
+  asking. Decisions that are Erez's still go to him before the work ("Who decides what",
   above: new programs and capabilities, how programs work together, the user experience, phases,
   priorities and conflicts, Gateway packages, ports). A release inside an approved phase is not one of
   them. A change to the docs alone needs no release of its own: it goes out with the
   next one.
+- **The hub's checks follow the release; a fault is fixed forward, never rolled back** (Erez, 7 Nov 2026:
+  "C, but the app never rolls back, fixes and issues a new release, prioritized"). The app releases when its
+  own checks pass: its rigs on EmuTOS, its speed pre-check, its screenshots. It sends the hub the commit
+  and the link. After the release the hub runs the configurations of `standards/TEST-MATRIX.md` on Erez's
+  TOS images and NVDI, and reports to the app, and to Erez when a finding reaches the user. A fault the
+  hub or Erez finds is fixed by **a new release with the next number, which comes before any other work
+  of that session**. The old release stays where it is, with one line in the new one's notes saying what
+  it fixes: no revert, no "withdrawn" notice, no deleting. The hub's checks no longer gate a release in
+  EWeb, EPDF, EPlay and EMail (the apps now in the phases); the apps in maintenance keep the earlier rule
+  until Erez ends maintenance (section 8).
 - **Text-only changes take the short path** (Erez's decision, 18 Oct 2026). A change to the docs alone
   (README, `docs/`, the guide the help file is made from, CLAUDE.md) is pushed to `main` as soon as
   it reads right and the help file still builds and says the program's version (`make help`, or
@@ -1844,3 +1853,4 @@ program's window.
 | Speed: a redraw of 300 ms or less is drawn in one piece, a longer one in pieces of at most 100 ms (Erez, 4 Nov) | maintenance | maintenance (win_redraw_bands) | maintenance (message in next turns) | to check | — | — | to check | to check | to check |
 | 7.3 The name is Gateway, never "Pi" or "Pi gateway", in the status line, Settings' Secure page, menus, alerts, About box, guide, README and notes (Erez, 7 Nov) | next release | next release (maintenance: with a release made anyway) | next release | maintenance | maintenance | maintenance (moves into AERA-Gateway) | next release | next release | next release |
 | 7.3 Work handed to the Gateway shows three phases in the status line: Sending, Working, Receiving (`conn_phase`; Erez, 7 Nov) | — | — | with translation | — | — | — | next release (a page through the Gateway) | with the Gateway mode | — |
+| 1.2 The hub's checks follow the release; a fault is fixed forward by a new release, never rolled back (Erez, 7 Nov) | maintenance | maintenance | next release | maintenance | maintenance | maintenance | next release | next release | next release |
