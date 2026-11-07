@@ -67,10 +67,13 @@ Removed (Erez, 7 Nov): the separate TT 640x480 and MiNT runs (merged into 4); "F
 Falcon 256 colours (each app's own matrix must include a 256-colour run on a Falcon: EPDF has it in speed,
 prepared and econv_fsel; EWeb, EMail and EPlay to confirm).
 
-Open on row 4: the MiNT rig (`common/tests/xaaes/run.py`) boots a Falcon from an IDE disk image, and
-Hatari's TT has SCSI, not IDE. The TT + MiNT + 1280x960 mono configuration has to be built and shown to
-work (XaAES in mono, MiNT's SCSI driver); until then MiNT stays on the Falcon at 640x480 and the TT runs
-TOS (EmuTOS here: there is no TT image in Erez's folder).
+Row 4 is built (7 Nov, `common/tests/xaaes/run.py --machine tt`): a TT030 (68030 at 32 MHz, 4 MB + 16 MB TT RAM,
+FPU) on its high-resolution monitor, 1280x960 mono, EmuTOS 512k, FreeMiNT 1.17 with XaAES, the same IDE disk image the
+Falcon run uses (Hatari's TT takes IDE too; SCSI also works and is left aside, Erez). Shown working: ICONTEST (a
+window with XaAES's closer, iconifier and full gadgets) opens at 11 s; EWeb (the 0.72 fix build) starts, draws its page
+at full size under XaAES's gadgets, quits with ^Q (sent by scan code) and saves its settings, about 40 s a run. Each
+app runs its existing xaaes test or a short tour with `--machine tt` (it needs its ready and quit lines through
+NatFeats, as EWeb's "EWEB shown" and "EWEB quit"). There is no TT image in Erez's folder: EmuTOS is the TOS here.
 
 Not covered by emulation, and tested by Erez on his Falcon: the real DFB1 (50 MHz, 128 MB TT RAM), real
 disks, a NetUSBee, graphics cards (1024x768 and up, true colour), and the tester's CT63 (68060 under MiNT).
