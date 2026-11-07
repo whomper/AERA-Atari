@@ -58,4 +58,4 @@ Falcon:256 and econv_fsel on Falcon:256 only on a class-3 or palette change; gat
 EConvert's 68030 path or EPDF's drawing changes; its Falcon-4 speed rows on EmuTOS dropped if the hub always runs
 Falcon-4 with NVDI (ST:mono stays as the quick gate). No row boots the same test twice.
 
-Erez, 7 Nov 2026: no heavy file in any app's test for performance; simpler files give the same answer for a fraction of the time. EPDF's big.py (40 min) and the EDOS conversion (25 min) go; the hub's runs never used them.
+Erez, 7 Nov 2026: no heavy file in any app's test for performance; simpler files give the same answer for a fraction of the time. EPDF's big.py (40 min) and every EDOS_01.PDF row (the conversion 25 min, prepared on the converted copy) go: Erez, 7 Nov, "remove it altogether"; performance comes from generated books (pdfgen's book(n)) and the corpus. The hub's runs never used them.
