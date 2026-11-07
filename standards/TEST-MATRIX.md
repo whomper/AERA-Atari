@@ -28,6 +28,22 @@ machine, the whole EPlay set about 30 min); an app's own column is that session'
 | speed, 256 | Falcon-4:256 (EPDF, EWeb) | 3 | 256-colour drawing | only when the change is in drawing |
 | compare | 5 runs a side, speedcmp | 5 x above | host noise | replaced by one paired run when the deterministic-input work (hub task) is done |
 
+### Erez, 7 Nov 2026, on the hub's checks (second round)
+
+1. **Add MiNT + XaAES and the TT beside the Falcon.** The apps' own rigs already test TOS and the ST and
+   Falcon; the hub's family run covers what they don't: FreeMiNT + XaAES (a multitasking AES: dialogs in
+   windows, iconify, drag and drop) and a TT (68030 at 32 MHz, TT RAM, mono or TT medium), next to the
+   Falcon under NVDI. Proposed hub run per candidate: Falcon:16 NVDI, TT:ttmed, MiNT + XaAES on a Falcon;
+   each starts the program, opens its menu, About and one dialog, moves and closes a window, quits with
+   ^Q, and leaves no CRASH.LOG and no alert. No speed limits on the TT (the stock-machine rule is for the
+   ST and Falcon-4); speed stays on ST:mono, ST:med and Falcon-4 under NVDI.
+2. **The accessory test (`acc_all`) is a memory test** (Erez: "once we optimize application memory and
+   performance, testing accessories is just to see what fits, and that depends on the user's data").
+   Proposed: not a release gate any more. Each accessory keeps its own memory rows (KB free, MEMKB) in
+   its repo's rigs; `acc_all` stays in common/tests/family for a one-off question ("what fits with
+   these four"), and the hub runs it only when asked. Pending Erez's confirmation: it also caught crashes
+   and menu clashes when several accessories load, which the TT and MiNT runs do not.
+
 ## App's own checks (to be filled by each session)
 
 Each session sends: every script or command it runs before it asks the hub (make, test, itest, each
