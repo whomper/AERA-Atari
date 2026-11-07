@@ -554,6 +554,15 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
      `ST`, `ST-1` and `Falcon-4` (and `--nvdi`), acc_all plain, NVDI and again.
   A result for a binary that is byte for byte the one already measured, on the same machine,
   TOS and rig version, stands and is not run again (the build output's SHA-256 names it).
+- **NVDI is the configuration that counts; one boot per test** (Erez, 7 Nov 2026: "little need to test
+  non-NVDI more than once, it's a seldom used configuration these days; reduce the number of multiple
+  boots for the same test"). Where a check exists on a Falcon, it runs under NVDI. The same check
+  without NVDI (TOS's own VDI) runs **once per release candidate**, on the one machine that differs
+  most (`Falcon-4:16` for drawing and speed, `Falcon:16` for the family check), and only when the change
+  draws, starts or loops over data (kind 3 above). Machines that have no NVDI (the ST editions, TT)
+  are unaffected. A test that boots the same machine again with the same arguments (`--again`, a
+  "second boot") runs once, under NVDI, not once per configuration. The matrix of what every app
+  runs is `standards/TEST-MATRIX.md`; a check is added to it, or moved, with the reason.
 - **The speed rule in steps.** The rig moves in 5 ms steps and a row swings by about one step
   between runs, so a row is **slower** only when the candidate's median is 10 ms or more above the
   version before's and every candidate run is above every run of the version before
