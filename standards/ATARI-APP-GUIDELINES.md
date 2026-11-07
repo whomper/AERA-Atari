@@ -505,6 +505,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   lands on `main`, and a fix to try on real hardware goes out as a release. CI builds and checks but
   publishes nothing. If a release doesn't work, **fix forward** (below): a new release with the next number,
   never a rollback; a number is never reused or deleted.
+- **A rig never says "passed" over a step it skipped** (EContact's 1.78 finding, 7 Nov 2026: a click
+  that missed its button left the Font dialog untested, and the rig printed `skipped` and `all
+  passed`). A step that cannot run on a machine (no GDOS fonts, say) is reported as `SKIPPED: reason`
+  in the result line and counted, and the summary reads `passed, N skipped`, never `all passed`. Before
+  such a step is given up, the rig checks that its click did what it should (the screenshot after
+  differs from the one before, or the dialog's frame is there): a missed click is a FAIL. A rig that
+  clicks fixed pixels says where in its header, and its checks catch the layout moving.
 - **Releases go out without asking Erez** (Erez's decision, 23 Oct 2026). When work on `main` is ready,
   the app's session releases it on its own:
   - the repo's own checks pass;
