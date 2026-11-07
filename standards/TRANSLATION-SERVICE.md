@@ -115,3 +115,42 @@ on the Gateway that Erez names, before the first release.
    on it with the fixed Hebrew/English set before the first release.
 4. **The name is Gateway** in everything the user sees (guideline 7.3), so the service is "the
    Gateway" in alerts and menus, never "the Pi".
+
+## Managing the installed languages from the Atari (proposal, 7 Nov 2026; Erez's request, the hub owns it)
+
+Erez: "in the applications that support translation a settings area that allows to manage installed languages and by
+ticking their boxes they are actually installed ... provide the memory consumption of all languages so that the user
+decides how much memory to use. This is a shared code and activity that the hub will own."
+
+**What the user sees** (one shared dialog, `common/ui/langs.c`, opened from the app's Settings beside "Translate into"):
+- a list of the languages Argos offers, each a tick box with its size in MB (both directions together: fr 125, pt 129,
+  nl 134, ar 162, it 166, ja 225, he 229, de 286, ru 335, es 354; English is always there);
+- a total line: "Installed 229 MB of 600 MB" (the cap is the service's memory limit less its working space; the number
+  comes from the Gateway, not a guess);
+- ticking past the cap is refused with the number that does not fit; installed languages stay ticked;
+- Apply sends what changed; a progress bar with the three phases (guideline 7.3), because 290 MB takes minutes, and
+  the dialog can be closed while the Gateway works (the install is a job on the Gateway; the status line shows it);
+- the "Translate into" pop-up lists only the installed languages. A language that is not installed reads
+  "Settings > Languages" in the alert (EMail's wording fix then follows from this).
+
+**What the Gateway needs** (AERA-Gateway's session, the app's protocol is the hub's here): three requests on
+translategate's port, all behind the existing `--allow` address check:
+1. `GET /languages` extended: each language with its download size, installed or not, plus `cap_mb` and `used_mb`;
+2. `POST /languages` with the wanted set (tick boxes as a list), answered at once with a job number; the Gateway
+   fetches and installs through English only (x>en and en>x; es<>pt is not offered);
+3. `GET /job` for the progress (`bytes of bytes`, `done`, `failed: reason`), and translategate restarts itself when
+   the job ends.
+The installer fault (every ordered pair; he>de does not exist) is fixed first; this is one root action from the
+network, so it needs its own safeguard (below).
+
+**Decisions that are Erez's** (packages on the Gateway, a root action reachable from the network): (1) may the Atari
+ask the Gateway to install and remove language packs at all, or only the Pi's shell (as today); (2) if it may, with
+which safeguard: only from the addresses already allowed (the least), or also a key the user types once on the
+Atari (the Gateway shows no key to the network); (3) the cap: the service's MemoryMax stays 1 GB (about 420 MB for
+en+he), the dialog's cap is what the Pi's free memory allows, shown by the Gateway. Recommendation: yes, the allowed
+addresses plus a key, and the cap read from the Gateway.
+
+**Order of work** once Erez says yes: the Gateway's installer fix (their session), then the three requests; the hub
+writes `common/ui/langs.c` and its host test with a fake Gateway; EMail hooks it into Settings > Connection and
+releases (maintenance lifted for that by Erez); the other apps with translation follow. Nothing is built before the
+answer to (1).
