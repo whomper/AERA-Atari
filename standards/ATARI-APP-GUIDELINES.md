@@ -1224,6 +1224,11 @@ CONTACTS.TXT when the user chooses it (below).
     band or line. In a dialog window under a multitasking AES the title is the AES's, so there the
     info line is the only place. ECal's and EContact's `field.c` drew "\xD3\xC3" as text (tsadi and
     bet, not ayin and bet); they switch to the common badge.
+  - **No menu item for it** (Erez, 7 Nov 2026): the "Hebrew keyboard" menu entry is removed from every
+    app; F10 switches it, as before, and everything else about it works as before (the badge, the
+    dialogs, the INF). It is no longer shown in any menu. ECal's Hebrew dates is a setting, not a menu
+    entry, and stays one. The help and the READMEs name F10, not the menu. A menu bar that held only that
+    entry loses it (the shared menu builder takes the rows out, nothing else moves).
 
 ### 5.4 Text fields (must)
 - **A text field holds more than it shows** (Erez, 22 Oct 2026). What it takes is set by what goes
