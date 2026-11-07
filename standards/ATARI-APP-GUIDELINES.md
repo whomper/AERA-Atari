@@ -1625,7 +1625,10 @@ for every app (the ones in maintenance too: section 8).
   status line tells where the time goes, in the order it passes:
   1. **Sending**: "Sending to the Gateway... 12 KB" (the size, and as it goes the part already sent);
   2. **Working**: "The Gateway is translating..." (converting, loading the page: the verb is the
-     job's); no figure, because the app can't know how long; the user can press Esc;
+     job's); no figure unless the Gateway sends one (EPDF's pdfgate sends interim `102 Processing`
+     lines with `X-Progress: DONE/TOTAL`: the client keeps Working through them and the status
+     line may add "page 3 of 12"; Receiving starts at the final status line, never at a 1xx);
+     the user can press Esc;
   3. **Receiving**: "Receiving from the Gateway... 3 KB".
   Then the status line returns to what it showed. The words are proposed here and are Erez's to
   change. The code is common's: a gateway client calls `conn_phase(GATE_SEND / GATE_WAIT /
