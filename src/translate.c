@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
  * Copyright (C) 2026 AERA | Erez Yaary */
 /*
- * translate.c - the client of the Pi's translation service; see translate.h
+ * translate.c - the client of the Gateway's translation service; see translate.h
  * and standards/TRANSLATION-SERVICE.md.
  */
 #include <stdlib.h>
@@ -10,7 +10,7 @@
 #include "charset.h"
 #include "translate.h"
 
-#define TR_TIMEOUT_MS 60000L	/* a piece of 2 KB takes seconds on a Pi; the service answers 504 beyond this */
+#define TR_TIMEOUT_MS 60000L	/* a piece of 2 KB takes seconds on the Gateway; the service answers 504 beyond this */
 #define TR_HDRMAX     40	/* header lines read before giving up */
 
 /* ---- the pure parts ---- */
@@ -119,13 +119,13 @@ int translate_status_code(const char *line)
 const char *translate_refusal(int code)
 {
 	switch (code) {
-	case 400: return "the Pi didn't understand the request";
-	case 413: return "the text is too long for the Pi";
-	case 422: return "that language pair isn't installed on the Pi";
-	case 503: return "the translation engine on the Pi is loading or busy";
-	case 504: return "the Pi took too long to translate";
+	case 400: return "the Gateway didn't understand the request";
+	case 413: return "the text is too long for the Gateway";
+	case 422: return "that language pair isn't installed on the Gateway";
+	case 503: return "the translation engine on the Gateway is loading or busy";
+	case 504: return "the Gateway took too long to translate";
 	}
-	return "the Pi refused the request";
+	return "the Gateway refused the request";
 }
 
 /* is s[0..n) well-formed UTF-8 (no overlong forms, no surrogates)? */
@@ -222,13 +222,13 @@ static int http(const char *host, unsigned short port, const SBUF *req, const ch
 	c->timeout_ms = TR_TIMEOUT_MS;
 	conn_log("TRANSLATE", " >> ", what, (long)strlen(what));	/* never the text */
 	if (!conn_write(c, req->s, req->len)) {
-		put_err(err, errlen, c->err[0] ? c->err : "couldn't send to the Pi");
+		put_err(err, errlen, c->err[0] ? c->err : "couldn't send to the Gateway");
 		conn_close(c);
 		return 0;
 	}
 	sb_init(&line);
 	if (conn_getline(c, &line) < 0) {
-		put_err(err, errlen, c->err[0] ? c->err : "no answer from the Pi");
+		put_err(err, errlen, c->err[0] ? c->err : "no answer from the Gateway");
 		sb_free(&line);
 		conn_close(c);
 		return 0;
@@ -242,7 +242,7 @@ static int http(const char *host, unsigned short port, const SBUF *req, const ch
 	}
 	for (h = 0; h < TR_HDRMAX; h++) {
 		if (conn_getline(c, &line) < 0) {
-			put_err(err, errlen, c->err[0] ? c->err : "the Pi stopped answering");
+			put_err(err, errlen, c->err[0] ? c->err : "the Gateway stopped answering");
 			sb_free(&line);
 			conn_close(c);
 			return 0;
@@ -276,13 +276,13 @@ static int http(const char *host, unsigned short port, const SBUF *req, const ch
 		return code;
 	}
 	if (clen > maxbody) {
-		put_err(err, errlen, "the Pi's answer is longer than the protocol allows");
+		put_err(err, errlen, "the Gateway's answer is longer than the protocol allows");
 		conn_close(c);
 		return 0;
 	}
 	if (clen >= 0) {
 		if (clen > 0 && !conn_getbytes(c, body, clen)) {
-			put_err(err, errlen, c->err[0] ? c->err : "the Pi's answer broke off");
+			put_err(err, errlen, c->err[0] ? c->err : "the Gateway's answer broke off");
 			conn_close(c);
 			return 0;
 		}
@@ -291,7 +291,7 @@ static int http(const char *host, unsigned short port, const SBUF *req, const ch
 		long r;
 		while ((r = conn_read(c, tmp, sizeof(tmp))) > 0) {
 			if (body->len + r > maxbody) {
-				put_err(err, errlen, "the Pi's answer is longer than the protocol allows");
+				put_err(err, errlen, "the Gateway's answer is longer than the protocol allows");
 				conn_close(c);
 				return 0;
 			}
@@ -302,7 +302,7 @@ static int http(const char *host, unsigned short port, const SBUF *req, const ch
 			}
 		}
 		if (r < 0) {
-			put_err(err, errlen, c->err[0] ? c->err : "the Pi's answer broke off");
+			put_err(err, errlen, c->err[0] ? c->err : "the Gateway's answer broke off");
 			conn_close(c);
 			return 0;
 		}
@@ -317,7 +317,7 @@ static int get(const char *host, unsigned short port, const char *path, SBUF *bo
 	SBUF req;
 	int code;
 	if (!host_ok(host)) {
-		put_err(err, errlen, "no address for the Pi");
+		put_err(err, errlen, "no address for the Gateway");
 		return 0;
 	}
 	sb_init(&req);
@@ -371,7 +371,7 @@ int translate_languages(const char *host, unsigned short port, SBUF *out, char *
 	}
 	if (!utf8_ok((const unsigned char *)out->s + start, out->len - start)) {
 		out->len = start;
-		put_err(err, errlen, "the Pi's list of languages isn't text");
+		put_err(err, errlen, "the Gateway's list of languages isn't text");
 		return 0;
 	}
 	return 1;
@@ -395,7 +395,7 @@ int translate_piece(const char *host, unsigned short port, const char *to, const
 	}
 	sb_init(&req);
 	if (!translate_request(&req, host, to, from, utf8, n)) {
-		put_err(err, errlen, "bad language or address for the Pi");
+		put_err(err, errlen, "bad language or address for the Gateway");
 		sb_free(&req);
 		return 0;
 	}
@@ -407,7 +407,7 @@ int translate_piece(const char *host, unsigned short port, const char *to, const
 	if (code != 200)
 		return 0;
 	if (same_ans) {
-		/* already in the target language: the Pi sends no body, the text stands as it was */
+		/* already in the target language: the Gateway sends no body, the text stands as it was */
 		out->len = start;
 		if (!sb_add(out, utf8, n)) {
 			put_err(err, errlen, "out of memory");
@@ -418,7 +418,7 @@ int translate_piece(const char *host, unsigned short port, const char *to, const
 	} else if (!utf8_ok((const unsigned char *)out->s + start, out->len - start) ||
 		   count_paras(out->s + start, out->len - start) > count_paras(utf8, n) + 1) {
 		out->len = start;
-		put_err(err, errlen, "the Pi's answer breaks the protocol");
+		put_err(err, errlen, "the Gateway's answer breaks the protocol");
 		return 0;
 	}
 	if (from_used)
