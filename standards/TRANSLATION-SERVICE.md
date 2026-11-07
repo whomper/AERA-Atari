@@ -128,7 +128,7 @@ decides how much memory to use. This is a shared code and activity that the hub 
 - a total line: "Installed 229 MB of 600 MB" (the cap is the service's memory limit less its working space; the number
   comes from the Gateway, not a guess);
 - ticking past the cap is refused with the number that does not fit; installed languages stay ticked;
-- Apply sends what changed; a progress bar with the three phases (guideline 7.3), because 290 MB takes minutes, and
+- Nothing happens on the Gateway while the user ticks and unticks, and Cancel (Undo) sends nothing. **Only when the dialog closes with OK** (Erez, 7 Nov: "the atari will instruct the translation service to install or uninstall a language only once the setting dialog closes with OK") the app sends one request with the changes, installs and removals together; a progress bar with the three phases (guideline 7.3), because 290 MB takes minutes, and
   the dialog can be closed while the Gateway works (the install is a job on the Gateway; the status line shows it);
 - the "Translate into" pop-up lists only the installed languages. A language that is not installed reads
   "Settings > Languages" in the alert (EMail's wording fix then follows from this).
@@ -154,3 +154,9 @@ addresses plus a key, and the cap read from the Gateway.
 writes `common/ui/langs.c` and its host test with a fake Gateway; EMail hooks it into Settings > Connection and
 releases (maintenance lifted for that by Erez); the other apps with translation follow. Nothing is built before the
 answer to (1).
+
+**Answered (Erez, 7 Nov):** the Atari may ask the translation service to install and remove languages, **only when the
+dialog closes with OK**: ticks alone change nothing, Cancel sends nothing. The safeguard is the existing address check
+(`--allow`); no key unless Erez asks for one. The cap and the memory total shown before OK are the Gateway's numbers.
+EMail and the Gateway are open for the translation service (Erez, 5 Nov), so the work starts: the Gateway's installer
+fix and the three requests first, then `common/ui/langs.c` and its host test (the hub), then EMail's hook and release.
