@@ -70,6 +70,9 @@ All text is **UTF-8**. The gateway never sees Atari text. One request, one answe
 - **Log** (guideline 7.3): who connected, the language pair, the sizes in bytes and the time taken.
   **Never a word of the text**, in the log, in `journalctl`, in a crash message or in an error
   reply.
+- **Phases** (Erez, 7 Nov): the client tells the app when it is sending, when the Gateway is
+  working and when it is receiving (`conn_phase`, guideline 7.3), so the status line says where
+  the time goes. Pieces of 2 KB make Sending and Receiving short; Working is most of it.
 - **Listening:** the home network only, or `--allow ATARI_IP`, as the other gateways. No connection
   onwards (the engine is local), so no `--allow-local`.
 

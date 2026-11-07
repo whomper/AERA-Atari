@@ -1620,6 +1620,21 @@ for every app (the ones in maintenance too: section 8).
   install steps: "on a Raspberry Pi"). The INF keys (`GATE=`, `GATEPORT=`) and the code's names stay.
   Each app changes its words with its next release (the apps in maintenance with a release they
   make anyway, no release of their own for it).
+- **Work handed to the Gateway shows three phases** (Erez, 7 Nov 2026): when an app sends something
+  for the Gateway to process (a letter to translate, a PDF to convert, a page to render), the
+  status line tells where the time goes, in the order it passes:
+  1. **Sending**: "Sending to the Gateway... 12 KB" (the size, and as it goes the part already sent);
+  2. **Working**: "The Gateway is translating..." (converting, loading the page: the verb is the
+     job's); no figure, because the app can't know how long; the user can press Esc;
+  3. **Receiving**: "Receiving from the Gateway... 3 KB".
+  Then the status line returns to what it showed. The words are proposed here and are Erez's to
+  change. The code is common's: a gateway client calls `conn_phase(GATE_SEND / GATE_WAIT /
+  GATE_RECEIVE / GATE_DONE, bytes)` (`conn.h`; `translate.c` does for translating) and the app sets
+  its status line from the handler; progress inside Sending and Receiving comes from
+  `conn_bytes_out` / `conn_bytes` in `conn_tick`. "Sent" means handed to the network: the last
+  few KB may still be on the way. Quick questions (a status check, a language list) show nothing.
+  A phase that lasts under about 0.3 s need not be drawn (draw only when it changed and the last
+  draw was over 100 ms ago, so the status line doesn't flicker).
 - **One installer**, `gateway/aera-gateway` (install, update, status, remove): a systemd unit per
   gateway with its own user, `NoNewPrivileges`, `ProtectSystem=strict`, `ProtectHome` and
   `PrivateTmp`. A gateway on ports below 1024 gets `CAP_NET_BIND_SERVICE` and nothing else. An
@@ -1816,3 +1831,4 @@ program's window.
 | Speed: common's fast paths used (text_plain, text_fx, scr_rows, scr_fill, pb_vdi, DLG_CPU, offdraw), none slower under NVDI with a GDOS font (1 Nov) | ✓ (2.40: text_fx; scr_fill under scr_cpu_wins(); scr_xor under text_plain_state() > 0) | ✓ (1.76: its own audit; offdraw for the window) | — | — | — | — | — | — | — |
 | Speed: a redraw of 300 ms or less is drawn in one piece, a longer one in pieces of at most 100 ms (Erez, 4 Nov) | maintenance | maintenance (win_redraw_bands) | maintenance (message in next turns) | to check | — | — | to check | to check | to check |
 | 7.3 The name is Gateway, never "Pi" or "Pi gateway", in the status line, Settings' Secure page, menus, alerts, About box, guide, README and notes (Erez, 7 Nov) | next release | next release (maintenance: with a release made anyway) | next release | maintenance | maintenance | maintenance (moves into AERA-Gateway) | next release | next release | next release |
+| 7.3 Work handed to the Gateway shows three phases in the status line: Sending, Working, Receiving (`conn_phase`; Erez, 7 Nov) | — | — | with translation | — | — | — | next release (a page through the Gateway) | with the Gateway mode | — |
