@@ -1,0 +1,88 @@
+# Translation service (translategate) — spec v1
+
+Status: draft by the hub, 7 Nov 2026, from Erez's decisions of 5–7 Nov. Open decisions for Erez are
+at the end; nothing here is built or released yet.
+
+## What Erez decided
+
+- Version 1 is a switch and a language: **Translate On/Off** and a **target language**. The main
+  target is English. Hebrew (Atari logical order, 0xC2–0xDC) is a first-class source.
+- It runs **headless on the Pi**, with a **local engine**: no text leaves the home network.
+- **Only with Translate = On does an app touch the gateway.** Off means as today: no connection, no
+  new code path run, no speed or memory cost. This is tested (see Tests).
+- A new gateway entry point only for translation; the other gateways do not change.
+- Maintenance mode is opened for EMail and for AERA-Gateway for this service only.
+
+## Who does what (guideline 7.3, "one unit")
+
+- **AERA-Gateway's session** owns `translategate`, its engine set-up in `aera-gateway install
+  translate`, tests, port table entry and the release.
+- **The protocol is shared** (this file). The client is written once, in `common/` (hub, first as
+  `common/src/translate.c/.h`), so every app that translates uses the same code: a request is built
+  from UTF-8, the answer parsed from UTF-8, and `common/` charsets do Atari text <-> UTF-8.
+- **EMail is the first consumer** (reading a letter in another language); EWeb and EPDF may follow.
+  Each app asks the hub before adding its use (guideline 1.2); the user-facing words, look and
+  defaults are Erez's.
+
+## Protocol (HTTP/1.0 over plain TCP on the home network, as webgate)
+
+All text is **UTF-8**. The gateway never sees Atari text. One request, one answer, then close.
+
+- `GET /status` -> `200`, body: `translategate 1` then a line `engine NAME VERSION` and a line
+  `ready` (or `loading`).
+- `GET /languages` -> `200`, one line per language the engine can use: `CODE<TAB>NAME`, codes as
+  ISO 639-1 (`en`, `he`, `de`, ...). A pair that is not installed is not listed.
+- `POST /translate?to=CODE[&from=CODE]` with the text as the body (`Content-Type: text/plain;
+  charset=utf-8`, `Content-Length` required). No `from` means the engine detects it. Answer `200`
+  with the translation as the body and the line `X-Translate-From: CODE` for the language used.
+  Paragraph breaks (blank lines) and line breaks are kept; the answer has the same number of
+  paragraphs as the request.
+- Refusals are one short status line and a one-line text body: `400` bad request, `413` text over
+  the limit, `422` language pair not available, `503` engine loading or busy, `504` took too long.
+- **Limits:** a request body up to 8 KB (the app splits at paragraph ends and sends pieces in
+  order, a turn between pieces); one request at a time per connection; a time limit per request
+  (the app shows progress and Esc stops, rule 4f); the answer is not longer than 4x the request.
+- **No state:** the gateway keeps no text, no cache of text and no session. A request leaves no
+  trace except the log line below.
+- **Log** (guideline 7.3): who connected, the language pair, the sizes in bytes and the time taken.
+  **Never a word of the text**, in the log, in `journalctl`, in a crash message or in an error
+  reply.
+- **Listening:** the home network only, or `--allow ATARI_IP`, as the other gateways. No connection
+  onwards (the engine is local), so no `--allow-local`.
+
+## The engine on the Pi (Erez's decision on packages; recommendation)
+
+The Pi may only have standard Python plus what Erez approves (guideline 7.3). A neural engine is
+a package set he must approve. Options, with the hub's recommendation first:
+
+1. **Argos Translate** (CTranslate2, OpenNMT models, MIT/CC licensed, fully offline): good enough
+   for letters and pages, Hebrew–English both ways, about a second or two a sentence on a Pi 4/5,
+   some hundreds of MB of models on disk and 1–2 GB of RAM while loaded. Installed into its own
+   Python virtual environment under `/opt/translategate`, as its own system user; not system-wide.
+2. **Bergamot (Firefox translation models)**: smaller and faster, models per pair, build is more
+   work, Hebrew quality to be checked.
+3. **Apertium (apt)**: tiny, fast, rule-based; poor for Hebrew and for free text.
+
+The Gateway session verifies the choice by running a fixed Hebrew/English test set (a dozen
+letters and sentences of Erez's kind, no private text) and reports the quality, speed and memory
+on the Pi that Erez names, before the first release.
+
+## Tests
+
+- Gateway: the protocol, the limits, the refusals, a stand-in engine (no model needed for CI), and
+  a **log test that proves no text appears anywhere**.
+- Client in common: host tests with a stand-in server, the splitting at paragraph ends, UTF-8 <->
+  Atari text for Hebrew, every refusal.
+- Per app (EMail first): with Translate **Off**, the Hatari rig shows **no connection attempted, no
+  new code run** (a counter or trace), and the speed rig numbers are unchanged within noise; with
+  it On, the speed rig for the translate action (the window stays alive between pieces: stretch
+  under the guideline limit) on `ST:mono` and `Falcon-4:16`.
+
+## Open decisions for Erez
+
+1. **Port** for translategate (the hub proposes 8480; 143/587/110, 8180, 2121, 30000-30099, 8280,
+   8380 (pdf, pending), 2323 and 8281 on 127.0.0.1 are taken).
+2. **Pi packages**: Argos Translate and CTranslate2 in a virtual environment (needs `python3-venv`,
+   `pip` and the models; downloaded once at install, then offline), and the disk and RAM above.
+3. **Which Pi** runs it (a Pi 4/5 with 4 GB or more is the floor for option 1) and whether one Pi
+   carries all gateways.
