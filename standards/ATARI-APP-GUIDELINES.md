@@ -512,6 +512,8 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   such a step is given up, the rig checks that its click did what it should (the screenshot after
   differs from the one before, or the dialog's frame is there): a missed click is a FAIL. A rig that
   clicks fixed pixels says where in its header, and its checks catch the layout moving.
+  The focus apps adopt this in their next candidate; the apps in maintenance (section 8) adopt it
+  only when Erez ends maintenance, as with any new rule.
 - **Releases go out without asking Erez** (Erez's decision, 23 Oct 2026). When work on `main` is ready,
   the app's session releases it on its own:
   - the repo's own checks pass;
