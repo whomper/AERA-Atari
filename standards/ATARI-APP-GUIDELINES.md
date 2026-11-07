@@ -572,6 +572,16 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   are unaffected. A test that boots the same machine again with the same arguments (`--again`, a
   "second boot") runs once, under NVDI, not once per configuration. The matrix of what every app
   runs is `standards/TEST-MATRIX.md`; a check is added to it, or moved, with the reason.
+- **At least 60% of an app's Atari boots per release candidate run under NVDI, in every app** (Erez,
+  7 Nov 2026: "this is the norm these days", and "all applications should have the same NVDI testing
+  policies, not just the four of focus"). The boots of the app's own checks are counted, ST boots
+  (TOS 1.04 cannot run NVDI) included in the count, so an app with a fifth of its boots on the ST runs
+  about 72% of its Falcon and TT boots under NVDI. Each app's session has Erez's NVDI copy in
+  `~/.aera/nvdi/x` (ECal, EContact and EHypView since 19 Oct; the rest as Erez puts it there) and
+  runs its rigs with `AERA_WITH_NVDI=1`; the hub's paired speed comparison, the TT + MiNT run and
+  the true-colour shot stay with the hub. The focus apps apply it from their next candidate; an app
+  in maintenance applies it at its next release and starts nothing before (section 8). The one run
+  without NVDI per candidate (above) stays. Each app's matrix in `standards/TEST-MATRIX.md` names its share.
 - **The speed rule in steps.** The rig moves in 5 ms steps and a row swings by about one step
   between runs, so a row is **slower** only when the candidate's median is 10 ms or more above the
   version before's and every candidate run is above every run of the version before
@@ -1854,3 +1864,4 @@ program's window.
 | 7.3 The name is Gateway, never "Pi" or "Pi gateway", in the status line, Settings' Secure page, menus, alerts, About box, guide, README and notes (Erez, 7 Nov) | next release | next release (maintenance: with a release made anyway) | next release | maintenance | maintenance | maintenance (moves into AERA-Gateway) | next release | next release | next release |
 | 7.3 Work handed to the Gateway shows three phases in the status line: Sending, Working, Receiving (`conn_phase`; Erez, 7 Nov) | — | — | with translation | — | — | — | next release (a page through the Gateway) | with the Gateway mode | — |
 | 1.2 The hub's checks follow the release; a fault is fixed forward by a new release, never rolled back (Erez, 7 Nov) | maintenance | maintenance | next release | maintenance | maintenance | maintenance | next release | next release | next release |
+| 1.2 At least 60% of an app's Atari boots per candidate run under NVDI, every app the same (Erez, 7 Nov); the app's session needs Erez's NVDI copy | has NVDI; next release | has NVDI; next release | needs NVDI; next candidate | needs NVDI; next release | has NVDI; next release | needs NVDI; next release | needs NVDI; next candidate | needs NVDI; next candidate | needs NVDI; next candidate |

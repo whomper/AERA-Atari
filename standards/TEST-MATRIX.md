@@ -85,7 +85,7 @@ For a large screen with a card, the closest the rig can come is EmuTOS's own VDI
 
 ### Erez, 7 Nov 2026, fourth round: NVDI is the norm
 
-**At least 60% of each app's Atari boots per candidate run under NVDI** ("the norm these days"). Counted over all the
+**At least 60% of each app's Atari boots per candidate run under NVDI, every app the same** ("the norm these days"; "all applications should have the same NVDI testing policies, not just the four of focus"; a maintenance app applies it at its next release). Counted over all the
 boots of the app's own checks, ST boots included in the count: TOS 1.04 on an ST cannot run NVDI, so on a candidate
 with a fifth of its boots on the ST, 72% of the Falcon and TT boots must. The NVDI copy goes into each of the four
 focus apps' sessions (Erez's decision, replacing "the hub runs every NVDI row"): the apps run their function rigs,
