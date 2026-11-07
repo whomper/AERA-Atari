@@ -26,8 +26,8 @@ static char logbuf[200000];
 static long loglen;
 static char sent[40000];	/* what the client wrote to the current connection */
 static long sentlen;
-static const char *answers[8];	/* the canned answer of each connection, in order */
-static long answer_len[8];
+static const char *answers[40];	/* the canned answer of each connection, in order */
+static long answer_len[40];
 static int nconn, cur;
 static long fed;
 static int refuse_open;
@@ -98,7 +98,7 @@ static void reset(void)
 }
 
 /* an answer with a Content-Length */
-static char abuf[8][20000];
+static char abuf[40][2048];
 static const char *ok200(int i, const char *body, const char *from)
 {
 	snprintf(abuf[i], sizeof(abuf[i]), "HTTP/1.0 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\n"
@@ -129,6 +129,8 @@ int main(void)
 	check(translate_split("aaaa\n\nbbbb\n\ncccc", 16, 12) == 12, "split: at the last paragraph break that fits (12)");
 	check(translate_split("aaaa\n\nbbbbbbb\ncc cc", 19, 17) == 6, "split: the paragraph break wins over a later line end (6)");
 	check(translate_split("aaaa bbbb cccc dddd", 19, 12) == 10, "split: else at a space");
+	check(translate_split("Aaa bbb. Ccc ddd eee fff", 24, 18) == 9, "split: a sentence end before a line end or a space");
+	check(translate_split("Aaa bbb\nccc ddd. Eee fff ggg", 28, 20) == 17, "split: ...and before an earlier line end");
 	check(translate_split("aaaabbbbccccdddd", 16, 7) == 7, "split: else at the limit");
 	check(translate_split("aaaa\r\n\r\nbbbbbbbbbbbbbbbbbbbb", 28, 10) == 8, "split: CR LF CR LF is a paragraph break");
 	{
@@ -169,7 +171,7 @@ int main(void)
 	sb_init(&out);
 	reset();
 	script(0, ok200(0, "Hello world", "he"), -1);
-	check(translate_piece("PI_IP", 8480, "en", NULL, "SHALOM OLAM", 11, &out, from, err, sizeof(err)) &&
+	check(translate_piece("PI_IP", 8480, "en", NULL, "SHALOM OLAM", 11, &out, from, NULL, err, sizeof(err)) &&
 	      out.len == 11 && !memcmp(out.s, "Hello world", 11) && !strcmp(from, "he"), "a piece: answer and the language used");
 	check(!strncmp(sent, "POST /translate?to=en HTTP/1.0\r\n", 32) && sentlen > 11 && !memcmp(sent + sentlen - 11, "SHALOM OLAM", 11),
 	      "a piece: the request as built went out");
@@ -187,7 +189,7 @@ int main(void)
 			script(0, r[i].text, -1);
 			sb_reset(&out);
 			snprintf(what, sizeof(what), "refusal %d: nothing returned, the app's own words in err", r[i].code);
-			check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 1, &out, from, err, sizeof(err)) &&
+			check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 1, &out, from, NULL, err, sizeof(err)) &&
 			      out.len == 0 && err[0] && !strstr(err, "xyzzy") &&
 			      !strcmp(err, translate_refusal(r[i].code)), what);
 		}
@@ -196,33 +198,33 @@ int main(void)
 	/* answers it must not take */
 	reset();
 	script(0, "<html>hello</html>", -1);
-	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 1, &out, from, err, sizeof(err)), "not an HTTP answer: refused");
+	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 1, &out, from, NULL, err, sizeof(err)), "not an HTTP answer: refused");
 	reset();
 	script(0, "HTTP/1.0 200 OK\r\nContent-Length: 99999\r\n\r\nx", -1);
-	check(!translate_piece("PI_IP", 8480, "en", NULL, "hello", 5, &out, from, err, sizeof(err)), "more than 4 times the request: refused");
+	check(!translate_piece("PI_IP", 8480, "en", NULL, "hello", 5, &out, from, NULL, err, sizeof(err)), "more than 4 times the request: refused");
 	reset();
 	script(0, ok200(0, "caf\xE9 latin1", "de"), -1);
 	sb_reset(&out);
-	check(!translate_piece("PI_IP", 8480, "en", NULL, "hello", 5, &out, from, err, sizeof(err)) && out.len == 0, "not UTF-8: refused");
+	check(!translate_piece("PI_IP", 8480, "en", NULL, "hello", 5, &out, from, NULL, err, sizeof(err)) && out.len == 0, "not UTF-8: refused");
 	reset();
 	script(0, ok200(0, "a\n\nb\n\nc\n\nd\n\ne", "de"), -1);
-	check(!translate_piece("PI_IP", 8480, "en", NULL, "one paragraph only", 18, &out, from, err, sizeof(err)), "more paragraphs than the request: refused");
+	check(!translate_piece("PI_IP", 8480, "en", NULL, "one paragraph only", 18, &out, from, NULL, err, sizeof(err)), "more paragraphs than the request: refused");
 	reset();
 	script(0, "HTTP/1.0 200 OK\r\nContent-Length: 20\r\n\r\nshort", -1);
-	check(!translate_piece("PI_IP", 8480, "en", NULL, "hello", 5, &out, from, err, sizeof(err)), "an answer that breaks off: refused");
+	check(!translate_piece("PI_IP", 8480, "en", NULL, "hello", 5, &out, from, NULL, err, sizeof(err)), "an answer that breaks off: refused");
 	reset();
 	refuse_open = 1;
-	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 1, &out, from, err, sizeof(err)) && !strcmp(err, "connection refused"), "no Pi: the network's own error");
-	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 0, &out, from, err, sizeof(err)) &&
-	      !translate_piece("PI_IP", 8480, "en", NULL, big, TR_PIECE + 1, &out, from, err, sizeof(err)) &&
-	      !translate_piece("PI_IP", 8480, "EN", NULL, "x", 1, &out, from, err, sizeof(err)), "empty, too long, bad code: no connection tried");
+	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 1, &out, from, NULL, err, sizeof(err)) && !strcmp(err, "connection refused"), "no Pi: the network's own error");
+	check(!translate_piece("PI_IP", 8480, "en", NULL, "x", 0, &out, from, NULL, err, sizeof(err)) &&
+	      !translate_piece("PI_IP", 8480, "en", NULL, big, TR_PIECE + 1, &out, from, NULL, err, sizeof(err)) &&
+	      !translate_piece("PI_IP", 8480, "EN", NULL, "x", 1, &out, from, NULL, err, sizeof(err)), "empty, too long, bad code: no connection tried");
 	check(nconn == 0, "...and none was");
 
 	/* an HTTP/1.0 answer ended by the close */
 	reset();
 	script(0, "HTTP/1.0 200 OK\r\nX-Translate-From: fr\r\n\r\nBonjour tout le monde", -1);
 	sb_reset(&out);
-	check(translate_piece("PI_IP", 8480, "en", NULL, "Hello", 5, &out, from, err, sizeof(err)) && out.len == 21 && !strcmp(from, "fr"),
+	check(translate_piece("PI_IP", 8480, "en", NULL, "Hello", 5, &out, from, NULL, err, sizeof(err)) && out.len == 21 && !strcmp(from, "fr"),
 	      "no Content-Length: read to the close");
 
 	/* status and languages */
@@ -250,7 +252,7 @@ int main(void)
 		char word[] = { (char)0xC2, (char)0xC3, (char)0xC4, ' ', 0 };
 		long n = 0, wn = 0, outlen = 0;
 		char *res;
-		static char eng[8][100];
+		static char eng[40][100];
 		while (n < 20000) {
 			memcpy(atari + n, word, 4);
 			n += 4;
@@ -261,7 +263,7 @@ int main(void)
 		}
 		reset();
 		/* the "engine" answers each piece with the same letters in UTF-8: alef bet gimel */
-		for (i = 0; i < 8; i++) {
+		for (i = 0; i < 40; i++) {
 			long m = 0;
 			m += snprintf(eng[i] + m, sizeof(eng[i]) - m, "PIECE%ld \xD7\x90\xD7\x91\xD7\x92\n\n", i);
 			script(i, ok200(i, eng[i], "he"), -1);
@@ -272,7 +274,7 @@ int main(void)
 		check(res != NULL, "the whole text in pieces (UTF-8 doubles the Hebrew), answers joined");
 		if (res) {
 			char *u = atari_to_utf8(res, outlen, &wn);
-			check(nconn >= 4 && nconn <= 8 && strstr(res, "PIECE0") && strstr(res, "PIECE1") && strstr(res, "PIECE2") &&
+			check(nconn >= 15 && nconn <= 40 && strstr(res, "PIECE0") && strstr(res, "PIECE1") && strstr(res, "PIECE2") &&
 			      (unsigned char)strstr(res, "PIECE0")[7] == 0xC2 && !strcmp(from, "he"),
 			      "...in order, Hebrew back in Atari's letters");
 			check(strstr(res, "PIECE0") < strstr(res, "PIECE1") && strstr(res, "\n\nPIECE1"), "...paragraph breaks kept between the pieces");
@@ -280,6 +282,68 @@ int main(void)
 			free(res);
 		}
 		(void)want;
+	}
+
+	/* already in the target language: no body, the piece stands */
+	reset();
+	script(0, "HTTP/1.0 200 OK\r\nX-Translate-From: en\r\nX-Translate-Same: 1\r\nContent-Length: 0\r\n\r\n", -1);
+	sb_reset(&out);
+	{
+		int same = 0;
+		check(translate_piece("PI_IP", 8480, "en", NULL, "Already English.", 16, &out, from, &same, err, sizeof(err)) &&
+		      same == 1 && out.len == 16 && !memcmp(out.s, "Already English.", 16) && !strcmp(from, "en"),
+		      "already in the target language: 200, no body, same=1, the text as it was");
+	}
+
+	/* the cursor: a piece at a time, the app shows each, a stop between or inside */
+	{
+		static char text[9000];
+		TRANSLATE t;
+		SBUF got;
+		int r, steps = 0;
+		for (i = 0; i < (long)sizeof(text) - 1; i++)
+			text[i] = i % 60 == 59 ? '\n' : (i % 11 == 10 ? ' ' : 'a' + i % 26);
+		reset();
+		for (i = 0; i < 10; i++)
+			script(i, ok200(i, "piece", "de"), -1);
+		translate_begin(&t, "PI_IP", 8480, "en", NULL, text, sizeof(text) - 1);
+		sb_init(&got);
+		while ((r = translate_step(&t, &got)) > 0)
+			steps++;
+		check(r == 0 && steps == nconn && steps >= 4 && steps <= 6 && got.len == 5 * steps && t.pos == t.len &&
+		      !strcmp(t.from_used, "de"), "translate_step: 2 KB pieces to the end, the first language kept");
+		sb_free(&got);
+		/* a failure keeps what was done and says why */
+		reset();
+		script(0, ok200(0, "one", "de"), -1);
+		script(1, "HTTP/1.0 504 Slow\r\n\r\nx", -1);
+		translate_begin(&t, "PI_IP", 8480, "en", NULL, text, sizeof(text) - 1);
+		sb_init(&got);
+		check(translate_step(&t, &got) == 1 && translate_step(&t, &got) == -1 &&
+		      !strcmp(t.err, translate_refusal(504)) && got.len == 3 && t.pos > 0 && t.pos < t.len,
+		      "translate_step: a 504 on the second piece: -1, the first stays");
+		sb_free(&got);
+		/* the app drops it at once: conn_stop set from pf_idle */
+		reset();
+		script(0, "HTTP/1.0 200 OK\r\nContent-Length: 100\r\n\r\nxx", -1);	/* the rest never comes */
+		translate_begin(&t, "PI_IP", 8480, "en", NULL, text, 300);
+		sb_init(&got);
+		conn_stop = 1;
+		check(translate_step(&t, &got) == -1 && !strcmp(t.err, "stopped") && got.len == 0, "conn_stop: the piece is dropped, \"stopped\"");
+		conn_stop = 0;
+		sb_free(&got);
+	}
+
+	/* UTF-8 in and out, no Atari conversion */
+	{
+		char *r;
+		long rl = 0;
+		reset();
+		for (i = 0; i < 4; i++)
+			script(i, ok200(i, "\xD0\x9F\xD1\x80\xD0\xB8", "ru"), -1);
+		r = translate_utf8("PI_IP", 8480, "en", NULL, "\xD0\x9F\xD1\x80\xD0\xB8\xD0\xB2\xD0\xB5\xD1\x82", 12, NULL, from, &rl, err, sizeof(err));
+		check(r && rl == 6 && !memcmp(r, "\xD0\x9F\xD1\x80\xD0\xB8", 6) && !r[6] && !strcmp(from, "ru"), "translate_utf8: Cyrillic stays Cyrillic, no '?'");
+		free(r);
 	}
 
 	/* a turn between pieces, and a stop */
@@ -292,15 +356,15 @@ int main(void)
 		for (i = 0; i < (long)sizeof(text) - 1; i++)
 			text[i] = i % 50 == 49 ? '\n' : 'a' + i % 26;
 		reset();
-		for (i = 0; i < 3; i++)
+		for (i = 0; i < 40; i++)
 			script(i, ok200(i, "ok", "en"), -1);
 		turns = 0;
 		stop_at = 0;
 		r = translate_atari("PI_IP", 8480, "he", "en", text, sizeof(text) - 1, stopper, from, NULL, err, sizeof(err));
-		check(r != NULL && turns == 3 && last_done > 0, "a turn before each of the three pieces");
+		check(r != NULL && turns >= 8 && turns == nconn && last_done > 0, "a turn before each piece (2 KB a piece)");
 		free(r);
 		reset();
-		for (i = 0; i < 3; i++)
+		for (i = 0; i < 40; i++)
 			script(i, ok200(i, "ok", "en"), -1);
 		turns = 0;
 		stop_at = 2;
@@ -327,7 +391,7 @@ int main(void)
 		reset();
 		script(0, ok200(0, "THE-SECRET-ANSWER-TEXT", "en"), -1);
 		sb_reset(&out);
-		translate_piece("PI_IP", 8480, "en", NULL, secret, sizeof(secret) - 1, &out, from, err, sizeof(err));
+		translate_piece("PI_IP", 8480, "en", NULL, secret, sizeof(secret) - 1, &out, from, NULL, err, sizeof(err));
 		conn_log_flush();
 		check(loglen > 0 && !memmem(logbuf, loglen, "SECRET", 6), "the protocol log has the pair and the sizes, no word of the text or of the answer");
 		check(memmem(logbuf, loglen, "auto>en, 22 bytes", 17) != NULL, "...the pair and the size are there");

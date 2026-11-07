@@ -13,6 +13,14 @@ at the end; nothing here is built or released yet.
 - A new gateway entry point only for translation; the other gateways do not change.
 - Maintenance mode is opened for EMail and for AERA-Gateway for this service only.
 
+- **EMail's use (Erez, 7 Nov):** a menu item "Translate" with a check mark is the On/Off (no check
+  mark: off; Settings has only the target language; the Pi is the one the accounts use for the
+  gateway). With it on, every message opened is translated whole, subject and body; the status line
+  says "Translating..." and the text is shown when it comes back; translations are kept in memory
+  while the app runs, not on disk. The right-click menu has "Translate..." for highlighted words: it
+  sends just those words and shows the answer in a small pop-up without changing the screen.
+  The subject and the highlighted words are one short request each.
+
 ## Who does what (guideline 7.3, "one unit")
 
 - **AERA-Gateway's session** owns `translategate`, its engine set-up in `aera-gateway install
@@ -35,13 +43,28 @@ All text is **UTF-8**. The gateway never sees Atari text. One request, one answe
 - `POST /translate?to=CODE[&from=CODE]` with the text as the body (`Content-Type: text/plain;
   charset=utf-8`, `Content-Length` required). No `from` means the engine detects it. Answer `200`
   with the translation as the body and the line `X-Translate-From: CODE` for the language used.
-  Paragraph breaks (blank lines) and line breaks are kept; the answer has the same number of
-  paragraphs as the request.
+  - **Paragraphs** (blank lines) are kept exactly: the answer has the same number of paragraphs.
+  - **Lines inside a paragraph** (EMail, 7 Nov: mail is hard-wrapped at about 72 columns): the
+    Pi joins them with spaces and translates the paragraph as sentences; the answer has the
+    paragraph on one line and the app wraps it. A paragraph whose lines are all short (under
+    about 40 characters: an address block, a list, a poem) is translated line by line and
+    keeps its lines. The Pi decides this, once, for every app.
+  - **Left as they are**, by the Pi, around the engine: URLs, e-mail addresses, numbers with
+    units and quote markers (`>`). The Pi protects them with placeholders its engine keeps intact
+    and puts them back; the app does nothing.
+  - **Already in the target language:** `200`, `X-Translate-From: CODE`, `X-Translate-Same: 1`,
+    and an empty body. The app keeps the text it sent. The engine is not run.
 - Refusals are one short status line and a one-line text body: `400` bad request, `413` text over
   the limit, `422` language pair not available, `503` engine loading or busy, `504` took too long.
-- **Limits:** a request body up to 8 KB (the app splits at paragraph ends and sends pieces in
-  order, a turn between pieces); one request at a time per connection; a time limit per request
-  (the app shows progress and Esc stops, rule 4f); the answer is not longer than 4x the request.
+- **Limits:** a request body up to 8 KB; the client sends **2 KB** at a time (a few paragraphs,
+  split at a paragraph, else a sentence end, else a line end, else a space), so the first words
+  come back in seconds and Esc waits no longer than a piece; one request at a time per
+  connection; **60 seconds** a request, then `504`; the answer is not longer than 4x the request.
+- **A closed connection stops the job:** the Pi watches the socket while the engine works. An app
+  that drops a translation (Esc, the user opened the next letter) just closes the connection;
+  the Pi stops translating and keeps nothing.
+- **The engine stays loaded** between requests, so a short request (a subject, a few highlighted
+  words) is answered in about a second; `503` while it is loading.
 - **No state:** the gateway keeps no text, no cache of text and no session. A request leaves no
   trace except the log line below.
 - **Log** (guideline 7.3): who connected, the language pair, the sizes in bytes and the time taken.
