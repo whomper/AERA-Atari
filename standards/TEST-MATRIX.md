@@ -131,3 +131,27 @@ EWeb already runs TT:mono (1280x960) and Falcon true colour in its screens group
 every drawing candidate. Its proposed cuts (about 5 boots, 10 minutes a candidate): dialogs on EmuTOS weekly; details on
 ST:mono dropped at 1.0; scripts "all" and "none" as one boot; deep's ST run weekly after 1.0; hatarinet's TT run weekly.
 It would keep speed at the stock 16 colours.
+
+### EPlay (its own checks, as run for 0.28; every Atari row on EmuTOS 1.4, its container has neither Erez's TOS nor NVDI, so the NVDI run of row 4 is the hub's; minutes in that 2-core container)
+
+| # | Row | Machine and screen | Boots | Min | What only it catches |
+|---|---|---|---|---|---|
+| 1 | `make` (-Werror on EPlay's own code) | host | 0 | 1 | build breaks, warnings, the a56 listing |
+| 2 | `make test` | host, ASan | 0 | 1 | WAV/AIFF/MP3 parsing, tags, INF, M3U, order, dirlist, probe lengths |
+| 3a | `make dsptest`: the decoder bit for bit | host, Hatari's DSP core | 0 | ~4 | any arithmetic change in dsp/mp3.a56 against the C model |
+| 3b | dsptest's stream harness, 10 runs | host | 0 | ~2 | host interrupt, ring, HF2, packet breaks |
+| 3c | the harness at SIMLAT 300, SIMLOAD 103 | host | 0 | ~1 | a stock Falcon's timing: late granules at 49,170 Hz |
+| 4 | play_test, 20 cases (10 sound, 10 GEM) | Falcon-4:16 | 20 | ~5 | sound recorded and checked; the GEM cases |
+| 5 | play_test, the same 20 | Falcon:16 (the DFB1's 32 MHz) | 20 | ~5 | a 68030 faster than the DSP |
+| 6 | speed.py, 5 sessions, base and candidate | Falcon-4:16 | 10 | ~12 | AESGAP rows against the release before |
+| 7 | speed medians of 3, rows speedcmp flags only | Falcon-4:16 | 4 a row | ~3 a pair | a real step against noise |
+| 8 | acc_all --prg EPlay | Falcon:16 | 1 | ~2 | EPlay with the four accessories loaded |
+| 9 | the XaAES rig | Falcon:16, FreeMiNT + XaAES | 1 | ~4 | MiNT and windowed dialogs |
+| 10 | `make help` (hcp) | host | 0 | <1 | the guide compiles, every link has a page |
+| 11 | speed's list session + shots of the player window, the cover on the DSP path, the list | Falcon:256 | 1 | ~3 | pens 16-22 and the cover's dither in 256 colours (class 3 only; from now on) |
+
+Rows 6, 7, 4's ten GEM cases, 9 and 11 only for a change that draws, starts or loops over data (kind 3); a DSP-only
+change like 0.28 needs rows 1-3 and the ten sound cases of 4. Proposed cuts (EPlay): row 5 weekly (the 32 MHz machine
+has caught nothing Falcon-4 missed in 0.20-0.28; -20 boots); wavvol folded into wav (-1 boot); row 8 dropped as a gate
+(monthly with the hub's accessory test); row 7 only when flagged; row 3b to 6 runs (host time only); row 9 monthly once
+the hub's MiNT+XaAES 1280x960 row exists, unless dialogs or windows change. EPlay's row 4 under NVDI is the hub's run.
