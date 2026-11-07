@@ -1,10 +1,9 @@
-# Test matrix: what a release candidate goes through (draft, 7 Nov 2026)
+# Test matrix: what a release candidate goes through (draft, 7 Nov 2026; consolidated, with all four apps)
 
 Erez's rules (7 Nov 2026): NVDI is the configuration that counts; the same check without NVDI runs
 once per candidate; one boot per test, not several of the same (guideline 1.2). Minutes are measured
 on the hub's machine from its queue logs (a Falcon boot is about 2.4 min, a speed run 2-7 min per
-machine, the whole EPlay set about 30 min); an app's own column is that session's figure (asked
-7 Nov, to be filled).
+machine, the whole EPlay set about 30 min); an app's own column is that session's figure.
 
 ## Axes
 
@@ -84,7 +83,44 @@ disks, a NetUSBee, graphics cards (1024x768 and up, true colour), and the tester
 For a large screen with a card, the closest the rig can come is EmuTOS's own VDI at 1024x768 and 16 bits
 (not yet built).
 
-## App's own checks (to be filled by each session)
+## Consolidated matrix (the four focus apps and the hub, 7 Nov 2026)
+
+One row per configuration, one column per app: what runs today per candidate, and what is proposed. "-" = not run.
+NVDI cannot be had in the apps' containers (EMail, EPDF, EPlay have none; EWeb's rigs take it from the hub), so
+**the hub runs every NVDI row**; an app's own container runs the same rig once without NVDI. Times are each
+session's figure in its container.
+
+| Configuration | Hub | EMail | EPDF | EWeb | EPlay | Proposed |
+|---|---|---|---|---|---|---|
+| host: make, make test, itest/pi-test, fuzz | - | make test < 1, itest 3 | make 2, test 1, pi-test 0.5 | make 6, test 10, itest 12 | make 1, test 1, dsptest 7 | unchanged: fast, catch logic with no GEM |
+| `Falcon-4:16` NVDI (the stock Falcon) | speed, 4-14 | redraw, font, speed (23 with ST) | speed (EmuTOS) | speed (4 boots with --nvdi) | speed 5 sessions (12), play_test 20 cases (5) | **hub runs it, every kind-3 candidate**; apps run it once on EmuTOS/TOS 4.04 without NVDI |
+| `ST-1:mono`, TOS 1.04, 1 MB | acc_all refuses | net, badge, emailchk (3 rows) | files, big (dropped), gateway | - (4 MB exception) | - (no ST edition) | every app with an ST edition; EMail drops its duplicate ST rows |
+| `ST:mono`/`ST:med`, 4 MB | speed 12 | drag, badge (dupes) | speed, gui, hold, prepared | st group on 4 MB | - | ST:med only where a colour picture or a larger activity matters |
+| `Falcon:16`, TOS 4.04, no NVDI | acc_all (3 boots) | 24 rigs, ~55 | gui, prepared, econv_fsel | browse, scripts, files, net | play_test (second, 32 MHz), acc_all | the function rigs, once; EPlay's 32 MHz run weekly; acc_all monthly |
+| `Falcon:256` | speed (EPDF, EWeb) | **none today** | speed, prepared, econv_fsel | 3 groups | **none today** | **every app has one run** (EMail's net_test moves here; EPlay's row 11 added), drawing candidates only |
+| `Falcon:65536` NVDI (true colour) | planned | - | - | screens group | - | EWeb every drawing candidate; hub monthly for the others |
+| TT:mono 1280x960 + MiNT + XaAES | row built | xaaes_test (Falcon:16, EmuTOS), help_test TT:mono | - | screens group TT:ttmed + TT:mono | XaAES rig (Falcon:16) | **one hub run per candidate on the TT**; the app supplies its ready and quit lines; app-side XaAES rigs on dialog or window changes only |
+| other apps' releases (EContact, ECal, EHypView) | - | people, invite, econtact, help (4 rows) | - | - | - | run the cross-app row only when the code that talks to it changes |
+| `acc_all` (four accessories) | per candidate | - | - | - | row 8 | **monthly** (Erez, 7 Nov), not a gate |
+
+Per candidate today and proposed: EMail ~100 min (77 rigs, 23 speed) to ~60; EPDF ~85 min without big.py and EDOS (65
+of the 150 minutes were those two); EWeb ~125 min to ~115; EPlay ~45 min to ~25 on a draw-class change, ~12 on a
+DSP-only change; the hub ~35 min of speed and ~7 of the monthly accessory test. Boots total about 140 today, about 80
+proposed.
+
+Decisions the hub took on the apps' proposals (all within the team's remit; Erez sees them here):
+- **Accepted:** EPlay row 5 weekly, wavvol into wav, row 7 only when flagged, row 8 monthly; EMail's emailchk on
+  ST-1 only (Falcon monthly), one Falcon:256 run, the ST duplicates dropped, disk_test's mailbox trimmed when next
+  touched, rig 5/8/9/10/11/12/13 merged into one boot when next touched; EWeb's cuts (dialogs weekly on EmuTOS, scripts
+  as one boot, deep ST weekly, hatarinet TT weekly).
+- **Not accepted as put:** EMail's "base speed runs from the last release's saved numbers". Runs on different days or
+  machines differ by more than the rows' limits (EPlay's unpaired comparisons flagged host noise), and the 1.2 rule
+  is paired runs in one session. Counter-proposal, cheaper still: one paired pair (base and candidate, interleaved);
+  a second and third pair only for a row the first pair flags. That is 2 runs in the normal case, not 10.
+- **For the hub to do:** the NVDI runs of every app (above), the TT + MiNT run, a Falcon:65536 shot for each drawing
+  candidate; none exceeds what the hub runs today.
+
+## App's own checks (each session's own figures)
 
 Each session sends: every script or command it runs before it asks the hub (make, test, itest, each
 Hatari rig), with machines/screens, NVDI or not, TOS, boots, minutes, and what it catches that no other
@@ -131,6 +167,34 @@ EWeb already runs TT:mono (1280x960) and Falcon true colour in its screens group
 every drawing candidate. Its proposed cuts (about 5 boots, 10 minutes a candidate): dialogs on EmuTOS weekly; details on
 ST:mono dropped at 1.0; scripts "all" and "none" as one boot; deep's ST run weekly after 1.0; hatarinet's TT run weekly.
 It would keep speed at the stock 16 colours.
+
+### EMail (its own checks: the 2.0 candidate round of 7 Nov; Erez's TOS 1.04 and 4.04, TT on EmuTOS 1.4, no NVDI in its container, so every row is without NVDI; network "serial" = FAKESTNG over the serial bridge to Dovecot and a test SMTP)
+
+| # | Rig | Machine:screen | TOS | PRG/ACC | Boots | Min | Repeat of |
+|---|---|---|---|---|---|---|---|
+| 1, 2 | net_test | Falcon:16; ST-1:mono | 4.04; 1.04 | PRG | 1 each | 2.0 each | 2 repeats 1 (68000 path) |
+| 3 | stop_test | Falcon:16 | 4.04 | PRG | 1 | 0.7 | - |
+| 4 | disk_test (opens budget, GEMDOS trace) | Falcon:16 | 4.04 | PRG | 1 | 5.5 | - |
+| 5, 8-13 | select, esc, field, find, rename, scroll, tip | Falcon:16 | 4.04 | PRG | 1 each | 1.3-2.5 each (~13) | each mirrors the inbox, ~40 s |
+| 6, 7 | drag_test | Falcon:16; ST:mono | 4.04; 1.04 | PRG | 1 each | 1.1 each | 7 repeats 6 |
+| 14 | startoffline_test | Falcon:16 | 4.04 | PRG | 2 | 4.2 | - |
+| 15 | redraw_test | Falcon-4:16 | 4.04 | PRG | 1 | 2.2 | NVDI-capable |
+| 16 | tlsovl_test (present, missing; ST) | Falcon:16 x2, ST:mono | 4.04/1.04 | PRG | 3 | 2.1 | - |
+| 17 | falcon_test (TLS direct) | Falcon:16 | 4.04 | PRG | 1 | 2.2 | - |
+| 18-21 | people, people_file (EContact ACC), invite (ECal), econtact_test | Falcon:16 | 4.04 | PRG+ACC | 1 each | 1.9, 2.6, 2.5, 3.7 | 19, 21 partly repeat 18 |
+| 22 | help_test (EHypView release) | Falcon:16, TT:mono | 4.04/EmuTOS | PRG | 2 | 1.4 | - |
+| 23, 24 | badge_test | Falcon:16; ST-1:mono | 4.04; 1.04 | PRG | 1 each | 1.2 each | 24 repeats 23 |
+| 25 | translate_test (Translate off, then on, against translategate :8480) | Falcon:16 | 4.04 | PRG (trace build) | 2 | 3.1 | - |
+| 26-28 | emailchk_test; EMAILCHK "KB free before" | Falcon:16; ST-1:mono | 4.04/1.04 | ACC (+PRG) | 1 each | 7.0, 7.1, 7.1 | 27, 28 repeat 26's boot shape |
+| 29 | xaaes_test: first, account, bgemng | Falcon:16 | EmuTOS + XaAES | PRG | 3 | 1.8 | - |
+| 30 | speed.py + speedcmp, base and candidate x5 each | ST:mono, Falcon-4:16 | 1.04/4.04 | PRG | 20 | 23 | the 5-fold repeats; base = last release |
+
+About 77 minutes of rigs and 23 of speed (~100). A GEM-free change needs only make test (<1 min) and make itest (Dovecot,
+128 checks, plus TLS=1 and FALCON=1 on connection changes, ~3 min). Proposed cuts (EMail): net_test to Falcon:256 (cost
+0); NVDI rows 15 and 30 and font_test the hub's; emailchk on ST-1 only (-14 min); speed base from the last release's
+numbers (-11; not accepted as put, see the consolidated matrix); rigs 5, 8-13 in one boot (-7, next rig round); drop
+drag_test on ST:mono and the ST:med badge run (-6); trim disk_test's mailbox; run people_file only when people code
+changes. After: ~60 minutes.
 
 ### EPlay (its own checks, as run for 0.28; every Atari row on EmuTOS 1.4, its container has neither Erez's TOS nor NVDI, so the NVDI run of row 4 is the hub's; minutes in that 2-core container)
 
