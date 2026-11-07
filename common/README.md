@@ -85,6 +85,7 @@ These had drifted between the apps; each is now the most complete copy, with eve
 | `src/tls.c/.h` | EFTP (itself ECal + EMail) | ECal's TLS session resumption for EMail; EMail's ChaCha20-first handshake (twice as fast as AES-GCM on a 68030) for ECal and EContact |
 | `src/tls_none.c` | EFTP | the ST editions' stand-in, until TLS.OVL (below); names the Falcon edition from `TLS_FULL_EDITION` |
 | `src/conn.c/.h` | EFTP + EMail | one API: `conn_open(name, host, port, bufsize, sec, err, errlen)` with `bufsize` 0 for `conn_bufsize` (16 KB; EMail lowers it on a small Atari); `SEC_STARTTLS`; EFTP's Stop (`conn_stop`), raw reads (`conn_read`: 0 = closed, -1 = timeout/stopped), `conn_pending`, `conn_close_flush`; ECal's handshake timing; a block-buffered log flushed at each milestone |
+| `src/translate.c/.h` | translation service (7 Nov 2026, standards/TRANSLATION-SERVICE.md) | the client of the Pi's translategate: `translate_status`, `translate_languages`, `translate_piece` (one request of up to 8 KB UTF-8), and `translate_atari` (Atari text in and out, split at paragraph ends, a turn before each piece, nothing partial on a failure). Plain HTTP/1.0 on `conn.c`; an app calls it only with Translate On. The text and the answer never reach `conn_logfile`. Tests: `tests/translate` (stand-in network, 40 checks). 4.3 KB on a 68000 |
 
 An app provides `net_close_wait()` in its `plat.h` (declared; the code is in `atari/net_tos.c`).
 
