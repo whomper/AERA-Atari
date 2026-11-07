@@ -55,15 +55,16 @@ machine, the whole EPlay set about 30 min); an app's own column is that session'
 |---|---|---|---|
 | 1 | `Falcon-4:16`, NVDI | the stock Falcon (16 MHz 030, 4 MB, no FPU): speed rows and function | every candidate (kind 3) |
 | 2 | **`ST-1:mono`, TOS 1.04, 1 MB** | the 8 MHz ST with 1 MB (the smallest the family runs on): speed rows, function, file-access budget, memory refused and recovered | every candidate |
-| 3 | `ST-1:med` | ST medium (640x200, 4 colours) on the same 1 MB machine: speed | kind 3 only |
+| 3 | **`ST:med`, 4 MB** | ST medium (640x200, 4 colours) on the 1040 ST (4 MB): the larger activities (big pages, long documents, many messages) and speed | kind 3 only |
 | 4 | **TT, 1280x960 mono, with MiNT + XaAES** (one configuration) | the TT (68030 at 32 MHz, TT RAM) on the large screen, under a multitasking AES: dialogs in windows, iconify, drag and drop, layout at 1280x960 | every candidate |
 | 5 | `Falcon:65536`, NVDI | true colour (16 bits, Motorola order: EWeb's byte-swap bug lived here) | drawing candidates, and monthly |
 | 6 | `Falcon:16` without NVDI | TOS's own VDI, once | once per drawing candidate |
 | 7 | `acc_all` | the four accessories together | monthly |
 
-ST mono is now the 1 MB machine (Erez, 7 Nov): the separate 1 MB row is gone. **Exception: EWeb's ST edition**
-(`EWEBST.PRG`) has a 4 MB floor since 23 Oct (DESIGN.md), so its ST rows keep the 4 MB `ST:mono` and `ST:med`;
-EPlay has no ST edition. Every other app's ST rows move to `ST-1`.
+ST mono is the 1 MB machine (Erez, 7 Nov): the separate 1 MB row is gone; ST medium is the 4 MB machine, for
+larger activities (Erez, 7 Nov). **EWeb's ST edition** (`EWEBST.PRG`) has a 4 MB floor since 23 Oct (DESIGN.md): its ST
+rows run on the 4 MB ST (medium in row 3, and its mono rows on `ST:mono` with 4 MB, its one exception to row 2).
+EPlay has no ST edition. Every other app's mono ST rows move to `ST-1:mono`.
 
 Removed (Erez, 7 Nov): the separate TT 640x480 and MiNT runs (merged into 4); "Falcon:16 NVDI, start and quit"
 (the apps' own tests run on Falcons plenty); the monthly TT 1280x960 (4 has that resolution); the monthly
