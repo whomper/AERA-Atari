@@ -110,7 +110,7 @@ on the Gateway that Erez names, before the first release.
 2. **Argos Translate** (with CTranslate2) in its own Python virtual environment under
    `/opt/translategate`, as its own user: `python3-venv`, `pip` and the models, downloaded once at
    install and offline after that.
-3. **A Raspberry Pi 5 with 8 GB, one Gateway machine for all the services.** The Gateway session
+3. **One Gateway machine for all the services**: decided as a Raspberry Pi 5 with 8 GB; **Erez's Gateway now is a Raspberry Pi 4 with 4 GB (7 Nov)**, and that is the target until he says otherwise (64-bit OS needed for the engine's wheels; 4 GB is the minimum `install translate` accepts). The Gateway session
    budgets memory for the engine next to the other gateways and reports quality, speed and memory
    on it with the fixed Hebrew/English set before the first release.
 4. **The name is Gateway** in everything the user sees (guideline 7.3), so the service is "the
