@@ -26,6 +26,7 @@ short vdi_h, cw, ch, scr_w, scr_h, desk_x, desk_y, desk_w, desk_h, planes, gl_wc
 
 static char host[40] = "127.0.0.1";
 static unsigned short port = 18480;
+static int nscen = 7;		/* how many of the scenarios to run (the third number of LANGT.CFG) */
 static langs L;
 
 static void say(const char *fmt, const char *name, int a, int b, int c, const char *s)
@@ -57,6 +58,13 @@ static void config(void)
 				p = p * 10 + (unsigned long)(b[i++] - '0');
 			if (p)
 				port = (unsigned short)p;
+			while (b[i] == ' ')
+				i++;
+			if (b[i] >= '0' && b[i] <= '9') {
+				nscen = 0;
+				while (b[i] >= '0' && b[i] <= '9')
+					nscen = nscen * 10 + (b[i++] - '0');
+			}
 		}
 	}
 }
@@ -129,12 +137,16 @@ static void follow(const langs *l)
 
 static void ask(const char *name, int do_follow)
 {
+	static int n;
 	int r;
+	if (n++ >= nscen)
+		return;
 	say("LANGT ask %s\n", name, 0, 0, 0, "");
 	r = langs_run(&L);
 	say("LANGT got %s %d job %d add %d err %s\n", name, r, L.job, L.add_mb, L.err);
 	if (r == 1 && L.job && do_follow)
 		follow(&L);
+	evnt_timer_(2500);		/* (run.py sets the fake Gateway up for the next one meanwhile) */
 }
 
 int main(void)
@@ -157,6 +169,20 @@ int main(void)
 	progbar_pens(vdi_h, 0);
 	pb_vdi(vdi_h);			/* as ECal and EContact do: the bar's fast way, on TOS's own screen */
 	config();
+	{
+		/* a file FLAT beside the program: the flat look on a 3D AES; WINDOW: the dialog in a window of
+		   the AES's, as on MiNT and MagiC, forced here (tests the window code where there is none) */
+		long f = Fopen("FLAT", 0);
+		if (f >= 0) {
+			Fclose((short)f);
+			dlg_3d_on = 0;
+		}
+		f = Fopen("WINDOW", 0);
+		if (f >= 0) {
+			Fclose((short)f);
+			dlg_window_on = 1;
+		}
+	}
 	if (net_init()) {
 		char b[80];
 		snprintf(b, sizeof(b), "LANGT net %s to %s:%u\n", net_stack(), host, (unsigned)port);
@@ -172,7 +198,7 @@ int main(void)
 	ask("over", 0);
 	ask("keys", 1);
 	ask("mouse", 1);
-	ask("refused", 0);
+	ask("refused", 1);
 	ask("stop", 0);
 	ask("down", 0);
 	nf_debug("LANGT done\n");
