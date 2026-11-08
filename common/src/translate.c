@@ -11,6 +11,8 @@
 #include "translate.h"
 
 #define TR_TIMEOUT_MS 60000L	/* a piece of 2 KB takes seconds on the Gateway; the service answers 504 beyond this */
+
+long translate_timeout_ms = TR_TIMEOUT_MS;
 #define TR_HDRMAX     40	/* header lines read before giving up */
 
 /* ---- the pure parts ---- */
@@ -228,7 +230,7 @@ static int http_run(const char *host, unsigned short port, const SBUF *req, cons
 		put_err(err, errlen, msg);
 		return 0;
 	}
-	c->timeout_ms = TR_TIMEOUT_MS;
+	c->timeout_ms = translate_timeout_ms;
 	conn_log("TRANSLATE", " >> ", what, (long)strlen(what));	/* never the text */
 	if (!conn_write(c, req->s, req->len)) {
 		put_err(err, errlen, c->err[0] ? c->err : "couldn't send to the Gateway");
@@ -751,6 +753,12 @@ int translate_langs_set(const char *host, unsigned short port, const char *codes
 		return 0;
 	}
 	code = http(host, port, &req, "POST /languages", &body, 256, NULL, NULL, err, errlen);
+	/* translate_refusal's words are for a piece of text ("that language pair isn't
+	   installed"): here 422 is "over the room", 503 "a job is running" */
+	if (code == 422)
+		put_err(err, errlen, "those languages don't fit on the Gateway");
+	else if (code == 503)
+		put_err(err, errlen, "the Gateway is busy with languages already");
 	if (code == 200 || code == 202) {
 		int id = 0;
 		const char *q = body.s ? body.s : "";

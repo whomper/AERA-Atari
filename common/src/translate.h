@@ -18,6 +18,11 @@
 #define TR_PIECE_DEFAULT 2048	/* what the client sends at a time: a few paragraphs, seconds on the Gateway */
 #define TR_LANG  8		/* a language code with its NUL: "en", "he", "pt-BR" */
 
+/* how long a request waits for the Gateway, ms (60 s: a piece of text takes seconds). A quick
+   question that must not hold the app up (the job's progress, langs_job_step) sets less
+   for its own request and puts this back */
+extern long translate_timeout_ms;
+
 /* a turn between pieces: done and total in bytes of the Atari text; non-zero
    stops (Esc) */
 typedef int (*translate_turn_fn)(long done, long total);
@@ -112,7 +117,7 @@ char *translate_atari(const char *host, unsigned short port, const char *to, con
    room, lets the user tick and untick, and sends ONE request when it closes with
    OK; Cancel sends nothing. English is always there (it is not ticked). The
    sizes, the room and what is installed are the Gateway's numbers. */
-#define TR_LANGS_MAX 48
+#define TR_LANGS_MAX 64		/* (AERA-Gateway's table has 50 rows; 48 left two out) */
 #define TR_LANGNAME  40		/* the name in UTF-8, with its NUL */
 typedef struct {
 	char code[TR_LANG];

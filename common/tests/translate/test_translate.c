@@ -344,6 +344,22 @@ int main(void)
 		reset();
 		script(0, "HTTP/1.0 422 Unprocessable\r\nContent-Length: 0\r\n\r\n", -1);
 		check(!translate_langs_set("PI_IP", 8480, "he,de,es", &job, err, sizeof(err)) && err[0], "languages: refused: 422");
+		check(strstr(err, "don't fit") != NULL, "languages: a 422 says the languages don't fit (not 'that language pair')");
+		reset();
+		script(0, "HTTP/1.0 503 Busy\r\nContent-Length: 0\r\n\r\n", -1);
+		check(!translate_langs_set("PI_IP", 8480, "he", &job, err, sizeof(err)) && strstr(err, "busy with languages"),
+		      "languages: a 503 says a job is running");
+		{
+			/* AERA-Gateway's table has 50 rows (en and 49): none may be dropped */
+			static char big_list[8000];
+			int k, len = snprintf(big_list, sizeof(big_list), "cap_mb 1108\nused_mb 0\nen\tEnglish\t0\tinstalled\n");
+			for (k = 0; k < 49; k++)
+				len += snprintf(big_list + len, sizeof(big_list) - len, "%c%c\tLanguage %d\t%d\tavailable\n",
+						'a' + k / 26, 'a' + k % 26, k, 100 + k);
+			check(translate_langs_parse(&L, big_list, len) && L.n == 50 && !strcmp(L.l[49].code, "bw"),
+			      "languages: the Gateway's 50 rows all kept (TR_LANGS_MAX was 48)");
+		}
+		check(translate_timeout_ms == 60000L, "translate_timeout_ms starts at 60 s");
 		reset();
 		check(!translate_langs_set("PI_IP", 8480, "he;de", &job, err, sizeof(err)) && nconn == 0,
 		      "languages: a code with a stray character is never sent");
