@@ -15,7 +15,7 @@ is played by the clock: RATE MB a second, then the set wanted is the set install
 asked is kept in `log` (method, path, body), so a test can say "no POST was made" or "one POST, he,de".
 
     import fakegate
-    g = fakegate.Gate(port=18480, cap_mb=600)
+    g = fakegate.Gate(port=0, cap_mb=600)       (port 0: a free one, g.port)
     g.start() ... g.stop()
     g.delay_list = 30        (seconds the list takes: a stop is tried against it)
     g.post_status = 503      (the next POSTs are refused with this status)
@@ -102,15 +102,18 @@ class Gate:
 
             def reply(self, status, why="", headers=(), body=None):
                 data = body if body is not None else ("translategate: %s\n" % why).encode()
-                self.send_response_only(status)
-                self.send_header("Content-Type", "text/plain; charset=utf-8")
-                self.send_header("Content-Length", str(len(data)))
-                for k, v in headers:
-                    self.send_header(k, v)
-                self.send_header("Connection", "close")
-                self.end_headers()
-                self.wfile.write(data)
-                self.wfile.flush()
+                try:
+                    self.send_response_only(status)
+                    self.send_header("Content-Type", "text/plain; charset=utf-8")
+                    self.send_header("Content-Length", str(len(data)))
+                    for k, v in headers:
+                        self.send_header(k, v)
+                    self.send_header("Connection", "close")
+                    self.end_headers()
+                    self.wfile.write(data)
+                    self.wfile.flush()
+                except OSError:
+                    pass                    # the Atari went away (a stop)
 
             def do_GET(self):
                 gate.log.append(("GET", self.path, b""))
@@ -163,6 +166,7 @@ class Gate:
         self.stopping = False
         self.server = ThreadingHTTPServer((host, port), H)
         self.server.daemon_threads = True
+        self.port = self.server.server_address[1]       # (port 0: a free one)
 
     def used_mb(self):
         return sum(self.size[c] for c in self.installed if c != "en")

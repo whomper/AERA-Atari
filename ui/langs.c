@@ -461,14 +461,14 @@ static void tr_end(void)
 }
 
 static langs *lg;
-static short o_list, o_tot, o_msg, o_ok, o_cancel;
+static short o_list, o_tot, o_msg, o_msg2, o_ok, o_cancel;
 static short ord[TR_LANGS_MAX];
 static langs_nm names[TR_LANGS_MAX];
 static int cur, top, rows, cols;
 static GRECT rowsr;		/* where the rows are */
 static PANEBAR bar;
 #define LD_COLS 44		/* the lines of text: the list's width in cells */
-static char tot_text[48], msg_text[2 * LD_COLS + 1];
+static char tot_text[LD_COLS + 4], msg_text[2 * LD_COLS + 1], msg_l1[LD_COLS + 1], msg_l2[LD_COLS + 1];
 
 static int clip(GRECT *r)
 {
@@ -580,42 +580,28 @@ static void rows_draw(void)
 	rows_between(top, top + rows - 1);
 }
 
-/* the lines of a box of the dialog (the total: one; the message: two) on the dialog's own ground,
-   3D or flat (5.6): the tree drawn there again, then the text */
-static void line_draw(short obj, const char *text)
+/* objects first..last of the dialog drawn again (the strings under them cleared by the root's own
+   ground: 3D or flat), within what the dialog's window may draw */
+static void box_draw(short first, short last)
 {
-	GRECT r;
+	GRECT c;
 	short x, y;
-	char l1[LD_COLS + 1], l2[LD_COLS + 1];
-	int nl = ltree[obj].ob_height / gl_hchar;
-	objc_offset(ltree, obj, &x, &y);
-	r.x = x;
-	r.y = y;
-	r.w = ltree[obj].ob_width;
-	r.h = ltree[obj].ob_height;
-	l2[0] = 0;
-	if (nl > 1)
-		langs_wrap(text, r.w / gl_wchar < LD_COLS ? r.w / gl_wchar : LD_COLS, l1, l2);
-	else
-		put(l1, text, r.w / gl_wchar < LD_COLS ? r.w / gl_wchar + 1 : LD_COLS + 1);
+	objc_offset(ltree, first, &x, &y);
+	c.x = x;
+	c.y = y;
+	c.w = ltree[first].ob_width;
+	c.h = ltree[last].ob_y + ltree[last].ob_height - ltree[first].ob_y;
+	if (!dlg_cut(&c.x, &c.y, &c.w, &c.h))
+		return;
 	graf_mouse(M_OFF, 0);
-	if (clip(&r)) {
-		GRECT c = r;
-		dlg_cut(&c.x, &c.y, &c.w, &c.h);
-		objc_draw(ltree, 0, 8, c.x, c.y, c.w, c.h);
-		if (l1[0])
-			text_at(r.x, r.y, l1, (long)strlen(l1), r.w / gl_wchar, TX_LTR);
-		if (l2[0])
-			text_at(r.x, r.y + gl_hchar, l2, (long)strlen(l2), r.w / gl_wchar, TX_LTR);
-		clip_off();
-	}
+	objc_draw(ltree, 0, 8, c.x, c.y, c.w, c.h);
 	graf_mouse(M_ON, 0);
 }
 
 static void total_draw(void)
 {
 	langs_total_line(&lg->list, tot_text, sizeof(tot_text));
-	line_draw(o_tot, tot_text);
+	box_draw(o_tot, o_tot);
 }
 
 static void msg_set(const char *s)
@@ -623,7 +609,8 @@ static void msg_set(const char *s)
 	if (!strcmp(msg_text, s))
 		return;
 	put(msg_text, s, sizeof(msg_text));
-	line_draw(o_msg, msg_text);
+	langs_wrap(msg_text, LD_COLS, msg_l1, msg_l2);
+	box_draw(o_msg, o_msg2);
 }
 
 /* the whole list again: when the AES asks for a piece, and after a scroll */
@@ -640,8 +627,6 @@ static void more(short x, short y, short w, short h)
 	(void)x, (void)y, (void)w, (void)h;
 	place();
 	list_all();
-	line_draw(o_tot, tot_text);
-	line_draw(o_msg, msg_text);
 }
 
 /* the cursor to row k, kept in sight: the old and the new row drawn, or the rows when they scroll */
@@ -770,7 +755,7 @@ static int ask_list(langs *l)
 	}
 	conn_stop = 0;
 	if (!ok) {
-		alert(1, "[3][The Gateway's languages|can't be had: %s|Is the Gateway on?][ OK ]", l->err);
+		alert(1, "[3][The Gateway's languages|can't be had: %s][ OK ]", l->err);
 		return -1;
 	}
 	return 1;
@@ -800,7 +785,7 @@ static int send_set(langs *l)
 	}
 	conn_stop = 0;
 	if (!ok) {
-		alert(1, "[3][The Gateway can't change|the languages: %s|Change the ticks or cancel.][ OK ]", why);
+		alert(1, "[3][The languages can't be|changed: %s.|Change the ticks or cancel.][ OK ]", why);
 		return 0;
 	}
 	l->job = job;
@@ -914,7 +899,7 @@ int langs_run(langs *l)
 	cur = l->list.n ? 0 : -1;
 	top = 0;
 	tot_text[0] = 0;
-	msg_text[0] = 0;
+	msg_text[0] = msg_l1[0] = msg_l2[0] = 0;
 	langs_total_line(&l->list, tot_text, sizeof(tot_text));
 
 	font_sys_push();
@@ -923,8 +908,11 @@ int langs_run(langs *l)
 	tr_begin(48, 18);
 	tr_add(G_STRING, 0, 0, (long)"Languages on the Gateway", 2, 1, 24, 1);
 	o_list = tr_add(G_BOX, 0, 0, 0x00FF1100L, 2, 2, 44, 10);
-	o_tot = tr_add(G_IBOX, 0, 0, 0L, 2, 12, 44, 1);
-	o_msg = tr_add(G_IBOX, 0, 0, 0L, 2, 13, 44, 2);
+	/* the total and the message are G_STRINGs the AES draws on the dialog's own ground (3D or
+	   flat, 5.6), whatever the app's text_at does with the ground behind a letter */
+	o_tot = tr_add(G_STRING, 0, 0, (long)tot_text, 2, 12, 44, 1);
+	o_msg = tr_add(G_STRING, 0, 0, (long)msg_l1, 2, 13, 44, 1);
+	o_msg2 = tr_add(G_STRING, 0, 0, (long)msg_l2, 2, 14, 44, 1);
 	o_ok = tr_add(G_BUTTON, SELECTABLE | EXIT | DEFAULT, 0, (long)"OK", 26, 16, 9, 1);
 	o_cancel = tr_add(G_BUTTON, SELECTABLE | EXIT, 0, (long)"Cancel", 37, 16, 9, 1);
 	tr_end();
@@ -932,6 +920,7 @@ int langs_run(langs *l)
 	ltree[o_list].ob_height -= 3;
 	ltree[o_tot].ob_y += 5;
 	ltree[o_msg].ob_y += 6;
+	ltree[o_msg2].ob_y += 6;
 	ltree[o_ok].ob_y += 12;
 	ltree[o_cancel].ob_y += 12;
 	ltree[0].ob_height += 14;
@@ -956,7 +945,6 @@ int langs_run(langs *l)
 		/* (over the screen: the tree is drawn; the list and the lines with it. In a window the
 		   AES's redraw asks for them: more) */
 		list_all();
-		line_draw(o_tot, tot_text);
 	}
 	dlg_more(more);
 
