@@ -226,3 +226,27 @@ dialog closes with OK**: ticks alone change nothing, Cancel sends nothing. The s
 (`--allow`); no key unless Erez asks for one. The cap and the memory total shown before OK are the Gateway's numbers.
 EMail and the Gateway are open for the translation service (Erez, 5 Nov), so the work starts: the Gateway's installer
 fix and the three requests first, then `common/ui/langs.c` and its host test (the hub), then EMail's hook and release.
+
+**Built (the hub, 8 Nov 2026):** the dialog is `common/ui/langs.c/.h` (`langs_run`, then `langs_job_begin` and
+`langs_job_step` for the job's progress), tested in `common/tests/langs`: the words, the tick rules and the polling on
+the build machine, and the dialog itself in Hatari against `fakegate.py`, a stand-in translategate that answers as
+AERA-Gateway's does (`GET /languages?all=1`, `POST /languages`, `GET /job`), through common's own network code.
+What the code settled, for the apps that hook it in (EMail, EWeb, EPDF):
+- The list is asked when the dialog opens, with the busy bee and Esc to stop it; if the Gateway can't be had the
+  user gets an alert and the dialog doesn't open. English first, then the languages by name (the Gateway lists them by
+  code). A name the Atari set can't show is drawn as its code (the Gateway sends English names, so none is today).
+- Ticking past the room is refused in the dialog's message line ("Spanish does not fit: it needs 272 MB more.").
+  Nothing is sent while the user ticks, Cancel, Esc and Undo send nothing, and a closer of an AES's window is Cancel.
+  OK sends one `POST /languages`; if the Gateway refuses it (a job already running, over the room) an alert says why
+  and the dialog stays open.
+- After OK the app follows the job in its own event loop (`langs_job_step`: `GET /job` no oftener than every 2 s,
+  a few seconds' wait at most): "Installing languages: 120 of 290 MB" with the progress bar, "Languages installed",
+  "The Gateway could not install: why". translategate restarts itself when the job ends, so for a while its
+  `GET /languages` answers 503 or nothing: the dialog's poll waits 90 s for it, and the app asks for the languages
+  again (for "Translate into") only once the job says done.
+- The Gateway's numbers are used as they come: the room is `cap_mb` (1108 MB on a Pi 4 with 4 GB: the service's
+  memory less its working space, over the 1.25 a model takes loaded), a language's MB is the download both models take.
+  The spec's example above (600 MB) is a test value.
+- Two things found in the client (`src/translate.c`) and fixed: `TR_LANGS_MAX` was 48 and the Gateway's table has 50
+  rows (the last two were dropped silently); and 422 and 503 on `POST /languages` said "that language pair isn't
+  installed" / "engine loading", the words for a piece of text.

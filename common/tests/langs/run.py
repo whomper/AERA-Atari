@@ -15,8 +15,11 @@ FAKESTNG and the serial bridge), driven with keys and clicks:
     stop     the list takes long; Esc stops it: no dialog, no alert, result 0
     down     the Gateway isn't there: an alert, the dialog doesn't open, result -1
 
-    run.py WORK MACHINE [--nvdi]       MACHINE as common/tools/machines.py names them (ST:mono,
-                                       ST:med, Falcon:16, Falcon:256 ...)
+    run.py WORK MACHINE [--nvdi] [--window] [--flat]
+                                       MACHINE as common/tools/machines.py names them (ST:mono,
+                                       ST:med, Falcon:16, Falcon:256 ...); --window forces the dialog
+                                       into a window of the AES's (as on MiNT and MagiC), --flat the
+                                       flat look on a 3D AES
 
 Checks the console's "LANGT ..." lines and the fake's log, and takes a screenshot at each step
 (WORK/shots); the pictures are for looking at. Exits 1 if anything failed.
@@ -67,6 +70,10 @@ class Run:
         r = self.r
         r.put(os.path.join(HERE, "build", "atari", "LANGT.PRG"))
         r.write("LANGT.CFG", "127.0.0.1 %d\n" % self.gate.port)
+        if "--window" in sys.argv:          # the dialog in a window of the AES's, forced on TOS (dlg_window_on)
+            r.write("WINDOW", "")
+        if "--flat" in sys.argv:            # the flat look on an AES that has 3D (dlg_3d_on 0)
+            r.write("FLAT", "")
         r.start("C:\\LANGT.PRG", ready="LANGT ask cancel", boot=240 if not r.nvdi else 400)
 
     def console(self):

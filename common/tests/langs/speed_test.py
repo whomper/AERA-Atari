@@ -62,7 +62,7 @@ def main():
         seg = con[con.index("LANGT ask cancel"):]
         gaps = [int(g) for g in re.findall(r"AESGAP (\d+) ms", seg[seg.index("LANGS geom"):])]
         opened = gaps[0] if gaps else 0
-        r.results.append(("the dialog opened (list read, drawn)", opened, OPEN_ST if r.st else speed.DIALOG))
+        r.results.append(("the dialog opened (the first time)", opened, OPEN_ST if r.st else speed.DIALOG))
 
         def click(x, y):
             g = dict(l.split("=") for l in r.xdo("getwindowgeometry", "--shell", r.win()).split())
@@ -90,6 +90,16 @@ def main():
         r.act("a click in the bar's track (a page)", speed.PAGE, lambda: click(bar[0] + bar[2] // 2, bar[1] + bar[3] - bar[2] - 8))
         r.act("a click on the bar's up arrow (a row)", speed.LINE, lambda: click(bar[0] + bar[2] // 2, bar[1] + 8))
         r.act("the dialog closed (Esc)", speed.WINDOW, lambda: r.key("Escape"))
+        # LANGT opens it again at once (its next scenario): the second time, the bar's first-draw check done
+        end = time.time() + 90
+        while time.time() < end and r.console().count("LANGS geom") < 2:
+            time.sleep(1)
+        r.still()
+        con = r.console()
+        if con.count("LANGS geom") >= 2:
+            i = [m.start() for m in re.finditer("LANGS geom", con)][1]
+            gaps = [int(g) for g in re.findall(r"AESGAP (\d+) ms", con[i:])]
+            r.results.append(("the dialog opened again (second time)", gaps[0] if gaps else 0, OPEN_ST if r.st else speed.DIALOG))
         rc = r.report()
     finally:
         r.stop()
