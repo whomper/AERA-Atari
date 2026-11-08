@@ -546,13 +546,17 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   and no run on Erez's TOS, and it doesn't wait for code that is still being tested: push it ahead
   on its own commits. A release that changes only the docs and the help file goes out the same way
   (without asking, as every release); the release workflow's own checks still run.
-- **A test that needs another AERA program uses that program's latest release** (Erez's decision,
-  17 Oct 2026), what Erez runs, not a build of its `main`: `common/tools/getrelease.py APP DIR FILE...`
-  fetches it (and `APP@vX.Y` a given one) and writes which release it was. A report names the release
-  it was tested against. The one exception is a change that both programs are still making (a
-  message one sends and the other answers): then test against the other's `main` at a named commit,
-  say so in the report, and test again against its release once it is out. Shared code (`common/`,
-  `xl/`, `gateway/`) is taken as source by design; this rule is about programs.
+- **No app tests with another AERA program or accessory** (Erez, 8 Nov 2026; replaces 17 Oct's "a test that
+  needs another program uses its latest release"). An app's own tests (`make test`, `make itest`, the
+  Hatari rigs, the speed rig, the session checks) run the app alone: no other AERA program or accessory
+  is loaded beside it, started by it or fetched for it (`getrelease.py` is not used in an app's repo). What
+  an app does with another one (PEOPLE, hand-overs, invitations, links, the Help key) is tested against a
+  stand-in that the app's repo owns and that plays the other's side of the message or protocol
+  (`fakecontact.acc`, `fakecal.acc`, `ASKER.PRG`, `fakeguide` and the like). The real programs together
+  are the hub's family checks (`common/tests/family/acc_all.py`, the joint scenarios), on their latest
+  releases, as the hub runs them for a candidate. Shared code (`common/`, `xl/`, `gateway/`) is taken as
+  source by design; this rule is about programs and accessories. A rig that loads the app's own
+  accessory and program together (the twin hand-over) is the app alone, and stays.
 - **A new capability goes to the hub first** (Erez, 5 Nov 2026). Before an app builds anything the family
   might share (a keyboard layout, a dialog, a file format, a protocol, a drawing or timing helper, a
   setting), its session asks the hub (the AERA-Atari session) whether `common/`, `xl/` or `gateway/`
@@ -1862,7 +1866,7 @@ program's window.
 | Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ (exception, Erez 31 Oct: a line scrolled on ST:mono 115-155 ms, glide steps kept) | ✗ | ✗ | ✗ | ✗ | ✗ | ~ (0.56: the ST floor recorded, DESIGN.md 076f9a7c1, Erez 31 Oct; Falcon-4: 3 actions still over; EUpdate ✗) | ✓ (0.5, the hub's run on TOS 1.04/4.04: ST:mono, ST:med and Falcon-4, plain and under NVDI with Courier 14, all within; About 185 on ST:med, under 2 Nov's 200) | — |
 | Speed: text through `text_n` and `text_fx` (`common/ui/text.c`), clipping off inside the clip (26 Oct) | ✗ | ✗ (next round, after 1.70) | ✓ (1.62: cb210535) | ✓ (1.61: 25e66d0) | ✗ (its own, e2f417a) | ✓ (1.66: 387e054) | ✗ (0.43: d89ee7497, with its release; EUpdate ✗) | ✓ (0.1: textwin.c draw_rows) | — |
 | Speed: the clip set to the area moved before a scroll's `vro_cpyfm` (26 Oct, EFTP) | to check | ✓ (1.70: no change needed) | ✓ (1.62: scroll_copy, as it was) | ✓ (1.62: 71432ab9d) | to check | ✓ (1.66: text_noclip before each copy) | ✓ (0.43: clip_on before both scrolls; EUpdate ✓ 1.15: 39ffae04a) | ✓ (0.1: textwin.c moved()) | — |
-| 1.2 Tests use other programs' releases (`getrelease.py`), not their `main` | ✓ (84559ef) | ✓ | ✓ | ✓ (none uses another program) | ✓ | ✓ | n/a (none uses another program) | n/a | — |
+| 1.2 No app tests with another AERA program or accessory (Erez, 8 Nov): stand-ins in the app's repo, the real ones in the hub's family checks | to check | to check | to check | to check | to check | to check | to check | to check | to check |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) | ✓ (0.1) | — |
 | Machines: `-ffunction-sections -fdata-sections`, `--gc-sections` for every program and accessory (1 Nov) | ✓ (2.39: ECAL.ACC 16.3 KB, ECAL.PRG 9.7 KB less) | ✓ (1.76) | ~ (EMAILCHK.ACC; EMAIL.PRG with 1.72) | ✓ (1.74: 12.3 KB less) | ✓ (since before 1.16) | to check (next after 1.73: 5.7 KB less, ready) | to check (EUpdate ✓ since 1.0) | ✓ (since 0.1) | ✓ (since 0.1) |
 | Machines: a 68020+ program says so on an ST (`cpucheck.c`, 27 Oct) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | n/a (68000) | ✓ (EWEB.PRG: 2b3cc3d47, 0.47; EUpdate ✓ ec8851c39, 52e737a1d, 1.19) | n/a (a 68000 program) | — |
