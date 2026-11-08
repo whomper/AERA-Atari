@@ -60,6 +60,33 @@ phases in the status line (guideline 7.3), and the rule that nothing of the text
 What each app translates (a letter's subject and body; a page's visible text with its structure kept;
 a PDF's text view's paragraphs) is the app's proposal to Erez.
 
+## EWeb and EPDF: what Erez approved (8 Nov 2026, "Yes to all of it")
+
+From the two apps' proposals (their sessions hold the details; the Gateway session builds the Gateway side):
+
+- **Both:** a checked **View > Translate** item is the on/off, for every page or document, kept in the
+  app's settings file; Settings has "Translate into" (installed languages only) and "Languages..."
+  (`common/ui/langs.c`). Translation is kept in memory, never written to the Atari's disk; Back or
+  reopening translates again when the kept copy is gone. A refusal (422/503/504) leaves the original on
+  screen with the reason on the status line (EPDF: one alert per document). Translate Off: no header, no
+  request, no new code run (each app's rig counts it) and the speed numbers stay.
+- **EWeb, direct:** the page shows at once untranslated; 2 KB pieces after parse and style, the first
+  screen first, redrawn when its pieces are back, then the rest at the relayout throttle; Esc stops;
+  the three phases in the status line. **Through the Gateway:** one header on the document request,
+  `X-Gateway-Translate: to=CODE`; webgate translates the visible text, title, img alt, placeholders, button
+  labels and title attributes, keeps tags, links, forms, scripts, URLs, numbers; `<html lang dir>` set
+  (rtl for he); answer in UTF-8 with `X-Translate-From` / `X-Translate-Same`; a refusal sends the page
+  untranslated with `X-Translate-Refused: CODE why`. At most the first 64 KB of text within a 90 s
+  budget, the rest as it was, `X-Translate-Partial: 64K`.
+- **EPDF:** the text view only (paragraphs, page by page from the page in view; picture lines and page
+  images untouched); the original shows until the translation arrives; the page head can read
+  "Page 3 · from Hebrew". **Through the Gateway:** one more query option on `POST /convert`,
+  `translate=CODE`; the converted PDF carries each page's text in two forms (a second stream,
+  /AERA /Translated, docs/CONVERTED-PDF.md) so Translate on and off need no second conversion; the
+  status words "The Gateway is converting and translating..."; refusals as pdfgate lines. **Direct:**
+  paragraphs in 2 KB pieces through common's translate.c, the page in view first, then onwards in the
+  reader's turns. The right-click menu has "Translate..." for the selection (a pop-up).
+
 ## Who does what (guideline 7.3, "one unit")
 
 - **AERA-Gateway's session** owns `translategate`, its engine set-up in `aera-gateway install
