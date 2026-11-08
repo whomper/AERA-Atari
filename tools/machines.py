@@ -323,6 +323,9 @@ class Machine:
     def accs(self, apps):
         """the family's accessories alongside (see above); returns what was put
         on C:, e.g. ["ECal v2.16"]"""
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import hubonly
+        hubonly.require("machines.py accs()")
         os.makedirs(self.hd, exist_ok=True)
         done = []
         for app in apps:
