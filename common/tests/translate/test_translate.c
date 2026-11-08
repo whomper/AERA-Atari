@@ -295,6 +295,72 @@ int main(void)
 		      strstr(out.s, "he\t\xD7\xA2"), "GET /languages");
 	}
 
+	/* the Languages page: the list with sizes, the ticks, the request, the job */
+	{
+		static const char list[] =
+			"cap_mb 600\nused_mb 229\n"
+			"fr\tFrench\t125\tavailable\n"
+			"he\t\xD7\xA2\xD7\x91\xD7\xA8\xD7\x99\xD7\xAA\t229\tinstalled\n"
+			"de\tGerman\t286\tavailable\n"
+			"es\tSpanish\t354\tavailable\n"
+			"bad code\tNo\t5\tavailable\n"
+			"xx\tNo mb\tx\tavailable\n"
+			"en\tEnglish\t0\tinstalled\n";
+		static TR_LANGS L;
+		static TR_JOB J;
+		char codes[64];
+		int job = -1;
+		check(translate_langs_parse(&L, list, (long)strlen(list)) && L.cap_mb == 600 && L.used_mb == 229 && L.n == 5,
+		      "languages: the list parsed, bad rows left out");
+		check(L.l[1].installed && L.l[1].want && !L.l[0].installed && L.l[1].mb == 229 && !strcmp(L.l[4].code, "en"),
+		      "languages: installed and wanted start the same");
+		check(translate_langs_total(&L) == 229 && !translate_langs_changed(&L), "languages: the total and nothing changed");
+		check(translate_langs_fits(&L, 2) && translate_langs_over(&L, 2) == 0, "languages: German fits (229 + 286 of 600)");
+		L.l[2].want = 1;
+		check(translate_langs_total(&L) == 515 && translate_langs_changed(&L), "languages: ticking German: 515 MB, changed");
+		check(!translate_langs_fits(&L, 3) && translate_langs_over(&L, 3) == 269,
+		      "languages: Spanish would go 269 MB past the room");
+		check(translate_langs_codes(&L, codes, sizeof(codes)) && !strcmp(codes, "he,de"), "languages: the set is he,de (no English)");
+		check(!translate_langs_codes(&L, codes, 4), "languages: no room for the codes: refused");
+		L.l[1].want = 0;
+		check(translate_langs_codes(&L, codes, sizeof(codes)) && !strcmp(codes, "de"), "languages: Hebrew unticked: de");
+		L.l[2].want = 0;
+		check(translate_langs_codes(&L, codes, sizeof(codes)) && !codes[0], "languages: nothing ticked: an empty set");
+		check(!translate_langs_parse(&L, "hello\n", 6), "languages: not the list: refused");
+
+		reset();
+		script(0, ok200(0, list, "en"), -1);
+		check(translate_langs_get("PI_IP", 8480, &L, err, sizeof(err)) && L.n == 5 &&
+		      !strncmp(sent, "GET /languages?all=1 HTTP/1.0\r\n", 31), "languages: GET /languages?all=1");
+
+		reset();
+		script(0, "HTTP/1.0 202 Accepted\r\nX-Translate-Job: 7\r\nContent-Length: 6\r\n\r\njob 7\n", -1);
+		check(translate_langs_set("PI_IP", 8480, "he,de", &job, err, sizeof(err)) && job == 7 &&
+		      !strncmp(sent, "POST /languages HTTP/1.0\r\n", 26) && strstr(sent, "Content-Length: 5\r\n") &&
+		      !strncmp(sent + sentlen - 5, "he,de", 5), "languages: POST /languages, job 7");
+		reset();
+		script(0, "HTTP/1.0 200 OK\r\nContent-Length: 11\r\n\r\njob 0\ndone\n", -1);
+		check(translate_langs_set("PI_IP", 8480, "he", &job, err, sizeof(err)) && job == 0, "languages: nothing to do: job 0");
+		reset();
+		script(0, "HTTP/1.0 422 Unprocessable\r\nContent-Length: 0\r\n\r\n", -1);
+		check(!translate_langs_set("PI_IP", 8480, "he,de,es", &job, err, sizeof(err)) && err[0], "languages: refused: 422");
+		reset();
+		check(!translate_langs_set("PI_IP", 8480, "he;de", &job, err, sizeof(err)) && nconn == 0,
+		      "languages: a code with a stray character is never sent");
+
+		check(translate_job_parse(&J, "job 7\nrunning\nbytes 120 of 290\n", 31) && J.id == 7 && J.state == TR_JOB_RUNNING &&
+		      J.done == 120 && J.total == 290, "job: running, 120 of 290");
+		check(translate_job_parse(&J, "job 7\ndone\n", 11) && J.state == TR_JOB_DONE, "job: done");
+		check(translate_job_parse(&J, "job 8\nfailed: no room\n", 22) && J.state == TR_JOB_FAILED && !strcmp(J.why, "no room"),
+		      "job: failed with its reason");
+		check(translate_job_parse(&J, "job 0\nnone\n", 11) && J.state == TR_JOB_NONE, "job: none");
+		check(!translate_job_parse(&J, "what\n", 5), "job: not a job answer: refused");
+		reset();
+		script(0, ok200(0, "job 7\nrunning\nbytes 1 of 2\n", "en"), -1);
+		check(translate_job_get("PI_IP", 8480, &J, err, sizeof(err)) && J.done == 1 && !strncmp(sent, "GET /job HTTP/1.0\r\n", 19),
+		      "job: GET /job");
+	}
+
 	/* the whole text, Hebrew in Atari text, three pieces */
 	{
 		/* 0xC2.. are Atari's Hebrew letters (alef = 0xC2, bet = 0xC3) */
