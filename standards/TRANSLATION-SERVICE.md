@@ -232,6 +232,9 @@ fix and the three requests first, then `common/ui/langs.c` and its host test (th
 the build machine, and the dialog itself in Hatari against `fakegate.py`, a stand-in translategate that answers as
 AERA-Gateway's does (`GET /languages?all=1`, `POST /languages`, `GET /job`), through common's own network code.
 What the code settled, for the apps that hook it in (EMail, EWeb, EPDF):
+- **Opening time on the 8 MHz ST accepted (Erez, 8 Nov 2026):** the dialog opens in about 360-410 ms there against
+  the 300 ms limit (the AES's own window drawing, `dlg_open`, is some 220 ms of it); the stock Falcon is within every
+  limit (140-150 ms, 110-115 ms under NVDI). It is the one exception to the Speed table's dialog row, for this dialog only.
 - The list is asked when the dialog opens, with the busy bee and Esc to stop it; if the Gateway can't be had the
   user gets an alert and the dialog doesn't open. English first, then the languages by name (the Gateway lists them by
   code). A name the Atari set can't show is drawn as its code (the Gateway sends English names, so none is today).
