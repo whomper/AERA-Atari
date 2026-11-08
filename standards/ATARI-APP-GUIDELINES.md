@@ -559,6 +559,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   stops `getrelease.py`, `machines.py`'s `accs()` and `acc_all.py` anywhere but in AERA-Atari, so an app's
   copy of `common/` cannot fetch or load another program. A rig that loads the app's own
   accessory and program together (the twin hand-over) is the app alone, and stays.
+  **An app tests its own gateway code** (Erez, 8 Nov 2026: "Gateway code of an app must be tested by the
+  app"): emailgate, ecalgate, eftpgate, webgate (with aerapens and aerajsc), pdfgate and ClaudeST's bridge
+  are the app's protocol. The app runs them from its read-only `gateway/` copy (its `make itest`, its
+  Hatari rigs through the gateway, its fuzzing) and owns the tests of every change to them; the Gateway
+  session builds and releases the change (and tests the installer, the shared rules and the units), the
+  app's session tests it from the app's side before the release. This is the app alone, not
+  interdependency: the gateway is shared code taken as source.
 - **A new capability goes to the hub first** (Erez, 5 Nov 2026). Before an app builds anything the family
   might share (a keyboard layout, a dialog, a file format, a protocol, a drawing or timing helper, a
   setting), its session asks the hub (the AERA-Atari session) whether `common/`, `xl/` or `gateway/`
