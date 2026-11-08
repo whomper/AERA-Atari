@@ -21,6 +21,35 @@ at the end; nothing here is built or released yet.
   sends just those words and shows the answer in a small pop-up without changing the screen.
   The subject and the highlighted words are one short request each.
 
+## Which apps translate, and the two ways text gets translated (Erez, 8 Nov 2026)
+
+**EMail, EWeb and EPDF** translate (Erez: "Yes, EWeb and EPDF too"). Each has the same settings,
+from the shared code: Translate On/Off, the target language, and the Languages dialog
+(`common/ui/langs.c`, below). The other apps do not.
+
+Erez's rule for how the text gets translated, to save round trips:
+
+- **Direct connection** (the Atari fetches the mail, page or file itself): the app sends the text
+  for translation to translategate (`POST /translate`, as above).
+- **Connection through the Gateway** (the Gateway fetches it for the app, as emailgate, webgate and
+  pdfgate do): the Gateway **returns the translated text**. The app asks in the request it already
+  makes; the Gateway fetches, translates on its own machine (translategate is the same machine) and
+  answers once. The app makes **no second request** and the text does not cross the network twice.
+
+So Translate = Off: nothing changes (no new request, no header). Translate = On with a direct
+connection: one extra request per piece, to translategate. Translate = On through the Gateway: the
+same single request as today, with the target language added.
+
+The request side is each app's own protocol (guideline 1.2, "Gateway code of an app must be tested by the
+app"): EMail's emailgate, EWeb's webgate, EPDF's pdfgate each take the target language in the
+request they already have, in the way that fits it (a header such as `X-Gateway-Translate: to=he`,
+the app's decision), and the Gateway session builds it. What is shared, and the hub's: the same
+words in the answer as `POST /translate` (`X-Translate-From`, `X-Translate-Same`, the refusal lines
+"translategate: why" with 422 for a pair not installed, 503 loading or busy, 504 over the time), the
+phases in the status line (guideline 7.3), and the rule that nothing of the text is logged or kept.
+What each app translates (a letter's subject and body; a page's visible text with its structure kept;
+a PDF's text view's paragraphs) is the app's proposal to Erez.
+
 ## Who does what (guideline 7.3, "one unit")
 
 - **AERA-Gateway's session** owns `translategate`, its engine set-up in `aera-gateway install
@@ -28,7 +57,7 @@ at the end; nothing here is built or released yet.
 - **The protocol is shared** (this file). The client is written once, in `common/` (hub, first as
   `common/src/translate.c/.h`), so every app that translates uses the same code: a request is built
   from UTF-8, the answer parsed from UTF-8, and `common/` charsets do Atari text <-> UTF-8.
-- **EMail is the first consumer** (reading a letter in another language); EWeb and EPDF may follow.
+- **EMail is the first consumer** (reading a letter in another language); EWeb and EPDF follow (Erez, 8 Nov).
   Each app asks the hub before adding its use (guideline 1.2); the user-facing words, look and
   defaults are Erez's.
 
