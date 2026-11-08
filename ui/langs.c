@@ -35,6 +35,22 @@ static char low(char c)
 	return c >= 'A' && c <= 'Z' ? (char)(c + 32) : c;
 }
 
+/* v in decimal at p (no snprintf: 2.9 ms a call on an 8 MHz ST); returns the digits' end */
+static char *put_num(char *p, long v)
+{
+	char t[12];
+	int n = 0;
+	if (v < 0)
+		v = 0;
+	do {
+		t[n++] = (char)('0' + v % 10);
+		v /= 10;
+	} while (v && n < 11);
+	while (n)
+		*p++ = t[--n];
+	return p;
+}
+
 static void put(char *dst, const char *s, int max)
 {
 	int n = (int)strlen(s);
@@ -88,11 +104,17 @@ int langs_row(const TR_LANGINFO *i, const char *name, int cols, char *out)
 	if (cols < 1)
 		return 0;
 	memset(out, ' ', cols);
-	if (!strcmp(i->code, "en"))
+	if (!strcmp(i->code, "en")) {
 		strcpy(sz, "always");
-	else
-		snprintf(sz, sizeof(sz), "%d MB", i->mb);
-	szl = (int)strlen(sz);
+		szl = 6;
+	} else {
+		char *e = put_num(sz, i->mb);
+		*e++ = ' ';
+		*e++ = 'M';
+		*e++ = 'B';
+		*e = 0;
+		szl = (int)(e - sz);
+	}
 	/* the tick box: [ ] or [x], the x being the system font's tick */
 	if (cols >= 1)
 		out[0] = '[';
@@ -116,7 +138,15 @@ int langs_row(const TR_LANGINFO *i, const char *name, int cols, char *out)
 
 int langs_total_line(const TR_LANGS *l, char *out, int max)
 {
-	return snprintf(out, max, "Installed %d MB of %d MB", translate_langs_total(l), l->cap_mb);
+	char t[48], *p = t;
+	memcpy(p, "Installed ", 10);
+	p = put_num(p + 10, translate_langs_total(l));
+	memcpy(p, " MB of ", 7);
+	p = put_num(p + 7, l->cap_mb);
+	memcpy(p, " MB", 4);
+	p += 3;
+	put(out, t, max);
+	return (int)(p - t);
 }
 
 int langs_over_line(const TR_LANGS *l, int i, const char *name, char *out, int max)
@@ -145,19 +175,25 @@ int langs_toggle(TR_LANGS *l, int i)
 
 static int cmp_name(const char *a, const char *b)
 {
-	while (*a && low(*a) == low(*b))
-		a++, b++;
-	if (low(*a) == low(*b))
-		return 0;
-	return (unsigned char)low(*a) < (unsigned char)low(*b) ? -1 : 1;
+	for (;; a++, b++) {
+		unsigned char x = (unsigned char)*a, y = (unsigned char)*b;	/* (folded in line: a call a letter was most of the sort's time) */
+		if (x >= 'A' && x <= 'Z')
+			x = (unsigned char)(x + 32);
+		if (y >= 'A' && y <= 'Z')
+			y = (unsigned char)(y + 32);
+		if (x != y)
+			return x < y ? -1 : 1;
+		if (!x)
+			return 0;
+	}
 }
 
-/* a sorts strictly before b: English first, then by name, then by code */
-static int before(const TR_LANGS *l, const langs_nm *names, short a, short b)
+/* a sorts strictly before b: English (index en) first, then by name, then by code */
+static int before(const TR_LANGS *l, const langs_nm *names, int en, short a, short b)
 {
-	int ae = !strcmp(l->l[a].code, "en"), be = !strcmp(l->l[b].code, "en"), c;
-	if (ae != be)
-		return ae;
+	int c;
+	if (a == en || b == en)
+		return a == en && b != en;
 	c = cmp_name(names[a], names[b]);
 	if (c)
 		return c < 0;
@@ -166,12 +202,24 @@ static int before(const TR_LANGS *l, const langs_nm *names, short a, short b)
 
 void langs_sort(const TR_LANGS *l, const langs_nm *names, short *ord)
 {
-	int i, j;
+	int i, j, en = -1;
+	for (i = 0; i < l->n; i++)
+		if (!strcmp(l->l[i].code, "en"))
+			en = i;
+	/* binary insertion: some 250 comparisons for 50 languages, where the plain way made 600 */
 	for (i = 0; i < l->n; i++) {
 		short v = (short)i;
-		for (j = i; j > 0 && before(l, names, v, ord[j - 1]); j--)
+		int lo = 0, hi = i;
+		while (lo < hi) {
+			int mid = (lo + hi) / 2;
+			if (before(l, names, en, v, ord[mid]))
+				hi = mid;
+			else
+				lo = mid + 1;
+		}
+		for (j = i; j > lo; j--)
 			ord[j] = ord[j - 1];
-		ord[j] = v;
+		ord[lo] = v;
 	}
 }
 
@@ -407,8 +455,12 @@ short langs_job_permille(const langs_job *j)
 
 #ifdef LANGS_TRACE
 #define TRACE(...) do { char tb[160]; snprintf(tb, sizeof(tb), __VA_ARGS__); nf_debug(tb); } while (0)
+/* where a stretch's time goes: "LANGS ms WHAT N" (ms since the last mark) */
+static unsigned long mark_t;
+#define MARK(what) do { unsigned long n_ = tos_ms(); TRACE("LANGS ms %s %lu\n", what, n_ - mark_t); mark_t = tos_ms(); } while (0)
 #else
 #define TRACE(...) do { } while (0)
+#define MARK(what) do { } while (0)
 #endif
 
 #define DMAX 12
@@ -470,6 +522,30 @@ static PANEBAR bar;
 #define LD_COLS 44		/* the lines of text: the list's width in cells */
 static char tot_text[LD_COLS + 4], msg_text[2 * LD_COLS + 1], msg_l1[LD_COLS + 1], msg_l2[LD_COLS + 1];
 
+/* the mouse hidden once for a whole action (an AES call costs an 8 MHz ST some 5 ms, and a tick draws the
+   row, the total and the message): the calls nest */
+static int hidden;
+
+static void hide(void)
+{
+	if (!hidden++)
+		graf_mouse(M_OFF, 0);
+}
+
+static void show(void)
+{
+	if (hidden > 0 && !--hidden)
+		graf_mouse(M_ON, 0);
+}
+
+/* where object o is: every object is a child of the root, whose place dlg_open and a moved window keep
+   (an objc_offset is an AES call) */
+static void origin(short o, short *x, short *y)
+{
+	*x = ltree[0].ob_x + ltree[o].ob_x;
+	*y = ltree[0].ob_y + ltree[o].ob_y;
+}
+
 static int clip(GRECT *r)
 {
 	GRECT c = *r;
@@ -483,7 +559,7 @@ static int clip(GRECT *r)
 static void place(void)
 {
 	short x, y, w, h;
-	objc_offset(ltree, o_list, &x, &y);
+	origin(o_list, &x, &y);
 	w = ltree[o_list].ob_width;
 	h = ltree[o_list].ob_height;
 	/* the bar is the list's right edge, its frame the list's line (5.7: one line between panes) */
@@ -504,46 +580,65 @@ static void place(void)
 	bar.top = top;
 }
 
-/* rows from..to (inclusive) drawn in one go: the mouse off once, the clip the whole list's (a row's
-   own clip would end where its text does, which TOS's VDI draws the slow way) */
-static void rows_between(int from, int to)
+/* row k in its place, in the clip and with the mouse hidden by the caller; white_done: the list's
+   white is already there (a whole redraw fills it once), only the cursor's row has a ground to fill */
+static void draw_one(int k, int white_done)
+{
+	GRECT r;
+	char buf[104];
+	short fl = TX_LTR;
+	if (k < top || k >= top + rows || k >= lg->list.n)
+		return;
+	r.x = rowsr.x;
+	r.y = rowsr.y + (short)(k - top) * gl_hchar;
+	r.w = rowsr.w;
+	r.h = gl_hchar;
+	if (k == cur) {
+		fill(&r, 1);
+		fl |= TX_INVERSE;
+	} else if (!white_done) {
+		fill(&r, 0);
+	}
+	langs_row(&lg->list.l[ord[k]], names[ord[k]], cols, buf);
+	text_at(rowsr.x + 2, r.y, buf, cols, cols, fl);
+}
+
+/* rows from..to (inclusive) drawn in one go: the mouse hidden once, the clip the whole list's (a row's own
+   clip would end where its text does, which TOS's VDI draws the slow way). b < 0 for one row */
+static void rows_go(int from, int to, int second)
 {
 	GRECT t;
 	int k;
+	t.x = rowsr.x;
+	t.y = rowsr.y;
+	t.w = rowsr.w;
+	t.h = rowsr.h;
+	hide();
+	if (clip(&t)) {
+		for (k = from; k <= to; k++)
+			draw_one(k, 0);
+		if (second >= 0)
+			draw_one(second, 0);
+		clip_off();
+	}
+	show();
+}
+
+static void rows_between(int from, int to)
+{
 	if (from < top)
 		from = top;
 	if (to >= top + rows)
 		to = top + rows - 1;
 	if (to >= lg->list.n)
 		to = lg->list.n - 1;
-	if (from > to)
-		return;
-	t.x = rowsr.x;
-	t.y = rowsr.y;
-	t.w = rowsr.w;
-	t.h = rowsr.h;
-	graf_mouse(M_OFF, 0);
-	if (clip(&t)) {
-		for (k = from; k <= to; k++) {
-			GRECT r;
-			char buf[104];
-			short fl = TX_LTR;
-			r.x = rowsr.x;
-			r.y = rowsr.y + (short)(k - top) * gl_hchar;
-			r.w = rowsr.w;
-			r.h = gl_hchar;
-			if (k == cur) {
-				fill(&r, 1);
-				fl |= TX_INVERSE;
-			} else {
-				fill(&r, 0);
-			}
-			langs_row(&lg->list.l[ord[k]], names[ord[k]], cols, buf);
-			text_at(rowsr.x + 2, r.y, buf, cols, cols, fl);
-		}
-		clip_off();
-	}
-	graf_mouse(M_ON, 0);
+	if (from <= to)
+		rows_go(from, to, -1);
+}
+
+static void rows_draw_two(int a, int b)
+{
+	rows_go(a, a, b);
 }
 
 static void row_draw(int k)
@@ -556,46 +651,63 @@ static void bar_draw(const GRECT *part)
 	GRECT c = *part;
 	if (!dlg_cut(&c.x, &c.y, &c.w, &c.h))
 		return;
-	graf_mouse(M_OFF, 0);
+	hide();
 	pb_draw(&bar, &c);
-	graf_mouse(M_ON, 0);
+	show();
 }
 
+/* the whole list's rows: the white filled once, then each row's letters (and the cursor's black) */
 static void rows_draw(void)
 {
-	GRECT r;
-	r.x = rowsr.x;
-	r.y = rowsr.y + rows * gl_hchar;
-	r.w = rowsr.w;
-	r.h = rowsr.h - rows * gl_hchar;
-	if (r.h > 0) {
-		/* what is under the last row (the list's height is not a whole number of rows) */
-		graf_mouse(M_OFF, 0);
-		if (clip(&r)) {
-			fill(&r, 0);
-			clip_off();
-		}
-		graf_mouse(M_ON, 0);
+	GRECT t = rowsr;
+	int k;
+	hide();
+	if (clip(&t)) {
+		fill(&rowsr, 0);
+		for (k = top; k < top + rows && k < lg->list.n; k++)
+			draw_one(k, 1);
+		clip_off();
 	}
-	rows_between(top, top + rows - 1);
+	show();
 }
 
 /* objects first..last of the dialog drawn again (the strings under them cleared by the root's own
-   ground: 3D or flat), within what the dialog's window may draw */
+   ground: 3D or flat), within what the dialog's window may draw. The clip reaches two pixels past
+   the last line: TOS's VDI draws a string the slow way (some 40 ms of an 8 MHz ST for the total line)
+   when the clip's edge is nearer than that to the letters; the layout leaves the pixels free */
 static void box_draw(short first, short last)
 {
 	GRECT c;
 	short x, y;
-	objc_offset(ltree, first, &x, &y);
+	origin(first, &x, &y);
 	c.x = x;
 	c.y = y;
 	c.w = ltree[first].ob_width;
-	c.h = ltree[last].ob_y + ltree[last].ob_height - ltree[first].ob_y;
+	c.h = ltree[last].ob_y + ltree[last].ob_height - ltree[first].ob_y + 2;
 	if (!dlg_cut(&c.x, &c.y, &c.w, &c.h))
 		return;
-	graf_mouse(M_OFF, 0);
-	objc_draw(ltree, 0, 8, c.x, c.y, c.w, c.h);
-	graf_mouse(M_ON, 0);
+	hide();
+	if (!dlg_in_window() && !(dlg_3d_ok() && dlg_3d_on)) {
+		/* over TOS's screen in the flat look the ground is white: the lines by our own drawing
+		   (some 8 ms of an 8 MHz ST, where the AES took 25 for the total line) */
+		short o;
+		if (clip(&c)) {
+			for (o = first; o <= last; o++) {
+				GRECT r;
+				const char *t = (const char *)ltree[o].ob_spec;
+				origin(o, &r.x, &r.y);
+				r.w = ltree[o].ob_width;
+				r.h = ltree[o].ob_height;
+				fill(&r, 0);
+				if (t[0])
+					text_at(r.x, r.y, t, (long)strlen(t), r.w / gl_wchar, TX_LTR);
+			}
+			clip_off();
+		}
+	} else {
+		objc_draw(ltree, 0, 8, c.x, c.y, c.w, c.h);
+	}
+	show();
 }
 
 static void total_draw(void)
@@ -617,9 +729,12 @@ static void msg_set(const char *s)
 static void list_all(void)
 {
 	GRECT all;
+	MARK("(list_all)");
 	rows_draw();
+	MARK("list: rows");
 	all = bar.r;
 	bar_draw(&all);
+	MARK("list: bar");
 }
 
 static void more(short x, short y, short w, short h)
@@ -629,7 +744,87 @@ static void more(short x, short y, short w, short h)
 	list_all();
 }
 
-/* the cursor to row k, kept in sight: the old and the new row drawn, or the rows when they scroll */
+/* the rows moved d rows up the screen (d > 0: top went down by d) or down (d < 0) by the VDI's screen copy,
+   the rows that come into view drawn after: some 50 ms of an 8 MHz ST for a row, where drawing them all
+   took 70 (the guidelines' Speed: a row scrolled, 50 ms). Only over TOS's own screen, where the whole
+   list is ours to move: in a window another program's window may cover a part of it. 1 when it did */
+extern void scr_rows(short h, const short *p) __attribute__((weak));
+
+static int move_rows(int d)
+{
+	short p[8], dy;
+	GRECT t;
+	MFDB scr;
+	if (dlg_in_window() || d == 0 || d >= rows || d <= -rows)
+		return 0;
+	dy = (short)(d * gl_hchar);
+	t.x = rowsr.x;
+	t.y = rowsr.y;
+	t.w = rowsr.w;
+	t.h = rows * gl_hchar;
+	p[0] = p[4] = t.x;
+	p[2] = p[6] = (short)(t.x + t.w - 1);
+	if (d > 0) {
+		p[1] = (short)(t.y + dy);
+		p[3] = (short)(t.y + t.h - 1);
+		p[5] = t.y;
+		p[7] = (short)(t.y + t.h - 1 - dy);
+	} else {
+		p[1] = t.y;
+		p[3] = (short)(t.y + t.h - 1 + dy);
+		p[5] = (short)(t.y - dy);
+		p[7] = (short)(t.y + t.h - 1);
+	}
+	hide();
+	clip_on(&t);
+	if (scr_rows) {
+		scr_rows(vdi_h, p);
+	} else {
+		memset(&scr, 0, sizeof(scr));
+		vro_cpyfm(vdi_h, 3, p, &scr, &scr);
+	}
+	clip_off();
+	show();
+	return 1;
+}
+
+/* top becomes nt (and the cursor row cur from old_cur): the list shows it, the slider moves */
+static void top_to(int nt, int old_cur)
+{
+	int ot = top, d = nt - ot;
+	GRECT m;
+	top = nt;
+	bar.top = top;
+	if (move_rows(d)) {
+		/* the rows that came into view, and the cursor's old and new rows (the old one went with
+		   the picture, black) */
+		GRECT t;
+		int k, from = d > 0 ? top + rows - d : top, to = d > 0 ? top + rows - 1 : top - d - 1;
+		t.x = rowsr.x;
+		t.y = rowsr.y;
+		t.w = rowsr.w;
+		t.h = rowsr.h;
+		hide();
+		if (clip(&t)) {
+			for (k = from; k <= to; k++)
+				draw_one(k, 0);
+			if (old_cur != cur) {
+				if (old_cur >= top && old_cur < top + rows && (old_cur < from || old_cur > to))
+					draw_one(old_cur, 0);
+				if (cur >= top && cur < top + rows && (cur < from || cur > to))
+					draw_one(cur, 0);
+			}
+			clip_off();
+		}
+		show();
+	} else {
+		rows_draw();
+	}
+	m = pb_moved(&bar, ot);
+	bar_draw(&m);
+}
+
+/* the cursor to row k, kept in sight: the old and the new row drawn, or the list scrolled */
 static void cursor_to(int k)
 {
 	int old = cur, nt;
@@ -637,33 +832,18 @@ static void cursor_to(int k)
 		return;
 	cur = k;
 	nt = langs_show(top, cur, rows, lg->list.n);
-	if (nt != top) {
-		int ot = top;
-		top = nt;
-		bar.top = top;
-		rows_draw();
-		{
-			GRECT m = pb_moved(&bar, ot);
-			bar_draw(&m);
-		}
-	} else {
-		row_draw(old);
-		row_draw(cur);
-	}
+	if (nt != top)
+		top_to(nt, old);
+	else
+		rows_draw_two(old, cur);
 }
 
 static int scroll_by(long n)
 {
-	int nt = langs_clamp_top((int)(top + n), rows, lg->list.n), ot = top;
+	int nt = langs_clamp_top((int)(top + n), rows, lg->list.n);
 	if (nt == top)
 		return 0;
-	top = nt;
-	bar.top = top;
-	rows_draw();
-	{
-		GRECT m = pb_moved(&bar, ot);
-		bar_draw(&m);
-	}
+	top_to(nt, cur);
 	return 1;
 }
 
@@ -683,9 +863,11 @@ static void tick(int k)
 	switch (r) {
 	case LT_TICKED:
 	case LT_UNTICKED:
+		hide();
 		row_draw(k);
 		total_draw();
 		msg_set("");
+		show();
 		break;
 	case LT_REFUSED: {
 		char m[sizeof(msg_text)];
@@ -702,6 +884,9 @@ static void tick(int k)
 /* ---- the waits: the list asked for, the request sent ---- */
 
 static int own_idle;
+#ifdef LANGS_TRACE
+static unsigned long idle_end;		/* the tos_ms at the end of the last idle turn: the last stretch's start */
+#endif
 
 static void stop_idle(void)
 {
@@ -715,6 +900,9 @@ static void stop_idle(void)
 		if (sc == 0x01 || sc == 0x61)	/* Esc, Undo */
 			conn_stop = 1;
 	}
+#ifdef LANGS_TRACE
+	idle_end = tos_ms();
+#endif
 }
 
 static void wait_on(langs *l)
@@ -742,13 +930,28 @@ static void wait_off(langs *l)
 		graf_mouse(ARROW, 0);
 }
 
+/* an event call, no wait: the names and the order (above) end a stretch, the dialog's drawing begins another
+   (the AES's messages, if the app takes them, given as in any wait) */
+static void yield_turn(langs *l)
+{
+	short msg[8], which;
+	AEVENT ev;
+	which = evnt_multi_((short)(MU_TIMER | (l->message ? MU_MESAG : 0)), 0, 0, 0, 0, msg, &ev);
+	if ((which & MU_MESAG) && l->message)
+		l->message(msg);
+}
+
 /* 1 the list came, 0 stopped by the user, -1 failed (the user has been told) */
 static int ask_list(langs *l)
 {
 	int ok;
 	wait_on(l);
+	MARK("(get)");
 	ok = translate_langs_get(l->host ? l->host : "", l->port, &l->list, l->err, sizeof(l->err));
+	TRACE("LANGS ms after the last idle turn %lu\n", (unsigned long)(tos_ms() - idle_end));
+	MARK("get: the request, with its waits");
 	wait_off(l);
+	MARK("get: wait_off");
 	if (!ok && conn_stop) {
 		conn_stop = 0;
 		return 0;
@@ -891,6 +1094,9 @@ int langs_run(langs *l)
 	r = ask_list(l);
 	if (r <= 0)
 		return r;
+	MARK("(list asked)");
+	/* the names and the order (not drawing) in their own stretch, apart from the dialog's drawing:
+	   an event call between (the guidelines' Speed: work that isn't drawing is not part of a draw's stretch) */
 
 	/* the names as drawn, and the order (English, then by name) */
 	for (i = 0; i < l->list.n; i++)
@@ -901,6 +1107,8 @@ int langs_run(langs *l)
 	tot_text[0] = 0;
 	msg_text[0] = msg_l1[0] = msg_l2[0] = 0;
 	langs_total_line(&l->list, tot_text, sizeof(tot_text));
+	MARK("names, order");
+	yield_turn(l);
 
 	font_sys_push();
 	/* 48 x 18 cells (the Font dialog's 17 and a line for the message): the lists a few pixels down, so no label loses its
@@ -919,26 +1127,56 @@ int langs_run(langs *l)
 	ltree[o_list].ob_y += 3;
 	ltree[o_list].ob_height -= 3;
 	ltree[o_tot].ob_y += 5;
-	ltree[o_msg].ob_y += 6;
-	ltree[o_msg2].ob_y += 6;
+	ltree[o_msg].ob_y += 9;		/* (4 pixels between the lines: box_draw's clip) */
+	ltree[o_msg2].ob_y += 9;
 	ltree[o_ok].ob_y += 12;
 	ltree[o_cancel].ob_y += 12;
 	ltree[0].ob_height += 14;
 	bar.across = 0;
+	MARK("tree built");
 
 	dlg_name("Languages");
 	dlg_open(ltree, &x, &y, &w, &h);
+	MARK("dlg_open");
 	place();
-	TRACE("LANGS open n=%d rows=%d cols=%d\n", l->list.n, rows, cols);
 #ifdef LANGS_TRACE
 	{
-		short bx, by, cx, cy;
+		/* by hand: snprintf took 30 ms of an 8 MHz ST here, in the stretch the speed rig times */
+		char tb[200], *p = tb;
+		short v[17], bx, by, cx, cy, q;
 		objc_offset(ltree, o_ok, &bx, &by);
 		objc_offset(ltree, o_cancel, &cx, &cy);
-		TRACE("LANGS geom rows %d %d %d %d bar %d %d %d %d ok %d %d %d %d cancel %d %d %d %d row %d\n",
-		      rowsr.x, rowsr.y, rowsr.w, rowsr.h, bar.r.x, bar.r.y, bar.r.w, bar.r.h,
-		      bx, by, ltree[o_ok].ob_width, ltree[o_ok].ob_height, cx, cy, ltree[o_cancel].ob_width,
-		      ltree[o_cancel].ob_height, gl_hchar);
+		v[0] = rowsr.x; v[1] = rowsr.y; v[2] = rowsr.w; v[3] = rowsr.h;
+		v[4] = bar.r.x; v[5] = bar.r.y; v[6] = bar.r.w; v[7] = bar.r.h;
+		v[8] = bx; v[9] = by; v[10] = ltree[o_ok].ob_width; v[11] = ltree[o_ok].ob_height;
+		v[12] = cx; v[13] = cy; v[14] = ltree[o_cancel].ob_width; v[15] = ltree[o_cancel].ob_height;
+		v[16] = gl_hchar;
+		memcpy(p, "LANGS open n=", 13);
+		p = put_num(p + 13, l->list.n);
+		memcpy(p, " cols=", 6);
+		p = put_num(p + 6, cols);
+		*p++ = '\n';
+		*p = 0;
+		nf_debug(tb);
+		p = tb;
+		memcpy(p, "LANGS geom rows", 15);
+		p += 15;
+		for (q = 0; q < 17; q++) {
+			const char *w = q == 4 ? " bar" : q == 8 ? " ok" : q == 12 ? " cancel" : q == 16 ? " row" : "";
+			size_t wl = strlen(w);
+			memcpy(p, w, wl);
+			p += wl;
+			*p++ = ' ';
+			if (v[q] < 0) {
+				*p++ = '-';
+				p = put_num(p, -v[q]);
+			} else {
+				p = put_num(p, v[q]);
+			}
+		}
+		*p++ = '\n';
+		*p = 0;
+		nf_debug(tb);
 	}
 #endif
 	if (!dlg_in_window()) {
@@ -946,6 +1184,7 @@ int langs_run(langs *l)
 		   AES's redraw asks for them: more) */
 		list_all();
 	}
+	MARK("list drawn");
 	dlg_more(more);
 
 	while (!done) {

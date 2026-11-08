@@ -192,6 +192,7 @@ int main(void)
 	}
 	L.host = host;
 	L.port = port;
+	status("LANGT: the app's status line", 0);	/* (text drawn before: TOS's text path is checked once, as in an app that has its window up) */
 	evnt_timer_(1500);
 	/* the scenarios run.py drives, in this order */
 	ask("cancel", 0);
