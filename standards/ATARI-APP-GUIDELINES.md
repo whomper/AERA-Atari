@@ -1239,6 +1239,12 @@ CONTACTS.TXT when the user chooses it (below).
     dialogs, the INF). It is no longer shown in any menu. ECal's Hebrew dates is a setting, not a menu
     entry, and stays one. The help and the READMEs name F10, not the menu. A menu bar that held only that
     entry loses it (the shared menu builder takes the rows out, nothing else moves).
+  - **No setting for it either** (Erez, 8 Nov 2026): "Start with the Hebrew keyboard" is removed from
+    every app's Settings. The Hebrew keyboard is an F10 behaviour only: it starts off in every program
+    and dialog, F10 switches it, the badge shows while it is on. The INF has no `HEBREW=` key any more:
+    an app neither reads nor writes it (a line left in an old INF is ignored). Nothing else changes (the
+    badge, the dialogs, F10 in windows and dialogs). ECal's "Show Hebrew dates" is a different setting and
+    stays. The help and the READMEs say F10 and nothing about a start-up choice.
 
 ### 5.4 Text fields (must)
 - **A text field holds more than it shows** (Erez, 22 Oct 2026). What it takes is set by what goes
