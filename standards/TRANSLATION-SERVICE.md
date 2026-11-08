@@ -40,6 +40,16 @@ So Translate = Off: nothing changes (no new request, no header). Translate = On 
 connection: one extra request per piece, to translategate. Translate = On through the Gateway: the
 same single request as today, with the target language added.
 
+**Decided (Erez, 8 Nov):** **EMail keeps the direct way even when its connection goes through the
+Gateway**: emailgate is a relay that never reads a letter (guideline 7.3), so it does not translate;
+EMail sends the letter's text to translategate itself, one extra request on the home network, only
+with Translate On. **EPDF** translates on the Gateway **at the same time as the conversion**
+(pdfgate holds the text it converts); **EWeb** translates on the Gateway too (webgate already
+parses the page). The Gateway's services reach translategate over a local socket on the same
+machine (`translateclient.py`, no TCP hop); translategate stays the only process holding models.
+The time is the limit, not the size: a whole page or text through the Gateway is capped (the first
+part translated, the rest as it was, with how much was done), the cap proposed by the app.
+
 The request side is each app's own protocol (guideline 1.2, "Gateway code of an app must be tested by the
 app"): EMail's emailgate, EWeb's webgate, EPDF's pdfgate each take the target language in the
 request they already have, in the way that fits it (a header such as `X-Gateway-Translate: to=he`,
