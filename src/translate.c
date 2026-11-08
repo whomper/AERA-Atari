@@ -281,7 +281,7 @@ static int http_run(const char *host, unsigned short port, const SBUF *req, cons
 		conn_close(c);
 		return 0;
 	}
-	if (code != 200) {
+	if (code != 200 && code != 202) {
 		put_err(err, errlen, translate_refusal(code));
 		conn_close(c);
 		return code;
@@ -321,7 +321,7 @@ static int http_run(const char *host, unsigned short port, const SBUF *req, cons
 		}
 	}
 	conn_close(c);
-	return 200;
+	return code;
 }
 
 static int http(const char *host, unsigned short port, const SBUF *req, const char *what,
@@ -554,4 +554,270 @@ char *translate_atari(const char *host, unsigned short port, const char *to, con
 	if (!res)
 		put_err(err, errlen, "out of memory");
 	return res;
+}
+
+
+/* ---- the Languages page ---- */
+
+/* the next line of s[*at..n): NUL-terminated copy in buf (cut at max), advances *at; 0 at the end */
+static int next_line(const char *s, long n, long *at, char *buf, int max)
+{
+	long i = *at, k = 0;
+	if (i >= n)
+		return 0;
+	while (i < n && s[i] != '\n') {
+		if (s[i] != '\r' && k < max - 1)
+			buf[k++] = s[i];
+		i++;
+	}
+	buf[k] = 0;
+	*at = i < n ? i + 1 : n;
+	return 1;
+}
+
+static int digits_only(const char *p, int *out)
+{
+	long v = 0;
+	int any = 0;
+	while (*p >= '0' && *p <= '9' && v < 1000000L) {
+		v = v * 10 + (*p++ - '0');
+		any = 1;
+	}
+	if (!any || *p)
+		return 0;
+	*out = (int)v;
+	return 1;
+}
+
+/* digits at p, then whatever follows (a job's number, then its line end) */
+static int num_prefix(const char *p, int *out)
+{
+	long v = 0;
+	int any = 0;
+	while (*p >= '0' && *p <= '9' && v < 1000000L) {
+		v = v * 10 + (*p++ - '0');
+		any = 1;
+	}
+	if (!any)
+		return 0;
+	*out = (int)v;
+	return 1;
+}
+
+int translate_langs_parse(TR_LANGS *out, const char *text, long n)
+{
+	char line[160];
+	long at = 0;
+	int have_cap = 0;
+	memset(out, 0, sizeof(*out));
+	while (next_line(text, n, &at, line, sizeof(line))) {
+		char *t1, *t2, *t3;
+		int mb;
+		if (!strncmp(line, "cap_mb ", 7)) {
+			have_cap = digits_only(line + 7, &out->cap_mb);
+			continue;
+		}
+		if (!strncmp(line, "used_mb ", 8)) {
+			digits_only(line + 8, &out->used_mb);
+			continue;
+		}
+		t1 = strchr(line, '\t');
+		if (!t1)
+			continue;
+		*t1++ = 0;
+		t2 = strchr(t1, '\t');
+		if (!t2)
+			continue;
+		*t2++ = 0;
+		t3 = strchr(t2, '\t');
+		if (!t3)
+			continue;
+		*t3++ = 0;
+		if (!translate_code_ok(line) || strlen(line) >= TR_LANG || !digits_only(t2, &mb))
+			continue;
+		if (strcmp(t3, "installed") && strcmp(t3, "available"))
+			continue;
+		if (!utf8_ok((const unsigned char *)t1, (long)strlen(t1)) || out->n >= TR_LANGS_MAX)
+			continue;
+		str_copy(out->l[out->n].code, line, TR_LANG);
+		str_copy(out->l[out->n].name, t1, TR_LANGNAME);
+		out->l[out->n].mb = mb;
+		out->l[out->n].installed = out->l[out->n].want = !strcmp(t3, "installed");
+		out->n++;
+	}
+	return have_cap;
+}
+
+int translate_langs_total(const TR_LANGS *l)
+{
+	int i, t = 0;
+	for (i = 0; i < l->n; i++)
+		if (l->l[i].want && strcmp(l->l[i].code, "en"))
+			t += l->l[i].mb;
+	return t;
+}
+
+int translate_langs_over(const TR_LANGS *l, int i)
+{
+	int t;
+	if (i < 0 || i >= l->n || l->l[i].want || !strcmp(l->l[i].code, "en"))
+		return 0;
+	t = translate_langs_total(l) + l->l[i].mb - l->cap_mb;
+	return t > 0 ? t : 0;
+}
+
+int translate_langs_fits(const TR_LANGS *l, int i)
+{
+	return translate_langs_over(l, i) == 0;
+}
+
+int translate_langs_changed(const TR_LANGS *l)
+{
+	int i;
+	for (i = 0; i < l->n; i++)
+		if (l->l[i].want != l->l[i].installed && strcmp(l->l[i].code, "en"))
+			return 1;
+	return 0;
+}
+
+int translate_langs_codes(const TR_LANGS *l, char *out, int max)
+{
+	int i, k = 0;
+	if (max < 1)
+		return 0;
+	for (i = 0; i < l->n; i++) {
+		int len;
+		if (!l->l[i].want || !strcmp(l->l[i].code, "en"))
+			continue;
+		len = (int)strlen(l->l[i].code);
+		if (k + len + 2 > max) {
+			out[0] = 0;
+			return 0;
+		}
+		if (k)
+			out[k++] = ',';
+		memcpy(out + k, l->l[i].code, len);
+		k += len;
+	}
+	out[k] = 0;
+	return 1;
+}
+
+int translate_langs_get(const char *host, unsigned short port, TR_LANGS *out, char *err, int errlen)
+{
+	SBUF b;
+	int ok;
+	sb_init(&b);
+	memset(out, 0, sizeof(*out));
+	ok = get(host, port, "/languages?all=1", &b, 16384, err, errlen);
+	if (ok && !utf8_ok((const unsigned char *)b.s, b.len)) {
+		put_err(err, errlen, "the Gateway's list of languages isn't text");
+		ok = 0;
+	}
+	if (ok && !translate_langs_parse(out, b.s ? b.s : "", b.len)) {
+		put_err(err, errlen, "that isn't the Gateway's list of languages");
+		ok = 0;
+	}
+	sb_free(&b);
+	return ok;
+}
+
+int translate_langs_set(const char *host, unsigned short port, const char *codes, int *job,
+			char *err, int errlen)
+{
+	SBUF req, body;
+	int code, ok = 0;
+	long n = codes ? (long)strlen(codes) : 0;
+	const char *p;
+	if (job)
+		*job = 0;
+	if (!host_ok(host) || n > 4000) {
+		put_err(err, errlen, "no address for the Gateway");
+		return 0;
+	}
+	for (p = codes; p && *p; p++)
+		if (!((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') ||
+		      *p == '-' || *p == ',')) {
+			put_err(err, errlen, "a language code isn't right");
+			return 0;
+		}
+	sb_init(&req);
+	sb_init(&body);
+	if (!sb_printf(&req, "POST /languages HTTP/1.0\r\nHost: %s\r\nContent-Type: text/plain\r\n"
+			     "Content-Length: %ld\r\nConnection: close\r\n\r\n", host, n) ||
+	    (n && !sb_add(&req, codes, n))) {
+		put_err(err, errlen, "out of memory");
+		sb_free(&req);
+		return 0;
+	}
+	code = http(host, port, &req, "POST /languages", &body, 256, NULL, NULL, err, errlen);
+	if (code == 200 || code == 202) {
+		int id = 0;
+		const char *q = body.s ? body.s : "";
+		if (!strncmp(q, "job ", 4) && num_prefix(q + 4, &id))
+			ok = 1;
+		else
+			put_err(err, errlen, "that isn't the Gateway's answer");
+		if (ok && job)
+			*job = id;
+	}
+	sb_free(&req);
+	sb_free(&body);
+	return ok;
+}
+
+int translate_job_parse(TR_JOB *j, const char *text, long n)
+{
+	char line[160];
+	long at = 0;
+	int have_id = 0;
+	memset(j, 0, sizeof(*j));
+	j->state = TR_JOB_NONE;
+	while (next_line(text, n, &at, line, sizeof(line))) {
+		if (!strncmp(line, "job ", 4)) {
+			have_id = num_prefix(line + 4, &j->id);
+		} else if (!strcmp(line, "running")) {
+			j->state = TR_JOB_RUNNING;
+		} else if (!strcmp(line, "done")) {
+			j->state = TR_JOB_DONE;
+		} else if (!strcmp(line, "none")) {
+			j->state = TR_JOB_NONE;
+		} else if (!strncmp(line, "failed", 6)) {
+			const char *w = line + 6;
+			j->state = TR_JOB_FAILED;
+			if (*w == ':')
+				w++;
+			while (*w == ' ')
+				w++;
+			if (utf8_ok((const unsigned char *)w, (long)strlen(w)))
+				str_copy(j->why, w, sizeof(j->why));
+		} else if (!strncmp(line, "bytes ", 6)) {
+			const char *q = line + 6;
+			long d = 0, t = 0;
+			while (*q >= '0' && *q <= '9')
+				d = d * 10 + (*q++ - '0');
+			if (!strncmp(q, " of ", 4)) {
+				q += 4;
+				while (*q >= '0' && *q <= '9')
+					t = t * 10 + (*q++ - '0');
+				j->done = d;
+				j->total = t;
+			}
+		}
+	}
+	return have_id;
+}
+
+int translate_job_get(const char *host, unsigned short port, TR_JOB *j, char *err, int errlen)
+{
+	SBUF b;
+	int ok;
+	sb_init(&b);
+	ok = get(host, port, "/job", &b, 512, err, errlen);
+	if (ok && !translate_job_parse(j, b.s ? b.s : "", b.len)) {
+		put_err(err, errlen, "that isn't the Gateway's answer");
+		ok = 0;
+	}
+	sb_free(&b);
+	return ok;
 }
