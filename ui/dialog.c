@@ -10,6 +10,7 @@
  * form_keybd and objc_edit see it, and so is Esc in a dialog without a
  * text field; in a text field Esc empties it, as GEM's form_do does.
  */
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "tos.h"
@@ -1503,7 +1504,6 @@ int dlg_win_button(OBJECT *tree, short o)
 }
 
 #ifdef DLG_TRACE
-#include <stdio.h>
 /* built with -DDLG_TRACE: each exit object's place on the screen to the
    emulator's console (NatFeats), "DLG exit OBJ X Y W H TEXT", so a test
    rig in Hatari can click it */
