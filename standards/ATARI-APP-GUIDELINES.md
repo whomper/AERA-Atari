@@ -546,7 +546,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   and no run on Erez's TOS, and it doesn't wait for code that is still being tested: push it ahead
   on its own commits. A release that changes only the docs and the help file goes out the same way
   (without asking, as every release); the release workflow's own checks still run.
-- **No app tests with another AERA program or accessory** (Erez, 8 Nov 2026; replaces 17 Oct's "a test that
+- **Only the hub tests interdependency and the family** (Erez, 8 Nov 2026: "Only you test interdependency and family tests"). **No app tests with another AERA program or accessory** ( replaces 17 Oct's "a test that
   needs another program uses its latest release"). An app's own tests (`make test`, `make itest`, the
   Hatari rigs, the speed rig, the session checks) run the app alone: no other AERA program or accessory
   is loaded beside it, started by it or fetched for it (`getrelease.py` is not used in an app's repo). What
@@ -555,7 +555,9 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   (`fakecontact.acc`, `fakecal.acc`, `ASKER.PRG`, `fakeguide` and the like). The real programs together
   are the hub's family checks (`common/tests/family/acc_all.py`, the joint scenarios), on their latest
   releases, as the hub runs them for a candidate. Shared code (`common/`, `xl/`, `gateway/`) is taken as
-  source by design; this rule is about programs and accessories. A rig that loads the app's own
+  source by design; this rule is about programs and accessories. It is enforced: `common/tools/hubonly.py`
+  stops `getrelease.py`, `machines.py`'s `accs()` and `acc_all.py` anywhere but in AERA-Atari, so an app's
+  copy of `common/` cannot fetch or load another program. A rig that loads the app's own
   accessory and program together (the twin hand-over) is the app alone, and stays.
 - **A new capability goes to the hub first** (Erez, 5 Nov 2026). Before an app builds anything the family
   might share (a keyboard layout, a dialog, a file format, a protocol, a drawing or timing helper, a
