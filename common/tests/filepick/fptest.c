@@ -66,6 +66,25 @@ int main(void)
 	graf_mouse(ARROW, 0);
 	strcpy(recent[0], "C:\\MUSIC\\LIVE\\");
 	strcpy(dir, "C:\\MUSIC\\");
+	{	/* a drive D: to P: with a folder fptlong (run.py's --ext2 of the XaAES rig, long names): there */
+		long map = Drvmap();
+		short k;
+		for (k = 3; k < 16; k++) {
+			char p[16];
+			long a;
+			if (!(map & (1L << k)))
+				continue;
+			strcpy(p, "x:\\fptlong");
+			p[0] = (char)('a' + k);
+			a = Fattrib(p, 0, 0);
+			if (a >= 0 && (a & 0x10)) {
+				strcpy(dir, "x:\\fptlong\\");
+				dir[0] = (char)('a' + k);
+				strcpy(recent[0], dir);
+				break;
+			}
+		}
+	}
 	nf_debug("FPT open\n");
 #ifdef FP_OLD
 	n = addfiles_run(dir, recent, take, idle);
