@@ -661,13 +661,21 @@ Erez Yaary", the copyright line, the three status lines below, "Free software un
 ### 1.4 README: a front page, not the manual (must; Erez, 9 Nov 2026)
 Nobody reads a README of five thousand words. It is a front page: it says what the program is, shows it and
 gets a reader started, and sends the rest elsewhere.
-- **Length:** about 600 words and 100 lines at most. EPDF's README (about 400 words) is the model; EWeb's
-  rewrite is the pilot and becomes the example.
-- **What stays**, in the template's order ([repo-template](repo-template/files/README.md)): the one sentence
-  and the icon, three to five Highlights (one line each), the screenshot, Getting started (the download, the
-  files in one short table, the steps to start, what it needs), a few lines on how it reaches the servers
-  (the one diagram), Building (the commands), Source (the folders, one line each), Tests (one line a
-  check), Licence, the family footer.
+- **Length:** about 600 words and 100 lines at most (ten Highlights fit in it). EPDF's README (about 400
+  words) is the model; EWeb's rewrite is the pilot and becomes the example.
+- **What stays**, in the template's order ([repo-template](repo-template/files/README.md)):
+  - the one sentence and the icon;
+  - **up to ten Highlights, one line each** (Erez, 9 Nov 2026): what the program does, at the top, before
+    anything else;
+  - the screenshot;
+  - Getting started: the download, the files in one short table, the steps to start, what it needs;
+  - for a program that uses the Gateway: **one paragraph** saying that AERA-Gateway exists, what the program
+    does through it and where it is optional, and a link to the Gateway's README (no install commands:
+    they are the Gateway's);
+  - Building: the commands;
+  - Source: a few lines, the main folders only (the full list goes to `docs/`);
+  - Tests: **one line**, naming `make test` and pointing to the rest in `docs/`;
+  - Licence, and the family footer (its last item is `Gateway: AERA-Gateway`, not `Pi:`).
 - **What moves out**, to `docs/` or the help guide (`docs/GUIDE.md`), with a one-line link from the README:
   anything explaining how a feature works, every setting, measurements and figures, the design, long
   how-to and troubleshooting text, history of fixes. The README links to it, never repeats it.

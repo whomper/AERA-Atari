@@ -5,7 +5,7 @@
 ONE SENTENCE: what it is, for which Ataris. *(e.g. "A calendar for the Atari ST, STE, TT and Falcon,
 written in C for GEM.")*
 
-**Highlights**
+**Highlights** *(up to ten, one line each: what the program does)*
 
 - **THE MAIN THING:** one line on what it does best.
 - **Modern but Atari:** desk accessory and program, right-click menus, drag and drop, iconify, help in
@@ -43,17 +43,12 @@ often, so it sets the speed of every STinG program: on Erez's Falcon with a NetU
 took EFTP's downloads from 40 to 75 KB/s. On a NetUSBee, keep STinG's TCP receive window at 5840
 (MSS 1460): the card holds about four full packets.
 
-## How it reaches the servers
+## The Gateway
 
-*(Networked apps only.)* Which machine connects how, with the same diagram style as ECal:
-
-```
-ST, STE:     Atari (ENAME) --plain, home LAN--> Raspberry Pi (gateway) --TLS--> the server
-Falcon, TT:  Atari (ENAME + TLS.OVL: TLS 1.2, RSA on the DSP) ------------TLS--> the server
-             (a Direct connection; or through the Pi, as an ST)
-```
-
-The gateway's own README: [`gateway/`](gateway/).
+*(Networked apps only: one paragraph.)* ENAME connects directly on a Falcon or TT (TLS 1.2, RSA on the DSP)
+and through **[AERA-Gateway](https://github.com/whomper/AERA-Gateway)**, a small service on a Raspberry Pi
+or in Docker, on an ST or STE. Say what ENAME does through it (and where it is optional), and link the
+Gateway's README for the setup. No install commands here.
 
 ## Building
 
@@ -107,4 +102,4 @@ It includes, under their own licences (compatible with the GPL):
 
 ---
 
-Part of **AERA** for Atari: [ECal](https://github.com/whomper/ECal) · [EContact](https://github.com/whomper/EContact) · [EMail](https://github.com/whomper/EMail) · [EFTP](https://github.com/whomper/EFTP) · [EHypView](https://github.com/whomper/EHypView) · [ClaudeST](https://github.com/whomper/ClaudeST) · [EWeb](https://github.com/whomper/EWeb) · [EUpdate](https://github.com/whomper/EUpdate) · [EPDF](https://github.com/whomper/EPDF) · 8-bit: [EDOS](https://github.com/whomper/EDOS) · [EFTP_XL](https://github.com/whomper/EFTP_XL) · Pi: [AERA-Gateway](https://github.com/whomper/AERA-Gateway)
+Part of **AERA** for Atari: [ECal](https://github.com/whomper/ECal) · [EContact](https://github.com/whomper/EContact) · [EMail](https://github.com/whomper/EMail) · [EFTP](https://github.com/whomper/EFTP) · [EHypView](https://github.com/whomper/EHypView) · [ClaudeST](https://github.com/whomper/ClaudeST) · [EWeb](https://github.com/whomper/EWeb) · [EUpdate](https://github.com/whomper/EUpdate) · [EPDF](https://github.com/whomper/EPDF) · 8-bit: [EDOS](https://github.com/whomper/EDOS) · [EFTP_XL](https://github.com/whomper/EFTP_XL) · Gateway: [AERA-Gateway](https://github.com/whomper/AERA-Gateway)
