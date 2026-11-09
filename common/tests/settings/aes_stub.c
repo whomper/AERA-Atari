@@ -337,6 +337,23 @@ short objc_offset(OBJECT *t, short obj, short *x, short *y)
 	return 1;
 }
 
+/* the focus ring (ui.h's drawing): frame() is the ring, drawn by settings.c after the tree */
+int ring_draws;
+GRECT ring_last;
+void frame(GRECT *r, short color)
+{
+	(void)color;
+	ring_draws++;
+	ring_last = *r;
+}
+void clip_on(GRECT *r)
+{
+	(void)r;
+}
+void clip_off(void)
+{
+}
+
 /* the clock the page turns are timed by (dialog.c's budget): it moves draw_cost ms for each object drawn */
 unsigned long fake_ms;
 short draw_cost;
@@ -505,6 +522,7 @@ short evnt_multi_(short flags, short clicks, short mask, short state, unsigned l
 	case S_KEY:
 		ev->which = MU_KEYBD;
 		ev->kreturn = script->a;
+		ev->kstate = script->b;
 		break;
 	case S_MSG:
 		ev->which = MU_MESAG;

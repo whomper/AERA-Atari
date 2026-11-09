@@ -27,6 +27,14 @@
    where Esc stops the transfer) passes -1: Esc and Undo then give -1,
    told apart from every button, and no object is drawn or changed. */
 short dlg_do(OBJECT *tree, short start, short cancel);
+/* start < 0: no text field gets the cursor (the focus is on a control: settings.c's keyboard reach, D25) */
+
+/* The app's own key, offered to dlg_do before its own (after F10): key as evnt_multi gives it, kstate, edit the object whose
+   text field has the cursor (0: none), *field set by the function: > 0 the text field that gets the cursor, < 0 the
+   cursor leaves its field, 0 as it is. It returns 1 when it took the key (dlg_do does nothing else with it), 0 to leave it
+   to dlg_do. NULL by default; settings.c sets it while its dialog is up (Tab, Space, arrows: the keyboard reach, 5.10).
+   A function that serves one tree checks `tree` and takes nothing of another dialog's (a button's own dialog) */
+extern int (*dlg_keys)(OBJECT *tree, short key, short kstate, short edit, short *field);
 
 /* the whole of it: the screen and mouse kept (wind_update), the tree
    centred (form_center) on a multiple of 16 pixels across (its text on a

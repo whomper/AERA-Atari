@@ -56,6 +56,10 @@ struct SETTINGS {
 	SET_F *fl;
 	short nf;
 	char *pool;			/* the fields' text when the dialog opened */
+	short line_obj;			/* the list's line (the ring round a page name reaches it) */
+	short focus;			/* the keyboard's: 0 the text cursor (or nothing), -1 the page list, else the control's object */
+	short kb;			/* a key has been used since the last click: only then is the focus shown (a ring) */
+	short ringed;			/* the ring is on the screen */
 	short live;			/* the dialog is open: a change is drawn */
 };
 
@@ -431,6 +435,301 @@ static void drawn_again(SETTINGS *s)
 		settings_drawn(s->b.tree, s->b.band);
 }
 
+/* ---------------- the keyboard's reach (the guidelines' 5.10, D25) ----------------
+ * The focus is the text field that has the cursor, one control (a tick, a radio group, a pop-up or an action button)
+ * with a ring round it, or the list of pages (the ring round the chosen name). Tab and Shift+Tab go through the page's
+ * fields and controls in the order they were added, then the list, and round; Space ticks a tick, opens a pop-up
+ * or does a button's work; the arrows change the choice of a radio group (Left, Right, Up, Down), the page in the
+ * list (Up, Down) and go from control to control (Up, Down); in a text field every key is as it was. Return is
+ * OK; Esc and Undo are Cancel. A dialog opens with the first text field as it always did, else the list. */
+
+#define SET_STOPS 64		/* controls the keys visit on one page */
+#define RING 2			/* the ring is this far outside its object, in pixels */
+
+static SETTINGS *key_set;	/* the dialog whose keys settings_key takes */
+
+static int is_field(const OBJECT *o)
+{
+	return (o->ob_type == G_FTEXT || o->ob_type == G_FBOXTEXT) && (o->ob_flags & EDITABLE);
+}
+
+/* the object the ring goes round: the control, a radio group's chosen button, the list's chosen name; 0 none */
+static short ring_obj(const SETTINGS *s)
+{
+	if (s->focus < 0)
+		return s->cur >= 1 && s->cur <= s->npages ? s->tab[s->cur] : 0;
+	if (s->focus > 0) {
+		short i;
+		for (i = 0; i < s->nw; i++)
+			if (s->wk[i].kind == W_RADIO && s->wk[i].obj == s->focus) {
+				short c = *s->wk[i].sel;
+				return (short)(s->focus + (c >= 0 && c < s->wk[i].n ? c : 0));
+			}
+		return s->focus;
+	}
+	return 0;
+}
+
+static void ring_draw(SETTINGS *s)
+{
+	short o = ring_obj(s), x, y;
+	GRECT r, c;
+	if (!o || !s->live || !s->kb)
+		return;
+	s->ringed = 1;
+	objc_offset(s->b.tree, o, &x, &y);
+	r.x = (short)(x - RING);
+	r.y = (short)(y - RING);
+	r.w = (short)(s->b.tree[o].ob_width + 2 * RING);
+	r.h = (short)(s->b.tree[o].ob_height + 2 * RING);
+	c = r;
+	if (!dlg_cut(&c.x, &c.y, &c.w, &c.h))
+		return;
+	graf_mouse(M_OFF, 0);
+	clip_on(&c);
+	frame(&r, 1);
+	clip_off();
+	graf_mouse(M_ON, 0);
+}
+
+/* the dialog's own drawing over its tree in a window: after any piece the AES asks for or we draw */
+static void ring_more(short x, short y, short w, short h)
+{
+	(void)x, (void)y, (void)w, (void)h;
+	if (key_set)
+		ring_draw(key_set);
+}
+
+/* the ring taken away, if it is on the screen: the object and 3 pixels round it drawn again over the page's ground (the
+   list's line too); the focus is 0 after it (the caller sets the next, so a redraw does not draw the ring again) */
+static void ring_erase(SETTINGS *s)
+{
+	short o = ring_obj(s), list = s->focus < 0, was = s->ringed;
+	s->focus = 0;
+	s->ringed = 0;
+	if (!was || !o || !s->live)
+		return;
+	dlg_draw_range(s->b.tree, o, o, (short)(o + 1), 1, 0);
+	if (list)
+		dlg_draw_one(s->b.tree, s->line_obj);
+}
+
+/* the page's controls the keys visit, in the order they were added: out[], their number */
+static short stops(SETTINGS *s, short *out, short max)
+{
+	OBJECT *t = s->b.tree;
+	short i, k, n = 0;
+	for (i = s->pfirst[s->cur]; i < s->pfirst[s->cur + 1] && n < max; i++) {
+		SET_W *w;
+		if ((t[i].ob_flags & HIDETREE) || (t[i].ob_state & DISABLED))
+			continue;
+		if (is_field(&t[i])) {
+			out[n++] = i;
+			continue;
+		}
+		k = db_tick_hit(&s->b, i);
+		if (k >= 0) {
+			if (i == s->b.tick[k].box)
+				out[n++] = i;
+			continue;
+		}
+		w = by_obj(s, i);
+		if (w && w->kind == W_RADIO) {
+			for (k = 0; k < w->n && ((w->off >> k) & 1); k++)
+				;
+			if (k < w->n)
+				out[n++] = i;
+		} else if (w) {
+			out[n++] = i;
+		}
+	}
+	return n;
+}
+
+/* the focus goes to `to` (a control, a field, or -1 the list); *field tells dlg_do where the text cursor goes */
+static void focus_to(SETTINGS *s, short to, short edit, short *field)
+{
+	if (s->ringed) {
+		ring_erase(s);
+		evnt_timer_(0);			/* an event call between the two draws: no stretch of 50 ms on an 8 MHz ST */
+	}
+	s->focus = 0;
+	if (to > 0 && is_field(&s->b.tree[to])) {
+		s->focus = 0;
+		*field = to;
+		return;
+	}
+	s->focus = to;
+	if (edit > 0)
+		*field = -1;
+	ring_draw(s);
+}
+
+/* the focus the dialog starts a page with: its first text field (dlg_do puts the cursor there), else the list */
+static void focus_default(SETTINGS *s)
+{
+	short k, n = stops(s, &k, 1);
+	s->focus = 0;
+	if (n && is_field(&s->b.tree[k]))
+		return;
+	{
+		short i;
+		for (i = s->pfirst[s->cur]; i < s->pfirst[s->cur + 1]; i++)
+			if (is_field(&s->b.tree[i]) && !(s->b.tree[i].ob_flags & HIDETREE))
+				return;
+	}
+	s->focus = -1;
+	ring_draw(s);
+}
+
+static void choices_refresh(SETTINGS *s);
+static void pop_run(SETTINGS *s, SET_W *p);
+static void act_run(SETTINGS *s, SET_W *p);
+static void radio_hit(SETTINGS *s, SET_W *p, short c, int by_key);
+
+/* Space on the control that has the focus */
+static void focus_act(SETTINGS *s)
+{
+	SET_W *w = by_obj(s, s->focus);
+	short k = db_tick_hit(&s->b, s->focus);
+	if (k >= 0) {
+		db_tick_flip(&s->b, k);
+		evnt_timer_(0);
+		choices_refresh(s);
+		ring_draw(s);
+	} else if (w && w->kind == W_POPUP) {
+		pop_run(s, w);
+		choices_refresh(s);
+		ring_draw(s);
+	} else if (w && (w->kind == W_ACT || w->kind == W_VALUE)) {
+		act_run(s, w);
+		choices_refresh(s);
+		ring_draw(s);
+	}
+}
+
+/* the next (d 1) or previous (d -1) choice of the radio group that applies, chosen; 0 if there is none */
+static int radio_step(SETTINGS *s, SET_W *w, short d)
+{
+	short c = *w->sel;
+	short k;
+	for (k = 0; k < w->n; k++) {
+		c = (short)(c + d);
+		if (c < 0 || c >= w->n)
+			return 0;		/* the ends: no wrapping, as a list */
+		if (!((w->off >> c) & 1)) {
+			radio_hit(s, w, c, 1);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+/* the page list's Up and Down */
+static void page_key(SETTINGS *s, short d)
+{
+	short np = (short)(s->cur + d);
+	if (np < 1 || np > s->npages)
+		return;
+	if (s->ringed) {
+		ring_erase(s);
+		evnt_timer_(0);
+	}
+	s->focus = 0;
+	show_page(s, np, 1);
+	s->focus = -1;
+	ring_draw(s);
+}
+
+/* a radio button chosen (by a click or an arrow key): the variable, the buttons, the ring */
+static void radio_hit(SETTINGS *s, SET_W *p, short c, int by_key)
+{
+	short old = *p->sel;
+	if (c < 0 || c >= p->n || ((p->off >> c) & 1) || c == old)
+		return;
+	*p->sel = c;
+	if (!by_key) {
+		radio_sync(s, p, 1);
+		return;
+	}
+	radio_sync(s, p, 0);
+	if (s->live) {
+		short ob = (short)(p->obj + (old >= 0 && old < p->n ? old : 0));
+		dlg_draw_one(s->b.tree, (short)(p->obj + c));
+		evnt_timer_(0);
+		dlg_draw_range(s->b.tree, ob, ob, (short)(ob + 1), 1, 0);	/* the old one, and the ring round it gone */
+		ring_draw(s);
+	}
+}
+
+/* a tick box drawn again (db_tick_flip's): alone over the ground where the look is flat, else through the AES */
+static void set_tick_draw(OBJECT *tree, short box)
+{
+	if (tree[0].ob_flags & 0x0600)		/* FL3DMASK: the AES's 3D look */
+		dlg_draw(tree, box);
+	else
+		dlg_draw_range(tree, box, box, (short)(box + 1), 1, 0);
+}
+
+/* a click: the keyboard's focus is no longer where it was (a control's ring goes; the list's when a page is chosen) */
+static void mouse_focus(SETTINGS *s, int page_change)
+{
+	if (s->focus > 0 || (s->focus < 0 && page_change) || s->ringed)
+		ring_erase(s);
+	s->kb = 0;
+}
+
+/* a key offered by dlg_do before its own: 1 when taken */
+static int settings_key(OBJECT *tree, short key, short kstate, short edit, short *field)
+{
+	SETTINGS *s = key_set;
+	short scan = (short)((key >> 8) & 0xff), ch = (short)(key & 0xff), d = 0, st[SET_STOPS], n, i, cur;
+	if (!s || !s->live || tree != s->b.tree)
+		return 0;
+	if (scan == 0x0f)			/* Tab (Shift+Tab backwards) goes through every field and control and the list, and round */
+		d = (kstate & 3) ? -1 : 1;
+	if (d) {
+		s->kb = 1;
+		n = stops(s, st, SET_STOPS);
+		{
+			short at = edit > 0 ? edit : s->focus;	/* a field, a control, or the list (-1) */
+			for (cur = 0; cur < n && st[cur] != at; cur++)
+				;			/* n when it isn't one of them: the list */
+		}
+		cur = (short)((cur + d + n + 1) % (n + 1));
+		focus_to(s, cur == n ? -1 : st[cur], edit, field);
+		return 1;
+	}
+	if (edit > 0)
+		return 0;				/* in a text field: its keys as they were */
+	if (scan == 0x39 && ch == ' ') {		/* Space */
+		s->kb = 1;
+		if (s->focus > 0) {
+			ring_draw(s);		/* shown now, if it was not */
+			focus_act(s);
+		}
+		return 1;
+	}
+	if (scan == 0x48 || scan == 0x50 || scan == 0x4b || scan == 0x4d) {
+		short up = (short)(scan == 0x48 || scan == 0x4b ? -1 : 1);
+		SET_W *w = s->focus > 0 ? by_obj(s, s->focus) : 0;
+		s->kb = 1;
+		if (s->focus <= 0 && (scan == 0x48 || scan == 0x50)) {
+			page_key(s, up);		/* the list, or nothing in focus: the page */
+		} else if (w && w->kind == W_RADIO) {
+			radio_step(s, w, up);
+		} else if (scan == 0x48 || scan == 0x50) {
+			n = stops(s, st, SET_STOPS);
+			for (i = 0; i < n && st[i] != s->focus; i++)
+				;
+			cur = (short)((i + up + n + 1) % (n + 1));
+			focus_to(s, cur == n ? -1 : st[cur], edit, field);
+		}
+		return 1;
+	}
+	return 0;
+}
+
 static void pop_run(SETTINGS *s, SET_W *p)
 {
 	char name[SET_POPMAX][SET_NAME + 4];
@@ -467,6 +766,7 @@ static void pop_run(SETTINGS *s, SET_W *p)
 		dlg_draw(tree, 0);		/* it wasn't kept (no memory): the dialog again */
 		drawn_again(s);
 	}
+	ring_draw(s);
 }
 
 /* a button's work: the app's dialog or list over ours, then ours again over what it covered */
@@ -486,6 +786,7 @@ static void act_run(SETTINGS *s, SET_W *p)
 	}
 	dlg_draw(tree, 0);
 	drawn_again(s);
+	ring_draw(s);
 }
 
 static SET_W *widget_of(SETTINGS *s, short obj)
@@ -540,15 +841,6 @@ static void choices_refresh(SETTINGS *s)
 	}
 }
 
-/* a radio button chosen by a click: the variable and the two buttons that changed */
-static void radio_hit(SETTINGS *s, SET_W *p, short c)
-{
-	if (c < 0 || c >= p->n || ((p->off >> c) & 1) || c == *p->sel)
-		return;
-	*p->sel = c;
-	radio_sync(s, p, 1);
-}
-
 /* Cancel: everything as it was when the dialog opened */
 static void revert(SETTINGS *s)
 {
@@ -592,6 +884,7 @@ int settings_dialog(const SET_DEF *d)
 	s->fl = (SET_F *)((char *)s->wk + (long)SET_WMAX * sizeof(SET_W));
 	s->band_text[0] = ' ';
 	strncpy(s->band_text + 1, d->title ? d->title : "Settings", sizeof(s->band_text) - 2);
+	s->b.draw = set_tick_draw;
 	build(s);
 	choices_refresh(s);
 	/* what Cancel puts back */
@@ -613,53 +906,70 @@ int settings_dialog(const SET_DEF *d)
 	dlg_band(s->b.band);		/* in a window its title says it (3.5) */
 	dlg_open(s->b.tree, &x, &y, &w, &h);
 	drawn_again(s);
-	s->live = 1;
-	for (;;) {
-		SET_W *p;
-		r = dlg_do(s->b.tree, 0, s->cancel) & 0x7fff;
-		k = db_tick_hit(&s->b, r);
-		if (k >= 0) {
-			if (!(s->b.tree[s->b.tick[k].box].ob_state & DISABLED)) {
-				db_tick_flip(&s->b, k);
-				evnt_timer_(120);
-				choices_refresh(s);
-			}
-			continue;
-		}
-		for (k = 1; k <= s->npages; k++)
-			if (r == s->tab[k])
-				break;
-		if (k <= s->npages) {
-			if (k != s->cur)
-				show_page(s, k, 1);
-			continue;
-		}
-		p = widget_of(s, r);
-		if (p) {
-			if (p->kind == W_RADIO)
-				radio_hit(s, p, (short)(r - p->obj));
-			else if (p->kind == W_POPUP)
-				pop_run(s, p);
-			else
-				act_run(s, p);
-			choices_refresh(s);
-			continue;
-		}
-		if (r == s->ok) {
-			if (d->check && !d->check(s, d->user)) {
-				s->b.tree[r].ob_state &= ~SELECTED;
-				dlg_draw(s->b.tree, r);
+	{
+		int (*was_keys)(OBJECT *, short, short, short, short *) = dlg_keys;
+		SETTINGS *was_set = key_set;
+		s->line_obj = 2;			/* the list's line: the band is 1 */
+		s->live = 1;
+		key_set = s;
+		dlg_keys = settings_key;
+		dlg_more(ring_more);
+		focus_default(s);
+		for (;;) {
+			SET_W *p;
+			r = dlg_do(s->b.tree, s->focus ? -1 : 0, s->cancel) & 0x7fff;
+			k = db_tick_hit(&s->b, r);
+			if (k >= 0) {
+				mouse_focus(s, 0);
+				if (!(s->b.tree[s->b.tick[k].box].ob_state & DISABLED)) {
+					db_tick_flip(&s->b, k);
+					evnt_timer_(120);
+					choices_refresh(s);
+				}
+				focus_default(s);
 				continue;
 			}
-			ok = 1;
-			break;
+			for (k = 1; k <= s->npages; k++)
+				if (r == s->tab[k])
+					break;
+			if (k <= s->npages) {
+				mouse_focus(s, 1);
+				if (k != s->cur)
+					show_page(s, k, 1);
+				focus_default(s);
+				continue;
+			}
+			p = widget_of(s, r);
+			if (p) {
+				mouse_focus(s, 0);
+				if (p->kind == W_RADIO)
+					radio_hit(s, p, (short)(r - p->obj), 0);
+				else if (p->kind == W_POPUP)
+					pop_run(s, p);
+				else
+					act_run(s, p);
+				choices_refresh(s);
+				focus_default(s);
+				continue;
+			}
+			if (r == s->ok) {
+				if (d->check && !d->check(s, d->user)) {
+					s->b.tree[r].ob_state &= ~SELECTED;
+					dlg_draw(s->b.tree, r);
+					continue;
+				}
+				ok = 1;
+				break;
+			}
+			if (r == s->cancel)
+				break;
+			/* anything else (an object that found no room, the root): nothing to do */
+			s->b.tree[r].ob_state &= ~SELECTED;
 		}
-		if (r == s->cancel)
-			break;
-		/* anything else (an object that found no room, the root): nothing to do */
-		s->b.tree[r].ob_state &= ~SELECTED;
+		s->live = 0;
+		key_set = was_set;
+		dlg_keys = was_keys;
 	}
-	s->live = 0;
 	dlg_close();
 	if (!ok)
 		revert(s);
