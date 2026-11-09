@@ -53,7 +53,7 @@ left unsettled is under `Still open` at the end of this file. Ids `C1` to `C26` 
   title replaces it:** `dlg_band(obj)` hides the band there and the window takes its text, so a dialog in a window
   has no band. (Alerts and the About box are not dialogs in this sense.) As built: EUpdate and EWeb put a band in
   every dialog, EFTP in four, EMail in one; EMail's and EFTP's small dialogs have a plain `G_STRING` at (2, 1) and
-  no band; EPlay's and EHypView's asks have a line of text there; the Font and Languages dialogs have none; ECal's
+  no band; EPlay's and EHypView's asks have a line of text there; the Font and Languages dialogs have one since 9 Nov 2026 (`fontsel.c`, `langs.c`: " Font", " Languages"); ECal's
   and EContact's have a black title bar with a centred bold title and a double frame; ClaudeST has a heading
   inside; EPDF's Find has a text line. All of those change. Decided 9 Nov 2026 (D22, C4).
 - **Keys** (`dlg_do`; EMail's, EFTP's and EUpdate's private `form_loop` is the same except where 3.5 and 5.4
@@ -71,10 +71,19 @@ left unsettled is under `Still open` at the end of this file. Ids `C1` to `C26` 
   - Keys typed before the dialog opened do not answer it (`flush_keys`; `dlg_do` only; the private loops have no
     `flush_keys`).
   - The Help key is not taken by a dialog.
-  **Keyboard reach is a rule, to build:** Space ticks a tick, the arrow keys move between radio buttons and in
+  **Keyboard reach is a rule:** Space ticks a tick, the arrow keys move between radio buttons and in
   lists, and the Settings pages have keys. The focus apps first, the maintenance apps at a release they make
-  anyway; the dialog loop and the Settings engine are hub work. How the keyboard focus reaches a tick, a radio, a
-  pop-up button or a page name, and which keys change the page, is in `Still open`. Decided 9 Nov 2026 (D25, C6).
+  anyway. **Built 9 Nov 2026 in the shared code (hub's proposal for Erez to confirm, `Still open`):** `dlg_do` offers
+  every key to `dlg_keys` first (`dialog.h`), and the Settings engine (`settings.h`) takes: **Tab and Shift+Tab** through
+  the page's text fields, ticks, radio groups (one stop each), pop-up buttons and action buttons in the order they were
+  added, then the list of pages, and round; **Space** on a tick (turns it over), a pop-up button (opens it over the
+  button) or an action button (its work); **Left, Right, Up, Down** in a radio group (next or previous choice that
+  applies, no wrapping), **Up and Down** in the page list (the chosen page; no wrapping) and from control to control
+  elsewhere. In a text field every key is as it was: Space types, Left and Right move the cursor, Up and Down go to
+  the previous and next field, Esc empties it. Return is OK, Esc and Undo Cancel wherever the focus is. The focus is
+  shown by a thin ring 2 pixels outside the control (the chosen name in the list), drawn only after a key was used and
+  gone after a click, so a dialog looks as before until then. The dialog opens with the cursor in the first text field,
+  else with the list in focus. An app's own dialog loop calls `dlg_keys` the same way. Decided 9 Nov 2026 (D25, C6).
 - **Mouse:** the left button only (mask 1, state 1). An exit button is pressed in while held and done when let
   go over it (the AES's `form_button`); a `TOUCHEXIT` object (a tick, a page name, a row, an arrow, a pop-up
   button) is done on the press; a click on a field moves the cursor into it (3 below); **a click outside the box
@@ -232,8 +241,12 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   EFTP's By type | As text | Binary, EPlay's Auto | FDI | DSP, ClaudeST's `own_add(... RBUTTON)`); the AES
   unselects the others of the same parent. **They are for one of up to four choices; above four, a pop-up button
   (5.7).** An existing pop-up of four choices or fewer (ECal's) becomes radio buttons. A choice that does not apply
-  is greyed (EPlay greys FDI and DSP on a machine without them): the shared Settings engine's `set_tick_group` and
-  `set_popup` cannot grey one choice yet, and learn to (hub work). Decided 9 Nov 2026 (D24).
+  is greyed (EPlay greys FDI and DSP on a machine without them). **Built 9 Nov 2026, in the shared Settings engine
+  (`settings.h`):** `set_radio(s, x, y, w, labels, n, &sel)` makes the group (up to four; `G_BUTTON`, `RBUTTON | TOUCHEXIT`
+  and not `SELECTABLE`, so the engine keeps the one chosen and the AES does not unchoose the other groups' buttons of the
+  page), `set_radio_enable` and `set_popup_enable` grey one choice or item, `set_choice_when` has the app say which
+  choices apply as the dialog opens and after every change. A greyed choice cannot be chosen by click or key. Decided
+  9 Nov 2026 (D24).
 - **Exit buttons one under another get room between them** (half a line) when 3D is on, because raised buttons
   grow by a few pixels.
 - **Dialogs an app draws itself** (ECal's and EContact's `ui/field.c`, ClaudeST's `own_*`) take the AES's 3D look
@@ -419,8 +432,9 @@ The text of 6.1 stays, with two corrections taken from the code:
 - **Button positions:** Cancel at `W - 24`, OK at `W - 12` is true of EMail, EFTP, EUpdate and EHypView (EMail:
   `SX + 18` and `SX + 30`). **EWeb has `SX + PW - 26` and `SX + PW - 13`** and a list `SW` of 12, not 13: a
   deviation to correct in EWeb, not a second form (C3).
-- **OK and Cancel order:** Cancel then OK, OK on the right. The Font dialog (`fontsel.c`), the Languages dialog
-  (`langs.c`) and EPlay's Settings put OK first; those are deviations to fix, not an alternative (C1).
+- **OK and Cancel order:** Cancel then OK, OK on the right. The Font dialog (`fontsel.c`) and the Languages dialog
+  (`langs.c`) had OK first and now follow it (9 Nov 2026, C1: Cancel at 24, OK at 36 in 48, 10 wide); EPlay's Settings
+  puts OK first and is a deviation to fix, not an alternative (C1).
 - **Decided 9 Nov 2026:** a choice of up to four is radio buttons and of more a pop-up button (D24; the engine learns to
   grey one choice); a number out of its limits is refused with an alert (D30); the controls and the pages get keys
   (D25); the pop-up opens over its button (D27).
@@ -463,11 +477,11 @@ names have `ch / 2` more per step. Exit buttons one under another: half a line b
 - **One button** (Keys, info): OK at `W - 12`, row `H - 2`. **Three** (EFTP "Already there"): Skip (default) |
   Resume | Replace, 10 wide (12 today, at x 2, 16, 30).
 - **Variants in use (deviations, C1 to C3):** EPlay 9 wide, OK left at 40, Cancel at 51 in 62 (the reverse of
-  the rule); Font dialog 9 wide, OK at 26, Cancel at 37 in 48; Languages the same on row 16; Add files 8 wide,
+  the rule); Font and Languages dialogs were 9 wide, OK at 26, Cancel at 37 in 48 (now 10 wide, Cancel at 24, OK at 36); Add files 8 wide,
   Cancel at 24, Add at 33 in 42; EWeb 10 wide with gap 3 and margin 3; pick list OK at `lw - 6`, Cancel at
   `lw - 18`, margin 4.
-  **Buttons are 10 wide, wider only if the label needs it.** EPlay and the Font and Languages dialogs (9), Add files
-  (8) and EFTP's "Already there" (12) change; the Font, Languages and Add files dialogs are hub work. An alert's
+  **Buttons are 10 wide, wider only if the label needs it.** EPlay (9), Add files
+  (8) and EFTP's "Already there" (12) change; the Font and Languages dialogs are done (9 Nov, hub), Add files is hub work. An alert's
   buttons keep their own rule (6.2: the longest label plus a cell). Decided 9 Nov 2026 (D26, C2).
 
 ### The standard dialogs
@@ -527,12 +541,16 @@ AES's), 8 x 8 or 8 x 16. Text goes on multiples of 8 pixels across (`align16`; t
 
 The answers of 9 Nov did not settle these; nothing here is guessed.
 
-- **How the keyboard reaches a control** (D25). The rule says Space ticks a tick, arrows move between radio buttons
-  and in lists, and the Settings pages have keys. It does not say how the focus gets to a tick, a radio, a pop-up
-  button or a page name (today Tab visits text fields only), whether it shows a ring, or which keys change the page.
-  The hub designs it with the focus apps and brings it to Erez as a UX decision.
+- **How the keyboard reaches a control** (D25). The hub built a proposal into the shared Settings engine (5, above, and
+  `settings.h`): Tab and Shift+Tab visit fields, ticks, radio groups, pop-ups and buttons then the page list; Space
+  acts; arrows choose in a radio group and in the list; a thin ring shows the focus once a key was used. **For Erez to
+  confirm:** the ring (a solid 1-pixel frame, 2 pixels out: its look), Up and Down moving the page only while the list
+  has the focus (so Tab to the list first, when the page has a text field), and no direct key for the page from a
+  text field (^Up and ^Down are free if he wants one).
 - **A radio group in the Settings page** (D24). Four radio buttons are 40 cells wide (10 apart) against the 30-cell
-  value column and the 42-cell page: how the engine lays a group out is the hub's to propose.
+  value column and the 42-cell page. The engine's proposal, built: a group starts at the page's column `SX` (or two in,
+  as a pop-up does) on a row of its own, buttons 8 or 9 wide, 10 characters and 4 pixels apart (EFTP's), so four of them
+  are 40 characters and 12 pixels of the 42; **for Erez to confirm** with the first app that uses one.
 - **The words of the out-of-range alerts** (D30). ECal's are the model; each app proposes its own, and the words are
   Erez's to approve.
 - **EHypView's "Look there anyway?"** (C21) is about a folder that isn't there, not a number; D30 does not cover it.

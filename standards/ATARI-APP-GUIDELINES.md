@@ -2098,8 +2098,8 @@ program's window.
 | 5.8, 3.4 Buttons act on the release over them; Stop in a job on the press (D32, D33) | ✗ | ✗ | ✗ | ? | ? | ✗ | ? (EUpdate ✗) | ? | ? |
 | 6.3 `Stop` for a job, `Cancel` for a dialog (D31) | — | ✗ | — | ? | — | — | ? (EUpdate ?) | ? | — |
 | 5.10 A black title band in every dialog (D22) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ? (EUpdate ?) | ✗ | ✗ |
-| 5.6 A bitmap tick for on/off, radio buttons for up to four choices, a pop-up above (D23, D24; the engine waits for the hub) | ✗ | ✗ | ✗ | ? | ? | ? | ? (EUpdate ✗) | ? | ? |
-| 5.10 The controls and the Settings pages can be reached from the keyboard (D25) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (EUpdate ✗) | ✗ | ✗ |
+| 5.6 A bitmap tick for on/off, radio buttons for up to four choices, a pop-up above (D23, D24; the engine's `set_radio`, `set_radio_enable`, `set_popup_enable` are built, 9 Nov: apps adopt) | ✗ | ✗ | ✗ | ? | ? | ? | ? (EUpdate ✗) | ? | ? |
+| 5.10 The controls and the Settings pages can be reached from the keyboard (D25; `dlg_keys` and the engine's Tab, Space and arrows are built, 9 Nov: apps adopt) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ (EUpdate ✗) | ✗ | ✗ |
 | 5.10 Dialog buttons 10 wide (D26) | ? | ? | ? | ✗ | ? | ? | ? (EUpdate ?) | ✗ | ✗ |
 | 5.7 A pop-up opens with the ticked row over its button (D27) | ✗ | ✗ | ✗ | ✗ | ? | — | ? (EUpdate ?) | ? | ✗ |
 | 3.5 Esc never cancels over a filter field (D28) | — | ✗ | — | — | — | — | — (EUpdate —) | — | ✗ |
