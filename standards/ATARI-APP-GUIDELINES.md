@@ -2041,7 +2041,7 @@ program's window.
 | 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) | ✓ | ✓ (0.1) | — |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (common's, 0.1) | — |
 | 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ | ✓ | ✓ | — |
-| 1.4 README is a front page: about 600 words, 100 lines, ten Highlights, one Gateway paragraph (Erez, 9 Nov 2026) | ✓ (653 words, 86 lines) | ✓ (650, 89) | ✓ (677, 92) | ✓ (621, 87) | ✓ (661, 83) | ✓ (652, 94) | ✓ pilot (699, 95) | ✓ (405; ten Highlights not yet) | ? (asked) |
+| 1.4 README is a front page: about 600 words, 100 lines, ten Highlights, one Gateway paragraph (Erez, 9 Nov 2026) | ✓ (653 words, 86 lines) | ✓ (650, 89) | ✓ (677, 92) | ✓ (621, 87) | ✓ (661, 83) | ✓ (652, 94) | ✓ pilot (699, 95) | ✓ (405; ten Highlights not yet) | ✓ (646, 82) |
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | ✓ PRG, and EMAILCHK.ACC beside it (1.57) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) | PRG only | — |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | ✓ (EMAILCHK.ACC, 1.57: AP_TERM goes to av_message, which ignores it) | n/a | ✓ | n/a | n/a | n/a | — |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | ✓ (EMAILCHK.ACC, 1.58: nothing before the first event call; ST-1 ≤ 100 ms a stretch through the gateway, Falcon ≤ 25; Direct's key exchange only while idle; the new-mail alert the AES's) | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a | n/a | — |
