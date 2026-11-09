@@ -18,6 +18,9 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
 
   When a change touches one of these, do it the guideline's way, even if the old code here did it
   differently.
+- **Never build a window, dialog or menu from the guidelines' words alone** (Erez, 9 Nov 2026): open the
+  family's real one in Hatari and copy its code (guidelines 5.6). A mock-up for Erez is a Hatari shot of the
+  real thing changed, never a drawing.
 - **Speed is set by the stock machines** (Erez, 26 Oct 2026; the guidelines' "Speed"): an 8 MHz ST
   and a stock Falcon (`ST`, `ST-1`, `Falcon-4`), not the DFB1. Design and code for them: draw only
   what changed, keep the 68000's slow operations out of inner loops, do work once. A change to

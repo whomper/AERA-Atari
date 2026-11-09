@@ -1342,6 +1342,12 @@ CONTACTS.TXT when the user chooses it (below).
   is made in AERA-Atari and reaches the app with `tools/sync-common.sh` and `make icons`.
 
 ### 5.6 Dialogs: the 3D look (must; Erez, 24 Oct 2026)
+- **Never build a window, dialog or menu from these words alone** (Erez, 9 Nov 2026; EPDF 2.1's Settings was
+  drawn from the text and did not look like the family's). Before drawing one, **open the family's real one** in
+  Hatari (EMail 2.14's Settings for a settings dialog, EUpdate's or EFTP's window for a job window, EWeb's or
+  EMail's menus for a menu bar) on TOS 4.04 and TOS 1.04, and **copy its code** (the sources named in 6.1 and
+  3.1), not its idea. Where these words and the real app differ, the real app is right: tell the hub, who
+  corrects the words. A mock-up for Erez is a Hatari shot of the real thing changed, never a drawing.
 - **Where the AES draws 3D objects, every dialog and alert has its 3D look.** That is AES 3.4 and
   newer, asked through `appl_getinfo(13)` where it can be: TOS 4, MagiC, N.AES, XaAES, and
   EmuTOS's AES in 16 colours or more (EHypView's session found it, 24 Oct 2026). The box and its
