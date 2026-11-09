@@ -775,11 +775,11 @@ static void log_geom(void)
 		const char *name;
 		short o;
 	} k[] = { { "drive", O_DRIVE }, { "folders", O_FOLDERS }, { "type", O_TYPE }, { "sort", O_SORT },
-		  { "mask", O_MASK }, { "cancel", O_CANCEL }, { "add", O_ADD } };
-	char b[200];
+		  { "mask", O_MASK }, { "cancel", O_CANCEL }, { "add", O_ADD }, { "list", O_LIST } };
+	char b[240];
 	int i, n;
 	n = snprintf(b, sizeof(b), "%s geom", spec->log);
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < 8; i++) {
 		short x, y;
 		objc_offset(tree, k[i].o, &x, &y);
 		n += snprintf(b + n, sizeof(b) - n, " %s=%d,%d,%d,%d", k[i].name, x, y, tree[k[i].o].ob_width,
