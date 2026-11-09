@@ -337,6 +337,15 @@ short objc_offset(OBJECT *t, short obj, short *x, short *y)
 	return 1;
 }
 
+/* the menu bar's title shown normal: dlg_evnt's MD17 (dialog.c), which a window dialog's test can send a MN_SELECTED for */
+int tnormal_calls;
+short menu_tnormal(OBJECT *t, short title, short normal)
+{
+	(void)t, (void)title, (void)normal;
+	tnormal_calls++;
+	return 1;
+}
+
 /* the focus ring (ui.h's drawing): frame() is the ring, drawn by settings.c after the tree */
 int ring_draws;
 GRECT ring_last;

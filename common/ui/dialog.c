@@ -115,7 +115,18 @@ const char *dlg_title = "";
 static const char *next_name;		/* dlg_name's, for the next dlg_open */
 static short next_band;			/* dlg_band's, for the next dlg_open */
 void (*dlg_redraw_hook)(const short *msg);
+OBJECT *dlg_menu;
 int dlg_window_on = -1;
+
+/* a menu title chosen while a dialog window is open (MiNT, MagiC: the AES doesn't hold the menu bar there): the dialog
+   is the user's business, so the choice is dropped, as it can't be made on TOS, and the title is shown normal again
+   (MD17, 9 Nov 2026: the AES leaves it highlighted until the app says). It used to be kept and run when the dialog
+   closed. The app's menu bar is dlg_menu (mbar_build sets it) */
+static void menu_drop_msg(const short *msg)
+{
+	if (dlg_menu)
+		menu_tnormal(dlg_menu, msg[3], 1);
+}
 
 /* the screen under the box, kept in memory while it shows (form_alert's
    way); vro_cpyfm through a workstation of our own */
@@ -1378,7 +1389,9 @@ static void held_msg(short *msg)
 	short k, i = ndw - 1;
 	for (k = 0; k <= i && dw[k].h != msg[3]; k++)
 		;
-	if (msg[0] == WM_REDRAW && k <= i && dw[k].h > 0) {
+	if (msg[0] == MN_SELECTED && dlg_in_window()) {
+		menu_drop_msg(msg);
+	} else if (msg[0] == WM_REDRAW && k <= i && dw[k].h > 0) {
 		wind_update(END_UPDATE);
 		win_paint(k, msg[4], msg[5], msg[6], msg[7]);
 		wind_update(BEG_UPDATE);
@@ -1464,7 +1477,9 @@ static short dlg_evnt_(short flags, short clicks, short mask, short state,
 			int mine = 1;		/* taken here: the caller doesn't see it */
 			for (k = 0; k <= i && dw[k].h != msg[3]; k++)
 				;
-			if (msg[0] == WM_REDRAW && k <= i && dw[k].h > 0) {
+			if (msg[0] == MN_SELECTED) {
+				menu_drop_msg(msg);	/* a menu choice while the dialog waits: dropped (MD17), whoever asked for messages */
+			} else if (msg[0] == WM_REDRAW && k <= i && dw[k].h > 0) {
 				wind_update(END_UPDATE);
 				win_paint(k, msg[4], msg[5], msg[6], msg[7]);
 				wind_update(BEG_UPDATE);

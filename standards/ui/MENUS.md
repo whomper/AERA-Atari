@@ -205,12 +205,13 @@ makes anyway.
 ### 1.8 Under a multitasking AES
 The bar is the same under MiNT with XaAES and under MagiC. On TOS a modal dialog (`form_do`, `dlg_do`) holds the
 AES, so no title can be chosen. Under a multitasking AES (`dlg_windowed()`: `aes_count() != 1`, or MagX) a
-dialog is a window and a title can be chosen meanwhile: `common/ui/dialog.c:dlg_evnt_` keeps messages the
-dialog loop was not asked for (`keep_msg`, up to 8) and gives them back after the last dialog closes. **The shared loop
-does not drop a menu choice made while a dialog is open:** it keeps it and sends it back when the dialog is gone, so
-the choice runs afterwards (read by the hub, 9 Nov), and it does not set the title normal. Only EContact drops it
-(`ui/main.c:menu_drop`). **The rule is: the choice is dropped and the title set normal with `menu_tnormal`**, a hub
-fix in `dlg_evnt` for every app (MD17). Pop-ups are drawn the same way on
+dialog is a window and a title can be chosen meanwhile: `common/ui/dialog.c:dlg_evnt_` keeps the other messages the
+dialog loop was not asked for (`keep_msg`, up to 8) and gives them back after the last dialog closes. **A menu choice made
+while a dialog window is open is dropped and the title set normal with `menu_tnormal(dlg_menu, msg[3], 1)`**, in the shared
+`dlg_evnt` for every app, whether or not the caller asked for messages (MD17, built 9 Nov 2026; before, it was kept and
+the choice ran after the dialog closed, with the title left highlighted: checked under XaAES, `tests/settings/run.py
+--xaaes`). `dlg_menu` is the app's menu tree; `mbar_build` sets it (an app with a bar of its own sets it). EContact's own
+`menu_drop` becomes unnecessary. Pop-ups are drawn the same way on
 both AESes (over the screen, `wind_update(BEG_MCTRL)`), not as AES windows.
 
 ---
@@ -585,8 +586,7 @@ As built at the tags; the rules of 1.5 say where each is going.
 - **Greying** is done in `menu_update()` (EMail, EFTP, EUpdate, EWeb, EContact), `event_items` (ECal),
   `update_menu` (EHypView), `menu_states` (EPDF). The caches that spare AES calls: `enable()` comparing
   `ob_state & DISABLED` (EMail, EFTP), a remembered last value (ECal, EWeb, EHypView, EPDF), a bit mask (EUpdate).
-- **Not in the code:** a Print command; a context-sensitive Help page (not wanted now: D12); a `menu_drop` in any app but EContact; what
-  the other apps' dialog loops do with a kept `MN_SELECTED`.
+- **Not in the code:** a Print command; a context-sensitive Help page (not wanted now: D12); a `menu_drop` in any app but EContact (the shared `dlg_evnt` drops it now).
 
 ---
 
