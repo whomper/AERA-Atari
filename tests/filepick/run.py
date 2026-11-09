@@ -308,6 +308,69 @@ def double_clicks(work, machine, nvdi, prg, display):
     return fails
 
 
+# "Use the system file selector" (Erez, 9 Nov 2026): the Cancel button's place in the AES's own selector, by TOS
+# (a screenshot of each; the selector is the AES's, not ours, and has no geometry on the console)
+SELECTOR_CANCEL = {"TOS 4.04": (373, 393), "EmuTOS": (325, 400)}
+
+
+def system_selector(work, machine, nvdi, prg, display):
+    """FPTEST.PRG with filepick_system set (C:\\FPSYS.TXT): the AES's selector opens, not our dialog; typing a name and
+    Return takes that one file (the folder as the selector gave it, left in dir and first in recent); Cancel takes
+    nothing and leaves dir and recent as they were; idle() isn't called meanwhile. Returns (fails, skipped)"""
+    scale_for(machine)
+    fails = []
+    for how in ("take", "cancel"):
+        r = speed.Rig(os.path.join(work, how), machine, nvdi=nvdi, display=display)
+        try:
+            tos = r.describe()
+            cancel = next((v for k, v in SELECTOR_CANCEL.items() if k in tos), None)
+            if how == "cancel" and not cancel:
+                return fails, ["the system selector's Cancel (no place known for %s)" % tos]
+            music = os.path.join(r.hd, "MUSIC")
+            os.makedirs(music)
+            for n in ("NIGHT01.MP3", "RAIN02.WAV", "README.TXT"):
+                with open(os.path.join(music, n), "wb") as f:
+                    f.truncate(100)
+            with open(os.path.join(r.hd, "FPSYS.TXT"), "w") as f:
+                f.write("1")
+            shutil.copy(prg, os.path.join(r.hd, "FPTEST.PRG"))
+            r.start("C:\\FPTEST.PRG", ready="FPT open", boot=900)
+            if "FPT open" not in r.console():
+                fails.append("system selector: the program never started")
+                continue
+            r.still(most=10)
+            shot = r.shot("sel-open")
+            if " picture add " in r.console():
+                fails.append("system selector, %s: our dialog opened" % how)
+            if how == "take":
+                r.type("NIGHT01.MP3")
+                r.key("Return")
+            else:
+                move(r, cancel[0] - 4, cancel[1] - 2)
+                move(r, cancel[0], cancel[1])
+                r.click(cancel[0] * SX, cancel[1] * SY)
+            t_end = time.time() + 30
+            while time.time() < t_end and "FPT dir" not in r.console():
+                time.sleep(1)
+            con = r.console()
+            took = [l[9:] for l in con.splitlines() if l.startswith("FPT took ")]
+            dirl = [l for l in con.splitlines() if l.startswith("FPT dir")]
+            if how == "take":
+                want = ["C:\\MUSIC\\NIGHT01.MP3"]
+                ok = took == want and "FPT done 1, idle never" in con and \
+                    dirl == ["FPT dir C:\\MUSIC\\; recent C:\\MUSIC\\"]
+            else:
+                ok = not took and "FPT done 0, idle never" in con and \
+                    dirl == ["FPT dir C:\\MUSIC\\; recent C:\\MUSIC\\LIVE\\"]
+            if not ok:
+                fails.append("system selector, %s: took %s, %s, %s" % (how, took, [l for l in con.splitlines()
+                                                                                  if l.startswith("FPT done")], dirl))
+            print("  system selector, %s on %s: took %s, %s%s" % (how, tos, took, dirl, "" if ok else "  <- FAILED"))
+        finally:
+            r.stop()
+    return fails, []
+
+
 def diff_box(a, b):
     """the box the two pictures differ in, (w, h, x, y), or None"""
     p = subprocess.run(["convert", a, b, "-compose", "difference", "-composite", "-trim", "info:"],
@@ -337,6 +400,11 @@ def main():
                          os.path.join(HERE, "build", "atari", "FPTEST.PRG"), DISPLAY, how)
     fails += double_clicks(os.path.join(work, "dbl"), machine, nvdi,
                            os.path.join(HERE, "build", "atari", "FPTEST.PRG"), DISPLAY)
+    f3, skipped = system_selector(os.path.join(work, "sys"), machine, nvdi,
+                                  os.path.join(HERE, "build", "atari", "FPTEST.PRG"), DISPLAY)
+    fails += f3
+    for sk in skipped:
+        print("SKIPPED: " + sk)
     if "--old" in sys.argv:
         f2, old = session(os.path.join(work, "old"), machine, nvdi,
                           os.path.join(HERE, "build", "old", "FPOLD.PRG"), DISPLAY)
@@ -356,7 +424,8 @@ def main():
                 fails.append("%s differs from EPlay's own (%s, %s; %s)" % (name, shots[name], old[name], box))
     for f in fails:
         print("FAIL  " + f)
-    print("all passed" if not fails else "%d failed" % len(fails))
+    print(("all passed" if not skipped else "passed, %d skipped" % len(skipped)) if not fails else
+          "%d failed" % len(fails))
     return 1 if fails else 0
 
 

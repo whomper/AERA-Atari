@@ -97,6 +97,45 @@ def long_folder(work, img, display, prg):
     return [] if ok else ["the long folder's file: took %s" % took]
 
 
+def system_selector(work, img, display, prg):
+    """"Use the system file selector" (filepick_system, C:\\FPSYS.TXT for FPTEST.PRG): XaAES's own selector opens, not
+    our dialog; a double click on a file takes it once (full path, the folder first in recent); Cancel takes nothing and
+    leaves dir and recent"""
+    fails = []
+    src = os.path.join(work, "sys")
+    music = os.path.join(src, "MUSIC")
+    os.makedirs(music)
+    for n in ("01_NIGHT.MP3", "LIVE.M3U", "README.TXT"):
+        with open(os.path.join(music, n), "wb") as f:
+            f.truncate(100)
+    with open(os.path.join(src, "FPSYS.TXT"), "w") as f:
+        f.write("1")
+    # XaAES's selector lists . and .. and the folders first: the rows of the screen at 640 x 480
+    for how, step in (("take", "dclick 300 216"), ("cancel", "move 450 418; click 458 422")):
+        w = os.path.join(work, how)
+        steps = ["until FPT open 150", "wait 4", step, "until FPT dir 30"]
+        cmd = [sys.executable, os.path.join(XAAES, "run.py"), w, img, prg, "--copy", music,
+               os.path.join(src, "FPSYS.TXT"), "--display", display, "--steps", ";".join(steps)] + MEM_PROT
+        r = subprocess.run(cmd, cwd=XAAES, capture_output=True, text=True)
+        print(r.stdout[-200:])
+        log = open(os.path.join(w, "hatari.log"), errors="replace").read()
+        slim(w)
+        took = [l[9:] for l in log.splitlines() if l.startswith("FPT took ")]
+        dirl = [l for l in log.splitlines() if l.startswith("FPT dir")]
+        if how == "take":
+            ok = took == ["C:\\MUSIC\\LIVE.M3U"] and "FPT done 1, idle never" in log and \
+                dirl == ["FPT dir C:\\MUSIC\\; recent C:\\MUSIC\\"]
+        else:
+            ok = not took and "FPT done 0, idle never" in log and \
+                dirl == ["FPT dir C:\\MUSIC\\; recent C:\\MUSIC\\LIVE\\"]
+        if " picture add " in log:
+            ok = False
+        print("  XaAES system selector, %s: took %s, %s" % (how, took, dirl))
+        if not ok:
+            fails.append("the system selector, %s: took %s, %s" % (how, took, dirl))
+    return fails
+
+
 def main():
     a = [x for x in sys.argv[1:] if not x.startswith("--")]
     opt = {}
@@ -163,6 +202,7 @@ def main():
     print("  XaAES: folders opened %d, took %s" % (folders, took))
     fails += long_names(os.path.join(work, "long"), img, display, prg)
     fails += long_folder(os.path.join(work, "long"), img, display, prg)
+    fails += system_selector(os.path.join(work, "selector"), img, display, prg)
     for f in fails:
         print("FAIL  " + f)
     print("all passed" if not fails else "%d failed" % len(fails))

@@ -340,3 +340,37 @@ void dl_date_text(unsigned short date, char *out)
 {
 	sprintf(out, "%02u.%02u.%02u", date & 31, (date >> 5) & 15, (unsigned)((date >> 9) + 80) % 100);
 }
+
+int dl_folder_of(const char *path, char *dir, size_t n)
+{
+	const char *b = strrchr(path, '\\');
+	size_t len;
+	if (!b)
+		return 0;
+	len = (size_t)(b - path) + 1;
+	if (len >= n)
+		return 0;
+	memcpy(dir, path, len);
+	dir[len] = 0;
+	return 1;
+}
+
+int dl_join(const char *dir, const char *name, char *out, size_t n)
+{
+	size_t a = strlen(dir), b = strlen(name);
+	if (a + b >= n)
+		return 0;
+	memcpy(out, dir, a);
+	memcpy(out + a, name, b + 1);
+	return 1;
+}
+
+void dl_recent_front(char *recent, size_t stride, int n, const char *dir)
+{
+	int k;
+	for (k = 0; k < n - 1 && strcmp(recent + (size_t)k * stride, dir); k++)
+		;
+	for (; k > 0; k--)
+		strcpy(recent + (size_t)k * stride, recent + (size_t)(k - 1) * stride);
+	strcpy(recent, dir);
+}

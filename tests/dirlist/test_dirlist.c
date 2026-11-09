@@ -185,6 +185,28 @@ int main(void)
 		dl_clear(&d);
 		check(d.pool == 0 && d.n == 0, "dl_clear gives the names' memory back");
 	}
+	/* what the system's file selector gives back */
+	{
+		char dir[20], full[40], rc[4][20];
+		check(dl_folder_of("C:\\MUSIC\\*.*", dir, sizeof(dir)) && !strcmp(dir, "C:\\MUSIC\\"), "the selector's folder");
+		check(dl_folder_of("D:\\*.MP3", dir, sizeof(dir)) && !strcmp(dir, "D:\\"), "the root");
+		check(!dl_folder_of("NOSLASH", dir, sizeof(dir)), "no folder in a path without a backslash");
+		check(!dl_folder_of("C:\\0123456789ABCDEF\\*.*", dir, sizeof(dir)), "a folder that doesn't fit is refused, not cut");
+		check(dl_join("C:\\MUSIC\\", "A long name.mp3", full, sizeof(full)) && !strcmp(full, "C:\\MUSIC\\A long name.mp3"),
+		      "folder and name joined");
+		check(!dl_join("C:\\MUSIC\\", "0123456789012345678901234567.mp3", full, sizeof(full)), "a path that doesn't fit is refused");
+		memset(rc, 0, sizeof(rc));
+		strcpy(rc[0], "C:\\A\\");
+		strcpy(rc[1], "C:\\B\\");
+		strcpy(rc[2], "C:\\C\\");
+		dl_recent_front(rc[0], sizeof(rc[0]), 4, "C:\\C\\");
+		check(!strcmp(rc[0], "C:\\C\\") && !strcmp(rc[1], "C:\\A\\") && !strcmp(rc[2], "C:\\B\\") && !rc[3][0],
+		      "a folder already there moves to the front");
+		dl_recent_front(rc[0], sizeof(rc[0]), 4, "C:\\D\\");
+		check(!strcmp(rc[0], "C:\\D\\") && !strcmp(rc[1], "C:\\C\\") && !strcmp(rc[3], "C:\\B\\"), "a new one goes first");
+		dl_recent_front(rc[0], sizeof(rc[0]), 4, "C:\\E\\");
+		check(!strcmp(rc[0], "C:\\E\\") && !strcmp(rc[3], "C:\\A\\") && !strcmp(rc[2], "C:\\C\\"), "the oldest goes when it is full");
+	}
 	dl_free(&d);
 	return bad != 0;
 }
