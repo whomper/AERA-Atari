@@ -20,7 +20,7 @@ LDFLAGS := -m68000 -nostdlib -static -no-pie -Wl,--emit-relocs -Wl,-T,$(A)/link.
            -Wl,--build-id=none -Wl,-z,noexecstack -Wl,--no-warn-rwx-segments
 B       := build
 
-all: $(B)/ICONTEST.PRG $(B)/OPNWK.PRG $(B)/LATER.PRG $(B)/EXT2TEST.PRG $(B)/LFNTEST.PRG
+all: $(B)/ICONTEST.PRG $(B)/OPNWK.PRG $(B)/LATER.PRG $(B)/EXT2TEST.PRG $(B)/LFNTEST.PRG $(B)/TERMTEST.PRG
 base: $(B)/OPNWK.PRG
 	python3 fetch.py
 $(B)/%.PRG: $(B)/%.elf ../../tools/elf2tos.py
@@ -33,6 +33,8 @@ $(B)/EXT2TEST.elf: $(B)/crt0.o $(B)/ext2test.o $(B)/gem.o $(B)/tos.o $(B)/libc.o
 	$(CC) $(LDFLAGS) -o $@ $^ -lgcc
 $(B)/LFNTEST.elf: $(B)/crt0.o $(B)/lfntest.o $(B)/gem.o $(B)/tos.o $(B)/libc.o $(B)/nf.o
 	$(CC) $(LDFLAGS) -o $@ $^ -lgcc
+$(B)/TERMTEST.elf: $(B)/crt0.o $(B)/termtest.o $(B)/crash.o $(B)/crash_s.o $(B)/gem.o $(B)/tos.o $(B)/libc.o $(B)/nf.o
+	$(CC) $(LDFLAGS) -o $@ $^ -lgcc
 $(B)/OPNWK.elf: $(B)/crt0.o $(B)/opnwk.o $(B)/tos.o $(B)/libc.o $(B)/nf.o
 	$(CC) $(LDFLAGS) -o $@ $^ -lgcc
 $(B)/opnwk.o: opnwk.c | $(B)
@@ -40,6 +42,8 @@ $(B)/opnwk.o: opnwk.c | $(B)
 $(B)/ext2test.o: ext2test.c | $(B)
 	$(CC) $(ACFLAGS) -c -o $@ $<
 $(B)/lfntest.o: lfntest.c | $(B)
+	$(CC) $(ACFLAGS) -c -o $@ $<
+$(B)/termtest.o: termtest.c | $(B)
 	$(CC) $(ACFLAGS) -c -o $@ $<
 $(B)/later.o: later.c | $(B)
 	$(CC) $(ACFLAGS) -c -o $@ $<
@@ -49,6 +53,8 @@ $(B)/%.o: $(A)/%.c | $(B)
 	$(CC) $(ACFLAGS) -c -o $@ $<
 $(B)/crt0.o: $(A)/crt0.S | $(B)
 	$(CC) -m68000 -DSTACK_SIZE=8192 -c -o $@ $<
+$(B)/crash_s.o: $(A)/crash.S | $(B)
+	$(CC) -m68000 -c -o $@ $<
 $(B)/nf.o: $(A)/nf.S | $(B)
 	$(CC) -m68000 -c -o $@ $<
 $(B):
