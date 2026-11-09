@@ -638,7 +638,10 @@ short aes_count(void)
    (MagiC's) reports something else in ap_count: evnt_multi_'s double click needs it (EFTP, 9 Nov) */
 static int aes_multi(void)
 {
-	return aes_count() < 0 || get_cookie(0x4D616758L) || get_cookie(0x4D694E54L);	/* MagX, MiNT */
+	static short k = -1;		/* worked out once: the cookies don't change while the program runs, and a cookie walk is a Supexec call */
+	if (k < 0)
+		k = aes_count() < 0 || get_cookie(0x4D616758L) || get_cookie(0x4D694E54L);	/* MagX, MiNT */
+	return k;
 }
 
 /* the GEM file selector; the titled version needs AES 1.4 (TOS 1.04) */
