@@ -428,6 +428,13 @@ def xaaes(a):
     for i, f in enumerate(shots):
         shutil.copy(os.path.join(w3, "shots", f), os.path.join(out, "xaaes-keys-%02d.png" % (i + 1)))
     print("     xaaes: %d screenshots of the keys in %s" % (len(shots), out), flush=True)
+    # the Font dialog in a window: the window's own title replaces the black band (D22), Cancel left of OK (C1), both 10 wide
+    w5 = os.path.join(a.work, "xaaes5")
+    rc, txt = go(w5, "until SETDEMO ready 300; key 4; wait 6; shot; key 0x61; until SETDEMO got font 60; key q; until SETDEMO done 60")
+    log = open(os.path.join(w5, "hatari.log"), errors="replace").read()
+    check(rc == 0 and "SETDEMO got font 0" in log, "xaaes: the Font dialog opened in a window and closed by Undo (rc %d)" % rc)
+    for i, f in enumerate(sorted(os.listdir(os.path.join(w5, "shots")))):
+        shutil.copy(os.path.join(w5, "shots", f), os.path.join(out, "xaaes-font-%02d.png" % (i + 1)))
     # MD17: a menu title chosen while a dialog window is open (the bar is the demo's, built where the AES has windows): dlg_evnt
     # drops the choice and sets the title normal; before, it was kept and run when the dialog closed ("SETDEMO menu T I")
     w4 = os.path.join(a.work, "xaaes4")
@@ -536,6 +543,56 @@ def keys_run(a, machine):
         s.r.stop()
 
 
+def font_run(a, machine):
+    """the shared Font dialog (ui/fontsel.c, SETDEMO's key 4): its black title band, Cancel left of OK, both 10 wide; a click on
+    the left button is Cancel (nothing applied), on the right one OK (applied); a screenshot to SHOTS (font-MACHINE-open.png)"""
+    tag = machine.replace(":", "_")
+    out = os.path.abspath(a.shots)
+    os.makedirs(out, exist_ok=True)
+    s = Session(os.path.join(a.work, "font-" + tag), machine, a.display)
+    try:
+        s.r.put(PRG, "")
+        s.r.start("C:\\SETDEMO.PRG", ready="SETDEMO ready")
+        m = re.search(r"SETDEMO screen\s+(\d+) (\d+) (\d+) (\d+)", s.r.console())
+        chei = int(m.group(4)) if m else 16
+        w_px, h_px = 48 * 8, 17 * chei + 14
+        pos = len(s.r.console())
+        s.r.act("Font dialog opened (key 4)", speed.DIALOG, lambda: s.r.key("4"))
+        time.sleep(4)
+        img = s.shot("font-open")
+        img.save(os.path.join(out, "font-%s-open.png" % tag))
+        box = find_box(img, w_px, h_px)
+        if not check(box is not None, "%s font: the dialog (48 x 17 cells) found on the screen" % tag):
+            return
+        bx, by = box
+        px = img.load()
+        # the title band: row 0 black from the left edge to the right (inside the 2-pixel frame), its text white
+        band_row = by + chei // 2
+        dark = sum(1 for x in range(bx + 4, bx + w_px - 4) if sum(px[x, band_row][:3]) < 150)
+        check(dark > (w_px - 8) * 0.7, "%s font: a black title band across the first row (%d of %d pixels dark)" % (tag, dark, w_px - 8))
+        by_ = by + 15 * chei + 12 + chei // 2
+        left = (bx + (24 + 5) * 8, by_)
+        right = (bx + (36 + 5) * 8, by_)
+        # a 10-wide button is 80 pixels: its frame at the two ends, none in the gap between them
+        row = [px[x, by_] for x in range(bx + 24 * 8 - 3, bx + 46 * 8 + 3)]
+        s.r.click(*left)
+        i = s.at("SETDEMO got font", pos)
+        got = s.r.console()[pos:].split("SETDEMO got font", 1)[-1].split("\n", 1)[0] if i > 0 else ""
+        check(i > 0 and got.strip().startswith("0") and "applied" not in s.r.console()[pos:], "%s font: the left button is Cancel: result 0, nothing applied (%s)" % (tag, got.strip()[:12]))
+        pos = len(s.r.console())
+        s.r.key("4")
+        time.sleep(4)
+        s.r.click(*right)
+        i = s.at("SETDEMO got font", pos)
+        got = s.r.console()[pos:].split("SETDEMO got font", 1)[-1].split("\n", 1)[0] if i > 0 else ""
+        check(i > 0 and got.strip().startswith("1") and "SETDEMO font applied" in s.r.console()[pos:],
+              "%s font: the right button is OK: result 1, applied (%s)" % (tag, got.strip()[:12]))
+        s.r.key("q")
+        s.at("SETDEMO done", pos, 20)
+    finally:
+        s.r.stop()
+
+
 def load_shots(a, tag):
     """the screenshots an earlier run left in WORK (--again): to compare them again"""
     def img(*p):
@@ -600,6 +657,7 @@ def main():
     ap.add_argument("--speed", action="store_true")
     ap.add_argument("--prg", metavar="DIR", help="build/DIR's SETDEMO.PRG instead of build/prof's (make cpu: the programs' own flags, -DDLG_CPU -DDLG_CLICK)")
     ap.add_argument("--keys", action="store_true", help="the radio buttons and the keyboard's reach in SETDEMO's third dialog (screenshots keys-*.png)")
+    ap.add_argument("--font", action="store_true", help="the Font dialog (SETDEMO's key 4): its band and its Cancel and OK")
     ap.add_argument("--again", action="store_true", help="compare the screenshots an earlier run left in WORK again (no emulator)")
     ap.add_argument("--xaaes", nargs="?", const="", metavar="TOS_IMAGE", help="the demo under FreeMiNT and XaAES (EmuTOS 1.4 where no image is given)")
     a = ap.parse_args()
@@ -613,6 +671,8 @@ def main():
     a.tos = a.xaaes or None
     if a.keys:
         keys_run(a, a.machine)
+    elif a.font:
+        font_run(a, a.machine)
     elif a.xaaes is not None:
         xaaes(a)
     else:
