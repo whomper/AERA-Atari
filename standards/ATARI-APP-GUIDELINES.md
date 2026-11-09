@@ -658,6 +658,25 @@ Erez Yaary", the copyright line, the three status lines below, "Free software un
 - **The icon is drawn from ST RAM** (copied there), never straight from program memory. Program memory
   may be TT/Fast RAM, which the screen can't read.
 
+### 1.4 README: a front page, not the manual (must; Erez, 9 Nov 2026)
+Nobody reads a README of five thousand words. It is a front page: it says what the program is, shows it and
+gets a reader started, and sends the rest elsewhere.
+- **Length:** about 600 words and 100 lines at most. EPDF's README (about 400 words) is the model; EWeb's
+  rewrite is the pilot and becomes the example.
+- **What stays**, in the template's order ([repo-template](repo-template/files/README.md)): the one sentence
+  and the icon, three to five Highlights (one line each), the screenshot, Getting started (the download, the
+  files in one short table, the steps to start, what it needs), a few lines on how it reaches the servers
+  (the one diagram), Building (the commands), Source (the folders, one line each), Tests (one line a
+  check), Licence, the family footer.
+- **What moves out**, to `docs/` or the help guide (`docs/GUIDE.md`), with a one-line link from the README:
+  anything explaining how a feature works, every setting, measurements and figures, the design, long
+  how-to and troubleshooting text, history of fixes. The README links to it, never repeats it.
+- **No `In more detail` section** (EMail and EFTP had one): that is what `docs/` is for.
+- **Write it for a visitor on GitHub:** short sentences, nothing a first-time reader has to scroll past;
+  facts that decide whether to download (the machines it runs on, TOS and memory needs) in the first screen.
+- A change to the README alone takes the short path (1.2). Apps in maintenance mode shorten theirs with
+  the docs-only change; Erez asked every session to on 9 Nov 2026.
+
 ---
 
 ## 2. Program and desk accessory
@@ -2011,6 +2030,7 @@ program's window.
 | 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) | ✓ | ✓ (0.1) | — |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (common's, 0.1) | — |
 | 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ | ✓ | ✓ | — |
+| 1.4 README is a front page: about 600 words, 100 lines (Erez, 9 Nov 2026) | ✗ (4,201 words) | ✗ (5,482) | ✗ (3,847) | ✗ (3,108) | ✗ (5,791) | ✗ (2,864) | pilot (4,978) | ✓ (405) | — |
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | ✓ PRG, and EMAILCHK.ACC beside it (1.57) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) | PRG only | — |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | ✓ (EMAILCHK.ACC, 1.57: AP_TERM goes to av_message, which ignores it) | n/a | ✓ | n/a | n/a | n/a | — |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | ✓ (EMAILCHK.ACC, 1.58: nothing before the first event call; ST-1 ≤ 100 ms a stretch through the gateway, Falcon ≤ 25; Direct's key exchange only while idle; the new-mail alert the AES's) | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a | n/a | — |
