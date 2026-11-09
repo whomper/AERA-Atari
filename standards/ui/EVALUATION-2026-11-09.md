@@ -106,7 +106,7 @@ W = the text was wrong; C = right in substance, a list or number changes.
 | 5 | MENUS 2.2 (last of ClaudeST) | "F1 to F5 crash on purpose": the keys are F1, F2 and F5 (`crash.c`, `crash_test`) | ClaudeST | W |
 | 6 | MENUS 2.2 (Other keys) | "Undo does nothing in ClaudeST": in its dialogs Undo is Cancel | ClaudeST | C |
 | 7 | MENUS 1.3 (job running) | EFTP greys no menu item; it drops the choice ("not now"). EUpdate disables commands and drops other keys and menu choices | EFTP, EUpdate | W |
-| 8 | MD17; MENUS 1.8 | "Dropped only in EContact": EMail keeps the choice in `kept[]` and runs it after the dialog closes. EUpdate reads `dlg_evnt` as dropping it (title not checked). **Not reconciled**; the hub reads `dlg_evnt` before rewording | EMail, EUpdate | C |
+| 8 | MD17; MENUS 1.8 | "Dropped only in EContact": common's `dlg_evnt` (`dialog.c` `dlg_evnt_`) does not drop a menu choice made while a window dialog is open: a message the caller did not ask for goes to `keep_msg` and is sent back when the dialog is gone, so EMail is right that it runs afterwards (read by the hub, 9 Nov). Only EContact drops it (`menu_drop`). The title is not set normal by `dlg_evnt`. The hub fix (MD17) is to drop it and call `menu_tnormal` in `dlg_evnt` for every app | EMail, EUpdate, EContact (hub read `dialog.c`) | W |
 | 9 | MG15; MENUS 4 | ECal also has dialog tips (`field.c`, `tip_put`, `tip_for`; one per list item, 500 ms; the People field in New Event shows the address). Events: 700 ms, two lines. No toolbar tips | ECal | C |
 | 10 | MD19; MENUS 3.2 | Add EUpdate `Copy name ^C` against the bar's `Copy`; its `Check for a release` is deliberate. EMail's `Reply to all ^E` is a real alias (fine); `Mark as unread ^U` is the error | EUpdate, EMail | C |
 | 11 | MD11 kind | "Fix" is a decision: EMail has no View menu, moving Translate needs a new title | EMail | C |
@@ -250,7 +250,7 @@ whatever you decide.
 
 | # | Work | Unblocks |
 |---|---|---|
-| 1 | `dlg_evnt` drops a menu choice made while a window dialog is open and sets the title normal (MD17); first read what it does now (correction 8) | all apps under MiNT or MagiC; EMail, EUpdate, EPlay |
+| 1 | `dlg_evnt` should drop a menu choice made while a window dialog is open and sets the title normal (MD17); today it keeps the choice and runs it after the dialog closes (correction 8) | all apps under MiNT or MagiC; EMail, EUpdate, EPlay |
 | 2 | Font dialog (`fontsel.c`, line 1344 per EUpdate) and Languages dialog (`langs.c`): Cancel left of OK (C1) | every app with the Font dialog; EMail Languages |
 | 3 | `filepick.c`: pop-up over the ticked row (`below()`), outlined `G_BOXTEXT` buttons (C9), Esc on an empty field as decided (line 791) | EPlay Add files (C8, C9, C15) |
 | 4 | A "secret" flag in `LFIELD` so a shown password is not copied (C12) | EMail, EUpdate; EFTP's `pw_of` can go |
