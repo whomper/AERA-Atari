@@ -21,7 +21,12 @@ wording or behaviour choice. F = focus app (EWeb, EPDF, EPlay); M = maintenance 
 
 ## 1. The main window (guidelines 5.1)
 
-<!-- SCREEN: main-window (EMail, EFTP, EUpdate side by side: toolbar, pane headers, divider, selected row, info line) -->
+
+![EMail main window, Falcon:16](../screens/window-email-main-f16.png)
+![EFTP start, Falcon:16](../screens/window-eftp-start-f16.png)
+![EUpdate main window, Falcon:16](../screens/window-eupdate-main-f16.png)
+![EMail main window, ST:mono (flat)](../screens/window-email-main-st1.png)
+
 
 ### 1.1 Parts, title, place
 - **Parts.** Name, closer, fuller, mover, sizer, info line, and the AES's vertical slider column (`UPARROW |
@@ -158,7 +163,10 @@ uses the AES's slider column; one click, one step). In detail, all in `common/ui
   hidden. **Open (Erez decides)** (W20): the rule reads "⇧^S in an app whose sidebar can be hidden".
 
 ### 2.2 Lists
-<!-- SCREEN: list-selection (a list with one selected row, a cursor row and a multi-selection) -->
+
+![EContact list with a chosen row, Falcon:16](../screens/window-econtact-main-f16.png)
+![EFTP transfers done, Falcon:16](../screens/window-eftp-transfers-done-f16.png)
+
 
 - **Rows** are `ch` high with no gap and no grid lines in EMail, EFTP and EUpdate; `ch + 2` in EContact's list
   and ECal's sidebar; `ch + 2` or `ch + 4` in ClaudeST; `ch + 4` in EPlay; two lines in EHypView's outline.
@@ -291,7 +299,9 @@ uses the AES's slider column; one click, one step). In detail, all in `common/ui
 
 ## 5. The About box (guidelines 1.3, must)
 
-<!-- SCREEN: about-box (the family About box, 16 colours and mono) -->
+![EMail About, Falcon:16](../screens/about-email-f16.png)
+![EMail About, ST:mono](../screens/about-email-st1.png)
+
 
 Every app has the same About box, drawn by `about_show()` (`common/ui/aboutbox.c`), in the system font, centred
 on the **desk** (not the window), with a 3-pixel shadow; on a multitasking AES it is a window of the AES's
@@ -415,7 +425,10 @@ of showing a job today; the first is the reference for anything that has a list 
 because 5.10 is "How a dialog is run", in [CONTROLS.md](CONTROLS.md).)
 
 ### 8.1 As built
-<!-- SCREEN: job-window (EFTP's Transfers pane while a run is going, and after) -->
+![EFTP Transfers pane during a run](../screens/job-eftp-transfer-progress-f16.png)
+![EUpdate download](../screens/job-eupdate-download-f16.png)
+![EConvert during a file](../screens/job-econvert-2-during-file-1-f16.png)
+
 
 1. **EFTP's Transfers pane** (`eftp/ui/queue.c`, drawn in `draw_white`): a pane of the main window across the
    bottom, one row per item. This is the pattern for a list of items.

@@ -34,18 +34,8 @@ without seeing the apps. Where these words and a real app differ, the real app i
 
 ## Reference screenshots
 
-A `screens/` directory is coming from another branch (`hub/spec-shots`, to land in `standards/screens/`). The
-places where a reference screenshot would help are marked with a comment `<!-- SCREEN: name -->`, so links can
-be filled in later. Search for `SCREEN:`. The names so far:
-
-| Name | File | Shows |
-|---|---|---|
-| `menu-drop` | MENUS.md | a pulled-down menu with ticks, a disabled item, shortcuts and a line |
-| `popup-open` | MENUS.md | a context menu open over a list with a ticked item, a line and a greyed item |
-| `settings-dialog` | CONTROLS.md | the family's Settings: page list at the left, heading and rule, settings, Cancel and OK |
-| `alert` | CONTROLS.md | an alert with icon, two lines and two buttons, in 3D and flat |
-| `about-box` | WINDOWS.md | the family About box, 16 colours and mono |
-| `file-selector` | CONTROLS.md | Add files (`common/ui/filepick.c`) with its pop-up buttons, list and buttons |
-| `main-window` | WINDOWS.md | EMail, EFTP and EUpdate side by side: toolbar, pane headers, divider, selected row, info line |
-| `list-selection` | WINDOWS.md | a list with one selected row, a cursor row and a multi-selection |
-| `job-window` | WINDOWS.md | EFTP's Transfers pane while a run is going, and after |
+The reference screenshots are in [../screens/](../screens/README.md), indexed by guideline section; the ones
+that explain a rule are embedded in the text here. Where a picture is still missing, a comment
+`<!-- SCREEN: name -->` marks the place (search for `SCREEN:`). Missing so far: the Add files dialog
+(`common/ui/filepick.c`), EMail's check-mail busy state, EWeb's ST edition, EPlay on an ST or STE, the
+accessories' windows, and menus and pop-ups under XaAES.

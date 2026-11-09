@@ -16,7 +16,10 @@ until he decides, new code follows the recommendation and no app is asked to cha
 point to the row in [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, EPlay), M = maintenance
 (all others).
 
-<!-- SCREEN: menu-drop (a pulled-down menu with ticks, a disabled item, shortcuts and a line) -->
+![EMail Options menu, a ticked item](../screens/menu-email-options-ticked-f16.png)
+![EMail File menu, greyed items, shortcut column](../screens/menu-email-file-f16.png)
+![EFTP Options menu](../screens/menu-eftp-options-f16.png)
+
 
 ---
 
@@ -281,7 +284,9 @@ between apps.
   `popup()` adds the margin itself (text at 2 cells, tick in the margin whether ticked or not) and apps drop
   their padding as they release; or all apps pad. Until decided, new menus pad with two spaces.
 
-<!-- SCREEN: popup-open (a context menu open over a list with a ticked item, a line and a greyed item) -->
+![EFTP pop-up, Falcon:16](../screens/popup-eftp-connect-f16.png)
+![ClaudeST pop-up, ST:mono](../screens/popup-claudest-model-open-st1.png)
+
 
 ### 3.2 What a menu holds
 - **The first entry is the double-click (or Return) action** of what was clicked: EMail "Open", EUpdate "Get

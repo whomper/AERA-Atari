@@ -235,7 +235,10 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
 
 ## 5. Pop-up buttons, frames and edges (guidelines 5.7, must)
 
-<!-- SCREEN: file-selector (Add files in EPlay, common/ui/filepick.c: the pop-up buttons Folders, Type and Sort, the list and the buttons) -->
+<!-- SCREEN: file-selector (Add files, common/ui/filepick.c: not captured yet) -->
+![The Font dialog (common/ui/fontsel.c)](../screens/dialog-eftp-font-f16.png)
+![EUpdate Find dialog](../screens/dialog-eupdate-find-f16.png)
+
 
 - **A button with a down arrow opens a pop-up menu there and then:** the shared `popup()` (3.3), the choice it
   shows ticked, a click on another choice changes it at once.
@@ -319,7 +322,9 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
 
 ## 8. Alerts (guidelines 6.2) and progress (6.3)
 
-<!-- SCREEN: alert (an alert with icon, two lines and two buttons, 3D and flat) -->
+![Two-button alert, 3D (EMail, Falcon:16)](../screens/alert-two-buttons-email-f16.png)
+![Three-button alert, flat (EMail, ST:mono)](../screens/alert-three-buttons-email-st1.png)
+
 
 - **One shared `alert(def, fmt, ...)`** (`common/ui/alert.c`, from ECal's). It formats like `printf`, wraps the
   text at **30 characters** (a line breaks at the last space that leaves it 30 characters or fewer; a word
@@ -368,7 +373,10 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
 
 ## 9. The Settings dialog, corrected (guidelines 6.1)
 
-<!-- SCREEN: settings-dialog (the family's Settings: page list at the left, heading and rule, settings, Cancel and OK) -->
+![EMail Settings, Falcon:16 (3D)](../screens/settings-email-1-mail-f16.png)
+![EMail Settings, ST:mono (flat)](../screens/settings-email-mail-st1.png)
+![EHypView Settings with a pop-up open over its button](../screens/settings-ehypview-1-general-popup-open-f16.png)
+
 
 The text of 6.1 stays, with two corrections taken from the code:
 - **The chosen page is a black bar:** its `te_color` is 0x1071, the others' 0x1180; **never `SELECTED`** (5.6).
