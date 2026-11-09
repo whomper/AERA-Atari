@@ -159,6 +159,26 @@ short set_long(SETTINGS *s, short x, short y, char *buf, short len, short cap, c
    the choices over it with the one now chosen ticked, a click on another changes *sel at once.
    At most 16 choices of 31 characters (a longer list is a button with "...": set_value). Returns its object */
 short set_popup(SETTINGS *s, short x, short y, short w, const char *const *choices, short n, short *sel);
+/* radio buttons (5.6, D24): one of up to four choices as AES buttons 10 characters apart, the way EFTP's Site Manager
+   and EPlay's Output have them (G_BUTTON, RBUTTON: the 3D look has them pressed in when chosen, flat the chosen one is
+   turned over). labels[0..n-1] (not copied), each w characters wide (8 or 9), the first at x, y; *sel (0 to n - 1) is
+   the app's, changed at once by a click or the arrow keys; Cancel puts it back. Four are 40 characters and 12
+   pixels wide, from the page's column SX: they fit the 42 of the page (not the value column SX + 30). The engine, not
+   the AES, keeps the one chosen (the AES would unchoose the buttons of every other group of the page). Returns the
+   group's number (its first button's object), 0 if there is no room (none of the buttons is made) */
+short set_radio(SETTINGS *s, short x, short y, short w, const char *const *labels, short n, short *sel);
+#define SET_RADIOS 4
+/* A choice that does not apply is greyed and cannot be chosen, by a click or by a key (D24; EPlay's FDI and DSP on a machine
+   without them). set_radio_enable: choice c of the radio group (set_radio's number) normal (on 1) or greyed (0); the
+   same for item `item` of a pop-up button (set_popup's object): its line greyed in the pop-up (popup.h's "~"), not
+   chosen. A greyed choice that is the chosen one stays chosen: the app decides what to do with it (it may move *sel) */
+void set_radio_enable(SETTINGS *s, short radio, short choice, int on);
+void set_popup_enable(SETTINGS *s, short popup, short item, int on);
+/* ...or a function that says it: when(s, obj, choice, user) is 1 when choice of the group or pop-up obj applies. It is
+   asked as the dialog opens and after every change the user makes (a click, a key, a button's work), so a choice follows
+   another setting; the buttons whose answer changed are drawn */
+typedef int (*SET_WHEN)(SETTINGS *s, short obj, short choice, void *user);
+void set_choice_when(SETTINGS *s, short obj, SET_WHEN when, void *user);
 /* a button the app acts on: act(s, user) when clicked, then the dialog is drawn again. w characters wide */
 short set_button(SETTINGS *s, short x, short y, short w, const char *label, SET_ACT act, void *user);
 /* the same, shown as a pop-up button without the arrow (a choice from a long list: its text ends in "...",

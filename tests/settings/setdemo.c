@@ -6,6 +6,8 @@
  *
  *   key 1   EMail 2.14's Settings (ui/dialogs.c: part_mail ... part_connection): six pages, 57 x 17
  *   key 2   EHypView 1.39's Settings (src/gem/settings.c): General and Library, 57 x 18
+ *   key 3   the radio buttons and the keyboard's reach (D24, D25): an Output page, as EPlay's, with a group of three
+ *           choices (the last greyed while the "no DSP" tick is on), a pop-up with a greyed item, and a plain page
  *   key q   ends
  *
  * run.py opens them on TOS 1.04 (ST:mono, flat) and TOS 4.04 (Falcon:16, 3D), takes a screenshot of each page
@@ -242,6 +244,73 @@ static int ehypview_dialog(void)
 	return k;
 }
 
+
+/* ============ the radio buttons and the keyboard's reach: an EPlay-like Output page ============ */
+
+static short rd_out, rd_nodsp, rd_rate, rd_tick2, rd_log, rd_acts;
+static char rd_name[12];
+static const char *const rd_label[] = { "Auto", "FDI", "DSP" };
+static const char *const rd_rates[] = { "49 kHz", "32 kHz", "25 kHz", "12 kHz" };
+
+/* DSP applies unless the tick says this machine has none */
+static int rd_when(SETTINGS *s, short obj, short c, void *user)
+{
+	(void)s, (void)obj, (void)user;
+	return c != 2 || !rd_nodsp;
+}
+
+static void rd_act(SETTINGS *s, void *user)
+{
+	(void)s, (void)user;
+	rd_acts++;
+}
+
+static void rd_output(SETTINGS *s, short x, short y, void *user)
+{
+	short r;
+	(void)user;
+	set_text(s, x, y, "Player name:");
+	set_field(s, (short)(x + 14), y, rd_name, 11, 'X');
+	set_text(s, x, set_y(s, 1), "Output:");
+	r = set_radio(s, x, set_y(s, 2), 9, rd_label, 3, &rd_out);
+	set_choice_when(s, r, rd_when, 0);
+	set_tick(s, x, set_y(s, 3), "This machine has no DSP", &rd_nodsp);
+	set_tick(s, x, set_y(s, 4), "Write a log", &rd_log);
+	set_text(s, x, set_y(s, 5), "Sample rate:");
+	r = set_popup(s, (short)(x + 14), set_y(s, 5), 14, rd_rates, 4, &rd_rate);
+	set_popup_enable(s, r, 0, 0);
+	set_button(s, x, set_y(s, 7), 14, "Languages...", rd_act, 0);
+}
+
+static void rd_plain(SETTINGS *s, short x, short y, void *user)
+{
+	(void)user;
+	set_text(s, x, y, "Nothing to type here.");
+	set_tick(s, x, set_y(s, 1), "Another tick", &rd_tick2);
+}
+
+static int radios_dialog(void)
+{
+	static const SET_PAGE pages[] = { { "Output", rd_output }, { "Plain", rd_plain } };
+	SET_DEF d;
+	int k;
+	rd_out = 0, rd_nodsp = 0, rd_rate = 1, rd_tick2 = 0, rd_log = 0, rd_acts = 0;
+	strcpy(rd_name, "Dana");
+	memset(&d, 0, sizeof(d));
+	d.title = "Settings";
+	d.pages = pages;
+	d.npages = 2;
+	d.height = 17;
+	k = settings_dialog(&d);
+	{
+		char b[160];
+		snprintf(b, sizeof(b), "SETDEMO radios out %d nodsp %d rate %d log %d tick2 %d acts %d name '%s'\n", rd_out, rd_nodsp, rd_rate,
+			 rd_log, rd_tick2, rd_acts, rd_name);
+		nf_debug(b);
+	}
+	return k;
+}
+
 /* Where the AES runs several programs (XaAES), keys go to the program whose window is on top: a window of the
    demo's own, white, over the desktop; the dialog is a window of its own over it (dlg_redraw_hook draws this one) */
 static short mainwin;
@@ -326,6 +395,10 @@ int main(void)
 			case '2':
 				now_name = "ehypview";
 				r = ehypview_dialog();
+				break;
+			case '3':
+				now_name = "radios";
+				r = radios_dialog();
 				break;
 			case 'q':
 				run = 0;
