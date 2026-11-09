@@ -5,16 +5,17 @@ its latest release tag (9 Nov 2026) and of `common/` in AERA-Atari at 74253f3, s
 reproduce the family's menus without seeing the apps. Where this file and the guidelines' short text differ,
 this file is the detail and the guidelines link here.
 
-**Basis.** EMail 2.14, EFTP 2.2, EUpdate 2.0, EWeb 0.81, EHypView 1.39, ECal 2.46, EContact 1.82,
+**Basis.** EMail 2.14, EFTP 2.2, EUpdate 2.02 (corrected 9 Nov), EWeb 0.81, EHypView 1.39, ECal 2.46, EContact 1.82,
 ClaudeST 2.1, EPDF 2.1 (with EConvert), EPlay 1.10. Every app's copy of `common/ui/mbar.c`, `mbar.h`,
 `popup.c` and `popup.h` is byte-identical to the hub's. A pointer reads `app: file:function`, from the app's
 repository root at that tag.
 
-**How to read it.** "The family does X" is the rule. Where the apps differ and the choice is a look, a
-wording or a key, the line `**Open (Erez decides):**` gives the current behaviour and a recommendation;
-until he decides, new code follows the recommendation and no app is asked to change. Ids such as `MD7`
-point to the row in [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, EPlay), M = maintenance
-(all others).
+**How to read it.** "The family does X" is the rule. Erez answered the open choices of
+[EVALUATION-2026-11-09.md](EVALUATION-2026-11-09.md) on 9 Nov 2026 ([DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md)):
+a settled rule ends `Decided 9 Nov 2026 (Dn)`, and what the answers left unsettled is under `Still open` at the end of
+this file. Where an app does not meet a rule yet, its row in [DEVIATIONS.md](DEVIATIONS.md) says so (ids such as `MD7`
+point to it): a focus app (F: EWeb, EPDF, EPlay) takes it as work, a maintenance app (M: all others) with a release it
+makes anyway.
 
 ![EMail Options menu, a ticked item](../screens/menu-email-options-ticked-f16.png)
 ![EMail File menu, greyed items, shortcut column](../screens/menu-email-file-f16.png)
@@ -30,7 +31,8 @@ point to the row in [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, E
   **Desk · File · Edit · View · [the app's own] · Options · Help.** All ten apps follow this. The app's own
   titles come after View: EMail Message and Folder; EFTP Local, Remote and Transfers; EUpdate Repository;
   EWeb Bookmarks; EHypView Navigate and Bookmarks; ECal Event; EContact Contact; ClaudeST Chat; EPDF Page;
-  EPlay Play. A title with nothing to hold is left out (EContact has no Edit; EPDF no Options).
+  EPlay Play. A title with nothing to hold is left out (EContact has no Edit; EPDF has no Options until it moves Settings and Font
+  there: MD1, D6).
   A title's text is `" File "`: a space each side.
 - **The Desk title is the product name, `" EMail "`, never the word "Desk"** (1.1). Its menu is
   `About NAME...` and nothing else of the app's. The builder adds a line and six slots that the AES fills
@@ -52,7 +54,8 @@ point to the row in [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, E
 - The `key` string is `^N` for Control+N. **Shift is the byte `\x01` in front**: `"\x01^F"` shows ⇧^F (the
   system font's shift arrow, the glyph of the up arrow).
 - Named keys are written `Help`, `Undo`, `Del`, `Esc`, `F10`, `^Left`, `^Right`, `^Home`, `^Return`,
-  `\x01Return`, `\x01Undo`. A key without Control is shown bare (`D`, `Space`). Write `Del`, never `Delete`
+  `\x01Return`, `\x01Undo`. A key without Control is shown bare (`D`, `Space`, `ClrHome`, `Return`): those bare names are
+  right as they are. A shifted arrow is the shift byte and the arrow (EPlay's `⇧←`, `⇧→`). Write `Del`, never `Delete`
   (MD14; EPlay's Edit menu to be corrected).
 - **An item shows a key only if that key does that command.** The menu table and the key switch are written
   by hand in each app (`shortcut()` or `win_key()`), so they are changed together. A key that is only an alias
@@ -70,15 +73,16 @@ point to the row in [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, E
   (MD23).
 - Ticks are for settings that change at once and for the view or mode shown (Day/Week/Month/Year, Calendar
   list, Server messages, Pages, Shuffle). A group of exclusive choices is several ticks of which one is set
-  (ECal's views, ClaudeST's baud rates, EPlay's connection). `Direct connection (TLS)` also loads
+  (ECal's views, ClaudeST's baud rates, EPlay's connection). `Direct connection` also loads
   `TLS.OVL`; if that fails the app alerts and leaves the tick off (`falcon_mode_set` returns 0).
 - **A command that cannot apply now is greyed in the menu, and its key does nothing** (the key code checks the
   same condition: EMail `ui/main.c:shortcut`). The bar never hides an item. Reasons that grey: nothing
-  selected, the wrong focus (Cut and Paste), no document, a job running (EFTP, EUpdate), offline, POP or local
+  selected, the wrong focus (Cut and Paste), no document, a job running (EUpdate; EFTP follows: D19), offline, POP or local
   folders (EMail), a limit reached (EWeb zoom). ClaudeST and EPlay grey nothing today.
-- **While a job runs** (EFTP, EUpdate) the commands that would start another are greyed, and a menu choice made
-  meanwhile is **not carried out**: the title is set normal and nothing happens (EFTP
-  `ui/main.c:handle_poll_event`, EUpdate `ui/main.c:idle`), except Stop (EWeb).
+- **While a job runs, the commands that would start another are greyed and their keys do nothing;** Stop stays
+  live (EWeb). EUpdate does this: it disables the commands and `ui/main.c:idle` reads and drops every other key and
+  menu choice. EFTP greys no menu item today: it drops the choice, with the title set normal and "not now"
+  (`ui/main.c:handle_poll_event`), and changes. Decided 9 Nov 2026 (D19).
 
 ### 1.4 Matching keys
 - **A key is matched by its scan code with `key_ctrl(kstate, key)`** (`common/atari/gem.h`), never
@@ -94,62 +98,74 @@ point to the row in [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, E
   shortcut typed while the app was busy arrives as the plain one (EPDF's comment: "Shift may be gone too when
   EPDF was busy"). **Therefore a shifted variant must never be a more dangerous command than its plain key.**
   EMail's ⇧^U (Mark as unread) can arrive as ^U (Close window).
-  **Open (Erez decides):** which keys change (MD13). Recommendation: move EMail's Mark as unread off ⇧^U; leave
-  the other per-app letters; promise across apps only the rows of the 2.1 table.
+  **EMail's Mark as unread moves off ⇧^U** (EMail proposes the key, Erez approves it) and **EHypView's Index moves
+  off ^I** (the family's Get info) at its next release. The other per-app letters stay; across apps only
+  the rows of the 2.1 table are promised. Shift typed while busy is read with `key_ctrl` for Control, and Shift+Left
+  and Shift+Right are known by their '4' and '6' (EContact); a shared `key_shift` beside `key_ctrl` is hub work.
+  Decided 9 Nov 2026 (D1, D2, MD13).
 
 ### 1.5 The titles' contents
 - **File** holds what concerns the program and its files: Open, Save, Close window ^U, Next window ^W (only an
   app with more than one window), Quit ^Q last. Order: Close window, Next window, Quit, with **one line above
-  the Close/Next/Quit group and none inside it** (MD8, MD9). A command on the app's own things is in that
+  the Close/Next/Quit group and none inside it** (MD8, MD9): EMail, EWeb and ClaudeST have it above the group
+  already; EHypView has one inside it (corrected 9 Nov). A command on the app's own things is in that
   thing's menu, New among them (EMail's New message under Message, ECal's New event under Event, EContact's
   New contact under Contact, ClaudeST's New chat under Chat). The exception is a window command: EWeb's and
   EHypView's `New window ^N` stay in File.
-  **Open (Erez decides):** a one-window program lists Quit alone (EFTP, EUpdate, EContact, EPDF, EPlay), or
-  Close window ^U and Quit (ECal, ClaudeST). Recommendation: Quit alone; ^U still quits (2.1); the accessory's
-  ≡ menu has Close (MD7).
+  **A one-window program lists Quit alone** (EFTP, EUpdate, EContact, EPDF, EPlay do; ECal's `Close ^U` and
+  ClaudeST's `Close window ^U` go: MD7). ^U still quits (2.1), and the accessory's ≡ menu keeps Close. Decided
+  9 Nov 2026 (D3).
 - **Edit** holds Cut ^X, Copy ^C, Paste ^V, a line, Select all ^A, where the app has them. A command the focused
   thing cannot take is greyed (EWeb's Cut and Paste only in the address field; EFTP's Cut and Paste are always
   grey, there is no text to cut). Select all belongs in Edit wherever the app has an Edit menu and a selection
-  (MD12; EContact keeps it under Contact because it has no Edit).
+  (MD12). **An app with no Edit menu puts Select all in the menu of the things selected:** EContact keeps it under
+  Contact. EPlay's playlist is single-select, so its Select all waits for multi-select (D21). Decided 9 Nov 2026
+  (D20, D21).
 - **View** holds how the window shows things: the views (ECal), zoom (EWeb `Larger text ^+`, `Smaller text ^-`,
-  `Actual size ^0`), the sidebar (`⇧^S`: ECal "Calendar list", EContact "Groups"), Back and Forward (EWeb),
-  Translate (EWeb, EPDF; MD11 moves EMail's out of Options).
-- **Find.** Where Find is in Edit (EWeb, EPDF) it follows Select all after a line: `Find... ^F`,
-  `Find next ^G`, `Find previous ⇧^G`. `Find...` ends in dots where it opens a dialog (ECal, EWeb, EPDF); EMail's
-  tick item (the find bar) and EContact's search field are `Find`, without dots.
-  **Open (Erez decides):** where Find lives. Today Edit (EWeb, EPDF), View (ECal, EContact), the app's own menu
-  (EMail, EUpdate `Find on GitHub...`, ClaudeST `Search chats`); none in EFTP, EHypView, EPlay. Recommendation:
-  Edit in apps that have Edit (MD10).
-- **Options, in this order, each item only if the app has it:** `Settings...  ^,` first (EMail puts
-  `Accounts...` before it); `Font...`; a line; then the ticks of settings that change at once, with the tick
-  in front: `Work offline`, `Direct connection (TLS)`, the app's own (`Show hidden files`, `Run this site's
-  scripts`), and the log last. **Settings is never in File** (EPDF and EConvert still have it there: MD1).
-  **There is no Hebrew keyboard item** (5.3: F10 alone; EUpdate 2.0 still ticks it, gone on `main`: MG1).
-  Options exists in nine apps; EPDF has none until it moves Settings.
-  **Open (Erez decides):**
-  - `Font...`: Options in EMail, EFTP, EUpdate, ECal, EContact, ClaudeST; View with ⇧^F in EHypView and EPDF;
-    none in EWeb and EPlay. Recommendation: Options everywhere, no key (EMail uses ⇧^F for Forward; MD2).
-  - The log tick: `Protocol log` (EMail, EFTP, EUpdate) or `Write a log` (ECal, EContact, EWeb). Settings says
-    "Write a protocol log" in the first three and "Write a log" in ECal and EContact. Recommendation: `Write a
-    log` in both places (MD3).
-  - `Direct connection (TLS)` (EMail, EFTP, ECal, EContact) or `Direct connection` (EWeb, EPlay). EPlay has two
-    exclusive ticks, Direct and Through the Gateway (how a station is reached), where the others have one.
-    Recommendation: `(TLS)` where it is TLS, so EWeb gets it; EPlay keeps its pair under the plain name (MD6).
+  `Actual size ^0`), the sidebar (`⇧^S`: ECal "Calendar list", EContact "Groups"; EMail's folders and ClaudeST's chat list gain it, D45),
+  Back and Forward (EWeb), Translate (EWeb, EPDF; EMail keeps its Translate in Options, below).
+- **Find.** **Finding in a page, a document or a list is in Edit** (EWeb, EPDF): it follows Select all after a line:
+  `Find... ^F`, `Find next ^G`, `Find previous ⇧^G`. **A search of the app's own things stays in the app's own menu
+  and says what it searches** (EUpdate `Find on GitHub...`, ClaudeST `Search chats`). **`Find...` ends in dots only
+  where a dialog opens** (ECal, EWeb, EPDF); where a bar or a field takes the words it is `Find` (EMail's tick item,
+  the find bar; EContact's search field). Today: Edit (EWeb, EPDF), View (ECal, EContact), the app's own menu (EMail,
+  EUpdate, ClaudeST); none in EFTP, EHypView, EPlay (MD10). Decided 9 Nov 2026 (D4); the words and place for EMail,
+  ECal and EContact are in `Still open`.
+- **Options, in this order, each item only if the app has it:** the account or site item (`Accounts...` in EMail,
+  `Add account or calendar...` in ECal, `Add account...` in EContact, `Sites... ^K` in EFTP); `Settings...  ^,`;
+  `Font...`; a line; then the ticks of settings that change at once, with the tick in front: `Work offline`,
+  `Direct connection`, the app's own (`Show hidden files`, `Run this site's scripts`), and the log last. **Settings
+  is never in File** (EPDF and EConvert still have it there: MD1). **There is no Hebrew keyboard item** (5.3: F10
+  alone; EUpdate removed it in 2.01 and the start-up tick and `HEBREW=` in 2.02: MG1). Options exists in nine apps;
+  EPDF has none until it moves Settings and Font there.
+  - **Accounts and sites are in Options, before Settings,** in every app that has them (MD27). File keeps what
+    concerns files and connecting; EFTP's File keeps `Quick connect...`, `Disconnect` and `Quit`, and `Sites... ^K`
+    keeps its key and its place in the toolbar's Connect menu. Decided 9 Nov 2026 (D13, confirmed for EFTP).
+  - **`Font...` is in Options with no key** (MD2). EHypView and EPDF move it from View and drop ⇧^F (⇧^F is Forward
+    in EMail). **EWeb and EPlay have no `Font...` and get none:** EWeb's page type is CSS and `EWEB.FNT`, and EPlay
+    has no font choice. Decided 9 Nov 2026 (D6, D7).
+  - **The log tick is `Write a log`, in the menu and in Settings** (MD3): EMail, EFTP and EUpdate drop `Protocol
+    log` and "Write a protocol log". An app with no log has no item. Decided 9 Nov 2026 (D8).
+  - **The tick is `Direct connection`, without `(TLS)`, in every app that has it** (MD6): EMail, EFTP, ECal and
+    EContact drop the `(TLS)`, and Settings says the same. EPlay keeps its two exclusive ticks, `Direct
+    connection` and `Through the Gateway` (how a station is reached), as a pair. Decided 9 Nov 2026 (D9).
+  - **Translate in EMail stays in Options, in a section of its own set off with a line above and a line below**
+    (the log stays last), so that it is clearly there; EMail has no View menu to move it to. EWeb and EPDF keep
+    theirs in View. Decided 9 Nov 2026 (D5, MD11).
 - **Help** is `NAME help  Help` and `Keys...`. `Help` is the key; item and key do the same: `help_key()` opens
   `NAME.HYP` at its first page through `common/ui/help.c`. It is **not context-sensitive** in any app (every
   `help_key` call passes page 0; only EConvert passes a page). With no viewer an alert offers the app's own
-  keys list (`Keys...`, a dialog). Opening the page of what is on screen is not built; **Open (Erez decides):**
-  whether it is wanted (a hub build task in `common/ui/help.c`; MG9).
-  **Open (Erez decides):** EHypView, EPDF and EPlay say `NAME guide`, have no `Keys...`, and EPDF shows no key.
-  Recommendation: `NAME help  Help` and `Keys...` everywhere (MD4; EPDF and EPlay are F, EHypView at its next
-  release).
-- **Accounts and sites.** Where they are added differs: File (ECal `Add account or calendar...`, EContact
-  `Add account...`, EFTP `Sites...`), Options (EMail `Accounts...`).
-  **Open (Erez decides):** a way through a task; recommendation: leave (MD27).
+  keys list (`Keys...`, a dialog). Opening the page of what is on screen is not built and not wanted now: Help opens the first
+  page, and Erez will look at context help again after 1.0 (MG9; a hub build task in `common/ui/help.c` that is not
+  started). Decided 9 Nov 2026 (D12).
+  **Every app says `NAME help  Help` and has `Keys...`** (MD4): EPDF and EPlay now (EPlay's guide command no longer
+  falls back to About), EHypView at its next release. **EHypView's exception:** its Help key shows the shown
+  hypertext's own help page (Navigate > Help page), so Help keeps that meaning, its guide item reads `EHypView help`
+  with no key, and `Keys...` is added. Decided 9 Nov 2026 (D10, D11).
 
 ### 1.6 Wording of items
 - Sentence case ("Close window", "Reply to all", "Show hidden files"); proper nouns keep their capital
-  ("Outbox", "GitHub", "Gateway", "Direct connection (TLS)").
+  ("Outbox", "GitHub", "Gateway").
 - **`...` when the command needs more from the user before it acts**: a dialog, the file selector or a pop-up
   asks (`Settings...`, `Font...`, `Keys...`, `Open...`, a `Delete...` that asks first). Not when it opens a
   window or a bar that has the answer (`Library and search`, `Show folders`, `Server messages`, `History`,
@@ -158,37 +174,43 @@ point to the row in [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, E
 - Exceptions in the code today, which are not the rule: EContact's context menus use Title Case (`Edit Card`,
   `Delete Card...`, `Add to Group...`) and its bar has `Sync Contact Photos...`; EMail's `Send Outbox` and
   `Put in Outbox`.
-  **Open (Erez decides):** EContact copies Mac Contacts' Title Case in its context menus; recommendation
-  sentence case as everywhere, so the pop-up matches the bar (MD19).
+  **A pop-up's words are sentence case, and the bar's words and keys:** EContact's Title Case goes, and a pop-up
+  never shows a key the bar does not. EUpdate's singular `Check for a release` (the bar says `Check for
+  releases`) is allowed. Decided 9 Nov 2026 (D14, MD19).
 
 ### 1.7 The accessory's menu
 - **The accessory has no menu bar; its ≡ button opens a pop-up with the menu bar's commands** (`popup()`, 3.3):
   ECal `ui/main.c:cmd_menu`, EContact `ui/main.c:cmd_menu`, EHypView `src/gem/ehypview.c:bar_menu`. Labels
   start with two spaces, shortcuts are typed into the label, a tick is `\x08` in place of the first space, a
-  grey item starts with `~`. It carries About, the commands, the Options ticks, Settings, Font, help and
+  grey item starts with `~` (when the shared `popup()` carries the margin, 3.1, the two spaces and the tick in place of
+  a space go). It carries About, the commands, the Options ticks, Settings, Font, help and
   keys, and Close (ECal, EHypView) or Quit (the program).
 - **About is the first entry** (1.3). EHypView does it; ECal and EContact have it near the end (MD16).
 - The accessory's name in the Desk menu is `"  NAME"`, two spaces (`menu_register`, 1.1). EMail's accessory
   has no window menu: its Desk entry `"  EMail check"` runs an alert with the state.
-- ECal's ≡ menu, in order (23 entries): Add account or calendar... · Import .ics... · New event N · — · Go to
+- ECal's ≡ menu, in order (23 entries; 2.45 dropped two Hebrew ones): Add account or calendar... · Import .ics... · New event N · — · Go to
   date... ^G · Find... ^F · Today T · Contacts... · — · Download everything again... · — · Calendar list ⇧^S
   (tick) · — · Work offline · Direct connection (TLS) · Write a log (ticks) · — · Settings... ^, · Font... ·
   Help... Help · About ECal... · — · Quit ^Q (Close ^U in the accessory).
-- EContact's: Add account... · New contact ^N · New group ^G · — · Import vCards... · Export vCards... · Sync
+- EContact's (19 entries in the accessory, 21 in the program, since the Hebrew item went): Add account... · New contact ^N · New group ^G · — · Import vCards... · Export vCards... · Sync
   Contact Photos... · — · Groups ⇧^S · — · Work offline · Direct connection (TLS) · Write a log · — · Settings...
   ^, · Font... · Keys... · About EContact... (· — · Quit ^Q, left out in the accessory, which has its closer).
 - EHypView's: About EHypView... · — · New window ^N · Open hypertext... ^O · Library and search ^L · — · Copy
   page ^C · Add bookmark ^D · — · Font... ⇧^F · Larger text ^+ · Smaller text ^- · Settings... ^, · — · EHypView
   guide · — · Next window ^W · Close window ^U · Quit ^Q.
-- On an ST the pop-up's compact rows (`popup.c:layout`) take over for the 20 to 23 entries.
+- On an ST the pop-up's compact rows (`popup.c:layout`) take over for the 19 to 23 entries.
+- These three lists are as built. The ≡ menu follows the bar, so the Options order and wording of 1.5 apply to it at
+  each app's release (accounts first, `Direct connection`, About first).
 
 ### 1.8 Under a multitasking AES
 The bar is the same under MiNT with XaAES and under MagiC. On TOS a modal dialog (`form_do`, `dlg_do`) holds the
 AES, so no title can be chosen. Under a multitasking AES (`dlg_windowed()`: `aes_count() != 1`, or MagX) a
 dialog is a window and a title can be chosen meanwhile: `common/ui/dialog.c:dlg_evnt_` keeps messages the
-dialog loop was not asked for (`keep_msg`, up to 8) and gives them back after the last dialog closes. **A menu
-choice made while a dialog is open is dropped, with the title set normal.** Only EContact does it today
-(`ui/main.c:menu_drop`); the shared loop should do it for all (MD17, hub). Pop-ups are drawn the same way on
+dialog loop was not asked for (`keep_msg`, up to 8) and gives them back after the last dialog closes. **The shared loop
+does not drop a menu choice made while a dialog is open:** it keeps it and sends it back when the dialog is gone, so
+the choice runs afterwards (read by the hub, 9 Nov), and it does not set the title normal. Only EContact drops it
+(`ui/main.c:menu_drop`). **The rule is: the choice is dropped and the title set normal with `menu_tnormal`**, a hub
+fix in `dlg_evnt` for every app (MD17). Pop-ups are drawn the same way on
 both AESes (over the screen, `wind_update(BEG_MCTRL)`), not as AES windows.
 
 ---
@@ -207,9 +229,9 @@ These keys mean the same in every app. An app may leave one unused, but **never 
 | ^W | Next window, the app's own, in turn (one window: nothing) | ^I | Get info / properties (EFTP Permissions, EUpdate Get info) |
 | ^Q | Quit (ACC: close window) | ^, | Settings... |
 | ^F | Find (⇧^F: see 2.2) | Del | Delete the selection (never in a text field) |
-| Help | The app's guide, first page (4.3) | Insert | Context menu for the selection (3.3) |
+| Help | The app's guide, first page (4.3); EHypView's Help key shows the hypertext's own help page (D11) | Insert | Context menu for the selection, in every app (3.3, D17) |
 | Esc | A text field: empty it. A dialog without a field and an alert: cancel (3.5). Stops a load (EWeb). EFTP also refreshes its file lists, as the TOS desktop does | Return | Default button / open the selection |
-| Undo | A dialog: Cancel (3.5). A job: stop. Elsewhere in viewers: Back | F10 | Hebrew keyboard (5.3) |
+| Undo | A dialog: Cancel (3.5). A job: stop (playback is not a job: D54). Elsewhere in viewers: Back | F10 | Hebrew keyboard (5.3); F1 to F9 may be an app's own views (2.3) |
 
 No app has a real Undo command. EHypView has Undo and Backspace but no ^Z; list ^Z as unused except in EWeb.
 
@@ -220,25 +242,30 @@ app's ⌘ key as ^. A letter is not taken for two meanings inside one app; **acr
 between apps.
 - ECal: ^R refresh (⇧ everything), ^T today, ^G go to date; bare keys `T D W M Y N`.
 - EContact: ^R refresh (⇧ everything), ^E edit, ^G new group.
-- EMail: ^R reply, ⇧^R reply all, ⇧^F forward, ⇧^D send, ⇧^N check mail, ⇧^U mark as unread, ^G flag, ^M move,
-  ^T attach, ^B address book.
+- EMail: ^R reply, ⇧^R reply all, ⇧^F forward, ⇧^D send, ⇧^N check mail, mark as unread (⇧^U until EMail's new key,
+  D1), ^G flag, ^M move, ^T attach, ^B address book.
 - EFTP: ^K sites, ^D disconnect, ^T upload / download, ^E rename, ^R refresh, ^L server messages. **Esc refreshes**
   the file lists.
 - EUpdate: ^R check, ^D update (⇧ all that are new).
 - EWeb: ^L address, ^R reload, ^D add bookmark, ^B bookmarks, ^Y history, ^G / ⇧^G find next / previous, ^+ ^- ^0
   text size, ⇧^Z forward.
-- EHypView: ^L library, ^T contents, ^I index, ^D add bookmark, ⇧^F font, ^+ ^-, ^Left / ^Right previous / next
-  page, ^Home main page. (^I here conflicts with the table's row; MD13.)
-- EPDF: ^G / ⇧^G find next / previous, ⇧^F font, ^Left / ^Right / ^Home / ⇧^Home pages, keypad + and - zoom.
-- EPlay: `Space` play/pause, `ClrHome` stop, ⇧← ⇧→ previous / next, arrows, `+` `-` volume.
+- EHypView: ^L library, ^T contents, ^I index (moves off ^I, D2), ^D add bookmark, ^+ ^-, ^Left / ^Right previous /
+  next page, ^Home main page. `Font...` has no key now (D6; it had ⇧^F).
+- EPDF: ^G / ⇧^G find next / previous, ^Left / ^Right / ^Home / ⇧^Home pages, keypad + and - zoom (`Font...` has no
+  key now, D6; MD28 is open).
+- EPlay (a player's exception, D53): `Space` play/pause, `ClrHome` stop, Left and Right ±10 s, ⇧← ⇧→ previous /
+  next, `+` `-` volume; Up and Down move the list. Clr/Home is Stop here, not the first row (WINDOWS 2.2). Playback
+  is not a job: Undo stops a load or a connection, the Stop key stops playback (D54).
 - ClaudeST: F1 new chat, F2 chats, F3 projects, F4 artifacts, F5 search, F6 code, F8 account, F9 model;
-  ⇧Del clears the reply line. (F1 to F5 crash on purpose in test builds only.)
+  ⇧Del clears the reply line. (F1, F2 and F5 crash on purpose in test builds only: `crash.c`, `crash_test`.)
 - Other keys: Esc in EWeb stops a page's refresh first, then the load. Undo in EMail leaves the find bar; in
-  EPDF it cancels a copy; in ClaudeST it does nothing yet.
+  EPDF it cancels a copy; in ClaudeST's dialogs Undo is Cancel.
 
 ### 2.3 Rules
-- **Sidebar show / hide is ⇧^S** in an app whose sidebar can be hidden (ECal, EContact). EMail's folder pane and
-  ClaudeST's chat list cannot be hidden.
+- **Sidebar show / hide is ⇧^S in every app that has a sidebar.** ECal and EContact have it; EMail's folder pane
+  and ClaudeST's chat list gain it (new work, at a release the app makes anyway). Decided 9 Nov 2026 (D45).
+- **Function keys.** An app may use F1 to F9 for its own views (ClaudeST: F1 to F6, F8, F9); F10 stays the Hebrew
+  keyboard's (5.3); Help is the Help key. Decided 9 Nov 2026 (D52).
 - **Alt+letter is left free** for the country keyboards' accented letters (ECal tests `K_ALT` before its bare
   letters).
 - **The shortcut table in each help file and in `Keys...` is written by hand** from the menu (EMail
@@ -276,13 +303,15 @@ between apps.
 - **Labels** (`popup.h`): `"-"` a line; `"~Text"` greyed; `"\x08Text"` ticked. A shortcut is typed into the
   label after spaces, so the labels of one menu have equal length (`popup` does not right-align keys); show the
   same key and the same words as the menu bar.
-  **Open (Erez decides): the padding (MD18).** Labels start with two spaces (`"  Text"`) in ECal, EContact,
-  EHypView, EPDF, EPlay and EWeb's form lists and Encoding menu: the tick takes the first, so ticked and
-  unticked text line up, text 4 cells in. EMail, EFTP, EUpdate, EWeb's page and link menus and ClaudeST pad
-  nothing: text is 2 cells in and a ticked label (`"\x08Text"`) sits one cell right of an unticked one. The
-  example in `popup.h` (`"\x08Hidden"`) shows the second form and misaligns (MG14). Recommendation: one look;
-  `popup()` adds the margin itself (text at 2 cells, tick in the margin whether ticked or not) and apps drop
-  their padding as they release; or all apps pad. Until decided, new menus pad with two spaces.
+  **`popup()` adds the margin itself** (MD18): a label is just its words (`"Text"`, `"~Text"`, `"\x08Text"`) and
+  the box puts the text 2 cells in with the tick in the margin whether ticked or not, so ticked and unticked rows
+  line up. Until the shared `popup()` does this (hub work, then a sync) the apps pad as they do: two leading spaces
+  (`"  Text"`, text 4 cells in) in ECal, EContact, EHypView, EPDF, EPlay and EWeb's form lists and Encoding menu;
+  nothing (text 2 cells in, a ticked label one cell right of an unticked one) in EMail, EUpdate, EWeb's page and link
+  menus and ClaudeST's item menus; and new menus pad with two spaces. At the sync every app drops its padding.
+  EFTP has both looks (its choice pop-ups pad the tick column in `exists_pick`, `proto_pick` and `drive_menu`; its
+  context menus and Connect pad nothing) and ClaudeST's model menu pads one (text at 3 cells). The example in
+  `popup.h` (`"\x08Hidden"`) is the unpadded form and misaligns today (MG14, hub). Decided 9 Nov 2026 (D15).
 
 ![EFTP pop-up, Falcon:16](../screens/popup-eftp-connect-f16.png)
 ![ClaudeST pop-up, ST:mono](../screens/popup-claudest-model-open-st1.png)
@@ -300,16 +329,21 @@ between apps.
 - **A command that cannot apply is greyed (`~`) while the others stay; it is left out when the menu is for
   another kind of thing** (EFTP offers Open only for one folder and Permissions only remotely; EHypView offers
   the link items only on a link; EContact leaves Delete and Add to Group out on a read-only book).
-- **Insert opens the same menu for the selected item**, for keyboard users: EHypView, EUpdate, EPDF, EPlay and
-  ClaudeST do; EMail, ECal, EContact and EWeb do not yet (3.3 is a "must": MD20). EFTP's Insert ticks the
-  row in or out with Space, as the TOS desktop does, and its menu is right-click only.
-  **Open (Erez decides):** keep EFTP's Insert as ticking and say so here, or move it to Space alone.
+- **Insert opens the same menu for the selected item, in every app**, for keyboard users: EHypView, EUpdate, EPDF,
+  EPlay and ClaudeST do; EMail, ECal, EContact and EWeb add it (3.3 is a "must": MD20; half a day each). **EFTP's
+  Insert opens its menu too;** its file panes tick a row with Space (as the TOS desktop's Insert does), which they
+  already do, so the menu now has a keyboard way. Decided 9 Nov 2026 (D16, D17).
 - **Viewers**: the right button on a toolbar's Back or Forward shows the history (EHypView `history_menu`); on
   Bookmarks, the bookmarks.
 - **EWeb bug (MD22):** `ui/win.c:context_menu` puts a tick (`\x08`) before Back and Forward when they cannot be
   used (`br_can_back(&br) ? "" : "\x08"`); `popup.h` says `~` greys.
 
 ### 3.3 Contents, as the apps have them
+As the apps have them at their tags. After the decisions of 9 Nov (D14, D1) a pop-up shows the bar's words and keys in
+sentence case: EMail's `Mark as unread` shows the bar's new key and `Reply to all` the bar's ⇧^R (the alias ^E is not
+shown), EFTP's `Connect... ^K` reads `Sites... ^K`, ECal's `Copy` reads `Copy event`, EContact's items read in sentence
+case with the bar's words (`Edit contact...`, `Delete...`); EUpdate's `Check for a release` stays.
+
 - **EMail list rows:** Open (list only; the reader's menu starts with Reply) · Reply ^R · Reply to all ^E ·
   Forward ⇧^F · — · Mark as read/unread ^U · Flag ^G · Move to... ^M · Download again · — · Delete Del. Several
   selected: Mark as read · Mark as unread ^U · Flag / unflag ^G · — · Move to... ^M · Download again · —
@@ -351,13 +385,14 @@ between apps.
 ## 4. Tooltips (guidelines 3.4)
 
 The toolbar row and its buttons are specified in [WINDOWS.md](WINDOWS.md); this section is the tooltip.
-- **There is no shared tooltip code in `common/`.** EMail, EFTP, EUpdate and ECal each carry their own copy of
+- **One shared `common/ui/tooltip.c` is the rule** (hub work: EFTP's `tip_show` with BubbleGEM in it; Decided 9 Nov
+  2026, D18). **Today there is none in `common/`:** EMail, EFTP, EUpdate and ECal each carry their own copy of
   the same `tip_show` (EFTP's header says "as ECal's", EUpdate's "EFTP's"); the text comes from each window's
   `win_tip` or `*_tip` function. EHypView draws its own and, when BubbleGEM runs (`appl_find("BUBBLE  ")`),
   hands the text to it (`ehypview.c:tip_bubble`). ClaudeST has its own for cut-off list items. A copy of EFTP's
   `tip_show` is the reference for a new one.
-- **Delay:** the pointer rests 0.7 s on a button or on a name a column cuts short (EMail, EFTP, EUpdate, ECal);
-  EHypView 1 s. The tip goes at the next move, key or click.
+- **Delay: 0.7 s** in every app: the pointer rests that long on a button or on a name a column cuts short (EMail,
+  EFTP, EUpdate, ECal today; EHypView's 1 s goes). The tip goes at the next move, key or click.
 - **Box:** a white box with a 1-pixel black frame, one or two lines (`|` in the text splits them; the second
   line in the dim colour), at most 60 characters a line, `(longest line + 2) * cw` wide, `lines * ch + 6` high,
   text `cw` in. Placed one cell right of the pointer and `ch + 2` below it, moved left or above at the
@@ -367,12 +402,20 @@ The toolbar row and its buttons are specified in [WINDOWS.md](WINDOWS.md); this 
 - **Tips also show what a cell cuts off** (EFTP and EUpdate rows, ClaudeST's list, EMail's address under a name).
 - **Who has them:** toolbar tips in EFTP, EUpdate, EHypView (and EMail's editor bar); ECal's are over events, not
   on its toolbar; EContact, EWeb (its status bar names the hovered button), EPDF and EPlay have none.
-  **Open (Erez decides):** whether every toolbar needs tips and the delay (0.7 s recommended). Hub work
-  follows: a `common/ui/tooltip.c` made from EFTP's `tip_show`, with BubbleGEM in it (MD21).
+  **Every toolbar has tips,** through BubbleGEM where it runs, else the box: EContact, ECal's toolbar, EPDF and
+  EPlay get them once the hub's `tooltip.c` is out (MD21); EWeb keeps its status bar naming the hovered button and
+  adds tips. ECal also has tips in its dialogs (`field.c`: `tip_put`, `tip_for`; one per list item, 500 ms; the
+  People field in New Event shows the address) and over events (700 ms, two lines), none on its toolbar (corrected
+  9 Nov). Decided 9 Nov 2026 (D18).
 
 ---
 
 ## 5. Every app's menu bar, as built
+
+These are the bars as built at the tags. Each app's bar changes at its release as the decisions say: Options order
+(accounts and sites, Settings, Font), `Write a log`, `Direct connection`, Quit alone in a one-window program, help
+items and `Keys...`, Find, and the keys that move (D1 to D14, D45). The changes are listed by app in
+[DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md).
 
 Notation: **bold** is a title; `^N` as shown in the menu; ⇧ is `\x01`; ✓ marks a tick; [grey: ...] is when the
 app greys it; — is a line. Items are in menu order.
@@ -408,7 +451,7 @@ app greys it; — is a line. Items are in menu order.
 - **Options**: Settings... ^, · Font... · ✓ Show hidden files · — · ✓ Direct connection (TLS) · — · ✓ Protocol log
 - **Help**: EFTP help Help · Keys...
 
-### EUpdate 2.0 (`ui/main.c`)
+### EUpdate 2.02 (`ui/main.c`; read at 2.0, corrected 9 Nov)
 - **EUpdate**: About EUpdate...
 - **File**: Quit ^Q
 - **Edit**: Copy ^C [grey: repositories pane with nothing selected, or found pane empty] · — · Select all ^A [grey: no
@@ -417,8 +460,8 @@ app greys it; — is a line. Items are in menu order.
   none followed] · Update ^D [grey: job, or nothing selected and nothing new] · Update all that are new ⇧^D [grey: job
   or none new] · Download again [grey: job or none selected] · — · Get info... ^I [grey: job, or not exactly one] ·
   Unfollow Del [grey: job or none selected]
-- **Options**: Settings... ^, [grey while a job runs] · Font... · — · ✓ Hebrew keyboard F10 (v2.0 only; removed on `main`,
-  unreleased) · ✓ Protocol log
+- **Options**: Settings... ^, [grey while a job runs] · Font... · — · ✓ Protocol log (2.0 also had ✓ Hebrew keyboard F10:
+  removed in 2.01; 2.02 removed the start-up tick and `HEBREW=`)
 - **Help**: EUpdate help Help · Keys...
 
 ### EWeb 0.81 (`ui/main.c`: `m_*`, `menu_update`, `bm_items`)
@@ -510,6 +553,8 @@ app greys it; — is a line. Items are in menu order.
 - Nothing is greyed (`menu_ienable` is not called). `Delete`, `ClrHome` and `Space` are shown bare: MD14.
 
 ### Where the same command is
+As built at the tags; the rules of 1.5 say where each is going.
+
 | Command | Menu: apps |
 |---|---|
 | Settings... ^, | Options: EMail, EFTP, EUpdate, EWeb, EHypView, ECal, EContact, ClaudeST, EPlay (last in its menu). File: EPDF, EConvert |
@@ -536,5 +581,32 @@ app greys it; — is a line. Items are in menu order.
 - **Greying** is done in `menu_update()` (EMail, EFTP, EUpdate, EWeb, EContact), `event_items` (ECal),
   `update_menu` (EHypView), `menu_states` (EPDF). The caches that spare AES calls: `enable()` comparing
   `ob_state & DISABLED` (EMail, EFTP), a remembered last value (ECal, EWeb, EHypView, EPDF), a bit mask (EUpdate).
-- **Not in the code:** a Print command; a context-sensitive Help page; a `menu_drop` in any app but EContact; what
+- **Not in the code:** a Print command; a context-sensitive Help page (not wanted now: D12); a `menu_drop` in any app but EContact; what
   the other apps' dialog loops do with a kept `MN_SELECTED`.
+
+---
+
+## 7. Still open
+
+The answers of 9 Nov did not settle these; nothing here is guessed, and new code does not depend on them.
+
+- **The keys.** EMail's new key for Mark as unread (EMail proposes, Erez approves: D1) and EHypView's new key for
+  Index (D2). Until then the keys stay as they are; nothing shifted is added.
+- **Find, the words and the place** (D4 settles the rule only). EMail's find bar is a tick item in Message that
+  should be `Find` and say what it searches; ECal's `Find...` (a dialog over events, in View) and EContact's `Find`
+  (a search field, in View; EContact has no Edit menu) are searches of the app's own things or finds in a list, and
+  the answer does not say which. EUpdate's `Find on GitHub...` and ClaudeST's `Search chats` already say what they
+  search.
+- **Where the `⇧^S` item sits** in EMail and ClaudeST (D45): neither has a View menu, and D5 keeps EMail's
+  Translate in Options for that reason.
+- **ClaudeST's Options** (D6, D13): `Account... F8` and `Font...` come after the baud and port ticks today, against
+  "accounts first, then Settings, Font, a line, the ticks". Whether F8's Account... counts as the account item is
+  not said.
+- **Where Insert's menu opens** in the four apps that add it (MD20): under the selected row (EUpdate, EPlay,
+  ClaudeST) or at a fixed place (EHypView, EPDF).
+- **EUpdate's `Copy name ^C`** against the bar's `Copy`: whether D14's "EUpdate's singular is allowed" covers it as
+  it covers `Check for a release`.
+- **`Write a log` in "every app"** (D8): EHypView, ClaudeST, EPDF and EPlay have no log item. Read here as the
+  wording where a log exists; whether each must have one is not said.
+- **MD28**, EPDF's zoom keys (`Zoom in +` / `Zoom out -` without Control against `^+` / `^-`): not among the 54;
+  EPDF asked Erez separately.

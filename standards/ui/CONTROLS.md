@@ -16,10 +16,12 @@ checked again at the tags (EMail 2.14, EFTP 2.2, EUpdate 2.0, EWeb 0.81, EHypVie
 1.82, ClaudeST 2.1, EPDF 2.1, EPlay 1.10) and differ from the older reading: **EWeb and EPDF now call
 `progbar_fill`** (5.9 below), and **ECal and EFTP build with `-DDLG_CLICK`** (5.8 below). Anything else here
 that names an app is "as read in the older copy" until its session re-reads it; the apps' self-evaluation
-against [DEVIATIONS.md](DEVIATIONS.md) is the check. EPDF has no dialog code beyond Settings yet.
+against [DEVIATIONS.md](DEVIATIONS.md) is the check. EPDF has the Find dialog (`find.c`) besides Settings, which it is
+rebuilding on the shared engine (unreleased); `Keys...` is added there.
 
-**How to read it.** "The family does X" is the rule. `**Open (Erez decides):**` gives the current behaviour and
-a recommendation for a look, wording or behaviour choice. Ids `C1` to `C26` point to rows in
+**How to read it.** "The family does X" is the rule. Erez answered the open choices on 9 Nov 2026
+([DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md)): a settled rule ends `Decided 9 Nov 2026 (Dn)`, and what the answers
+left unsettled is under `Still open` at the end of this file. Ids `C1` to `C26` point to rows in
 [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, EPlay), M = maintenance (the others).
 
 
@@ -46,13 +48,14 @@ a recommendation for a look, wording or behaviour choice. Ids `C1` to `C26` poin
   up** when the app called `dlg_band(obj)`; the window's name is `dlg_name()`, else the band's text, else the
   app's name (`dlg_title`). The first click or key on a dialog that is not in front only brings it to the
   front; a click outside the dialog's window rings the bell. Alerts are the AES's own there (3.5).
-- **Title** (**Open (Erez decides)**, C4). As built, EUpdate and EWeb put a black band in every dialog, EFTP in
-  four, EMail in one; EMail's and EFTP's small dialogs have a plain `G_STRING` at (2, 1) and no band; EPlay's
-  and EHypView's asks have a line of text there; the Font and Languages dialogs have none; ECal's and
-  EContact's have a black title bar with a centred bold title and a double frame; ClaudeST has a heading inside.
-  Recommendation: **a black band in every dialog**, row 0, the full width, a `G_BOXTEXT` `te_color` 0x1071
-  (white on black), text left with one leading space (`" Settings"`). In a window the window's name is the
-  title either way.
+- **Title: a black band in every dialog**, row 0, the full width, a `G_BOXTEXT` `te_color` 0x1071 (white on
+  black), text left with one leading space (`" Settings"`). **In a window under a multitasking AES the window's own
+  title replaces it:** `dlg_band(obj)` hides the band there and the window takes its text, so a dialog in a window
+  has no band. (Alerts and the About box are not dialogs in this sense.) As built: EUpdate and EWeb put a band in
+  every dialog, EFTP in four, EMail in one; EMail's and EFTP's small dialogs have a plain `G_STRING` at (2, 1) and
+  no band; EPlay's and EHypView's asks have a line of text there; the Font and Languages dialogs have none; ECal's
+  and EContact's have a black title bar with a centred bold title and a double frame; ClaudeST has a heading
+  inside; EPDF's Find has a text line. All of those change. Decided 9 Nov 2026 (D22, C4).
 - **Keys** (`dlg_do`; EMail's, EFTP's and EUpdate's private `form_loop` is the same except where 3.5 and 5.4
   say; C11):
   - **Return and Enter** pick the `DEFAULT` button (shown pressed, then returned). **Esc and Undo:** 3.5, below.
@@ -62,11 +65,16 @@ a recommendation for a look, wording or behaviour choice. Ids `C1` to `C26` poin
     in EMail, EFTP, EUpdate, EWeb, EHypView or EPlay: there is no Space, no underlined letter, no accelerator
     (the Add files, Font and Languages dialogs have Up and Down in their lists). Fields on pages not shown are
     not `EDITABLE` (`show_page`).
-  - ^C ^X ^V: 3 below. F10 switches the Hebrew keyboard in `dlg_do` loops only (`heb_f10`).
-  - Keys typed before the dialog opened do not answer it (`flush_keys`; `dlg_do` only).
+  - ^C ^X ^V: 3 below. F10 switches the Hebrew keyboard in `dlg_do` loops (`heb_f10`) and in the private
+    `form_loop` of EMail, EFTP and EUpdate (since 2.0; in EUpdate the band's badge changes at once, the window's at
+    close).
+  - Keys typed before the dialog opened do not answer it (`flush_keys`; `dlg_do` only; the private loops have no
+    `flush_keys`).
   - The Help key is not taken by a dialog.
-  **Open (Erez decides):** keyboard reach (C6). Recommendation: Space ticks a tick, arrows move in lists and
-  between radio buttons.
+  **Keyboard reach is a rule, to build:** Space ticks a tick, the arrow keys move between radio buttons and in
+  lists, and the Settings pages have keys. The focus apps first, the maintenance apps at a release they make
+  anyway; the dialog loop and the Settings engine are hub work. How the keyboard focus reaches a tick, a radio, a
+  pop-up button or a page name, and which keys change the page, is in `Still open`. Decided 9 Nov 2026 (D25, C6).
 - **Mouse:** the left button only (mask 1, state 1). An exit button is pressed in while held and done when let
   go over it (the AES's `form_button`); a `TOUCHEXIT` object (a tick, a page name, a row, an arrow, a pop-up
   button) is done on the press; a click on a field moves the cursor into it (3 below); **a click outside the box
@@ -77,12 +85,14 @@ a recommendation for a look, wording or behaviour choice. Ids `C1` to `C26` poin
   left `SELECTED` and the caller (or `dlg_modal`) deselects it. Settings stays open for ticks, pages and
   pop-ups and ends on OK or Cancel.
 - **OK and validation.** OK is the `DEFAULT` button and keeps the dialog's values; Cancel keeps nothing.
-  **Open (Erez decides)** (C21): as built, an out-of-range number is **put right silently**: EMail (messages at
-  a time 20 to 1000, wrap column 40 to 78 else 72), EUpdate (hours 1 to 168), EWeb (text size outside 50 to 200
-  left as it was; a bad port to the default; the cache size cut to 512), and an empty line in an "ask" dialog
-  is a Cancel (EMail, EUpdate). The only refusals: ECal ("Please type dates as|day.month.year: 12.10.2026",
-  "Please type the server's address."), EContact (the server's address) and EHypView (a folder that isn't there:
-  "Look there anyway?" [Keep | Change]; Change goes back to the page). Recommendation: one rule for the family.
+  **A number out of range is refused with a short alert that says what to type; the dialog stays open and nothing
+  is changed silently** (ECal's way: "Please type dates as|day.month.year: 12.10.2026", "Please type the server's
+  address."; EContact refuses an empty server address the same way). EMail (messages at a time 20 to 1000, wrap
+  column 40 to 78 else 72), EUpdate (hours 1 to 168), EWeb (text size outside 50 to 200 left as it was; a bad port
+  to the default; the cache size cut to 512) and EPlay (a bad Gateway port set to 8580) put it right silently today
+  and change. An empty line in an "ask" dialog is a Cancel (EMail, EUpdate). EHypView's "Look there anyway?" [Keep |
+  Change] for a folder that isn't there is a question about a path, not a number (`Still open`). Decided 9 Nov 2026
+  (D30, C21).
 - **A dialog on a dialog** (a list over Settings, EMail's zone picker): the tree is kept aside and built in the
   same static tree; on TOS the dialog under it is drawn again when the list closes; in a window the AES asks
   for it.
@@ -108,9 +118,10 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   is in and no other, **also when it is already empty** (`lf_edit`, `objc_edit`). A dialog with a text field
   closes with Undo, Cancel or the closer. Settings has this twice over: on a page with a field Esc empties it,
   on a page without one Esc is Cancel.
-  **Open (Erez decides):** where the field only filters a list, Esc on an **empty** field cancels in EPlay's Add
-  files (`filepick.c`: `a == 27 && !s_mask[0]`) and EContact's choose mode; every other dialog and window keeps
-  the dialog open. Recommendation: keep it as an exception for list filters (C15).
+  **There is no exception for a field that only filters a list:** Esc empties the filter, and on an empty one it does
+  nothing more. The dialog closes only by its Cancel button or Undo. EPlay's Add files (`filepick.c`: `a == 27 &&
+  !s_mask[0]`, hub) and EContact's choose mode (its toolbar's Cancel, or Undo, ends it) cancelled on an empty field
+  and change. Decided 9 Nov 2026 (D28, C15).
 - **A one-line text field of a window empties on Esc too** and nothing else happens (EHypView's library search,
   a list's filter). EWeb's address field puts back the page's address. **A text of several lines never empties
   on Esc**; only editing keys take text out there (ECal's and EContact's notes boxes, EMail's editor,
@@ -212,13 +223,17 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   the box alone is drawn again (`dlg_draw`) and the loop waits 120 ms (`evnt_timer_(120)`). A tick has no
   keyboard way in and no disabled look; a disabled one ignores the click (its `DISABLED` state is tested in the
   loop).
-  **Open (Erez decides)** (C5): ECal's and EContact's own tick (`draw_field`, `FT_CHECK`) is a white box
-  `2*cw - 4` wide, `ch - 2` high, with a 2-pixel-thick tick; EMail's account dialog has one toggle drawn as a
-  `G_BUTTON` ("leave mail on the server", `d_check`); EUpdate uses ticks as a group of exclusive choices
-  (`group_of`). Recommendation: the bitmap tick for every on/off setting, `RBUTTON` buttons for one of several.
+  **A bitmap tick for every on/off setting, radio buttons for one of several** (rule as written; apps change at a
+  release they make anyway). ECal's and EContact's own tick (`draw_field`, `FT_CHECK`) is a white box `2*cw - 4` wide,
+  `ch - 2` high, with a 2-pixel-thick tick; EMail's account dialog has one toggle drawn as a `G_BUTTON` ("leave mail
+  on the server", `d_check` becomes `d_tick`); EUpdate uses ticks as a group of exclusive choices (`group_of`
+  becomes radio buttons, or a pop-up above four). Decided 9 Nov 2026 (D23, C5).
 - **Radio buttons** are `G_BUTTON`, `SELECTABLE | RBUTTON`, 8 or 9 cells wide, 10 apart (EMail's IMAP | POP3,
   EFTP's By type | As text | Binary, EPlay's Auto | FDI | DSP, ClaudeST's `own_add(... RBUTTON)`); the AES
-  unselects the others of the same parent.
+  unselects the others of the same parent. **They are for one of up to four choices; above four, a pop-up button
+  (5.7).** An existing pop-up of four choices or fewer (ECal's) becomes radio buttons. A choice that does not apply
+  is greyed (EPlay greys FDI and DSP on a machine without them): the shared Settings engine's `set_tick_group` and
+  `set_popup` cannot grey one choice yet, and learn to (hub work). Decided 9 Nov 2026 (D24).
 - **Exit buttons one under another get room between them** (half a line) when 3D is on, because raised buttons
   grow by a few pixels.
 - **Dialogs an app draws itself** (ECal's and EContact's `ui/field.c`, ClaudeST's `own_*`) take the AES's 3D look
@@ -226,7 +241,8 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   own (`aes_button`), pop-up buttons raised by `bevel()`, fields, ticks and lists white. Their rows are `ch + 6`
   high, the focused field has a double line and the pop-up button is flat with a shadow: they are the "older"
   dialogs to bring over (C24).
-- **Buttons are the AES's:** an exit button is a `G_BUTTON` drawn by the AES, never by hand. Anything the app
+- **Buttons are the AES's:** an exit button in a dialog is a `G_BUTTON` drawn by the AES, never by hand. (A
+  toolbar's hand-drawn buttons are accepted when they behave right: [WINDOWS.md](WINDOWS.md) 3, D33.) Anything the app
   draws into a dialog clears its place by drawing the tree there (`objc_draw`), never with white.
 - **The pop-up menu itself is flat in every look:** `popup()` draws a white box with a 1-pixel frame and a
   2-pixel black shadow with the app's own primitives (`popup.c`).
@@ -250,15 +266,17 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
     centred, `"%s \x02"`: C9). In 3D it is raised; flat it is a framed box.
   - **The menu's items** start with two spaces; the ticked one starts with `\x08` (the Atari check mark) in
     place of the first space: `"%c %s"` with `'\x08'` or `' '`. `popup()` puts the check mark half a cell in
-    and every item's words 2 cells in from the left edge.
+    and every item's words 2 cells in from the left edge. When the shared `popup()` adds the margin itself
+    ([MENUS.md](MENUS.md) 3.1, D15) an item is just its words, the ticked one `\x08` and its words.
   - It sits in the settings' value column (`SX + 30`) or after its label; the dialog under the menu is drawn
     again when `popup_put_back` is 0. `popup()` itself moves a menu left to fit the desktop, and above the point
     when there is no room below.
-  - **Where it opens. Open (Erez decides)** (C8): as built, EHypView aligns the ticked row over the button
-    (`over_button`: `y - 3 - sel * (ch + 2)`, rows `ch + 2` high from 2 pixels down); EFTP (`exists_pick`,
-    `proto_pick`), ECal and EContact (`popup_over`) put the menu's top-left at the button's top-left whatever is
-    ticked; EPlay's Add files opens it below the button (`below()`). Recommendation: **the ticked row over the
-    button**, the AES's own pop-ups' way (the majority does the other).
+  - **Where it opens: the ticked row over the button,** the AES's own pop-ups' way. EHypView does it today
+    (`over_button`: `y - 3 - sel * (ch + 2)`, rows `ch + 2` high from 2 pixels down). EFTP (`exists_pick`,
+    `proto_pick`) and EContact (`popup_over`) put the menu's top-left at the button's top-left whatever is ticked;
+    ECal does the same, but through `field.c` `dlg_run` (`FT_POPUP`) into `popup.c` `popup()`, not `popup_over`
+    (corrected 9 Nov); EMail's Translate pop-up and EPlay's Add files (`below()`, hub) open below the button. They
+    change, and the shared `popup()` gets an "over this button" call (hub work). Decided 9 Nov 2026 (D27, C8).
 - **A choice from a long list is not a pop-up:** the button shows the choice and ends in "...", with no arrow,
   and opens a dialog with the list (EMail's and EFTP's time zones, `zone_label`: 28 cells, "..." in the last
   three). An arrow that opens a dialog promises what it doesn't do.
@@ -284,18 +302,26 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   and EUpdate's `form_loop` pass 2), as GEM's `form_do` does, so a press on a tick, a page name or a list row in
   a dialog is handed over after the double-click time. `-DDLG_CLICK` with `click.c` asks for one (`dlg_touch`,
   `dlg_touch_up`). **ECal and EFTP build with `-DDLG_CLICK`** (their Makefiles at the release tags); EWeb,
-  EPDF and EPlay do not yet (C16, hub's call: the focus apps should). Only Add files (`filepick.c`), the
+  EPDF, EPlay, EMail (which links `click.o` since 2.13), EHypView and EUpdate do not; EContact's own dialogs already
+  ask one click, only its Font dialog is affected (corrected 9 Nov). **Every app builds `-DDLG_CLICK`:** that is the
+  dialog loop, apart from the window list's `click.c` that EMail and EUpdate adopt (W24); the focus apps now, the
+  others at a release they make anyway (C16). Only Add files (`filepick.c`), the
   Languages dialog, the About box and (unless a button is held) the Font dialog ask for one.
 - **As built in dialogs:**
   - the AES's own exit buttons (`dlg_do`, `form_button`): pressed in while held, done when let go over them,
     nothing when let go elsewhere. ECal's, EContact's and ClaudeST's own dialogs **act on the press** (ECal and
     EContact flash the button for 90 ms, `press_effect`; ClaudeST not at all); the Font dialog acts on the
-    release **wherever the pointer is** (`on_click`: `left_up()`). The rule is 5.8's: let go over the button
-    (C7; ECal, EContact, ClaudeST at their next release, the Font dialog in `common/`);
+    release **wherever the pointer is** (`on_click`: `left_up()`). The rule is 5.8's: **a button acts when the mouse
+    is let go over it**, shown pressed meanwhile (C7; ECal, EContact, ClaudeST at their next release, the Font dialog
+    in `common/`); the one exception is **Stop in a job, which acts on the press** (D32);
   - a list row in a dialog is a `TOUCHEXIT` object: it is chosen **on the press**, a double click (the AES's
-    count, bit 0x8000 of the result) takes it, and nothing waits for the release (EMail's and EFTP's `pick_w`,
-    EPlay's Open URL);
-  - ticks and the Settings page names (`TOUCHEXIT`) act on the press as well.
+    count, bit 0x8000 of the result) takes it, and nothing waits for the release (EMail's and EFTP's `pick_w`;
+    EPlay's Open URL rows are not `TOUCHEXIT`: they are `SELECTABLE | EXIT` `G_STRING`s on the root that act on the
+    release, with no white well: corrected 9 Nov);
+  - ticks and the Settings page names (`TOUCHEXIT`) act on the press as well. **Menus, pop-ups, ticks, pop-up
+    buttons, page names and list rows act on the press; buttons act on the release over them.** This is the
+    reading of 5.8 that fits the code; ECal's and EContact's ticks and pop-ups on the press (C7) follow it, which
+    Erez has not said in so many words (`Still open`).
 
 ---
 
@@ -315,6 +341,10 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   `progbar_fill`. Own bars remain in EFTP (a bar a row in the Transfers pane, its own colours), EContact (its
   progress box fills with `sel_color()`) and EWeb's quit box (a plain black `G_BOX`); they move to `progbar`
   when each next draws progress (C22). EPlay and the maintenance apps: section 8 of the guidelines.
+  **EFTP keeps a bar per running row** (the Transfers pane is a list of items), drawn with `progbar_fill`, so its
+  colours become the shared ones (the direction arrow keeps its colour); **EConvert keeps its two bars** (the file's
+  and the batch's). Both are written exceptions to 5.9's one bar for the whole job. Decided 9 Nov 2026 (D48,
+  D34).
 - **Where:** at the foot of the status bar of a window (EWeb, EPDF), or in the progress box of a job that has
   no window (6.3). Tested: `common/tests/progbar` (`make test`; `run.py WORK MACHINE [--nvdi]`).
 
@@ -341,7 +371,10 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   the row centred on the box; `G_BUTTON`, `SELECTABLE | EXIT`. A single "OK" is written `" OK "` (spaces inside
   the brackets) so that its button is not narrow (277 uses). The box is the same `G_BOX` as a dialog's
   (0x00021100, `OUTLINED`), centred like one, 3D by `dlg_3d`, the mouse an arrow. Only a lone OK is padded; the
-  hub may pad inside `alert()` instead (C19).
+  hub may pad inside `alert()` instead (C19). Not every
+  padded form in the old list exists: EFTP pads only a lone OK, and neither EFTP nor EWeb has a padded `Replace |
+  Cancel` (EPlay's failure alerts do); EWeb's `confirm()` (` OK |Cancel`) and EHypView's ` Keep |Change` are padded
+  oddly (corrected 9 Nov).
 - **Text:** what happened, then what to do, a line each: "Can't reach the server.|Check the network and try
   again." Questions end in "?"; a second line in brackets says what stays ("(Its mail stays on the server.)");
   statements end in a full stop. The apps break lines by hand at 30 or fewer; `alert()` wraps what is left.
@@ -354,9 +387,8 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   question** (Delete, Quit, Discard, Forget, Replace), the first for the others ([Open | Later], [Check |
   Later], [Download | Cancel], [Locate... | Use C:\ECAL | Cancel], [Only this | All future | Cancel]). An
   information alert has "OK" and def 1.
-  **Open (Erez decides)** (C17): EFTP's "Already there" dialog defaults to **Replace**, the action that
-  overwrites, with no Cancel; Esc stops the transfer. Recommendation: default Skip, or leave it since Esc is
-  Stop.
+  **EFTP's "Already there" defaults to Skip.** It defaulted to Replace, the action that overwrites; it has no
+  Cancel, and Esc stops the transfer. Decided 9 Nov 2026 (D29, C17).
 - **Esc and Undo pick the last button** (3.5). A click on a button acts on the release (`form_button`). On a
   multitasking AES (MiNT, MagiC) it is the AES's `form_alert` with the same wrapped text.
 - **Progress and status** (6.3): every wait is signalled in three places and ended by Esc: the **busy bee**
@@ -366,8 +398,10 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   timeout would and what was done is said. Long work shows its progress in the window with a **Stop** button;
   a modal progress box only when there is no window to show it in (EWeb's quit box, " Closing EWeb": a line
   of words, a bar, no buttons). EContact's Sync Contact Photos opens a modal box (46 cells wide, two lines of
-  text, a bar, a 10-wide Cancel at the right; Esc, Undo or Cancel say "Stopping..."): an exception to leave
-  until it is next touched (C23). The job windows' look is in [WINDOWS.md](WINDOWS.md).
+  text, a bar, a 10-wide Cancel at the right (it reads Stop: D31); Esc, Undo or the button say "Stopping..."): an exception to
+  leave until it is next touched (C23). **`Stop` is the word for a job and `Cancel` only for a dialog** (EContact's
+  box changes). Decided 9 Nov 2026 (D31). Playback is not a job: Undo stops a load or a connection, and the Stop key
+  stops playback (D54). The job windows' look is in [WINDOWS.md](WINDOWS.md).
 
 ---
 
@@ -386,6 +420,9 @@ The text of 6.1 stays, with two corrections taken from the code:
   deviation to correct in EWeb, not a second form (C3).
 - **OK and Cancel order:** Cancel then OK, OK on the right. The Font dialog (`fontsel.c`), the Languages dialog
   (`langs.c`) and EPlay's Settings put OK first; those are deviations to fix, not an alternative (C1).
+- **Decided 9 Nov 2026:** a choice of up to four is radio buttons and of more a pop-up button (D24; the engine learns to
+  grey one choice); a number out of its limits is refused with an alert (D30); the controls and the pages get keys
+  (D25); the pop-up opens over its button (D27).
 
 ---
 
@@ -401,11 +438,11 @@ sits in a 3-pixel outline outside it (white 2, black 1; flat only); the 2-pixel 
 |---|---|---|---|
 | Root | `G_BOX` 0x00021100, `OUTLINED` | W x H; 3D flag on the root on TOS 4 | `d_begin`; `dlg_3d` |
 | Title band | `G_BOXTEXT` `te_color` 0x1071, `te_just` 0, `te_font` 3 | (0, 0), W x 1; text " Title" | `d_band` |
-| Plain title | `G_STRING` | (2, 1), len x 1 | EMail `dlg_ask`, `dlg_keys` |
+| Plain title | `G_STRING` | (2, 1), len x 1 | EMail `dlg_ask`, `dlg_keys` (goes: D22) |
 | Label | `G_STRING` | x = 2 (or `SX`), 1 high | `d_text` |
 | Field | `G_FBOXTEXT` `EDITABLE`, `te_color` 0x1180, `te_thickness -1`, `te_font` 3, template `_` x n, valid `X` or `9` | n x 1, frame 1 px outside | `d_framed`, `d_edit` |
 | Button | `G_BUTTON`, `SELECTABLE \| EXIT` (+`DEFAULT` on OK) | 10 x 1 | `d_button` |
-| Radio | `G_BUTTON`, `SELECTABLE \| RBUTTON` | 8 or 9 x 1, 10 apart | EMail `dlg_account` |
+| Radio | `G_BUTTON`, `SELECTABLE \| RBUTTON` | 8 or 9 x 1, 10 apart; up to four to a group | EMail `dlg_account` |
 | Tick | `G_IMAGE` 16 x 16 + `G_STRING`, both `TOUCHEXIT` | box 2 x 1 at x; words at x + 3 | `d_tick` |
 | Pop-up button | `G_BOXTEXT` `TOUCHEXIT`, `te_thickness -1`, `te_color` 0x1180 | 23 to 28 x 1; text " %-Ns\x02" | section 5 |
 | List well | `G_BOX` 0x00FF1100 (frame outside, hollow) with the rows as its children | n x 12 for a pick list | `pick_w` |
@@ -422,13 +459,15 @@ names have `ch / 2` more per step. Exit buttons one under another: half a line b
 - **Two buttons:** Cancel at `W - 24`, OK at `W - 12`, both 10 wide: right margin 2, gap 2. Row `H - 2`, one
   empty row under it (EMail, EFTP, EUpdate, EHypView, ECal, EContact; ClaudeST `cancel_x = ok_x - btn_w - 2*cw`,
   `ok_x = x + w - 2*cw - btn_w`).
-- **One button** (Keys, info): OK at `W - 12`, row `H - 2`. **Three** (EFTP "Already there"): 12 wide at x 2,
-  16, 30; Skip | Resume | Replace (default).
+- **One button** (Keys, info): OK at `W - 12`, row `H - 2`. **Three** (EFTP "Already there"): Skip (default) |
+  Resume | Replace, 10 wide (12 today, at x 2, 16, 30).
 - **Variants in use (deviations, C1 to C3):** EPlay 9 wide, OK left at 40, Cancel at 51 in 62 (the reverse of
   the rule); Font dialog 9 wide, OK at 26, Cancel at 37 in 48; Languages the same on row 16; Add files 8 wide,
   Cancel at 24, Add at 33 in 42; EWeb 10 wide with gap 3 and margin 3; pick list OK at `lw - 6`, Cancel at
   `lw - 18`, margin 4.
-  **Open (Erez decides)** (C2): button width. Recommendation: 10, wider only if the label needs it.
+  **Buttons are 10 wide, wider only if the label needs it.** EPlay and the Font and Languages dialogs (9), Add files
+  (8) and EFTP's "Already there" (12) change; the Font, Languages and Add files dialogs are hub work. An alert's
+  buttons keep their own rule (6.2: the longest label plus a cell). Decided 9 Nov 2026 (D26, C2).
 
 ### The standard dialogs
 **A question with a line to type** (EMail `dlg_ask`; EFTP, EUpdate, EWeb, EHypView the same, plus or minus a row):
@@ -472,7 +511,7 @@ AES's), 8 x 8 or 8 x 16. Text goes on multiples of 8 pixels across (`align16`; t
 ## 11. Not in the code (so not in the standard)
 
 - Underlined-letter or accelerator keys in dialogs; Space on a tick; Tab to a button; keys that change the
-  Settings page; the Help key in a dialog.
+  Settings page (the last two kinds are decided and to be built: D25); the Help key in a dialog.
 - Mouse selection in a text field, drag, double-click word selection, a right-button menu in a dialog, the wheel.
 - A remembered dialog position; zooming boxes.
 - Any number for a tick label's wrap, or a maximum dialog height (EMail builds its account dialog 62 x 24 or 25;
@@ -480,3 +519,23 @@ AES's), 8 x 8 or 8 x 16. Text goes on multiples of 8 pixels across (`align16`; t
 - What `form_keybd` does with Return when there is no `DEFAULT`, and with Shift+Tab: the AES's.
 - Whether the pop-up's choice in `popup()` is made on the press or the release of a later click: it is the
   `evnt_multi` button event with state 0 (the AES's definition).
+
+---
+
+## 12. Still open
+
+The answers of 9 Nov did not settle these; nothing here is guessed.
+
+- **How the keyboard reaches a control** (D25). The rule says Space ticks a tick, arrows move between radio buttons
+  and in lists, and the Settings pages have keys. It does not say how the focus gets to a tick, a radio, a pop-up
+  button or a page name (today Tab visits text fields only), whether it shows a ring, or which keys change the page.
+  The hub designs it with the focus apps and brings it to Erez as a UX decision.
+- **A radio group in the Settings page** (D24). Four radio buttons are 40 cells wide (10 apart) against the 30-cell
+  value column and the 42-cell page: how the engine lays a group out is the hub's to propose.
+- **The words of the out-of-range alerts** (D30). ECal's are the model; each app proposes its own, and the words are
+  Erez's to approve.
+- **EHypView's "Look there anyway?"** (C21) is about a folder that isn't there, not a number; D30 does not cover it.
+- **Press and release for ticks and pop-ups** (contradiction 2 of the evaluation). 5.8's "act on release" is written
+  here for buttons, with menus, pop-ups, ticks, pop-up buttons, page names and list rows on the press, which is what
+  the code does. C7 asked ECal and EContact to move ticks and pop-ups to the release; read this way it does not.
+  Erez's answers (D32, D33) speak of buttons only, so he may want to say.

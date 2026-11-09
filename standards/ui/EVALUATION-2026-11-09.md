@@ -1,3 +1,5 @@
+Answered 9 Nov 2026: see [DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md).
+
 # The app sessions' evaluation of the UI standards, 9 Nov 2026
 
 For Erez, from the hub. Nine of ten app sessions checked [MENUS.md](MENUS.md), [CONTROLS.md](CONTROLS.md),
