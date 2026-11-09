@@ -57,6 +57,7 @@ struct SETTINGS {
 	short nf;
 	char *pool;			/* the fields' text when the dialog opened */
 	short line_obj;			/* the list's line (the ring round a page name reaches it) */
+	short want;			/* set_focus: the field the text cursor goes to when dlg_do is entered next (0 none) */
 	short focus;			/* the keyboard's: 0 the text cursor (or nothing), -1 the page list, else the control's object */
 	short kb;			/* a key has been used since the last click: only then is the focus shown (a ring) */
 	short ringed;			/* the ring is on the screen */
@@ -362,6 +363,14 @@ static void show_page(SETTINGS *s, short p, int draw)
 		   what shows of them in that piece, a turn of their own */
 		evnt_timer_(0);
 		dlg_draw_range(tree, s->pages_obj, s->cancel, (short)(s->ok + 1), 0, 0);
+	}
+}
+
+void set_focus(SETTINGS *s, short field)
+{
+	if (field > 0 && field < s->b.nobj) {
+		s->want = field;
+		s->focus = 0;
 	}
 }
 
@@ -917,7 +926,11 @@ int settings_dialog(const SET_DEF *d)
 		focus_default(s);
 		for (;;) {
 			SET_W *p;
-			r = dlg_do(s->b.tree, s->focus ? -1 : 0, s->cancel) & 0x7fff;
+			{
+				short start = s->want > 0 ? s->want : s->focus ? -1 : 0;
+				s->want = 0;
+				r = dlg_do(s->b.tree, start, s->cancel) & 0x7fff;
+			}
 			k = db_tick_hit(&s->b, r);
 			if (k >= 0) {
 				mouse_focus(s, 0);
