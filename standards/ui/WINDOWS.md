@@ -369,7 +369,7 @@ gap `g` of half a line (halved until the box fits the desk):
   other people's work it must credit (EUpdate "Git logo by Jason Long, CC BY 3.0"; EWeb its libraries; EPlay's credits are in `NOTICES.TXT`, and "MP3
   decoded on the Falcon's DSP." is not a credit). No repository address.
 - **Taglines** (one line, at most 44 characters): "E-mail for the Atari ST, TT and Falcon", "File transfer for
-  the Atari ST, TT and Falcon" (45 characters in EFTP: shorten), "A calendar for ...", "Contacts for ...",
+  the ST, TT and Falcon" (39 characters; Erez approved it for EFTP on 9 Nov, in EFTP's next release), "A calendar for ...", "Contacts for ...",
   "Hypertexts for ...", "PDF viewer for ...", "GitHub releases for the Atari Falcon and TT", "A web browser for
   the Atari Falcon", "An audio player for the Atari Falcon". **Fix both:** EFTP's is shortened to 44 characters or fewer,
   and EPlay's names the machines it runs on (it runs on the TT and STE as well). Each session sends Erez the wording

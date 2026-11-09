@@ -121,7 +121,7 @@ the context menu, where the evaluation kept it ticking). D13 was confirmed for E
 
 ## Other (D49 to D54)
 
-- **D49.** Taglines: fix both. EFTP's is shortened to 44 characters or fewer; EPlay's names the machines it runs
+- **D49.** Taglines: fix both. EFTP's is shortened to 44 characters or fewer (Erez approved "File transfer for the ST, TT and Falcon", 39, on 9 Nov); EPlay's names the machines it runs
   on. Each session sends Erez the wording to approve. EFTP (M), EPlay (F).
 - **D50.** The clipboard sentences are `Copied to the clipboard.` and `Couldn't write the clipboard.` on the status
   line, never an alert. EMail, EContact, EHypView, ClaudeST, EUpdate (M), EWeb, EPDF (F). S each.
