@@ -48,6 +48,9 @@ LONG = ["A long file name.mp3", "Mixed Case Song - Artist (2019 remix).MP3",
 LONGDIR = "Long Folder Name With Spaces"
 
 
+MEM_PROT = []		# ["--mem-prot"]: run.py's memory protection
+
+
 def long_names(work, img, display, prg):
     """the dialog on a folder of an ext2 drive (run.py --ext2, D:) with long names: every music file is listed
     whole (^A takes them all) and a folder of a long name opens and gives its file. Before 9 Nov 2026 the
@@ -62,7 +65,7 @@ def long_names(work, img, display, prg):
         f.write("probe\n")
     steps = ["until FPT open 150", "wait 3", "shot", "ctrl a", "wait 2", "shot", "key 0x1c", "until FPT dir 30"]
     cmd = [sys.executable, os.path.join(XAAES, "run.py"), os.path.join(work, "x"), img, prg, "--ext2", src,
-           "--display", display, "--steps", ";".join(steps)]
+           "--display", display, "--steps", ";".join(steps)] + MEM_PROT
     r = subprocess.run(cmd, cwd=XAAES, capture_output=True, text=True)
     print(r.stdout[-300:])
     log = open(os.path.join(work, "x", "hatari.log"), errors="replace").read()
@@ -83,7 +86,7 @@ def long_folder(work, img, display, prg):
     steps = ["until FPT open 150", "wait 3", "dclick 300 %d" % row_y(0), "wait 3", "shot",
              "dclick 300 %d" % row_y(0), "until FPT dir 30"]
     cmd = [sys.executable, os.path.join(XAAES, "run.py"), os.path.join(work, "x2"), img, prg, "--ext2",
-           os.path.join(work, "ext2src"), "--display", display, "--steps", ";".join(steps)]
+           os.path.join(work, "ext2src"), "--display", display, "--steps", ";".join(steps)] + MEM_PROT
     r = subprocess.run(cmd, cwd=XAAES, capture_output=True, text=True)
     print(r.stdout[-300:])
     log = open(os.path.join(work, "x2", "hatari.log"), errors="replace").read()
@@ -104,6 +107,8 @@ def main():
             a.remove(args[i + 1])
     if not a:
         sys.exit(__doc__)
+    if "--mem-prot" in args:
+        MEM_PROT.append("--mem-prot")
     work = os.path.abspath(a[0])
     img = a[1] if len(a) > 1 else machines.emutos()
     display = opt.get("display", ":105")
@@ -128,8 +133,7 @@ def main():
              "dclick 300 %d" % row_y(0), "until FPT dir 30"]
     cmd = [sys.executable, os.path.join(XAAES, "run.py"), os.path.join(work, "x"), img, prg, "--copy", music,
            "--display", display, "--steps", ";".join(steps)]
-    if "--mem-prot" in args:
-        cmd += ["--mem-prot"]
+    cmd += MEM_PROT
     r = subprocess.run(cmd, cwd=XAAES, capture_output=True, text=True)
     print(r.stdout[-600:])
     log = open(os.path.join(work, "x", "hatari.log"), errors="replace").read()
