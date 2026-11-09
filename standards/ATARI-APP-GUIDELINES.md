@@ -1583,10 +1583,25 @@ rows, states, words and keys, and the proposed EConvert layout: [ui/WINDOWS.md](
   EWeb: General, Secure, Scripts; EHypView: General, Library. An app with one or two pages still has the
   list. ECal and EContact's FIELD dialogs are older and are to be brought to this one (a change for their next
   release; they are in maintenance).
-- **One engine** (this settles the open step 3): the layout above, built from the objects a dialog builds
-  (`d_begin`, `d_band`, `d_add`, `d_tick`, `d_field`, `d_button`, `d_end`, then `dlg_do`/`dlg_modal`,
-  common/ui/dialog.c's loop). Until the builder is in `common/` as `settings.c` (to be lifted from EMail's, a
-  task of the hub's), an app copies EMail's `settings_sidebar()` and `show_page()`, and says so in its commit.
+- **One engine** (Erez, 9 Nov 2026; the hub, 9 Nov): the dialog is `common/ui/settings.c` (`settings_run`), built with
+  the object builder `common/ui/dlgbuild.c` (`db_begin`, `db_add`, `db_text`, `db_field`, `db_long`, `db_tick`,
+  `db_button`, `db_band`, `db_end`), both lifted out of EMail 2.14's `settings_sidebar()`, `show_page()` and `d_*`
+  (EFTP's, EUpdate's and EWeb's `ui/dialogs.c` and EHypView's `src/gem/settings.c` were copies of them). **An app writes only its pages**: an array of
+  `{ "Name", build }` and, for each, a function that adds that page's words and values at column `x`, row `y`:
+  `set_text`, `set_tick` (the family's tick box), `set_field`, `set_long` (5.4), `set_popup` (the pop-up button of
+  5.7, opened over its button with the choice ticked), `set_button` and `set_value` (a button that opens an app's
+  dialog or list), `set_y(s, n)` (row n with the family's air between rows). The list, the band, the line, the bar,
+  the heading, Cancel and OK and the geometry above are the code's and are not passed in: an app gives the page
+  width (42, EWeb 44), the height in rows, and its pages. The values are the app's own variables, passed by pointer;
+  Cancel, Esc and Undo put every tick, pop-up and text back as it was when the dialog opened. Return is OK, Esc and
+  Undo Cancel (3.5), the long fields take their keys, the dialog opens in a window of its own under MiNT and MagiC
+  (`dlg_band`, `dlg_in_window`) and is drawn again after a pop-up or a dialog of the app's over it. The header
+  `settings.h` has a complete example. **An app moves to it (EPDF first; the apps in maintenance, section 8, when Erez ends it) by deleting its own
+  `settings_sidebar()`, `show_page()`, tick and page tables and loop, and says so in its commit**; no app keeps a copy. Checked in
+  `common/tests/settings`: `make test` (the tree's geometry, the pages, ticks, fields, pop-ups, the keys, the limits,
+  against a stand-in AES) and `run.py` (SETDEMO.PRG: EMail 2.14's six pages and EHypView 1.39's two, built with the
+  engine, in Hatari on TOS 1.04 and TOS 4.04 and compared pixel for pixel with the real programs' releases;
+  `--xaaes` under FreeMiNT and XaAES).
 
 ### 6.2 Alerts
 Layout, wording and defaults in detail: [ui/CONTROLS.md](ui/CONTROLS.md) section 8.
