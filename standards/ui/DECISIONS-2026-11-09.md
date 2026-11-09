@@ -148,7 +148,7 @@ Done first, in `common/` and the standards (numbers are the evaluation's section
 - **Text:** 6.1's exception for old INF keys (D44), written in this change.
 
 Items 1, 2, 4, 7, 8, 9, 10 and 11 of the evaluation's section 7 do not depend on the answers and are unchanged.
-Item 13 (context help) is not needed (D12). Item 12 (log size cap) is still on the hub's own list.
+Item 13 (context help) is not needed (D12). Item 12 (log size cap) is done in `common/src/conn.c` (256 KB, roll-over to `NAME.OLD`, `conn_log_start`): hub done, apps adopt with the next sync (`conn_log_size = pf_handle_size`; `pf_seek`, `pf_remove`, `pf_rename`, `pf_size` in `plat.h`).
 
 ## Where the answers meet other rules
 
