@@ -16,6 +16,7 @@
 #define SET_FMAX 24		/* fields: their text is kept for Cancel */
 #define SET_POPMAX 16		/* choices of a pop-up */
 #define SET_NAME 31		/* characters of a choice shown */
+#define SET_TURN_MS 20		/* a page is drawn in turns of this long (and 1 object at least), an event call between */
 #define SET_LAB 48		/* a pop-up button's text, w at most 46 */
 
 enum { W_POPUP = 1, W_ACT, W_VALUE };
@@ -44,6 +45,7 @@ struct SETTINGS {
 	short row0, rgap;		/* set_y: the page's first row, the pixels a row more */
 	short ok, cancel, pages_obj;
 	short tab[SET_MAXPAGES + 1];	/* from 1 */
+	short pfirst[SET_MAXPAGES + 2];	/* page k's objects are pfirst[k] to pfirst[k + 1] - 1 (from 1) */
 	char tabname[SET_MAXPAGES][16];
 	unsigned char *page;		/* the page of each object, 0: on every page */
 	SET_W *wk;
@@ -249,7 +251,7 @@ short set_page_now(const SETTINGS *s)
 static void show_page(SETTINGS *s, short p, int draw)
 {
 	OBJECT *tree = s->b.tree;
-	short i, old = s->cur;
+	short i, n, ground, old = s->cur;
 	s->cur = p;
 	for (i = 1; i < s->b.nobj; i++) {
 		if (!s->page[i])
@@ -268,11 +270,25 @@ static void show_page(SETTINGS *s, short p, int draw)
 		((TEDINFO *)tree[s->tab[i]].ob_spec)->te_color = i == p ? 0x1071 : 0x1180;
 	}
 	if (draw) {
-		/* the two names that changed (the bar's old place and new), and the page: the other names are as they were */
-		if (old >= 1 && old <= s->npages && old != p)
-			dlg_draw(tree, s->tab[old]);
-		dlg_draw(tree, s->tab[p]);
-		dlg_draw(tree, s->pages_obj);
+		/* the two names that changed (the bar's old place and new) and the page's area, each object by itself
+		   (dlg_draw_one, dlg_draw_range): the AES's walk through a hundred objects cost an 8 MHz ST 35 ms a name
+		   and most of the page's. The other names are as they were */
+		if (old >= 1 && old <= s->npages && old != p) {
+			dlg_draw_one(tree, s->tab[old]);
+			evnt_timer_(0);
+		}
+		dlg_draw_one(tree, s->tab[p]);
+		evnt_timer_(0);
+		/* the page in turns of 20 ms, an event call between, so no stretch is long */
+		for (n = s->pfirst[p], ground = 1; n < s->pfirst[p + 1]; ground = 0) {
+			n = dlg_draw_range(tree, s->pages_obj, n, s->pfirst[p + 1], ground, SET_TURN_MS);
+			if (n < s->pfirst[p + 1])
+				evnt_timer_(0);
+		}
+		/* the area's 3 pixels below reach the frames of Cancel and OK (the ground filled over them): drawn again,
+		   what shows of them in that piece, a turn of their own */
+		evnt_timer_(0);
+		dlg_draw_range(tree, s->pages_obj, s->cancel, (short)(s->ok + 1), 0, 0);
 	}
 }
 
@@ -312,6 +328,7 @@ static void build(SETTINGS *s)
 	s->pages_obj = db_add(b, G_IBOX, 0, 0, 0, (short)(s->sx - 1), 2, s->pw, (short)(s->h - 4));
 	for (k = 1; k <= d->npages; k++) {
 		from = b->nobj;
+		s->pfirst[k] = from;
 		s->adding = k;
 		db_text(b, s->sx, 2, d->pages[k - 1].name);
 		db_add(b, G_BOX, 0, 0, 0x00001171L, s->sx, (short)(3 | (2 << 8)), (short)(s->pw - 2), (short)(0 | (1 << 8)));
@@ -322,6 +339,7 @@ static void build(SETTINGS *s)
 			s->page[from] = (unsigned char)k;
 	}
 	s->adding = 0;
+	s->pfirst[d->npages + 1] = b->nobj;
 	db_keep(b, 0);
 	s->cancel = db_button(b, (short)(s->w - 24), (short)(s->h - 2), 10, "Cancel", EXIT);
 	s->ok = db_button(b, (short)(s->w - 12), (short)(s->h - 2), 10, "OK", EXIT | DEFAULT);

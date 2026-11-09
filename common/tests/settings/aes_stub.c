@@ -337,9 +337,25 @@ short objc_offset(OBJECT *t, short obj, short *x, short *y)
 	return 1;
 }
 
+/* the clock the page turns are timed by (dialog.c's budget): it moves draw_cost ms for each object drawn */
+unsigned long fake_ms;
+short draw_cost;
+unsigned long tos_ms(void)
+{
+	return fake_ms;
+}
+
+short draw_log[1024], draw_depth[1024];		/* the objects objc_draw was asked for, and how deep */
+int ndraw_log;
+
 short objc_draw(OBJECT *t, short start, short depth, short x, short y, short w, short h)
 {
-	(void)t, (void)start, (void)depth;
+	(void)t;
+	if (ndraw_log < 1024) {
+		draw_log[ndraw_log] = start;
+		draw_depth[ndraw_log++] = depth;
+	}
+	fake_ms += draw_cost;
 	draws++;
 	last_draw[0] = x, last_draw[1] = y, last_draw[2] = w, last_draw[3] = h;
 	return 1;

@@ -289,6 +289,9 @@ int main(void)
 	planes = wo[4];
 	vst_alignment(vdi_h, 0, 5);
 	text_font(vdi_h, 1, cw, ch);
+	/* as an app has drawn its window's text before it opens a dialog: text.c checks its fast path on the first
+	   draw (scr_cpu_wins), which dialog.c's DLG_CPU path asks */
+	text_plain(vdi_h, 8, 100, "SETDEMO", 7);
 	wind_get(0, WF_WORKXYWH, &desk_x, &desk_y, &desk_w, &desk_h);
 	graf_mouse(ARROW, 0);
 	dlg_title = "SETDEMO";
