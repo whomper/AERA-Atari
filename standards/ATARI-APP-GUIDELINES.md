@@ -850,6 +850,15 @@ does nothing. An accessory's ^U closes its window, as its closer does (2.2).
 takes ^A..^Z by their codes (and not Backspace, Tab, Return or Enter, which share ^H, ^I and ^M);
 digits and punctuation (`^,` `^-` `^+` `^0`) are matched by scan code (MENUS 1.4).
 
+**A shifted key typed while the app is busy keeps its Shift** (hub, 9 Nov 2026, task #139). The same cause as
+above (the AES gives kstate as it is when the program reads the key), and Ctrl+Shift+N and Ctrl+N are the same code
+(0x310E on TOS 1.04), so a code can't say. `evnt_multi_` now puts the state the BIOS keeps with each key (conterm
+bit 3) into `kstate` (`common/atari/gem.c`; not under MagiC or MiNT): `(kstate & 3)` is right for Shift+^letter,
+Ctrl+Shift+arrows, Shift+Delete, Tab, Return. A program with a long start calls `key_state_init()` after
+`appl_init`; keys typed before that have no state. `key_shift(kstate, key)` (`gem.h`) is the fallback from the code
+alone: Shift+letter, the cursor keys, Home, Insert, F1 to F10. Still never give a Shift variant a more dangerous
+meaning than the plain key (D1). Checked in Hatari on TOS 1.04 and 4.04 (`common/tests/busykeys`).
+
 ### 3.3 Context menus (must)
 Contents per app, geometry and keys: [ui/MENUS.md](ui/MENUS.md) section 3.
 - **Right-click on a row, a link, an event, a file, a sidebar entry or the page opens a context menu at the
@@ -2065,6 +2074,7 @@ program's window.
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) | ✓ | — |
 | 3.2 Shortcuts take Control through `key_ctrl()` | ✓ (2.11) | ✓ (1.46) | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✓ (1.10) | ✓ (1.47) | ✓ (0.11) | ✓ (0.1) | — |
 | 6.5 The log is capped at 256 KB and rolls over to `NAME.OLD` (`conn.c`, hub 9 Nov 2026; `conn_log_size = pf_handle_size`) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| 3.2 A Shift or Ctrl typed while busy keeps its state in `kstate` (`evnt_multi_`, `key_state_init`, hub 9 Nov 2026) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 3.5 Esc empties a text field, Undo cancels; Esc cancels a dialog without a field (GEM's way, 27 Oct; `dlg_cancel_key`) | ✓ (e918efde, 2.31) | ✓ (123d2791, 1.72) | ✓ (a10c706f6, 983af248b; 1.64: Esc in a message being written does nothing) | ✓ (aa652f00, 15b0bec4; 1.64) | ✓ (f8095de, 1.29: Esc empties the library search) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, 0.46: Esc in the address field puts the page's address back; EUpdate ✓ 375e2c0a8, 1.18) | ✓ (0.1: Find) | — |
 | 3.1/3.2 ^U closes, ^W the next window; New in the item's menu (27 Oct) | ✓ (e918efde, 2.31: an Event menu) | ✓ (123d2791, 1.72: New in the Contact menu) | ✓ (9d934c959, 1.64: New message in the Message menu, Mark as unread ⇧^U) | ✓ (df507247, 1.64: ^U quits, one window) | ✓ (f8095de, 1.29: New window stays in File, its only New) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, 0.46; EUpdate ✓ 886bea54a, 1.18) | ✓ (one window: ^U quits, ^W nothing) | — |
 | 4.3 Help: the viewer `STGUIDE=` names (27 Oct; common's `help.c`, comes with the sync) | ✓ (9ff93409, 2.31) | ✓ (123d2791, 1.72) | ✓ (5625a5d6f, 1.64) | ✓ (cb9a5492, 6be5c92c; 1.64) | ✓ (f8095de, 1.29: the guide says how to set STGUIDE) | ✓ (51562d826, 1.67) | ✓ (0.46, the sync; EUpdate ✓ 886bea54a, 1.18) | ✓ (common's help.c) | — |
