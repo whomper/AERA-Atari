@@ -79,6 +79,16 @@
  * and OK always have room. The page's area, for a page switch, is rows 2 to H - 3: a page's objects stay
  * inside it, above the buttons' row.
  *
+ * The keyboard reaches every control (the guidelines' 5.10, D25; 9 Nov 2026). The focus is the text field that has the
+ * cursor, one control (a tick, a radio group, a pop-up, a button the app acts on) or the list of pages; it is shown
+ * by a thin ring 2 pixels outside it, drawn only once a key has been used (after a click it is gone again, and a page
+ * without a text field looks as it always did). Tab and Shift+Tab visit the page's fields and controls in the order
+ * they were added, then the list, and round; Space ticks a tick, opens a pop-up, does a button's work; Left, Right,
+ * Up and Down choose in a radio group (greyed choices skipped, no wrapping); Up and Down in the list choose the page,
+ * and from control to control elsewhere; in a text field every key is as it was (Up and Down go to the next field,
+ * Space is a space), Return is OK, Esc and Undo are Cancel. The dialog opens with the first text field as it always did,
+ * else with the list. The ring is the app's frame() and clip_on() (gemui.h), drawn over the tree through dlg_more.
+ *
  * A page switch draws the two names that changed and the page's area only (9 Nov 2026), each object by itself
  * (dialog.h: dlg_draw_one, dlg_draw_range: no walk of the AES through the dialog's hundred objects), the page in
  * turns of 20 ms with an event call between, then Cancel and OK where the area's margin reached their frames; a

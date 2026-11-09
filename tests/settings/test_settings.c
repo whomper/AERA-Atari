@@ -543,6 +543,7 @@ static void r_reset(void)
 	refs_hook = refs_r;
 	r_sel = 0, r_sel2 = 1, r_tick = 0, r_tick2 = 0, r_pop = 0, r_acts = 0, r_big_sel = 0;
 	strcpy(r_text, "ab");
+	ring_draws = 0;
 	ndraw_log = 0;
 	s_tick3 = 0;
 }
@@ -550,6 +551,15 @@ static void r_reset(void)
 static int st(short o)
 {
 	return TREE[o].ob_state;
+}
+
+/* the ring round object o as settings.c draws it: 2 pixels outside */
+static int ring_round(short o)
+{
+	short x, y;
+	objc_offset(TREE, o, &x, &y);
+	return ring_draws > 0 && ring_last.x == x - 2 && ring_last.y == y - 2 && ring_last.w == TREE[o].ob_width + 4 &&
+	       ring_last.h == TREE[o].ob_height + 4;
 }
 
 static void r_geom(void)
@@ -570,6 +580,7 @@ static void r_geom(void)
 	checkf(!(st(o_rad + 2) & DISABLED) && !(st(o_rad + 1) & DISABLED),
 	       "the app's function answered as the dialog opened: DSP applies while the tick is off");
 	check(!strcmp((const char *)t[o_rad + 3].ob_spec, "Both"), "the labels are the app's text, not copied");
+	checkf(ring_draws == 0, "a page with a text field opens with the cursor in it and no ring (%d)", ring_draws);
 }
 
 static void r_greyed(void)
@@ -643,6 +654,165 @@ static void test_radios(void)
 		static const STEP s[] = { CANCELB, END };
 		run(&d, s);
 		checkf(r_big_n == 4, "set_radio with six choices makes four buttons (%d)", r_big_n);
+	}
+}
+
+static void k_tick(void)
+{
+	check(ring_round(o_rtick) && st(o_rpop) == 0, "Tab from the first field: the ring is round the first tick's box");
+}
+
+static void k_space1(void)
+{
+	checkf(r_tick == 0 && !(st(o_rad + 2) & DISABLED), "Space ticked the tick: off (%d), DSP applies again", r_tick);
+}
+
+static void k_radio_on(void)
+{
+	checkf(r_tick == 1 && (st(o_rad + 2) & DISABLED), "Space again: on (%d), DSP greyed", r_tick);
+}
+
+static void k_group(void)
+{
+	check(ring_round(o_rad), "Tab to the radio group: the ring is round its chosen button (Auto)");
+}
+
+static void k_right_end(void)
+{
+	checkf(r_sel == 3 && ring_round(o_rad + 3), "Right, Right, Right: 1, then 3 (the greyed DSP skipped), then the end holds (%d)", r_sel);
+}
+
+static void k_left_up(void)
+{
+	checkf(r_sel == 0 && (st(o_rad) & SELECTED) && !(st(o_rad + 1) & SELECTED) && !(st(o_rad + 3) & SELECTED) && ring_round(o_rad),
+	       "Left (1, skipping DSP), Up (0), Up: Auto, the start holds (%d), the ring went with it", r_sel);
+}
+
+static void k_down(void)
+{
+	checkf(r_sel == 1 && ring_round(o_rad + 1), "Down: FDI (%d), the ring on it", r_sel);
+}
+
+static void k_radio2(void)
+{
+	checkf(r_sel2 == 0 && ring_round(o_rad2), "Tab, Up: the second group chose its first button (%d)", r_sel2);
+}
+
+static void k_tick2(void)
+{
+	check(r_tick2 == 1 && ring_round(o_rtick2), "Tab, Space: the second tick is on, the ring on its box");
+}
+
+static void k_popup(void)
+{
+	checkf(popups == 1 && r_pop == 2 && ring_round(o_rpop), "Tab, Space: the pop-up opened, the choice taken (%d)", r_pop);
+}
+
+static void k_button(void)
+{
+	checkf(r_acts == 1 && ring_round(o_rbtn), "Tab, Space: the button did its work (%d)", r_acts);
+}
+
+static void k_list(void)
+{
+	check(ring_round(ref_tab[1]) && set_page_now(cur) == 0, "Tab from the last control: the list, the ring round the chosen name");
+}
+
+static void k_page2(void)
+{
+	checkf(set_page_now(cur) == 1 && ring_round(ref_tab[2]) && ((TEDINFO *)TREE[ref_tab[2]].ob_spec)->te_color == 0x1071,
+	       "Down in the list: page 2 shown (the black bar moved), the ring with it (page %d)", set_page_now(cur) + 1);
+}
+
+static void k_page2_hold(void)
+{
+	check(set_page_now(cur) == 1, "Down at the last page holds (no wrapping)");
+}
+
+static void k_page1(void)
+{
+	checkf(set_page_now(cur) == 0 && ring_round(ref_tab[1]), "Up: page 1 again, the ring on its name (page %d)", set_page_now(cur) + 1);
+}
+
+static void k_shift_tab(void)
+{
+	check(ring_round(o_rbtn), "Shift+Tab from the list: the last control (the button)");
+}
+
+static void k_wrap(void)
+{
+	check(!strcmp(r_text, "abx "), "Tab, Tab from the button: list, then round to the first field; 'x' and Space typed into it");
+}
+
+static void test_keys(void)
+{
+	SET_DEF d = def3(pages_r, 2);
+	int r;
+	r_reset();
+	r_tick = 1;
+	pop_answer = 2;
+	{
+		static const STEP s[] = {
+			KEY(KEY_TAB), CALL(k_tick), KEY(KEY_SPACE), CALL(k_space1), KEY(KEY_SPACE), CALL(k_radio_on),
+			KEY(KEY_TAB), CALL(k_group), KEY(KEY_RIGHT), KEY(KEY_RIGHT), KEY(KEY_RIGHT), CALL(k_right_end),
+			KEY(KEY_LEFT), KEY(KEY_UP), KEY(KEY_UP), CALL(k_left_up), KEY(KEY_DOWN), CALL(k_down),
+			KEY(KEY_TAB), KEY(KEY_UP), CALL(k_radio2),
+			KEY(KEY_TAB), KEY(KEY_SPACE), CALL(k_tick2),
+			KEY(KEY_TAB), KEY(KEY_SPACE), CALL(k_popup),
+			KEY(KEY_TAB), KEY(KEY_SPACE), CALL(k_button),
+			KEY(KEY_TAB), CALL(k_list), KEY(KEY_DOWN), CALL(k_page2), KEY(KEY_DOWN), CALL(k_page2_hold),
+			KEY(KEY_UP), CALL(k_page1),
+			KEYS(KEY_TAB, 1), CALL(k_shift_tab),
+			KEY(KEY_TAB), KEY(KEY_TAB), KEY(K('x')), KEY(KEY_SPACE), CALL(k_wrap),
+			KEY(KEY_RETURN), END
+		};
+		r = run(&d, s);
+		checkf(r == 1 && r_sel == 1 && r_sel2 == 0 && r_tick == 1 && r_tick2 == 1 && r_pop == 2 && !strcmp(r_text, "abx "),
+		       "Return is OK and keeps what the keys did (%d: %d %d %d %d %d '%s')", r, r_sel, r_sel2, r_tick, r_tick2, r_pop, r_text);
+	}
+}
+
+static void k_start_list(void)
+{
+	checkf(ring_draws == 0 && set_page_now(cur) == 1,
+	       "a page without a text field opens with the list in focus, and no ring: nothing on the screen differs from the old dialog (%d)", ring_draws);
+}
+
+static void k_esc_tick(void)
+{
+	check(ring_round(o_rtick), "Tab: the first tick");
+}
+
+static void test_keys2(void)
+{
+	SET_DEF d = def3(pages_r, 2);
+	int r;
+	r_reset();
+	d.first = 1;
+	{
+		static const STEP s[] = { CALL(k_start_list), KEY(KEY_UP), CALL(k_page1), KEY(KEY_ESC), END };
+		r = run(&d, s);
+		checkf(r == 0, "Esc with the focus on the list cancels (%d)", r);
+	}
+	d.first = 0;
+	r_reset();
+	{
+		static const STEP s[] = { KEY(KEY_TAB), CALL(k_esc_tick), KEY(KEY_SPACE), KEY(KEY_ESC), END };
+		r = run(&d, s);
+		checkf(r == 0 && r_tick == 0, "Esc with the focus on a tick cancels, and the tick Space turned is back (%d, %d)", r, r_tick);
+	}
+	r_reset();
+	{
+		static const STEP s[] = { KEY(KEY_TAB), KEY(KEY_TAB), KEY(KEY_SPACE), KEY(KEY_RETURN), END };
+		r = run(&d, s);
+		checkf(r == 1 && r_sel == 0, "Space on a radio group does nothing; Return is OK (%d, %d)", r, r_sel);
+	}
+	r_reset();
+	{
+		/* the mouse after the keys: the ring is gone, the first field has the cursor again */
+		static const STEP s[] = { KEY(KEY_TAB), OBJ(o_r1), KEY(K('q')), OKB, END };
+		r = run(&d, s);
+		checkf(r == 1 && r_sel == 1 && !strcmp(r_text, "abq"), "a click after Tab: the cursor is back in the first field ('%s')", r_text);
 	}
 }
 
@@ -1247,6 +1417,8 @@ int main(void)
 	test_pages_and_ticks();
 	test_page_switch();
 	test_radios();
+	test_keys();
+	test_keys2();
 	test_keys_and_values();
 	test_check();
 	test_widgets();

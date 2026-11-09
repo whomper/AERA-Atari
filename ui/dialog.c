@@ -1571,9 +1571,11 @@ short dlg_find(OBJECT *tree, short mx, short my)
 	return find_in(tree, 0, 0, 0, 8, mx, my);
 }
 
+int (*dlg_keys)(OBJECT *tree, short key, short kstate, short edit, short *field);
+
 short dlg_do(OBJECT *tree, short start, short cancel)
 {
-	short next, edit = 0, idx = 0, cont = 1, m[8];
+	short next, edit = 0, idx = 0, cont = 1, m[8], hk, want;
 	int win = dlg_in_window();
 	AEVENT e;
 	if (!win) {
@@ -1581,7 +1583,7 @@ short dlg_do(OBJECT *tree, short start, short cancel)
 		wind_update(BEG_MCTRL);
 	}
 	flush_keys();
-	next = start > 0 ? start : first_field(tree);
+	next = start > 0 ? start : start < 0 ? 0 : first_field(tree);
 	while (cont) {
 		LFIELD *lf;
 		if (next > 0 && next != edit) {
@@ -1598,8 +1600,18 @@ short dlg_do(OBJECT *tree, short start, short cancel)
 		if (e.which & MU_KEYBD) {
 			if (dlg_esc(e.kreturn) && !dlg_undo(e.kreturn))
 				e.kreturn = 0x011b;	/* ^[ too: the key objc_edit empties a field on */
+			want = 0;
 			if (heb_f10(e.kreturn)) {
 				/* the Hebrew keyboard switched */
+			} else if (dlg_keys && (hk = dlg_keys(tree, e.kreturn, e.kstate, edit, &want)) != 0) {
+				/* the app's own key (settings.c's focus, Space, the arrows); it says where the text cursor goes */
+				if (want > 0) {
+					next = want;
+				} else if (want < 0 && edit > 0) {
+					objc_edit(tree, edit, 0, &idx, ED_END);
+					edit = 0;
+					next = 0;
+				}
 			} else if (lf && !dlg_undo(e.kreturn) && lf_key(lf, e.kreturn, key_char ? key_char(e.kstate, e.kreturn) : e.kreturn & 0xff, e.kstate, &idx)) {
 				/* the long field took it (Esc empties it) */
 			} else if (dlg_cancel_key(e.kreturn, edit > 0)) {
