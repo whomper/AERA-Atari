@@ -212,7 +212,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   | The user | Longest stretch |
   |---|---|
   | types a letter, moves the cursor, ticks a box, clicks a row or a button | 50 ms |
-  | scrolls one line or row (an arrow, the wheel); held, at least 15 rows a second | 50 ms |
+  | scrolls one line or row (an arrow; no app handles a wheel yet, ui/WINDOWS.md 1.3); held, at least 15 rows a second | 50 ms |
   | scrolls a page (Shift+arrow, a click in the track) | 150 ms |
   | opens a menu entry's dialog, a pop-up or an alert | 150 ms |
   | on an 8 MHz ST in low or medium resolution (`ST:low`, `ST:med`), opens the About box | 200 ms |
@@ -625,30 +625,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
 
 ### 1.3 About box (must)
 Every app has the same About box, drawn by the shared `about_show()` (`common/ui/aboutbox.c`, from
-ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the system font.
-
-```
-            ┌──────────────────────────────────────────────┐
-            │                  [32×32 icon]                 │  256-colour icon with ≥256 colours,
-            │                     ECal                      │  16 with 16, mono otherwise; name bold
-            │                 Version 1.32                  │
-            │       Calendar for the Atari ST, TT, Falcon   │  tagline: one line, ≤ 44 characters
-            │  ───────────────────────────────────────────  │
-            │           Created by AERA | Erez Yaary        │
-            │            © 2026 AERA | Erez Yaary           │
-            │                                               │
-            │      STinG  •  Direct  •  online              │  1. the connection (network apps)
-            │      654 contacts in 2 address books          │  2. the app's own line
-            │      TT RAM  •  Free: 98.2 MB TT, 3.1 MB ST   │  3. the memory
-            │                                               │
-            │   Free software under the GNU GPL, version 2  │  fine print, small font
-            │   or later. github.com/whomper/ECal           │  + "not affiliated with …" / trademark
-            │                                               │    lines when the app names others
-            │                     [ OK ]                    │
-            └──────────────────────────────────────────────┘
-```
-
-- It is centred on the screen, not the window, and closes with Return, Esc, Undo or a click on OK.
+ECal's) in the system font, centred on the desk. The picture (its rows, sizes, icon, fine print and
+taglines, and how it closes) is in [ui/WINDOWS.md](ui/WINDOWS.md) section 5; in short: the icon drawn at twice
+its width, the name bold and underlined, `Version X.Y`, a tagline of at most 44 characters, "Created by AERA |
+Erez Yaary", the copyright line, the three status lines below, "Free software under the GNU GPL 2 or later."
+(no repository address) and an OK button drawn by the box.
+- It closes with Return, Esc, Space, Undo, Help or a click anywhere.
 - **The status lines say the same things in the same words in every app** (Erez, 27 Oct 2026):
   at most three, in this order, a line left out where it has nothing to say.
   1. **The connection**, in apps that use the network: the network stack (STinG, MiNTnet, or "No
@@ -668,7 +650,7 @@ ECal's), which draws the icon from ST RAM, has the TT-RAM line, and uses the sys
 - **It opens from the first menu item, "About ECal…".**
   - With a menu bar: the first entry under the Desk title.
   - Without one (an ACC, or a PRG in a window-only layout): the first entry of the toolbar's ≡ menu.
-  - Either way, **every edition must be able to reach it**. Today EHypView's ACC can't.
+  - Either way, **every edition must be able to reach it**. In ECal and EContact it is near the end of the ≡ menu: About goes first.
 - **Pens 8–15 may be borrowed** for the icon while the box is open, and must be restored when it closes.
 - **The icon is drawn from ST RAM** (copied there), never straight from program memory. Program memory
   may be TT/Fast RAM, which the screen can't read.
@@ -794,51 +776,52 @@ time**, so they never write the same file at once. The shared `common/ui/twin.c`
 ## 3. Menus and keyboard
 
 ### 3.1 Menu bar
+The exact rules, every app's bar and the wording are in [ui/MENUS.md](ui/MENUS.md); where an app differs,
+[ui/DEVIATIONS.md](ui/DEVIATIONS.md).
 - **Every PRG has a menu bar** with these titles, in this order, leaving out empty ones:
   **Desk · File · Edit · View · [app titles] · Options · Help**. The Desk title shows the program's
-  name (" EMail ", " ClaudeST "), as in every app of the family, never the word "Desk"; its menu
-  is About and the accessories. The menu bar is built at run time by the
-  shared builder (`common/ui/mbar.c`, from EHypView's, which right-aligns the shortcut column).
-- **The ACC has no menu bar.** Its toolbar ≡ menu carries the same commands.
-- **Menu items show their shortcut** as `^N`, `⇧^F`. Commands that open a dialog end in "…".
+  name (" EMail ", " ClaudeST "), never the word "Desk"; its menu is `About NAME...` and nothing else of
+  the app's (the builder adds the accessories). The bar is built at run time by `mbar_build()`
+  (`common/ui/mbar.c`) from a static table, no resource file.
+- **The ACC has no menu bar.** Its toolbar ≡ menu carries the same commands, About first.
+- **Menu items show their shortcut** as `^N`; Shift is the byte `\x01` (shown ⇧); named keys are `Help`, `Undo`,
+  `Del`, `Esc`, `^Left`. An item shows a key only if that key does that command. A command that needs more
+  from the user before it acts ends in "...". A tick shows a state; a command that cannot apply is greyed and
+  its key does nothing.
 - **Settings is in the Options menu** (Erez, 9 Nov 2026: "the family settings is accessed from Options"),
-  never in File, and its shortcut is `^,`. **Options, in this order** (EMail, EFTP, EUpdate and EWeb have
-  it; each item only if the app has it): `Settings...  ^,` first (EMail puts its `Accounts...` before
-  it); `Font...`; a line; then the ticks of settings that change at once, with the tick in front: `Direct
-  connection (TLS)`, `Hebrew keyboard  F10`, `Protocol log` (EWeb: `Write a log`), and the app's own (EMail
-  `Work offline`, EFTP `Show hidden files`, EWeb `Run this site's scripts`). A setting that has a tick in
-  Options and a tick in Settings is one setting, kept in step. File holds only what concerns files and the
-  program (Open, Save, Close window, Next window, Quit and the app's own file commands); the Desk title's
-  menu is `About NAME...` and the accessories; Help is `NAME help  Help` and `Keys...`.
+  never in File, and its shortcut is `^,`. **Options, in this order, each item only if the app has it:**
+  `Settings...  ^,` first (EMail puts its `Accounts...` before it); `Font...`; a line; then the ticks of
+  settings that change at once, with the tick in front: `Work offline`, `Direct connection (TLS)`, the app's
+  own (`Show hidden files`, `Run this site's scripts`), and the log last. **There is no Hebrew keyboard item**
+  (5.3: F10 alone). A setting that has a tick in Options and a tick in Settings is one setting, kept in step.
+  File holds only what concerns files and the program (Open, Save, Close window, Next window, Quit and the
+  app's own file commands); Help is `NAME help  Help` and `Keys...`.
 - **A command on the app's own items is in that item's menu, New among them** (a tester, Erez 27
   Oct 2026): EMail's New message is under Message, with Reply and Forward, not under File. File
   keeps what concerns files and the program (Open, Save, Close, Quit).
 
 ### 3.2 Family shortcuts (must)
 These keys mean the same thing in every app. An app may leave one unused, but **never gives it another
-meaning**.
+meaning**. Every app's own keys and the matching rules: [ui/MENUS.md](ui/MENUS.md) section 2.
 
 | Key | Command | Key | Command |
 |---|---|---|---|
-| ^N | New (event, contact, message, chat, connection) | ^A | Select all |
+| ^N | New (event, contact, message, chat, folder, window; EFTP's connection is ^K) | ^A | Select all |
 | ^O | Open | ^C ^X ^V | Copy, Cut, Paste (GEM clipboard) |
-| ^S | Save | ^Z / Undo key | Undo (viewers: Back) |
+| ^S | Save | Undo key | A dialog: Cancel (3.5); a job: stop; viewers: Back (⇧: Forward). ^Z is Back in EWeb only |
 | ^U | Close window (a one-window PRG: quit) | ^P | Print (reserved) |
 | ^W | Next window: the app's own, in turn (one window: nothing) | ^I | Get info / properties |
-| ^Q | Quit (ACC: close window) | | |
-| ^F | Find | ^, | Settings… |
-| Help | Help for what's on screen (see 4.3) | Insert | Context menu for the selection (see 3.3) |
-| Esc | A text field: empty it. A dialog without one, an alert: Cancel (3.5). File list: refresh (as the TOS desktop) | Return | Default button / open selection |
-| Undo | Dialog: Cancel (3.5); elsewhere Undo, as ^Z | | |
+| ^Q | Quit (ACC: close window) | ^, | Settings... |
+| ^F | Find | Del | Delete the selection (never in a text field) |
+| Help | The guide's first page (see 4.3) | Insert | Context menu for the selection (see 3.3) |
+| Esc | A text field: empty it. A dialog without one, an alert: Cancel (3.5). EFTP: refresh the file lists (as the TOS desktop) | Return | Default button / open selection |
 
-App commands use the other letters, then ⇧^ for related commands. Where the app copies a Mac app,
-use that app's ⌘ key as ^:
-- ECal: ^R refresh, ^T today.
-- EMail: ^R reply, ⇧^R reply all, ⇧^F forward, ⇧^D send, ⇧^N get mail, ⇧^U mark as unread.
-- **Sidebar show/hide is ⇧^S in every app that has a sidebar.**
-
-Alternate+letter is left free, because some country keyboards use it for accented letters. The shortcut
-table in each help file is generated from the menu definition, so it can't drift.
+App commands use the other letters, then ⇧^ for related commands; across apps the letters differ (^T is
+today, transfer, attach and contents) and only the table's rows are promised. Where the app copies a Mac app,
+use that app's ⌘ key as ^. **A shifted shortcut typed while the app was busy arrives unshifted, so a shifted
+variant is never a more dangerous command than its plain key.** **Sidebar show/hide is ⇧^S** in an app whose
+sidebar can be hidden. Alt+letter is left free, because some country keyboards use it for accented
+letters. The shortcut table in each help file and `Keys...` is written by hand from the menu, not generated.
 
 **^U closes, ^W goes to the next window** (a tester, Erez 27 Oct 2026), as the Atari's desktops and
 programs have them (Thing, Gemini, MagiC's desktop): until then the family closed with ^W. ^W tops
@@ -848,23 +831,32 @@ does nothing. An accessory's ^U closes its window, as its closer does (2.2).
 **A Control key is `key_ctrl(kstate, key)`** (`common/atari/gem.h`), never `kstate & K_CTRL` alone
 (EMail, 18 Oct 2026): the AES gives the shift keys as they are when the program reads the key, so a
 ^R typed while the program was busy comes with no Control in kstate and was lost. `key_ctrl` also
-takes ^A..^Z by their codes (and not Backspace, Tab, Return or Enter, which share ^H, ^I and ^M).
+takes ^A..^Z by their codes (and not Backspace, Tab, Return or Enter, which share ^H, ^I and ^M);
+digits and punctuation (`^,` `^-` `^+` `^0`) are matched by scan code (MENUS 1.4).
 
 ### 3.3 Context menus (must)
-- **Right-click on anything that has commands opens a context menu at the mouse.** That covers list rows,
-  sidebar items, text fields, files and toolbar buttons.
-- **It is drawn by the shared `popup()`** (`common/ui/popup.c`, from ECal's, with check-mark alignment,
-  system font and `popup_area`).
-- **The first entry is the double-click action.** The menu only repeats commands that also exist in the
-  menu bar or toolbar, with their shortcuts, so nothing is right-click only.
-- **Insert opens the same menu** for the selected item (ClaudeST), for keyboard users.
-- **Viewers may make Back the first entry** (EHypView), instead of right-click going back with no menu.
+Contents per app, geometry and keys: [ui/MENUS.md](ui/MENUS.md) section 3.
+- **Right-click on a row, a link, an event, a file, a sidebar entry or the page opens a context menu at the
+  mouse, on the press,** the item under it selected first. Text fields have one only in EWeb's address field
+  and EMail's editor; a toolbar button has its own pop-up only where it opens a menu (EHypView's Back history).
+- **It is drawn by the shared `popup()`** (`common/ui/popup.c`; labels start with two spaces so that ticked
+  and unticked text line up, `"-"` a line, `"~"` greyed, `"\x08"` ticked) and nothing else.
+- **The first entry is the double-click action.** The menu repeats commands that exist in the menu bar, with
+  their keys and words, and **may add commands that act on the thing under the mouse** (links, ClaudeST's Pin).
+- **Insert opens the same menu** for the selected item, for keyboard users (EHypView, EUpdate, EPDF, EPlay,
+  ClaudeST; EFTP's Insert ticks the row instead; EMail, ECal, EContact and EWeb are to add it).
+- **Viewers make Back the first entry** (EHypView, EWeb).
 
 ### 3.4 Toolbar and tooltips
-- Toolbar buttons have a tooltip after about 1 s, drawn by the shared tooltip code (ECal/EFTP).
-- If BubbleGEM is running, tooltips go through it.
+The toolbar row and its buttons: [ui/WINDOWS.md](ui/WINDOWS.md) section 3; the tooltip: [ui/MENUS.md](ui/MENUS.md)
+section 4.
+- Toolbar buttons have a tooltip after the pointer rests 0.7 s (EHypView 1 s). There is **no shared tooltip
+  code** yet: EMail, EFTP, EUpdate and ECal each carry the same `tip_show` (EFTP's is the reference), and a
+  tip is a short sentence with the button's key in brackets: "Stop (Esc)".
+- If BubbleGEM is running, tooltips go through it (only EHypView does so today).
 
 ### 3.5 Esc and Undo (must)
+The keys, the buttons, the loops and the tests in detail: [ui/CONTROLS.md](ui/CONTROLS.md) section 2.
 **Undo closes any dialog box as if Cancel was clicked; so does Esc, except in a text field, which
 Esc empties, as GEM's `form_do` does** (Erez, 17 Oct 2026; GEM's way since 27 Oct 2026, after a
 tester cancelled an account he was setting up when he meant to empty a field). An alert, which has
@@ -1021,7 +1013,8 @@ CONTACTS.TXT when the user chooses it (below).
 - **What an app doesn't take, it refuses,** so the sender knows (`DD_EXT`, `DD_NAK`). A drop that comes
   while the app is busy is refused, not left unanswered.
 - Files dropped are taken as files handed over with `VA_START` (4.1).
-- Shared code: `common/ui/dd.c` (`dd_message()`), `av_window()` in `common/ui/av.c`.
+- Shared code: `common/ui/dd.c` (`dd_message()`), `av_window()` in `common/ui/av.c`. Details and the drags the
+  apps start: [ui/WINDOWS.md](ui/WINDOWS.md) section 6.
 - What a drop does:
 
 | App | Drop files | Drop text |
@@ -1031,10 +1024,14 @@ CONTACTS.TXT when the user chooses it (below).
 | EMail | attach to the message being written (or a new one) | insert at the cursor |
 | EFTP | upload to the server folder shown | — |
 | EHypView | `.HYP` → open | — |
-| ClaudeST | text file → into the reply line | into the reply line |
+| ClaudeST | attached to the next message | into the reply line |
+| EUpdate | — | a repository address: the Follow dialog |
+| EWeb, EPDF | the file opened | — |
+| EPlay | added to the playlist | — |
 
 ### 4.3 Help
-- **Help opens the app's `.HYP` at the page for what's on screen.** The help launcher (shared) tries, in
+- **Help opens the app's `.HYP` at its first page** (no app passes another page yet; EConvert is the one
+  exception; the page for what's on screen is not built: ui/MENUS.md 1.5). The help launcher (shared) tries, in
   this order, the viewer `STGUIDE=` names, then `EHYPVIEW`, `ST-GUIDE`, `HYPVIEW`, `HYP_VIEW`, using
   `VA_START "*:\NAME.HYP page"`.
 - **`STGUIDE=` is the user's own viewer** (a tester, Erez 27 Oct 2026): MiNT's and MagiC's users
@@ -1079,12 +1076,13 @@ CONTACTS.TXT when the user chooses it (below).
 ### 4.4 Clipboard
 - ^C ^X ^V work in every text field and on list selections that have a text form, through the GEM
   clipboard (`scrp_read` / `scrp_write`, `SCRAP.TXT`, Atari character set).
-- **Nothing selected:**
+- **There is no selection in any field** (5.4), so:
   - ^C and ^X take the whole field.
   - In a text of several lines, they take the line the cursor is in (in EMail's header lines, the value
     after "To: ").
   - ^V inserts at the cursor; a field of one line takes the first line only.
-- **Passwords are never copied out of a field;** pasting into one works.
+- **Passwords are never copied out of a field, shown or hidden;** pasting into one works (EMail and EUpdate
+  still copy it once the eye is open: ui/DEVIATIONS.md C12).
 - **Lists copy their selection's text form;** ^X and ^V do nothing there:
   - EMail: the message shown, or the folder's name.
   - EFTP: the chosen files' full names, a line each.
@@ -1092,8 +1090,11 @@ CONTACTS.TXT when the user chooses it (below).
   - EContact: "Name <email>", as EMail's To: line takes it.
   - EHypView: the page as text.
   - ClaudeST: Claude's last answer, from an empty reply line.
-- **A program with a menu bar has an Edit menu:** Cut ^X, Copy ^C, Paste ^V, Select all ^A where it
-  has one. Items that don't apply to what has the keyboard are greyed.
+  - EUpdate, EWeb, EPDF: the selected repositories' names, the selected text or the page, the page's text.
+  - The words said afterwards are in [ui/WINDOWS.md](ui/WINDOWS.md) section 7.
+- **An Edit menu holds Cut ^X, Copy ^C, Paste ^V, Select all ^A** where the app has text to cut, copy or
+  paste (EContact has none; ECal's has Copy event only). Items that don't apply to what has the keyboard are
+  greyed.
 - **Writing the clipboard:** SCRAP.TXT goes in the AES's clipboard folder, made if it isn't there yet,
   else `\CLIPBRD` on the boot drive. The other `SCRAP.*` files go first, and lines end CR LF.
   Other programs are told with `SC_CHANGED` where the AES can broadcast.
@@ -1132,21 +1133,29 @@ CONTACTS.TXT when the user chooses it (below).
 ## 5. Windows, screen, fonts
 
 ### 5.1 Windows
+Parts, title, place, grid, minimum sizes, panes, lists, status lines and the toolbar in detail, and every
+app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
 - **Window parts:** name, closer, mover, fuller, sizer, info line, plus sliders where content scrolls.
-  The iconifier is added when `appl_getinfo(11)` reports it (`icon_kind()`).
+  The iconifier is added when `appl_getinfo(11)` reports it (`icon_kind()`). EWeb, EPDF and ClaudeST draw
+  their own status instead of the info line; EPlay and EConvert lack the fuller and iconifier (a work item).
 - **Iconify (must, where the AES has it):**
   - Handle `WM_ICONIFY`, `WM_UNICONIFY` and `WM_ALLICONIFY`, in every window of the app's own.
   - The iconified window shows the app icon and a short status under it when there is room
-    (`icon_redraw()`): today's date for ECal, the number of contacts for EContact, unread mail for
-    EMail, transfer % for EFTP, "busy" or "offline" for ClaudeST.
+    (`icon_draw()`): today's date for ECal, the number of contacts for EContact, unread mail for
+    EMail, transfer % for EFTP, "busy" or "offline" for ClaudeST, the page for EPDF.
   - An iconified window takes no keys or clicks: they are taken and dropped, not left in the AES's
     buffer for when it comes back. Moving the icon doesn't change the place saved in the INF.
   - Nothing is laid out for the icon's small work area: the app lays out again when it comes back.
   - A page or file asked for (VA_START) brings back an iconified viewer (EHypView).
   - Reference: `common/ui/iconify.c`; ECal `ui/win.c`.
 - **`WM_BOTTOMED` sends the window to the back** where the AES supports it.
-- **Window title:** `ECal` or `ECal – Work`. The **info line** is the status line.
-- **Position and size** are saved in the INF and checked against the current screen on the next start.
+- **Window title:** the name with a space each side (` EMail `), then " - " and the document or page
+  (` EWeb - PAGE `). The **info line** is the status line (one leading space).
+- **Position and size** are saved in the INF (keys differ: ui/DEVIATIONS.md W18) and checked against the
+  current screen on the next start. The work area starts on a multiple of 8 pixels (`wind_x8`).
+- **Lists:** a click selects, Shift+click toggles a row, Control+click adds a range from the last row
+  clicked, ^A selects all; Up/Down a row, Shift+Up/Down a page, Clr/Home and Shift+Clr/Home the first and last
+  row (WINDOWS 2.2).
 - **Redraw** uses the AES rectangle list. Nothing is drawn outside the work area.
 - **The AES's widgets (must; Erez, 24 Oct 2026, after a MiNT tester's report).** What the AES
   draws in its own look (TOS, XaAES, N.AES and MyAES all have themes) is never drawn by hand:
@@ -1250,7 +1259,8 @@ CONTACTS.TXT when the user chooses it (below).
     and bet as a bitmap, 16 x 16 or 16 x 8, in any app and font: the AES's title bars and many VDI
     fonts have no Hebrew) at the **right end of a dialog's title band and of a main window's info
     line**, drawn by `hebrew_badge_right(vdi, x, y, w, h, colour)` (3 pixels in from the edge,
-    centred up and down); the words "Hebrew keyboard (F10)" are gone. Where the info line is the AES's
+    centred up and down); the words "Hebrew keyboard (F10)" are gone. Apps without an info line put it
+    where the code does: EMail's pane header, EWeb's status bar, ClaudeST's reply field (WINDOWS 4). Where the info line is the AES's
     own (`WF_INFO`, which the AES redraws without telling the app), the badge goes at the right end of the
     toolbar row instead, the window's top right, which the app draws itself (EUpdate, 6 Nov). Pressing F10 redraws the
     band or line. In a dialog window under a multitasking AES the title is the AES's, so there the
@@ -1275,10 +1285,13 @@ CONTACTS.TXT when the user chooses it (below).
   token field, 30 wide, took 30 of a GitHub token's 93 characters.
 - **As much as the setting holds:** a GitHub token 99 (a fine-grained one has 93), a folder or a file's
   path as long as the app keeps it, a server's address, a name, a search.
-- **The keys:** letters type at the cursor (the Hebrew keyboard too, in a dialog loop that maps it:
-  `dlg_do` passes the key as it came, as it does to every field), Backspace and Delete, the cursor
-  keys left and right (with Shift: to the start or the end), ClrHome; ^C ^X ^V take and give the
-  whole text (4.4). A password shows stars and is never copied out; pasting into it works.
+- **The keys** (`lf_edit`; the full list is [ui/CONTROLS.md](ui/CONTROLS.md) section 3): letters type at the
+  cursor (the Hebrew keyboard too, in a dialog loop that maps it), Backspace and Delete; Left and Right one
+  place; **Shift+Left and Shift+Right go to the start and the end, ClrHome to the start, Shift+ClrHome to the
+  end**; **Esc empties the field** (3.5). The cursor enters a field at the **end** of its text. **There is no
+  selection in any field:** ^C copies the whole text, ^X copies and empties, ^V inserts the clipboard's first
+  line at the cursor (4.4); a click moves the cursor into the field, not within its text. A password shows
+  stars and is never copied out, shown or hidden; pasting into it works.
 - **Reference:** `common/ui/field.c`. `lf_init()` on a `G_FTEXT` or `G_FBOXTEXT` field, its template
   as wide as it shows; `dlg_do` and `dlg_modal` (`common/ui/dialog.c`) then take its keys, and a
   dialog loop of the app's own calls `lf_enter()` and `lf_key()`. Tested in `common/tests/dialog`.
@@ -1385,11 +1398,13 @@ CONTACTS.TXT when the user chooses it (below).
 ### 5.7 Pop-up buttons, frames and edges (must; a tester, Erez 27 Oct 2026)
 - **A button with a down arrow opens a pop-up menu there and then:** the shared `popup()` (3.3),
   over the button, the choice it shows ticked; a click on another choice changes it at once.
-  **How the button is drawn** (EHypView's `start_label`, EMail's `Translate into`): a `G_BOXTEXT` with
+  **How the button is drawn** (EHypView's `start_show`, EMail's `Translate into`): a `G_BOXTEXT` with
   `TOUCHEXIT` and `te_thickness = -1` (an outline), its text a space, the choice padded to the button's width, and
   the system font's down-arrow character `\x02` as the last character: `sprintf(label, " %-21s\x02", choice)`.
   It sits in the settings' value column (`SX + 30`) or after its label; it is never a plain button
-  and never a drop-down drawn by the app.
+  and never a drop-down drawn by the app. Where the menu opens differs (EHypView puts the ticked row over
+  the button; EFTP, ECal and EContact the menu's top-left on the button; EPlay's Add files below it): this is
+  Erez's to decide, CONTROLS 5, ui/DEVIATIONS.md C8.
 - **A choice from a long list is not a pop-up** (EMail's and ECal's time zones, some 400): its
   button shows the choice and ends in "…", with no arrow, and opens a dialog with the list (and a
   field that finds in it). An arrow that opens a dialog promises what it doesn't do.
@@ -1423,15 +1438,15 @@ document's pages, a playlist.
 - **A list whose chosen row is what the window shows** (a folder list, a sidebar's books and
   groups): let go elsewhere, the old row is drawn chosen again, as a button let go elsewhere, so
   the row shown chosen is always the one shown (EContact's case, 1 Nov 2026).
-- **Shift or Control held:** the selection changes on press (3.2's ranges and single rows), and
-  nothing is opened on release.
+- **Shift or Control held:** the selection changes on press (Shift a single row, Control a range:
+  [ui/WINDOWS.md](ui/WINDOWS.md) 2.2), and nothing is opened on release.
 - **A double click:** the first click as above; the double-click action runs when the second click
   is released.
 - **Buttons the program draws itself** (toolbars, tabs, a Continue strip, a sidebar's entries, a
   player's Play and Stop) the same way: drawn pressed on press, their action on release over them,
   nothing if let go elsewhere, as GEM's own buttons in a dialog do.
 - **The right button** opens the context menu on press, on the row it selects (3.3), as now.
-- **No waiting for a second click:** the event loop asks for one click (evnt_multi's clicks 1), so
+- **No waiting for a second click:** a window's event loop asks for one click (evnt_multi's clicks 1), so
   the AES hands the press over at once; a loop asking for two holds every single press back for
   the double-click time. The program times the double click itself (evnt_dclick's setting).
   An accessory under TOS that waits for the release as an `MU_BUTTON` event (common's
@@ -1440,7 +1455,8 @@ document's pages, a playlist.
   evnt_multi's count (`breturn`). Waiting for the release by `graf_mkstate` instead didn't cure
   it (ECal: 4 runs in 5): the loss follows a first press handed over while the button is still
   down, after which TOS gives the second press to no one asking for one click. EContact's
-  accessory asks for one and loses a double click only when one begins inside a stretch. Programs ask for one.
+  accessory asks for one and loses a double click only when one begins inside a stretch. Window event loops ask for one; dialog loops
+  ask for two unless the app builds `-DDLG_CLICK` (ECal and EFTP do): ui/CONTROLS.md 6.
   **A multitasking AES** (XaAES under MiNT, rig of 4 Nov 2026) holds a double click's presses back
   and gives the pair to no one who asked for one click: EFTP's lists did nothing at all on a CT63,
   not even the first press selected. There common's `evnt_multi_` asks the AES for two (0x102,
@@ -1479,8 +1495,21 @@ bar nearly full shows them all:
 - `common/tests/progbar`: `make test` (the pens in each kind of screen, against TOS's, a TT's,
   NVDI's and EWeb's palettes; a bar drawn in pieces is the bar drawn whole) and `run.py WORK
   MACHINE [--nvdi]` (PRBTEST.PRG's screenshot).
-- EPDF and EWeb now (their status bars, Erez); EPlay and the apps in maintenance when they next draw
-  progress (section 8).
+- EWeb and EPDF use it (their status bars, Erez; EConvert too); EFTP's rows, EContact's progress box and EWeb's
+  quit box still draw their own bars; EPlay and the apps in maintenance when they next draw progress
+  (section 8). The geometry is the app's: [ui/CONTROLS.md](ui/CONTROLS.md) 7.
+
+### 5.10 How a dialog is run
+Built in code from AES objects, always centred, text on a multiple of 16 pixels across; in a window under a
+multitasking AES. Return picks the default, Tab and the arrows visit the text fields only, a click outside
+rings the bell, buttons are 10 cells wide with Cancel then OK at `W - 24` and `W - 12`, and out-of-range numbers
+are put right. Everything, with the anatomy of each standard dialog: [ui/CONTROLS.md](ui/CONTROLS.md) sections
+1 and 10. Open choices (title band, keyboard reach, validation) are marked there.
+
+### 5.11 Job windows
+A window or pane whose work is a run of items watched by the user. EFTP's Transfers pane is the reference for
+a list of items; EUpdate's info line and EWeb's and EPDF's status bar with the 5.9 line are the others. The
+rows, states, words and keys, and the proposed EConvert layout: [ui/WINDOWS.md](ui/WINDOWS.md) section 8.
 
 ---
 
@@ -1525,8 +1554,8 @@ bar nearly full shows them all:
   - **The list of pages** at the left, `SW` wide, from row 1 to the bottom: a one-pixel line at its right
     edge (`G_BOX`, width 0, the line at column `SW`), plain words on white, each `"  Name"` (two spaces), one
     per `G_BOXTEXT` with `TOUCHEXIT`, rows 2, 4, 6 ... (every second row, each step a half character
-    lower than the last: `gap = gl_hchar / 2`). **The chosen page is a black bar** (the object `SELECTED`),
-    never a button, never a tab, never a frame.
+    lower than the last: `gap = gl_hchar / 2`). **The chosen page is a black bar** (its `te_color` is 0x1071,
+    the others' 0x1180; never `SELECTED`, 5.6), never a button, never a tab, never a frame.
   - **A page** at column `SX`: its name as a heading on row 2 (`G_STRING`), under it on row 3 a one-pixel
     line across the page (`G_BOX` 40 wide, 0 rows high plus 1 pixel, 2 pixels down), and its settings from
     row 4. One page's objects are shown at a time (`page_of[]`, `show_page()`); a click on a name changes the
@@ -1536,12 +1565,12 @@ bar nearly full shows them all:
     choice from a few is a pop-up button (5.7), from many a button ending in "..." (5.7). Words that explain
     a setting go in `G_STRING`s under it, 3 columns in from the tick, 38 characters at most.
   - **The buttons.** On row `H - 2`, **Cancel then OK**, 10 wide each, OK at the right: Cancel at
-    `W - 24`, OK at `W - 12` (EMail: `SX + 18` and `SX + 30`). OK is `DEFAULT`. Both `EXIT`. Return is OK, Esc
+    `W - 24`, OK at `W - 12` (EMail: `SX + 18` and `SX + 30`; EWeb is off by 2 and 1: ui/DEVIATIONS.md C3). OK is `DEFAULT`. Both `EXIT`. Return is OK, Esc
     and Undo are Cancel (3.5). No Apply, no Help button, no other buttons in the dialog's own row.
   - **What happens.** Nothing is kept until OK; Cancel, Esc and Undo keep nothing. The dialog stays open
     while ticks and pages change.
   - **Not allowed:** one long page with no list (EPDF 2.1 had one); the list as a row of tabs or buttons
-    along the top; a dialog narrower than the list plus a page; the title in the middle; OK on the left.
+    along the top; a dialog narrower than the list plus a page; the title in the middle; OK on the left (the Font and Languages dialogs and EPlay's Settings still have it: C1).
 - **Which pages, and in what order.** The pages belong to the app, in one word of at most 11 characters,
   in this order, each only if the app has it: **General** (what the app does, and its start), the app's own
   pages, **Look** (colours, anything seen; a font is chosen in Options > Font..., not here), **Secure**,
@@ -1560,23 +1589,28 @@ bar nearly full shows them all:
   task of the hub's), an app copies EMail's `settings_sidebar()` and `show_page()`, and says so in its commit.
 
 ### 6.2 Alerts
+Layout, wording and defaults in detail: [ui/CONTROLS.md](ui/CONTROLS.md) section 8.
 - **One shared `alert()`** (`common/ui/alert.c`, from ECal's): it wraps text to 30 characters, at most 5
-  lines, and runs bidi.
+  lines (a sixth is dropped without a word), and runs bidi.
 - **Icons:**
   - 1 (!) to inform
   - 2 (?) to ask
   - 3 (stop) when something failed
 - **Text:** what happened, then what to do: "Can't reach the server. | Check the network and try again."
   Error numbers go at the end in brackets, if at all.
-- **Buttons are verbs** ("Delete", "Keep"), at most 3 of up to 10 characters. The default button is the
-  safe one, and Cancel comes last.
+- **Buttons are verbs** ("Delete", "Keep"), at most 3 of about 10 characters (`alert()` takes 20). Every
+  button is as wide as the longest label plus a cell; a lone OK is written `" OK "`. The first button repeats
+  the question's verb and **Cancel comes last** (in a dialog box Cancel is the left one of two).
+- **The default (`def`, Return)** is the safe button: Cancel for a destructive question, the first for the
+  others; 0 is none.
 - **Esc and Undo pick the last button** (3.5), so it is always Cancel or the button that does nothing.
 - **On a multitasking AES (MiNT, MagiC) it is the AES's `form_alert`**, with the same text (3.5).
 
 ### 6.3 Progress and status
 - **A short status goes on the info line.**
 - **Long work** (sync, transfer, download) shows progress inside the window with a **Stop** button
-  (EFTP). A modal progress box only when there's no window to show it in.
+  (EFTP's Transfers pane is the reference: 5.11). A modal progress box only when there's no window to show it
+  in. Esc and Undo stop it, the pointer is the busy bee, and the result goes on the info line.
 - **The app stays usable while network work runs**, wherever the protocol allows it.
 
 ### 6.4 Crashes
@@ -1905,8 +1939,8 @@ program's window.
 | 4.3 Help front page (banner, window, diagram, contents) | ✓ (2.9) | ✓ (1.43; the picture a column in, 59a8d98, with the next) | ✓ (1.37; the picture a column in, 59a8d98, in 1.38) | ✓ (1.37; the picture a column in, 59a8d98, with the next) | ✓ (1.11) | ✓ (1.44) | ✓ (0.11) | ✓ (docs/front.json) | — |
 | 4.4 Clipboard | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (0.1: Copy in slices, clip_put_begin/step/end) | — |
 | 5.1 One click on a window's arrow or track, one step: the AES's second WM_ARROWED dropped by common's `evnt_multi_` (28 Oct; TOS 1.04 too, 7a37019) | ✓ (1622a020, 197b4f4b, 2.34; TOS 1.04 too) | ✓ (4eb13c80, 89c6dedd, 1.74; TOS 1.04's with the next sync) | ✓ (caff63437, 00bd5a7a0, 1.68; TOS 1.04 too) | ✓ (748710146, 1.68; TOS 1.04: 850eb812, 1.69) | ✓ (b7f290a, 66c8e52, 1.33; TOS 1.04: e185040, 1.34) | ✓ (1b33e50f, 198a9530, 1.69; TOS 1.04 too) | ✓ (f7bb380fc, 0.51; TOS 1.04 too; EUpdate ✓ c88eab48d, 1.22) | ✓ (common's evnt_multi_) | — |
-| 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
-| 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
+| 5.1 Iconify | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ (no iconifier: ui/DEVIATIONS.md W13) |
+| 5.1 WM_BOTTOMED | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ (W13) |
 | 5.2 ST Low gets an alert | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (0.1) | — |
 | 5.3 Font dialog lists only usable fonts (20 Oct) | ✓ (fixed-width only, seen under NVDI) | ✓ (1.53: fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✓ (fixed-width only, seen under NVDI) | ✓ (1.15: fixed-width only, seen under NVDI) | ✓ (1.51: 9 fixed-width families, seen under NVDI on Falcon and Falcon-4) | n/a (no GDOS fonts) | ✓ (common's fontsel) | — |
 | 5.3 One Font dialog: Family, Style and Size lists (common/ui/fontsel.c, 20 Oct) | ✓ (2.17) | ✓ (1.54) | ✓ (1.46; 1.47 the smaller one) | ✓ (1.44) | ✓ (1.15) | ✓ (1.52; 1.53 the smaller one, seen under NVDI) | n/a | ✓ (0.1) | — |
@@ -1954,7 +1988,7 @@ program's window.
 | 1.3 About box: the three status lines, connection and memory from `aboutline.c` (27 Oct) | ✓ (e918efde, 2.31) | ✓ (706b8301, 1.72) | ✓ (7465bb209, 1.64) | ✓ (89137bcf, 1.64) | ✓ (2038e9b, 1.31: no line 1, no network) | ✓ (51562d826, 1.67) | ✓ (8798a8dd9, 0.46; EUpdate ✓ cbdc756d9, d1048f647, 1.18) | ✓ (0.1: no line 1, no network) | — |
 | 6.1 A program's own files from `app_dir()` (`shel_read`), not the current folder (28 Oct) | ✗ | ✓ (57e480ac, 1.74) | ✓ (909ef989c, 1.67: work_dir()) | ✓ (6f14a42d, 1.67: work_dir()) | ✓ (3b2de1a, 1.32: start_dir) | ✓ (e3e4383, 1.69) | ✓ (890245b6f, 0.49: work_dir(); EUpdate ✓ 25580444d, 1.21) | ✓ (0.1) | — |
 | Speed: the DSP shared, `Dsp_Lock` refused means the 68030 (31 Oct) | ✓ (TLS.OVL: common's dspec.c, dsprsa.c) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | n/a (no DSP) | n/a (no DSP) | ✓ (TLS.OVL; dspjpeg.c) | — (no DSP yet; its pictures will use dspjpeg.c) | — |
-| 5.8 A list click: selected on press, done on release (1 Nov) | ✓ (2.41: the program on one click; the accessory on two, its presses drawn while held) | ✓ (1.76: list, buttons and tabs on the release; the accessory one click too) | — | ✓ (1.74: panes and the Site Manager on press, drawn while held) | — | — | — | ✓ (0.4: a press selects at once, drawn while held; the word on release) | ✓ (0.4: its buttons drawn pressed on press, act on release over them) |
+| 5.8 A list click: selected on press, done on release (1 Nov) | ✓ (2.41: the program on one click; the accessory on two, its presses drawn while held) | ✓ (1.76: list, buttons and tabs on the release; the accessory one click too) | ✗ (no `click.h`: selects and acts on the press; ui/DEVIATIONS.md W24) | ✓ (1.74: panes and the Site Manager on press, drawn while held) | — | — | — | ✓ (0.4: a press selects at once, drawn while held; the word on release) | ✓ (0.4: its buttons drawn pressed on press, act on release over them) |
 | 5.9 The progress bar: blue in 256, pens 1–15 in 16, black otherwise (`progbar`; 3 Nov) | — | — | — | — | — | — | ✓ (0.63) | ✓ (0.6) | — |
 | Speed: common's fast paths used (text_plain, text_fx, scr_rows, scr_fill, pb_vdi, DLG_CPU, offdraw), none slower under NVDI with a GDOS font (1 Nov) | ✓ (2.40: text_fx; scr_fill under scr_cpu_wins(); scr_xor under text_plain_state() > 0) | ✓ (1.76: its own audit; offdraw for the window) | — | — | — | — | — | — | — |
 | Speed: a redraw of 300 ms or less is drawn in one piece, a longer one in pieces of at most 100 ms (Erez, 4 Nov) | maintenance | maintenance (win_redraw_bands) | maintenance (message in next turns) | to check | — | — | to check | to check | to check |
@@ -1963,3 +1997,4 @@ program's window.
 | 1.2 The hub's checks follow the release; a fault is fixed forward by a new release, never rolled back (Erez, 7 Nov) | maintenance | maintenance | next release | maintenance | maintenance | maintenance | next release | next release | next release |
 | 1.2 At least 60% of an app's Atari boots per candidate run under NVDI, every app the same (Erez, 7 Nov); the app's session needs Erez's NVDI copy | has NVDI; next release | has NVDI; next release | needs NVDI; next candidate | needs NVDI; next release | has NVDI; next release | needs NVDI; next release | needs NVDI; next candidate | needs NVDI; next candidate | needs NVDI; next candidate |
 | 3.1/6.1 Settings in the family's layout (sidebar list, page heading and line, Cancel and OK on row H-2) and in Options, not File (Erez, 9 Nov) | ✗ (FIELD dialog; to be brought over: maintenance) | ✗ (FIELD dialog; same) | ✓ (the reference: settings_sidebar) | ✓ | ✓ (src/gem/settings.c) | to check | ✓ | ✗ (EPDF 2.1: one page, Settings under File; being redone, 9 Nov) | to check |
+| 3.1 to 6.3 and 5.10, 5.11: the UI standards in `ui/` (menus, controls, windows); each app answers the rows of `ui/DEVIATIONS.md` that name it (9 Nov) | maintenance | maintenance | maintenance | maintenance | maintenance | maintenance | to check | to check | to check |
