@@ -232,8 +232,12 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   EFTP's By type | As text | Binary, EPlay's Auto | FDI | DSP, ClaudeST's `own_add(... RBUTTON)`); the AES
   unselects the others of the same parent. **They are for one of up to four choices; above four, a pop-up button
   (5.7).** An existing pop-up of four choices or fewer (ECal's) becomes radio buttons. A choice that does not apply
-  is greyed (EPlay greys FDI and DSP on a machine without them): the shared Settings engine's `set_tick_group` and
-  `set_popup` cannot grey one choice yet, and learn to (hub work). Decided 9 Nov 2026 (D24).
+  is greyed (EPlay greys FDI and DSP on a machine without them). **Built 9 Nov 2026, in the shared Settings engine
+  (`settings.h`):** `set_radio(s, x, y, w, labels, n, &sel)` makes the group (up to four; `G_BUTTON`, `RBUTTON | TOUCHEXIT`
+  and not `SELECTABLE`, so the engine keeps the one chosen and the AES does not unchoose the other groups' buttons of the
+  page), `set_radio_enable` and `set_popup_enable` grey one choice or item, `set_choice_when` has the app say which
+  choices apply as the dialog opens and after every change. A greyed choice cannot be chosen by click or key. Decided
+  9 Nov 2026 (D24).
 - **Exit buttons one under another get room between them** (half a line) when 3D is on, because raised buttons
   grow by a few pixels.
 - **Dialogs an app draws itself** (ECal's and EContact's `ui/field.c`, ClaudeST's `own_*`) take the AES's 3D look
@@ -532,7 +536,9 @@ The answers of 9 Nov did not settle these; nothing here is guessed.
   button or a page name (today Tab visits text fields only), whether it shows a ring, or which keys change the page.
   The hub designs it with the focus apps and brings it to Erez as a UX decision.
 - **A radio group in the Settings page** (D24). Four radio buttons are 40 cells wide (10 apart) against the 30-cell
-  value column and the 42-cell page: how the engine lays a group out is the hub's to propose.
+  value column and the 42-cell page. The engine's proposal, built: a group starts at the page's column `SX` (or two in,
+  as a pop-up does) on a row of its own, buttons 8 or 9 wide, 10 characters and 4 pixels apart (EFTP's), so four of them
+  are 40 characters and 12 pixels of the 42; **for Erez to confirm** with the first app that uses one.
 - **The words of the out-of-range alerts** (D30). ECal's are the model; each app proposes its own, and the words are
   Erez's to approve.
 - **EHypView's "Look there anyway?"** (C21) is about a folder that isn't there, not a number; D30 does not cover it.

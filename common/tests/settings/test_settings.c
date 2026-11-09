@@ -470,6 +470,182 @@ static void test_page_switch(void)
 	}
 }
 
+
+/* ---------------- radio buttons and the keyboard's reach (D24, D25; 9 Nov 2026) ---------------- */
+
+static short r_sel, r_sel2, r_tick, r_tick2, r_pop, r_acts, r_big_n;
+static char r_text[6];
+static short o_rad, o_rad2, o_rtick, o_rpop, o_rfield, o_rbtn, o_rtick2, o_r0, o_r1, o_r2, o_r3, o_big;
+static const char *const rlab[] = { "Auto", "FDI", "DSP", "Both" };
+static const char *const rlab2[] = { "On", "Off" };
+static const char *const rpop[] = { "One", "Two", "Three" };
+static const char *const rbig[] = { "a", "b", "c", "d", "e", "f" };
+static short r_big_sel;
+
+/* choice 2 (DSP) applies while the tick is off: a choice that follows another setting */
+static int rwhen(SETTINGS *s, short obj, short c, void *user)
+{
+	(void)s, (void)obj, (void)user;
+	return c == 2 ? !r_tick : 1;
+}
+
+static void r_act(SETTINGS *s, void *user)
+{
+	(void)s, (void)user;
+	r_acts++;
+}
+
+static void page_r1(SETTINGS *s, short x, short y, void *user)
+{
+	short k;
+	(void)user;
+	cur = s;
+	stub_tree = set_tree(s);
+	o_rfield = set_field(s, x, y, r_text, 5, 'X');
+	k = set_tick(s, x, set_y(s, 1), "Use the DSP", &r_tick);
+	o_rtick = set_db(s)->tick[k].box;
+	o_rad = set_radio(s, x, set_y(s, 2), 9, rlab, 4, &r_sel);
+	set_choice_when(s, o_rad, rwhen, 0);
+	o_rad2 = set_radio(s, x, set_y(s, 3), 8, rlab2, 2, &r_sel2);
+	k = set_tick(s, x, set_y(s, 4), "Another", &r_tick2);
+	o_rtick2 = set_db(s)->tick[k].box;
+	o_rpop = set_popup(s, x + 2, set_y(s, 5), 23, rpop, 3, &r_pop);
+	set_popup_enable(s, o_rpop, 1, 0);
+	o_rbtn = set_button(s, x, set_y(s, 6), 14, "Languages...", r_act, 0);
+}
+
+static void page_r2(SETTINGS *s, short x, short y, void *user)
+{
+	short before = set_db(s)->nobj;
+	(void)user;
+	set_tick(s, x, y, "Alone on a page", &s_tick3);
+	before = set_db(s)->nobj;
+	o_big = set_radio(s, x, set_y(s, 2), 9, rbig, 6, &r_big_sel);
+	r_big_n = (short)(set_db(s)->nobj - before);
+}
+
+static const SET_PAGE pages_r[] = { { "Radios", page_r1 }, { "Plain", page_r2 } };
+
+static void refs_r(void)
+{
+	if (!cur || !stub_tree)
+		return;
+	ref_tab[1] = set_obj_tab(cur, 0);
+	ref_tab[2] = set_obj_tab(cur, 1);
+	ref_ok = set_obj_ok(cur);
+	ref_cancel = set_obj_cancel(cur);
+	o_r0 = o_rad, o_r1 = (short)(o_rad + 1), o_r2 = (short)(o_rad + 2), o_r3 = (short)(o_rad + 3);
+}
+
+static void r_reset(void)
+{
+	reset();
+	refs_hook = refs_r;
+	r_sel = 0, r_sel2 = 1, r_tick = 0, r_tick2 = 0, r_pop = 0, r_acts = 0, r_big_sel = 0;
+	strcpy(r_text, "ab");
+	ndraw_log = 0;
+	s_tick3 = 0;
+}
+
+static int st(short o)
+{
+	return TREE[o].ob_state;
+}
+
+static void r_geom(void)
+{
+	OBJECT *t = TREE;
+	short k;
+	int ok = 1;
+	for (k = 0; k < 4; k++) {
+		OBJECT *o = &t[o_rad + k];
+		ok &= o->ob_type == G_BUTTON && (o->ob_flags & TOUCHEXIT) && (o->ob_flags & RBUTTON) && !(o->ob_flags & SELECTABLE) &&
+		      !(o->ob_flags & EXIT) && o->ob_width == 9 * cell_w && o->ob_height == cell_h &&
+		      o->ob_x == t[o_rad].ob_x + k * (10 * cell_w + 4) && o->ob_y == t[o_rad].ob_y;
+	}
+	check(ok, "a radio group: four G_BUTTONs, RBUTTON | TOUCHEXIT (not SELECTABLE: the AES would unchoose the other groups'), 9 wide, 10 characters and 4 pixels apart");
+	checkf(t[o_rad2].ob_width == 8 * cell_w && o_rad2 == o_rad + 4, "the second group follows the first, 8 wide (%d, %d)", o_rad, o_rad2);
+	checkf((st(o_rad) & SELECTED) && !(st(o_rad + 1) & SELECTED) && !(st(o_rad2) & SELECTED) && (st(o_rad2 + 1) & SELECTED),
+	       "the chosen button of each group is SELECTED (the variables are 0 and 1)");
+	checkf(!(st(o_rad + 2) & DISABLED) && !(st(o_rad + 1) & DISABLED),
+	       "the app's function answered as the dialog opened: DSP applies while the tick is off");
+	check(!strcmp((const char *)t[o_rad + 3].ob_spec, "Both"), "the labels are the app's text, not copied");
+}
+
+static void r_greyed(void)
+{
+	checkf(r_tick == 1 && (st(o_rad + 2) & DISABLED) && !(st(o_rad + 1) & DISABLED),
+	       "the tick turned on: the app's function greys DSP (DISABLED) and no other (tick %d)", r_tick);
+}
+
+static void r_click_greyed(void)
+{
+	checkf(r_sel == 0 && !(st(o_rad + 2) & SELECTED), "a click on the greyed DSP chooses nothing (%d)", r_sel);
+}
+
+static void r_click_fdi(void)
+{
+	checkf(r_sel == 1 && (st(o_rad + 1) & SELECTED) && !(st(o_rad) & SELECTED),
+	       "a click on FDI: the variable is 1, FDI turned over, Auto not (%d)", r_sel);
+	checkf(r_sel2 == 1 && (st(o_rad2 + 1) & SELECTED), "the other group is as it was: not unchosen by the click (%d)", r_sel2);
+}
+
+static void r_drawn_two(void)
+{
+	checkf(in_log(o_rad, 0) == 1 && in_log(o_rad + 1, 0) == 1 && in_log(o_rad + 2, 0) == 0 && in_log(o_rad2, 0) == 0 &&
+	       in_log(o_rad2 + 1, 0) == 0,
+	       "a click on FDI draws the two buttons that changed, once each, and no other");
+}
+
+static void r_mark(void)
+{
+	ndraw_log = 0;
+}
+
+static void r_pop_check(void)
+{
+	checkf(popups == 1 && pop_n == 3 && pop_lab[1][0] == '~' && pop_lab[0][0] != '~' && pop_lab[2][0] != '~' &&
+	       strstr(pop_lab[1], "Two") && r_pop == 2,
+	       "a pop-up item greyed by the app: its label starts '~' (popup.h), the others don't; the choice taken is %d", r_pop);
+}
+
+static void test_radios(void)
+{
+	SET_DEF d = def3(pages_r, 2);
+	int r;
+	r_reset();
+	{
+		static const STEP s[] = { CALL(r_geom), CANCELB, END };
+		run(&d, s);
+	}
+	r_reset();
+	{
+		static const STEP s[] = { OBJ(o_rtick), CALL(r_greyed), OBJ(o_r2), CALL(r_click_greyed), CALL(r_mark), OBJ(o_r1),
+					  CALL(r_click_fdi), CALL(r_drawn_two), OBJ(o_r1), CANCELB, END };
+		run(&d, s);
+		checkf(r_sel == 0 && r_tick == 0 && r_sel2 == 1, "Cancel puts the group and the tick back (%d, %d)", r_sel, r_tick);
+	}
+	r_reset();
+	{
+		static const STEP s[] = { OBJ(o_r3), OBJ(o_r3), OKB, END };
+		r = run(&d, s);
+		checkf(r == 1 && r_sel == 3, "a click on Both and OK: the group keeps it (%d, %d)", r, r_sel);
+	}
+	r_reset();
+	pop_answer = 2;
+	{
+		static const STEP s[] = { OBJ(o_rpop), CALL(r_pop_check), CANCELB, END };
+		run(&d, s);
+	}
+	r_reset();
+	d.first = 1;
+	{
+		static const STEP s[] = { CANCELB, END };
+		run(&d, s);
+		checkf(r_big_n == 4, "set_radio with six choices makes four buttons (%d)", r_big_n);
+	}
+}
+
 static void test_keys_and_values(void)
 {
 	SET_DEF d = def3(pages3, 3);
@@ -1070,6 +1246,7 @@ int main(void)
 	geometry(8, 8, 0, 0, 17, "8x8 cells (ST medium)");
 	test_pages_and_ticks();
 	test_page_switch();
+	test_radios();
 	test_keys_and_values();
 	test_check();
 	test_widgets();

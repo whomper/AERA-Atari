@@ -19,7 +19,7 @@
 #define SET_TURN_MS 20		/* a page is drawn in turns of this long (and 1 object at least), an event call between */
 #define SET_LAB 48		/* a pop-up button's text, w at most 46 */
 
-enum { W_POPUP = 1, W_ACT, W_VALUE };
+enum { W_POPUP = 1, W_ACT, W_VALUE, W_RADIO };
 
 typedef struct {
 	short obj, kind, w, n, was;
@@ -28,6 +28,9 @@ typedef struct {
 	char *label;		/* what the button shows (w characters): lab for a pop-up, the app's for a value */
 	SET_ACT act;
 	void *user;
+	unsigned short off;	/* bit c: choice c is greyed (a radio group's, a pop-up's) */
+	SET_WHEN when;		/* decides which choices apply, or NULL */
+	void *wuser;
 	char lab[SET_LAB];
 } SET_W;
 
@@ -53,6 +56,7 @@ struct SETTINGS {
 	SET_F *fl;
 	short nf;
 	char *pool;			/* the fields' text when the dialog opened */
+	short live;			/* the dialog is open: a change is drawn */
 };
 
 void (*settings_drawn)(OBJECT *tree, short band);
@@ -180,6 +184,71 @@ short set_popup(SETTINGS *s, short x, short y, short w, const char *const *choic
 	p->obj = db_add(&s->b, G_BOXTEXT, TOUCHEXIT, 0, (long)db_ted(&s->b, p->lab, 0, 0x1180), x, y, w, 1);
 	((TEDINFO *)s->b.tree[p->obj].ob_spec)->te_thickness = -1;	/* an outline (5.7) */
 	return kept(s, p);
+}
+
+static SET_W *by_obj(SETTINGS *s, short obj);
+static void radio_sync(SETTINGS *s, SET_W *p, int draw);
+
+short set_radio(SETTINGS *s, short x, short y, short w, const char *const *labels, short n, short *sel)
+{
+	SET_W *p;
+	short k;
+	if (n < 1)
+		return 0;
+	if (n > SET_RADIOS)
+		n = SET_RADIOS;
+	if (w < 8)
+		w = 8;
+	if (w > 9)
+		w = 9;
+	if (s->b.nobj + n > s->b.omax - 1 - s->b.keep) {
+		s->b.lost++;		/* all or none */
+		return 0;
+	}
+	p = new_w(s, W_RADIO);
+	if (!p)
+		return 0;
+	p->w = w;
+	p->n = n;
+	p->sel = sel;
+	p->was = *sel;
+	p->ch = labels;
+	for (k = 0; k < n; k++) {
+		/* 10 characters apart, and 4 pixels more for each (EFTP's, where the 3D buttons grow by a few) */
+		short o = db_add(&s->b, G_BUTTON, TOUCHEXIT | RBUTTON, 0, (long)labels[k],
+				 (short)(x + 10 * k + ((4 * k) << 8)), y, w, 1);
+		if (!k)
+			p->obj = o;
+	}
+	radio_sync(s, p, 0);
+	return p->obj;
+}
+
+void set_radio_enable(SETTINGS *s, short radio, short choice, int on)
+{
+	SET_W *p = by_obj(s, radio);
+	if (!p || (p->kind != W_RADIO && p->kind != W_POPUP) || choice < 0 || choice >= p->n)
+		return;
+	if (on)
+		p->off &= (unsigned short)~(1u << choice);
+	else
+		p->off |= (unsigned short)(1u << choice);
+	if (p->kind == W_RADIO)
+		radio_sync(s, p, 1);
+}
+
+void set_popup_enable(SETTINGS *s, short popup, short item, int on)
+{
+	set_radio_enable(s, popup, item, on);
+}
+
+void set_choice_when(SETTINGS *s, short obj, SET_WHEN when, void *user)
+{
+	SET_W *p = by_obj(s, obj);
+	if (!p || (p->kind != W_RADIO && p->kind != W_POPUP))
+		return;
+	p->when = when;
+	p->wuser = user;
 }
 
 short set_button(SETTINGS *s, short x, short y, short w, const char *label, SET_ACT act, void *user)
@@ -364,7 +433,7 @@ static void drawn_again(SETTINGS *s)
 
 static void pop_run(SETTINGS *s, SET_W *p)
 {
-	char name[SET_POPMAX][SET_NAME + 3];
+	char name[SET_POPMAX][SET_NAME + 4];
 	const char *lab[SET_POPMAX];
 	short i, k, x, y, r, sel = *p->sel < 0 || *p->sel >= p->n ? 0 : *p->sel;
 	OBJECT *tree = s->b.tree;
@@ -372,9 +441,12 @@ static void pop_run(SETTINGS *s, SET_W *p)
 		short n = (short)strlen(p->ch[i]);
 		if (n > SET_NAME)
 			n = SET_NAME;
-		/* popup_m's labels: the words, the ticked one with the check mark in front (popup.h) */
+		/* popup_m's labels: the words, the ticked one with the check mark in front (popup.h); a greyed one (D24) is "~" and
+		   the words, and not ticked */
 		k = 0;
-		if (i == *p->sel)
+		if ((p->off >> i) & 1)
+			name[i][k++] = '~';
+		else if (i == *p->sel)
 			name[i][k++] = '\x08';
 		memcpy(name[i] + k, p->ch[i], (size_t)n);
 		name[i][k + n] = 0;
@@ -420,9 +492,61 @@ static SET_W *widget_of(SETTINGS *s, short obj)
 {
 	short i;
 	for (i = 0; i < s->nw; i++)
+		if (s->wk[i].obj == obj || (s->wk[i].kind == W_RADIO && obj > s->wk[i].obj && obj < s->wk[i].obj + s->wk[i].n))
+			return &s->wk[i];
+	return 0;
+}
+
+/* the widget whose (first) object is obj */
+static SET_W *by_obj(SETTINGS *s, short obj)
+{
+	short i;
+	for (i = 0; i < s->nw; i++)
 		if (s->wk[i].obj == obj)
 			return &s->wk[i];
 	return 0;
+}
+
+/* a radio group's buttons as its variable and its greyed choices say; drawn where one changed */
+static void radio_sync(SETTINGS *s, SET_W *p, int draw)
+{
+	short k;
+	for (k = 0; k < p->n; k++) {
+		OBJECT *o = &s->b.tree[p->obj + k];
+		unsigned short st = (unsigned short)((k == *p->sel ? SELECTED : 0) | (((p->off >> k) & 1) ? DISABLED : 0));
+		if (o->ob_state != st) {
+			o->ob_state = st;
+			if (draw && s->live && !(o->ob_flags & HIDETREE))
+				dlg_draw_one(s->b.tree, (short)(p->obj + k));
+		}
+	}
+}
+
+/* the choices the app's functions say apply, after every change the user makes */
+static void choices_refresh(SETTINGS *s)
+{
+	short i, c;
+	for (i = 0; i < s->nw; i++) {
+		SET_W *p = &s->wk[i];
+		unsigned short off = 0;
+		if (!p->when)
+			continue;
+		for (c = 0; c < p->n; c++)
+			if (!p->when(s, p->obj, c, p->wuser))
+				off |= (unsigned short)(1u << c);
+		p->off = off;
+		if (p->kind == W_RADIO)
+			radio_sync(s, p, 1);
+	}
+}
+
+/* a radio button chosen by a click: the variable and the two buttons that changed */
+static void radio_hit(SETTINGS *s, SET_W *p, short c)
+{
+	if (c < 0 || c >= p->n || ((p->off >> c) & 1) || c == *p->sel)
+		return;
+	*p->sel = c;
+	radio_sync(s, p, 1);
 }
 
 /* Cancel: everything as it was when the dialog opened */
@@ -433,7 +557,7 @@ static void revert(SETTINGS *s)
 	for (i = 0; i < s->b.nticks; i++)
 		*s->b.tick[i].var = s->b.tick[i].was;
 	for (i = 0; i < s->nw; i++)
-		if (s->wk[i].kind == W_POPUP)
+		if (s->wk[i].kind == W_POPUP || s->wk[i].kind == W_RADIO)
 			*s->wk[i].sel = s->wk[i].was;
 	for (i = 0; i < s->nf; i++) {
 		memcpy(s->fl[i].buf, q, (size_t)s->fl[i].cap + 1);
@@ -469,6 +593,7 @@ int settings_dialog(const SET_DEF *d)
 	s->band_text[0] = ' ';
 	strncpy(s->band_text + 1, d->title ? d->title : "Settings", sizeof(s->band_text) - 2);
 	build(s);
+	choices_refresh(s);
 	/* what Cancel puts back */
 	for (k = 0; k < s->nf; k++)
 		pool += s->fl[k].cap + 1;
@@ -488,6 +613,7 @@ int settings_dialog(const SET_DEF *d)
 	dlg_band(s->b.band);		/* in a window its title says it (3.5) */
 	dlg_open(s->b.tree, &x, &y, &w, &h);
 	drawn_again(s);
+	s->live = 1;
 	for (;;) {
 		SET_W *p;
 		r = dlg_do(s->b.tree, 0, s->cancel) & 0x7fff;
@@ -496,6 +622,7 @@ int settings_dialog(const SET_DEF *d)
 			if (!(s->b.tree[s->b.tick[k].box].ob_state & DISABLED)) {
 				db_tick_flip(&s->b, k);
 				evnt_timer_(120);
+				choices_refresh(s);
 			}
 			continue;
 		}
@@ -509,10 +636,13 @@ int settings_dialog(const SET_DEF *d)
 		}
 		p = widget_of(s, r);
 		if (p) {
-			if (p->kind == W_POPUP)
+			if (p->kind == W_RADIO)
+				radio_hit(s, p, (short)(r - p->obj));
+			else if (p->kind == W_POPUP)
 				pop_run(s, p);
 			else
 				act_run(s, p);
+			choices_refresh(s);
 			continue;
 		}
 		if (r == s->ok) {
@@ -529,6 +659,7 @@ int settings_dialog(const SET_DEF *d)
 		/* anything else (an object that found no room, the root): nothing to do */
 		s->b.tree[r].ob_state &= ~SELECTED;
 	}
+	s->live = 0;
 	dlg_close();
 	if (!ok)
 		revert(s);
