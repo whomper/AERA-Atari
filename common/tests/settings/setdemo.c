@@ -8,6 +8,7 @@
  *   key 2   EHypView 1.39's Settings (src/gem/settings.c): General and Library, 57 x 18
  *   key 3   the radio buttons and the keyboard's reach (D24, D25): an Output page, as EPlay's, with a group of three
  *           choices (the last greyed while the "no DSP" tick is on), a pop-up with a greyed item, and a plain page
+ *   key 4   the Font dialog (ui/fontsel.c: the title band, Cancel and OK)
  *   key q   ends
  *
  * run.py opens them on TOS 1.04 (ST:mono, flat) and TOS 4.04 (Falcon:16, 3D), takes a screenshot of each page
@@ -24,6 +25,7 @@
 #include "dialog.h"
 #include "settings.h"
 #include "mbar.h"
+#include "fontsel.h"
 
 extern short text_round;
 short vdi_h, cw, ch, scr_w, scr_h, desk_x, desk_y, desk_w, desk_h, planes, gl_wchar, gl_hchar, ap_id;
@@ -312,6 +314,27 @@ static int radios_dialog(void)
 	return k;
 }
 
+/* ============ the Font dialog (ui/fontsel.c): its title band and its Cancel and OK, for the screenshots ============ */
+
+static void font_apply(fontsel *f)
+{
+	char b[100];
+	snprintf(b, sizeof(b), "SETDEMO font applied id %d pt %d\n", f->id, f->pt);
+	nf_debug(b);
+}
+
+static int font_dialog(void)
+{
+	static fontsel f;
+	memset(&f, 0, sizeof(f));
+	f.app = "SETDEMO";
+	f.id = 1;
+	f.pt = gl_hchar >= 16 ? 16 : 8;
+	f.gdos = FS_UNLOADED;
+	f.apply = font_apply;
+	return fontsel_run(&f);
+}
+
 /* Where the AES runs several programs (XaAES), keys go to the program whose window is on top: a window of the
    demo's own, white, over the desktop; the dialog is a window of its own over it (dlg_redraw_hook draws this one) */
 static short mainwin;
@@ -418,6 +441,10 @@ int main(void)
 			case '3':
 				now_name = "radios";
 				r = radios_dialog();
+				break;
+			case '4':
+				now_name = "font";
+				r = font_dialog();
 				break;
 			case 'q':
 				run = 0;

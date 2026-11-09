@@ -53,7 +53,7 @@ left unsettled is under `Still open` at the end of this file. Ids `C1` to `C26` 
   title replaces it:** `dlg_band(obj)` hides the band there and the window takes its text, so a dialog in a window
   has no band. (Alerts and the About box are not dialogs in this sense.) As built: EUpdate and EWeb put a band in
   every dialog, EFTP in four, EMail in one; EMail's and EFTP's small dialogs have a plain `G_STRING` at (2, 1) and
-  no band; EPlay's and EHypView's asks have a line of text there; the Font and Languages dialogs have none; ECal's
+  no band; EPlay's and EHypView's asks have a line of text there; the Font and Languages dialogs have one since 9 Nov 2026 (`fontsel.c`, `langs.c`: " Font", " Languages"); ECal's
   and EContact's have a black title bar with a centred bold title and a double frame; ClaudeST has a heading
   inside; EPDF's Find has a text line. All of those change. Decided 9 Nov 2026 (D22, C4).
 - **Keys** (`dlg_do`; EMail's, EFTP's and EUpdate's private `form_loop` is the same except where 3.5 and 5.4
@@ -432,8 +432,9 @@ The text of 6.1 stays, with two corrections taken from the code:
 - **Button positions:** Cancel at `W - 24`, OK at `W - 12` is true of EMail, EFTP, EUpdate and EHypView (EMail:
   `SX + 18` and `SX + 30`). **EWeb has `SX + PW - 26` and `SX + PW - 13`** and a list `SW` of 12, not 13: a
   deviation to correct in EWeb, not a second form (C3).
-- **OK and Cancel order:** Cancel then OK, OK on the right. The Font dialog (`fontsel.c`), the Languages dialog
-  (`langs.c`) and EPlay's Settings put OK first; those are deviations to fix, not an alternative (C1).
+- **OK and Cancel order:** Cancel then OK, OK on the right. The Font dialog (`fontsel.c`) and the Languages dialog
+  (`langs.c`) had OK first and now follow it (9 Nov 2026, C1: Cancel at 24, OK at 36 in 48, 10 wide); EPlay's Settings
+  puts OK first and is a deviation to fix, not an alternative (C1).
 - **Decided 9 Nov 2026:** a choice of up to four is radio buttons and of more a pop-up button (D24; the engine learns to
   grey one choice); a number out of its limits is refused with an alert (D30); the controls and the pages get keys
   (D25); the pop-up opens over its button (D27).
@@ -476,11 +477,11 @@ names have `ch / 2` more per step. Exit buttons one under another: half a line b
 - **One button** (Keys, info): OK at `W - 12`, row `H - 2`. **Three** (EFTP "Already there"): Skip (default) |
   Resume | Replace, 10 wide (12 today, at x 2, 16, 30).
 - **Variants in use (deviations, C1 to C3):** EPlay 9 wide, OK left at 40, Cancel at 51 in 62 (the reverse of
-  the rule); Font dialog 9 wide, OK at 26, Cancel at 37 in 48; Languages the same on row 16; Add files 8 wide,
+  the rule); Font and Languages dialogs were 9 wide, OK at 26, Cancel at 37 in 48 (now 10 wide, Cancel at 24, OK at 36); Add files 8 wide,
   Cancel at 24, Add at 33 in 42; EWeb 10 wide with gap 3 and margin 3; pick list OK at `lw - 6`, Cancel at
   `lw - 18`, margin 4.
-  **Buttons are 10 wide, wider only if the label needs it.** EPlay and the Font and Languages dialogs (9), Add files
-  (8) and EFTP's "Already there" (12) change; the Font, Languages and Add files dialogs are hub work. An alert's
+  **Buttons are 10 wide, wider only if the label needs it.** EPlay (9), Add files
+  (8) and EFTP's "Already there" (12) change; the Font and Languages dialogs are done (9 Nov, hub), Add files is hub work. An alert's
   buttons keep their own rule (6.2: the longest label plus a cell). Decided 9 Nov 2026 (D26, C2).
 
 ### The standard dialogs
