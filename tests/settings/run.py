@@ -428,6 +428,23 @@ def xaaes(a):
     for i, f in enumerate(shots):
         shutil.copy(os.path.join(w3, "shots", f), os.path.join(out, "xaaes-keys-%02d.png" % (i + 1)))
     print("     xaaes: %d screenshots of the keys in %s" % (len(shots), out), flush=True)
+    # MD17: a menu title chosen while a dialog window is open (the bar is the demo's, built where the AES has windows): dlg_evnt
+    # drops the choice and sets the title normal; before, it was kept and run when the dialog closed ("SETDEMO menu T I")
+    w4 = os.path.join(a.work, "xaaes4")
+    steps = ("until SETDEMO ready 300; wait 2; key 1; until SETDEMO box email 90; wait 3; move 88 8; wait 2; shot; "
+             "drag 88 8 92 30; wait 3; shot; key 0x61; until SETDEMO got email 60; wait 3; shot; key q; until SETDEMO done 60")
+    rc, txt = go(w4, steps)
+    log = open(os.path.join(w4, "hatari.log"), errors="replace").read()
+    check(rc == 0 and "SETDEMO got email 0" in log, "xaaes: the dialog window open, a menu item chosen, the dialog closed by Undo (rc %d)" % rc)
+    check("SETDEMO menu" not in log, "xaaes: the menu choice made while the dialog window was open was dropped, not run when it closed (MD17)")
+    shots = sorted(os.listdir(os.path.join(w4, "shots")))
+    for i, f in enumerate(shots):
+        shutil.copy(os.path.join(w4, "shots", f), os.path.join(out, "xaaes-menu-%02d.png" % (i + 1)))
+    if len(shots) >= 2:
+        # the title shown normal again: the bar's pixels as before the menu was opened (the shot before the dropdown is the second)
+        a1 = Image.open(os.path.join(w4, "shots", shots[1])).convert("RGB").crop((0, 0, 200, 16))
+        a2 = Image.open(os.path.join(w4, "shots", shots[2])).convert("RGB").crop((0, 0, 200, 16))
+        check(ImageChops.difference(a1, a2).getbbox() is None, "xaaes: the menu title is shown normal again with the dialog still open (menu_tnormal)")
 
 
 def keys_run(a, machine):

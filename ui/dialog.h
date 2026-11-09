@@ -152,6 +152,11 @@ void dlg_band(short obj);
    while a dialog loop that takes none waits (a PEOPLE question, VA_START,
    AP_TERM): up to eight, given back as they came */
 extern void (*dlg_redraw_hook)(const short *msg);
+/* The app's menu bar (mbar.h's MBAR.tree; mbar_build sets it where dialog.c is linked, an app with its own bar sets it):
+   a menu title chosen while a dialog window is open (MN_SELECTED: the AES doesn't hold the bar there) is dropped, not
+   kept and run after the dialog closes, and the title is shown normal again (menu_tnormal) (MENUS 1.8, MD17). Without it
+   the choice is dropped all the same and the app's menu_tnormal is the app's. A dialog over the screen (TOS) can't have one. */
+extern OBJECT *dlg_menu;
 
 /* 1 for Esc and Undo, as evnt_multi gives them (scan code in the high
    byte) */

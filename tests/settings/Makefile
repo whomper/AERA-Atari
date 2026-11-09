@@ -34,7 +34,7 @@ TCFLAGS := -m68000 -Os -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic
 TLDFLAGS := -m68000 -nostdlib -static -no-pie -Wl,--emit-relocs -Wl,-T,$(A)/link.ld \
             -Wl,--build-id=none -Wl,-z,noexecstack -Wl,--no-warn-rwx-segments
 T       := $(B)/atari
-LIB     := dialog alert popup click text bidi clip field dlgbuild settings gem libc tos
+LIB     := mbar dialog alert popup click text bidi clip field dlgbuild settings gem libc tos
 OBJS    := $(T)/crt0.o $(T)/nf.o $(T)/setdemo.o $(T)/draw.o $(addprefix $(T)/,$(addsuffix .o,$(LIB)))
 
 prg: $(T)/SETDEMO.PRG

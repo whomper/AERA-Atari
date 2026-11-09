@@ -23,6 +23,7 @@
 #include "text.h"
 #include "dialog.h"
 #include "settings.h"
+#include "mbar.h"
 
 extern short text_round;
 short vdi_h, cw, ch, scr_w, scr_h, desk_x, desk_y, desk_w, desk_h, planes, gl_wchar, gl_hchar, ap_id;
@@ -342,6 +343,14 @@ static void paint_main(const short *msg)
 	wind_update(END_UPDATE);
 }
 
+/* a menu bar where the AES runs several programs (the dialogs are windows there; MD17): a title chosen while one is open is
+   dropped by dlg_evnt, so "SETDEMO menu T I" is never said for it; one chosen otherwise says it */
+static MBAR mbar;
+static const MBAR_ITEM mb_desk[] = { { "About SETDEMO...", 0, 1 }, { 0 } };
+static const MBAR_ITEM mb_test[] = { { "Do it", "^D", 2 }, { "Do more", 0, 3 }, { 0 } };
+static const MBAR_TITLE mb_bar[] = { { " Desk ", mb_desk }, { " Test ", mb_test }, { 0 } };
+static int have_bar;
+
 int main(void)
 {
 	short wo[57], d, m[8];
@@ -372,6 +381,10 @@ int main(void)
 		wind_open(mainwin, desk_x, desk_y, desk_w, desk_h);
 		wind_get(mainwin, WF_WORKXYWH, &x, &y, &w, &h);
 		dlg_redraw_hook = paint_main;
+		if (mbar_build(&mbar, mb_bar, gl_wchar, gl_hchar, scr_w, scr_h) == 0) {
+			menu_bar(mbar.tree, 1);
+			have_bar = 1;
+		}
 	}
 	say("SETDEMO screen %s %d %d %d %d\n", "", scr_w, scr_h, gl_wchar, gl_hchar);
 	nf_debug("SETDEMO ready\n");
@@ -380,7 +393,13 @@ int main(void)
 		if (e.which & MU_MESAG) {
 			if (m[0] == WM_REDRAW)
 				paint_main(m);
-			else if (m[0] == WM_TOPPED || m[0] == WM_NEWTOP)
+			else if (m[0] == MN_SELECTED) {
+				char b[60];
+				snprintf(b, sizeof(b), "SETDEMO menu %d %d\n", m[3], m[4]);
+				nf_debug(b);
+				if (have_bar)
+					menu_tnormal(mbar.tree, m[3], 1);
+			} else if (m[0] == WM_TOPPED || m[0] == WM_NEWTOP)
 				wind_set(m[3], WF_TOP, m[3], 0, 0, 0);
 			else if (m[0] == WM_CLOSED || m[0] == AP_TERM)
 				run = 0;
