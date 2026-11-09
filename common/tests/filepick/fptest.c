@@ -85,6 +85,8 @@ int main(void)
 			}
 		}
 	}
+	if (Fopen("C:\\FPSYS.TXT", 0) >= 0)		/* the setting "Use the system file selector", for run.py */
+		filepick_system = 1;
 	nf_debug("FPT open\n");
 #ifdef FP_OLD
 	n = addfiles_run(dir, recent, take, idle);

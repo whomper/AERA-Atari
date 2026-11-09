@@ -20,6 +20,7 @@
 #include "click.h"
 #include "dirlist.h"
 #include "filepick.h"
+#include "fsel.h"
 
 /* the tree: 42 by 24 cells */
 enum { O_ROOT, O_BAND, O_DRIVE, O_PATH, O_PATHT, O_UP, O_FOLDERS, O_TYPE, O_SORT, O_NAMEL, O_MASK, O_LIST, O_INFO,
@@ -888,9 +889,39 @@ static void mask_changed(void)
 	show_info();
 }
 
+short filepick_system;
+
+/* "Use the system file selector" (Erez, 9 Nov 2026): the AES's own, through fsel_exinput (titled where the AES is 1.4
+   or newer: gem.c), on the folder dir and its files whatever their type (the AES's mask is one, and the app's types
+   are several). One file, which plain TOS gives and nothing more; it goes to add() once, the folder it was
+   chosen in is left in dir with its '\\' and put first in recent[], as the dialog does. idle() isn't called while
+   the selector is open: it is the AES's, and the app is waiting in it. The click that closed it is settled
+   (fsel_settle: a double click's second press would reach the app's window as a click of its own). 1 or 0 on Cancel. */
+static int run_system(const FP_SPEC *sp, char *dir, char recent[FP_RECENT][FP_PATH], void (*add)(const char *path))
+{
+	static char path[FP_PATH + 4], folder[FP_PATH], name[DL_NAME], full[FP_PATH + DL_NAME];
+	short button = 0;
+	if (dir[0])
+		snprintf(path, sizeof(path), "%s*.*", dir);
+	else
+		snprintf(path, sizeof(path), "%c:\\*.*", (char)('A' + Dgetdrv()));
+	name[0] = 0;
+	fsel_exinput(path, name, &button, sp->title);
+	fsel_settle();
+	if (!button || !name[0] || !dl_folder_of(path, folder, sizeof(folder)) ||
+	    !dl_join(folder, name, full, sizeof(full)))
+		return 0;
+	snprintf(dir, FP_PATH, "%s", folder);
+	dl_recent_front(recent[0], FP_PATH, FP_RECENT, folder);
+	add(full);
+	return 1;
+}
+
 int filepick_run(const FP_SPEC *sp, char *dir, char recent[FP_RECENT][FP_PATH], void (*add)(const char *path),
 		 void (*idle)(void))
 {
+	if (filepick_system)
+		return run_system(sp, dir, recent, add);
 	short x, y, w, h, idx = 0, m[8];
 	int done = 0, added = 0, i;
 	AEVENT e;
@@ -1038,15 +1069,8 @@ int filepick_run(const FP_SPEC *sp, char *dir, char recent[FP_RECENT][FP_PATH], 
 			add(p);
 			added++;
 		}
-		if (added) {
-			/* the folder to the front of the Folders pop-up */
-			int k;
-			for (k = 0; k < FP_RECENT - 1 && strcmp(recent[k], dir_now); k++)
-				;
-			for (; k > 0; k--)
-				strcpy(recent[k], recent[k - 1]);
-			strcpy(recent[0], dir_now);
-		}
+		if (added)			/* the folder to the front of the Folders pop-up */
+			dl_recent_front(recent[0], FP_PATH, FP_RECENT, dir_now);
 	}
 	snprintf(dir, FP_PATH, "%s", dir_now);
 	dl_free(&dl);

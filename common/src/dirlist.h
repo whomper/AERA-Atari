@@ -13,6 +13,8 @@
 #ifndef AERA_DIRLIST_H
 #define AERA_DIRLIST_H
 
+#include <stddef.h>
+
 #define DL_NAME 256		/* the longest name and its NUL (MiNT's: 255); a longer one is left out */
 
 typedef struct {
@@ -73,6 +75,16 @@ void dl_select_range(DLIST *d, int a, int b);	/* a to b, and only them */
 void dl_select_all(DLIST *d, int on);	/* on: every file (not the folders: a drive's all at once) */
 int dl_selected_dirs(const DLIST *d);	/* of those, the folders (added with their subfolders) */
 int dl_selected(const DLIST *d, long *bytes);	/* how many rows (files and folders), the files' bytes */
+
+/* What the system's file selector gave back (ui/filepick.c, "Use the system file selector"): its path is a folder
+   and a mask ("C:\\MUSIC\\*.*"). The folder with its '\\' is copied to dir (n bytes): 0 when the path has no '\\' or
+   the folder doesn't fit. */
+int dl_folder_of(const char *path, char *dir, size_t n);
+/* folder and file name joined into out (n bytes): 0 when they don't fit (never cut: a cut path is another file) */
+int dl_join(const char *dir, const char *name, char *out, size_t n);
+/* dir to the front of the list of recent folders (n of them, stride bytes apart in one array, "" where none, the
+   newest first): where it was already it moves up, else the oldest goes */
+void dl_recent_front(char *recent, size_t stride, int n, const char *dir);
 
 /* "7.1M", "64M", "512K", "12"; "03.11.26" */
 void dl_size_text(long size, char *out);
