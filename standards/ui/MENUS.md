@@ -303,15 +303,17 @@ between apps.
 - **Labels** (`popup.h`): `"-"` a line; `"~Text"` greyed; `"\x08Text"` ticked. A shortcut is typed into the
   label after spaces, so the labels of one menu have equal length (`popup` does not right-align keys); show the
   same key and the same words as the menu bar.
-  **`popup()` adds the margin itself** (MD18): a label is just its words (`"Text"`, `"~Text"`, `"\x08Text"`) and
+  **`popup_m()` adds the margin itself** (MD18; hub done 9 Nov 2026, `common/ui/popup.c`, D15): a label is just
+  its words (`"Text"`, `"~Text"`, `"\x08Text"`; in C `"\x08" "At start"` when the word starts with a hex digit) and
   the box puts the text 2 cells in with the tick in the margin whether ticked or not, so ticked and unticked rows
-  line up. Until the shared `popup()` does this (hub work, then a sync) the apps pad as they do: two leading spaces
+  line up. `popup()` and `popup_alt()` are unchanged for the apps that have not synced: an app moves in one commit,
+  its calls to `popup_m()` / `popup_m_alt()` and its padding dropped. Until it does, the apps pad as they do: two leading spaces
   (`"  Text"`, text 4 cells in) in ECal, EContact, EHypView, EPDF, EPlay and EWeb's form lists and Encoding menu;
   nothing (text 2 cells in, a ticked label one cell right of an unticked one) in EMail, EUpdate, EWeb's page and link
-  menus and ClaudeST's item menus; and new menus pad with two spaces. At the sync every app drops its padding.
+  menus and ClaudeST's item menus; new menus use `popup_m()`. At the sync every app drops its padding.
   EFTP has both looks (its choice pop-ups pad the tick column in `exists_pick`, `proto_pick` and `drive_menu`; its
-  context menus and Connect pad nothing) and ClaudeST's model menu pads one (text at 3 cells). The example in
-  `popup.h` (`"\x08Hidden"`) is the unpadded form and misaligns today (MG14, hub). Decided 9 Nov 2026 (D15).
+  context menus and Connect pad nothing) and ClaudeST's model menu pads one (text at 3 cells). `popup.h`'s example is
+  now the `popup_m()` form and says why `"\x08Hidden"` misaligns under `popup()` (MG14, done). Decided 9 Nov 2026 (D15).
 
 ![EFTP pop-up, Falcon:16](../screens/popup-eftp-connect-f16.png)
 ![ClaudeST pop-up, ST:mono](../screens/popup-claudest-model-open-st1.png)
@@ -385,8 +387,10 @@ case with the bar's words (`Edit contact...`, `Delete...`); EUpdate's `Check for
 ## 4. Tooltips (guidelines 3.4)
 
 The toolbar row and its buttons are specified in [WINDOWS.md](WINDOWS.md); this section is the tooltip.
-- **One shared `common/ui/tooltip.c` is the rule** (hub work: EFTP's `tip_show` with BubbleGEM in it; Decided 9 Nov
-  2026, D18). **Today there is none in `common/`:** EMail, EFTP, EUpdate and ECal each carry their own copy of
+- **One shared `common/ui/tooltip.c` is the rule** (EFTP's `tip_show` with BubbleGEM in it; hub done 9 Nov 2026,
+  apps adopt it at their release: `tip_init(repaint)`, `tip_tick(which, x, y, text_fn)` after each event call,
+  `tip_wait(ms)` for the timer, `tip_hide()`; the example in `tooltip.h`; Decided 9 Nov 2026, D18). **Until an
+  app adopts it:** EMail, EFTP, EUpdate and ECal each carry their own copy of
   the same `tip_show` (EFTP's header says "as ECal's", EUpdate's "EFTP's"); the text comes from each window's
   `win_tip` or `*_tip` function. EHypView draws its own and, when BubbleGEM runs (`appl_find("BUBBLE  ")`),
   hands the text to it (`ehypview.c:tip_bubble`). ClaudeST has its own for cut-off list items. A copy of EFTP's
@@ -403,7 +407,7 @@ The toolbar row and its buttons are specified in [WINDOWS.md](WINDOWS.md); this 
 - **Who has them:** toolbar tips in EFTP, EUpdate, EHypView (and EMail's editor bar); ECal's are over events, not
   on its toolbar; EContact, EWeb (its status bar names the hovered button), EPDF and EPlay have none.
   **Every toolbar has tips,** through BubbleGEM where it runs, else the box: EContact, ECal's toolbar, EPDF and
-  EPlay get them once the hub's `tooltip.c` is out (MD21); EWeb keeps its status bar naming the hovered button and
+  EPlay get them by adopting the hub's `tooltip.c`, which is out (MD21); EWeb keeps its status bar naming the hovered button and
   adds tips. ECal also has tips in its dialogs (`field.c`: `tip_put`, `tip_for`; one per list item, 500 ms; the
   People field in New Event shows the address) and over events (700 ms, two lines), none on its toolbar (corrected
   9 Nov). Decided 9 Nov 2026 (D18).

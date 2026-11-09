@@ -855,9 +855,11 @@ Contents per app, geometry and keys: [ui/MENUS.md](ui/MENUS.md) section 3.
 - **Right-click on a row, a link, an event, a file, a sidebar entry or the page opens a context menu at the
   mouse, on the press,** the item under it selected first. Text fields have one only in EWeb's address field
   and EMail's editor; a toolbar button has its own pop-up only where it opens a menu (EHypView's Back history).
-- **It is drawn by the shared `popup()`** (`common/ui/popup.c`, which adds the margin itself so that ticked and
-  unticked text line up: a label is its words, `"-"` a line, `"~"` greyed, `"\x08"` ticked; until the hub's change is
-  synced apps pad with two spaces; D15) and nothing else.
+- **It is drawn by the shared `popup_m()`** (`common/ui/popup.c`, hub done 9 Nov 2026, D15), which adds the margin
+  itself so that ticked and unticked text line up: a label is its words, `"-"` a line, `"~"` greyed, `"\x08"`
+  ticked, every text 2 cells in and the tick in the margin. `popup()` stays as it was (the label carries two
+  spaces of padding, text 4 cells in) for the apps that have not moved: an app changes its calls to `popup_m()`
+  and drops its padding in one commit when it syncs `common/`. Nothing else draws a pop-up.
 - **The first entry is the double-click action.** The menu repeats commands that exist in the menu bar, with
   their keys and words (sentence case, the bar's words: D14), and **may add commands that act on the thing under
   the mouse** (links, ClaudeST's Pin).
@@ -870,10 +872,11 @@ Contents per app, geometry and keys: [ui/MENUS.md](ui/MENUS.md) section 3.
 The toolbar row and its buttons: [ui/WINDOWS.md](ui/WINDOWS.md) section 3; the tooltip: [ui/MENUS.md](ui/MENUS.md)
 section 4.
 - **Every toolbar's buttons have a tooltip** after the pointer rests 0.7 s, from one shared `common/ui/tooltip.c`
-  (D18). A tip is a short sentence with the button's key in brackets: "Stop (Esc)". The hub builds the shared code
-  from EFTP's `tip_show`; until then EMail, EFTP, EUpdate and ECal each carry the same copy (EFTP's is the
-  reference) and EHypView's wait 1 s. EWeb keeps its status bar naming the hovered button and adds tips.
-- If BubbleGEM is running, tooltips go through it (only EHypView does so today; the shared code does it for all).
+  (D18; hub done 9 Nov 2026: `tip_init`, `tip_tick`, `tip_wait`, `tip_hide`, with a complete example in
+  `tooltip.h`). A tip is a short sentence with the button's key in brackets: "Stop (Esc)". Apps adopt it at the
+  release they make anyway, dropping their own `tip_show` (EMail, EFTP, EUpdate, ECal carry the same copy; EHypView's
+  waits 1 s). EWeb keeps its status bar naming the hovered button and adds tips.
+- If BubbleGEM is running, tooltips go through it (the shared code does it for every app that uses it).
 - **Toolbar buttons** that the app draws itself are accepted when they behave as 5.8 says: shown pressed while
   held, acting on the release over them. A new toolbar copies EFTP's AES buttons. **Stop in a job acts on the
   press,** the one exception (D32). `Stop` is the word for a job and `Cancel` only for a dialog (D31).
@@ -2081,8 +2084,8 @@ program's window.
 | 3.2 No key means two things: Mark as unread off ⇧^U, Index off ^I (D1, D2) | — | — | ✗ | — | ✗ | — | — (EUpdate —) | — | — |
 | 3.2 ⇧^S shows or hides every sidebar (D45) | ? | ? | ✗ | — | — | ✗ | — (EUpdate —) | — | — |
 | 3.3 Insert opens the context menu (D16, D17) | ✗ | ✗ | ✗ | ✗ | ? | ? | ✗ (EUpdate ?) | ? | ? |
-| 3.3 A pop-up's words and keys are the bar's, in sentence case; `popup()` adds the margin (D14, D15; the margin waits for the hub) | ✗ | ✗ | ✗ | ✗ | ? | ✗ | ✗ (EUpdate ✗) | ? | ? |
-| 3.4 Tooltips on every toolbar, from the shared `tooltip.c`, 0.7 s (D18; the code waits for the hub) | ✗ | ✗ | ? | ? | ✗ | — | ✗ (EUpdate ?) | — | ✗ |
+| 3.3 A pop-up's words and keys are the bar's, in sentence case; `popup_m()` adds the margin (D14, D15; hub done: apps change their calls and drop their padding as they sync) | ✗ | ✗ | ✗ | ✗ | ? | ✗ | ✗ (EUpdate ✗) | ? | ? |
+| 3.4 Tooltips on every toolbar, from the shared `tooltip.c`, 0.7 s (D18; hub done: `common/ui/tooltip.c`, apps adopt it as they sync) | ✗ | ✗ | ? | ? | ✗ | — | ✗ (EUpdate ?) | — | ✗ |
 | 3.1 Commands that would start another job are greyed while a job runs (D19) | — | — | ? | ✗ | — | — | ? (EUpdate ?) | ? | — |
 | 5.8, 3.4 Buttons act on the release over them; Stop in a job on the press (D32, D33) | ✗ | ✗ | ✗ | ? | ? | ✗ | ? (EUpdate ✗) | ? | ? |
 | 6.3 `Stop` for a job, `Cancel` for a dialog (D31) | — | ✗ | — | ? | — | — | ? (EUpdate ?) | ? | — |

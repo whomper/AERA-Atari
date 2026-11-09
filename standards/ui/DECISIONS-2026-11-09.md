@@ -137,9 +137,10 @@ Done first, in `common/` and the standards (numbers are the evaluation's section
 
 - **Item 3, `filepick.c`:** the pop-up over the ticked row and buttons 10 wide (D26, D27), Esc empties and never
   cancels (D28), the outlined pop-up buttons (C9). Unblocks EPlay's Add files.
-- **Item 5, `common/ui/tooltip.c`** from EFTP's `tip_show`, 0.7 s, BubbleGEM (D18).
+- **Item 5, `common/ui/tooltip.c`** from EFTP's `tip_show`, 0.7 s, BubbleGEM (D18). *Done 9 Nov 2026* (hub); apps adopt.
 - **Item 6, `popup()`:** adds its margin (D15) and opens over a button on request (D27); `popup.h`'s example
-  fixed (MG14); `set_popup` and `set_tick_group` grey one choice (D24).
+  fixed (MG14); `set_popup` and `set_tick_group` grey one choice (D24). *Margin and example done 9 Nov 2026* (`popup_m()`,
+  hub; apps adopt); "over this button" and the grey single choice are still to do.
 - **New:** the Font and Languages dialogs get the band and 10-wide buttons (D22, D26); the dialog loop and the
   Settings engine learn the keyboard reach (D25) and refuse out-of-range numbers where the engine owns them (D30);
   the window arrows go to the pane under the pointer (D37); one `theme.c` with the one selection colour (D42); a

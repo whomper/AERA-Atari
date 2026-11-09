@@ -266,8 +266,9 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
     centred, `"%s \x02"`: C9). In 3D it is raised; flat it is a framed box.
   - **The menu's items** start with two spaces; the ticked one starts with `\x08` (the Atari check mark) in
     place of the first space: `"%c %s"` with `'\x08'` or `' '`. `popup()` puts the check mark half a cell in
-    and every item's words 2 cells in from the left edge. When the shared `popup()` adds the margin itself
-    ([MENUS.md](MENUS.md) 3.1, D15) an item is just its words, the ticked one `\x08` and its words.
+    and every item's words 2 cells in from the left edge. The shared `popup_m()` adds the margin itself
+    ([MENUS.md](MENUS.md) 3.1, D15; hub done, apps move as they sync): an item is just its words, the ticked
+    one `\x08` and its words. The shared Settings (`set_popup`) and file dialog already use it.
   - It sits in the settings' value column (`SX + 30`) or after its label; the dialog under the menu is drawn
     again when `popup_put_back` is 0. `popup()` itself moves a menu left to fit the desktop, and above the point
     when there is no room below.
