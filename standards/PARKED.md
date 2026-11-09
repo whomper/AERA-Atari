@@ -67,3 +67,17 @@ starts before he says so. The hub adds to it; each line says where the work stan
   fault fix fe7aaa0 is only in apps that use inflate: EPDF, EUpdate 1.27), the press drawn on
   mouse-down (5.8), the fast drawing paths, and each rule the "Where each app stands" table
   shows them without.
+
+## FireBee edition (Erez, 9 Nov 2026)
+
+- Target: EWeb and EPDF, once the family rework and alignment are finished (the UI standards, the shared
+  dialog engine and the apps' adoption) and EWeb has reached 1.0. A FireBee owner offered to test ColdFire
+  builds (the V4e core, `-mcpu=5475`); the other programs run there as they are, through the system's
+  emulation of the instructions the chip lacks.
+- The work is mostly `common/`: ColdFire versions of the assembly (crt0, crash, inflate_fast, mont030,
+  sting, nf), TLS without the DSP, and for EWeb its script overlay on the ColdFire FPU (doubles only).
+  EWeb's DESIGN.md, "A FireBee edition", has what was checked. Hatari has no ColdFire: the GEM checks need
+  the tester's FireBee; QEMU's cfv4e runs the host tests and counts.
+- Not part of it: EPlay (its sound goes through the Falcon's hardware and DSP, so a FireBee build would be
+  a new audio driver, a separate decision).
+
