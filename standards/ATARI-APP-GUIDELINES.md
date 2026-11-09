@@ -801,6 +801,15 @@ time**, so they never write the same file at once. The shared `common/ui/twin.c`
   shared builder (`common/ui/mbar.c`, from EHypView's, which right-aligns the shortcut column).
 - **The ACC has no menu bar.** Its toolbar ≡ menu carries the same commands.
 - **Menu items show their shortcut** as `^N`, `⇧^F`. Commands that open a dialog end in "…".
+- **Settings is in the Options menu** (Erez, 9 Nov 2026: "the family settings is accessed from Options"),
+  never in File, and its shortcut is `^,`. **Options, in this order** (EMail, EFTP, EUpdate and EWeb have
+  it; each item only if the app has it): `Settings...  ^,` first (EMail puts its `Accounts...` before
+  it); `Font...`; a line; then the ticks of settings that change at once, with the tick in front: `Direct
+  connection (TLS)`, `Hebrew keyboard  F10`, `Protocol log` (EWeb: `Write a log`), and the app's own (EMail
+  `Work offline`, EFTP `Show hidden files`, EWeb `Run this site's scripts`). A setting that has a tick in
+  Options and a tick in Settings is one setting, kept in step. File holds only what concerns files and the
+  program (Open, Save, Close window, Next window, Quit and the app's own file commands); the Desk title's
+  menu is `About NAME...` and the accessories; Help is `NAME help  Help` and `Keys...`.
 - **A command on the app's own items is in that item's menu, New among them** (a tester, Erez 27
   Oct 2026): EMail's New message is under Message, with Reply and Forward, not under File. File
   keeps what concerns files and the program (Open, Save, Close, Quit).
@@ -1370,6 +1379,11 @@ CONTACTS.TXT when the user chooses it (below).
 ### 5.7 Pop-up buttons, frames and edges (must; a tester, Erez 27 Oct 2026)
 - **A button with a down arrow opens a pop-up menu there and then:** the shared `popup()` (3.3),
   over the button, the choice it shows ticked; a click on another choice changes it at once.
+  **How the button is drawn** (EHypView's `start_label`, EMail's `Translate into`): a `G_BOXTEXT` with
+  `TOUCHEXIT` and `te_thickness = -1` (an outline), its text a space, the choice padded to the button's width, and
+  the system font's down-arrow character `\x02` as the last character: `sprintf(label, " %-21s\x02", choice)`.
+  It sits in the settings' value column (`SX + 30`) or after its label; it is never a plain button
+  and never a drop-down drawn by the app.
 - **A choice from a long list is not a pop-up** (EMail's and ECal's time zones, some 400): its
   button shows the choice and ends in "…", with no arrow, and opens a dialog with the list (and a
   field that finds in it). An arrow that opens a dialog promises what it doesn't do.
@@ -1489,12 +1503,55 @@ bar nearly full shows them all:
     has an empty line before it. A setting with no note of its own (EUpdate's `HAVEDATE=` under
     `HAVE=`) is a paragraph too. Reading skips empty lines; writing back keeps them.
   - The program writes it back keeping comments and unknown lines.
-- **One Settings… dialog** (^,), with a sidebar of pages in this order, leaving out what doesn't apply:
-  **General · Accounts/Servers · Secure · Appearance · Advanced**.
-  - The **Secure** page is the same in every networked app: "Direct connection: TLS on this Atari
-    (68020 or better)" or "Through the Gateway: address, port".
-  - Step 3 picks one dialog engine from the two in use today: FIELD in ECal/EContact, OBJECT +
-    `form_do` in EMail/EFTP.
+- **One Settings… dialog** (^,), the one EMail, EFTP, EUpdate, EWeb and EHypView have, built the same way
+  (Erez, 9 Nov 2026: an app that draws its own look "does not look like the family settings dialog").
+  **Copy the real one, not a description of it:** `settings_sidebar()` in EMail's `ui/dialogs.c` (EFTP's,
+  EUpdate's and EWeb's `ui/dialogs.c` and EHypView's `src/gem/settings.c` are the same layout with their
+  own pages). Its parts, in characters of the system font (a character is `gl_wchar` x `gl_hchar`), as
+  built there:
+  - **The box.** Width `SX + PW`, where `SW = 13` is the list's width, `SX = SW + 2 = 15` where a page
+    starts, and `PW` = 42 (EMail, EFTP, EUpdate), 44 (EWeb). Height 16 or 17 rows (EFTP, EUpdate 16, EMail 17,
+    EWeb 20): the tallest page, plus the heading, plus the button row, plus one empty row. An `OUTLINED`
+    `G_BOX`, as every dialog (5.6).
+  - **The title band.** The first row, " Settings" (a space, then the word), in the dialog's title look
+    (`d_band`, `G_BOXTEXT` 0x1071 in EHypView). In an AES window (`dlg_band`, 3.5) the window's title says it
+    and the band is left out.
+  - **The list of pages** at the left, `SW` wide, from row 1 to the bottom: a one-pixel line at its right
+    edge (`G_BOX`, width 0, the line at column `SW`), plain words on white, each `"  Name"` (two spaces), one
+    per `G_BOXTEXT` with `TOUCHEXIT`, rows 2, 4, 6 ... (every second row, each step a half character
+    lower than the last: `gap = gl_hchar / 2`). **The chosen page is a black bar** (the object `SELECTED`),
+    never a button, never a tab, never a frame.
+  - **A page** at column `SX`: its name as a heading on row 2 (`G_STRING`), under it on row 3 a one-pixel
+    line across the page (`G_BOX` 40 wide, 0 rows high plus 1 pixel, 2 pixels down), and its settings from
+    row 4. One page's objects are shown at a time (`page_of[]`, `show_page()`); a click on a name changes the
+    page and the dialog stays open.
+  - **The settings.** Labels are `G_STRING`s at column `SX`; the values' column is `SX + 30` (EMail's `FX`);
+    a tick is `d_tick` (the family's tick box, then its words), a field is `d_field` (framed, 5.4), a
+    choice from a few is a pop-up button (5.7), from many a button ending in "..." (5.7). Words that explain
+    a setting go in `G_STRING`s under it, 3 columns in from the tick, 38 characters at most.
+  - **The buttons.** On row `H - 2`, **Cancel then OK**, 10 wide each, OK at the right: Cancel at
+    `W - 24`, OK at `W - 12` (EMail: `SX + 18` and `SX + 30`). OK is `DEFAULT`. Both `EXIT`. Return is OK, Esc
+    and Undo are Cancel (3.5). No Apply, no Help button, no other buttons in the dialog's own row.
+  - **What happens.** Nothing is kept until OK; Cancel, Esc and Undo keep nothing. The dialog stays open
+    while ticks and pages change.
+  - **Not allowed:** one long page with no list (EPDF 2.1 had one); the list as a row of tabs or buttons
+    along the top; a dialog narrower than the list plus a page; the title in the middle; OK on the left.
+- **Which pages, and in what order.** The pages belong to the app, in one word of at most 11 characters,
+  in this order, each only if the app has it: **General** (what the app does, and its start), the app's own
+  pages, **Look** (colours, anything seen; a font is chosen in Options > Font..., not here), **Secure**,
+  **Advanced** (logs, tuning, last). **Secure is the same in every app that talks to a server or the
+  Gateway:** "Direct connection: TLS on this Atari (68020 or better)" as a tick (the same tick as the
+  Options item "Direct connection (TLS)", the two kept in step), and, under it, "Through the Gateway:"
+  with its Address and Port fields (the words of 7.3). Where the apps stand, from the code (9 Nov 2026):
+  EMail: Mail, Writing, Signature, Look, Contacts, Connection (its Secure content is on Connection);
+  EFTP: Transfers, Names, Look, Connection, Secure; EUpdate: Checks, Files, GitHub, Look, Advanced;
+  EWeb: General, Secure, Scripts; EHypView: General, Library. An app with one or two pages still has the
+  list. ECal and EContact's FIELD dialogs are older and are to be brought to this one (a change for their next
+  release; they are in maintenance).
+- **One engine** (this settles the open step 3): the layout above, built from the objects a dialog builds
+  (`d_begin`, `d_band`, `d_add`, `d_tick`, `d_field`, `d_button`, `d_end`, then `dlg_do`/`dlg_modal`,
+  common/ui/dialog.c's loop). Until the builder is in `common/` as `settings.c` (to be lifted from EMail's, a
+  task of the hub's), an app copies EMail's `settings_sidebar()` and `show_page()`, and says so in its commit.
 
 ### 6.2 Alerts
 - **One shared `alert()`** (`common/ui/alert.c`, from ECal's): it wraps text to 30 characters, at most 5
@@ -1899,3 +1956,4 @@ program's window.
 | 7.3 Work handed to the Gateway shows three phases in the status line: Sending, Working, Receiving (`conn_phase`; Erez, 7 Nov) | — | — | with translation | — | — | — | next release (a page through the Gateway) | with the Gateway mode | — |
 | 1.2 The hub's checks follow the release; a fault is fixed forward by a new release, never rolled back (Erez, 7 Nov) | maintenance | maintenance | next release | maintenance | maintenance | maintenance | next release | next release | next release |
 | 1.2 At least 60% of an app's Atari boots per candidate run under NVDI, every app the same (Erez, 7 Nov); the app's session needs Erez's NVDI copy | has NVDI; next release | has NVDI; next release | needs NVDI; next candidate | needs NVDI; next release | has NVDI; next release | needs NVDI; next release | needs NVDI; next candidate | needs NVDI; next candidate | needs NVDI; next candidate |
+| 3.1/6.1 Settings in the family's layout (sidebar list, page heading and line, Cancel and OK on row H-2) and in Options, not File (Erez, 9 Nov) | ✗ (FIELD dialog; to be brought over: maintenance) | ✗ (FIELD dialog; same) | ✓ (the reference: settings_sidebar) | ✓ | ✓ (src/gem/settings.c) | to check | ✓ | ✗ (EPDF 2.1: one page, Settings under File; being redone, 9 Nov) | to check |
