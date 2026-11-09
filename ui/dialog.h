@@ -101,6 +101,22 @@ void dlg_more(void (*draw)(short x, short y, short w, short h));
 int dlg_cut(short *x, short *y, short *w, short *h);
 /* an object of the open dialog drawn again, through what shows of it */
 void dlg_draw(OBJECT *tree, short obj);
+/* Part of the open dialog drawn again without the AES's walk through every object (a flat tree: all the root's
+   children; a Settings dialog has a hundred, 35 ms of an 8 MHz ST's walk for each tab drawn, 9 Nov 2026):
+   dlg_draw_one: object obj alone, its own box;
+   dlg_draw_range: the area of object `area` and 3 pixels round it: with `ground` the root alone first (its fill), then
+   objects first to end - 1 that are not HIDETREE, each alone, in order. The objects must not need anything of the others
+   drawn under them but the root. Through what shows of the window, as dlg_draw; with -DDLG_CPU, the CPU draws what it
+   can, as dlg_open's does. budget_ms (0: none; not in a window): no object is started after that many ms, and the
+   first one not drawn comes back (end when all are): the caller makes an event call (evnt_timer_(0)) and goes on from
+   there with ground 0, so no stretch between event calls is long (the guidelines' Speed) */
+void dlg_draw_one(OBJECT *tree, short obj);
+short dlg_draw_range(OBJECT *tree, short area, short first, short end, int ground, unsigned long budget_ms);
+/* objc_find(tree, 0, 8, x, y) without the AES's walk (45 to 50 ms a click on a Settings dialog on an 8 MHz ST): the
+   last object that shows and holds the point, -1 outside the box. The AES's own where it draws 3D (its borders are
+   part of the object); dlg_find_own 0 (the tests) asks it always. dlg_do takes its clicks through it */
+short dlg_find(OBJECT *tree, short x, short y);
+extern int dlg_find_own;
 /* where the open dialog is now */
 void dlg_area(short *x, short *y, short *w, short *h);
 /* 1 where dialogs open in a window (aes_count() != 1, or MagiC);

@@ -79,6 +79,13 @@
  * and OK always have room. The page's area, for a page switch, is rows 2 to H - 3: a page's objects stay
  * inside it, above the buttons' row.
  *
+ * A page switch draws the two names that changed and the page's area only (9 Nov 2026), each object by itself
+ * (dialog.h: dlg_draw_one, dlg_draw_range: no walk of the AES through the dialog's hundred objects), the page in
+ * turns of 20 ms with an event call between, then Cancel and OK where the area's margin reached their frames; a
+ * click is found by dlg_find, in C. On an 8 MHz ST (TOS 1.04) the longest stretch of a switch went from 280-345 ms to
+ * 45 (a program with -DDLG_CPU) or 55 ms, on a stock Falcon (TOS 4.04) from 110-155 ms to 30-45 ms; the pixels
+ * are the old ones'. The page's objects follow each other from heading to its last object, on the root alone.
+ *
  * Tested in tests/settings (make test: the built tree's geometry and the keys against a stand-in AES;
  * run.py, SETDEMO.PRG: EMail's Connection page and EHypView's General page in Hatari on TOS 4.04 and
  * TOS 1.04, pixel for pixel; --xaaes under FreeMiNT and XaAES).

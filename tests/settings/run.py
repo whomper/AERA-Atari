@@ -11,6 +11,7 @@ the same way, and compares the dialog's pixels.
                                                Falcon:16 (TOS 4.04, 3D), Falcon-4:16 ... (Erez's TOS from ~/.aera/tos
                                                where it is there, else EmuTOS; the report names it)
     python3 run.py WORK MACHINE --speed        the demo's opening times only (the speed rig's AESGAP)
+    python3 run.py WORK MACHINE --speed --prg cpu   the same with the programs' own flags (make cpu: DLG_CPU, DLG_CLICK)
     python3 run.py WORK MACHINE --again        compare the screenshots an earlier run left in WORK again
     python3 run.py WORK --xaaes TOS_IMAGE      the demo in a window under FreeMiNT and XaAES (../xaaes: make base)
 
@@ -474,9 +475,13 @@ def main():
     ap.add_argument("--rel", default=os.path.join(HERE, "build", "rel"))
     ap.add_argument("--display", default=":99")
     ap.add_argument("--speed", action="store_true")
+    ap.add_argument("--prg", metavar="DIR", help="build/DIR's SETDEMO.PRG instead of build/prof's (make cpu: the programs' own flags, -DDLG_CPU -DDLG_CLICK)")
     ap.add_argument("--again", action="store_true", help="compare the screenshots an earlier run left in WORK again (no emulator)")
     ap.add_argument("--xaaes", nargs="?", const="", metavar="TOS_IMAGE", help="the demo under FreeMiNT and XaAES (EmuTOS 1.4 where no image is given)")
     a = ap.parse_args()
+    global PRG
+    if a.prg:
+        PRG = os.path.join(HERE, "build", a.prg, "SETDEMO.PRG")
     if not os.path.exists(PRG) and not a.again:
         sys.exit("no %s: make prof" % PRG)
     a.work = os.path.abspath(a.work)

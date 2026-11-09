@@ -800,10 +800,16 @@ void vq_color(short h, short index, short *rgb)
 	rgb[2] = tt_pal[index][2];
 }
 
+unsigned long tos_ms(void)
+{
+	return 0;
+}
+
 int main(void)
 {
 	short r;
 	setvbuf(stdout, 0, _IOLBF, 0);
+	dlg_find_own = 0;		/* this stand-in's objc_find answers from the script; dlg_find is tested in ../settings */
 
 	test_3d();
 

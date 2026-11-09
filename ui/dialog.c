@@ -384,6 +384,45 @@ static int clip(short *x, short *y, short *w, short *h, short cx, short cy, shor
 	return *w > 0 && *h > 0;
 }
 
+/* dlg_draw_one and dlg_draw_range: part of a flat tree (every object the root's child) in the piece
+   (x, y, w, h), each object alone, without the AES's walk through the others. some 1: object a; 2: the root
+   alone (the ground), then objects a to b - 1 that show, in the order the tree has them; 3: those objects only.
+   The mouse is hidden by the caller. rng_until: the time (tos_ms) after which no more objects are started, 0 none;
+   rng_next: the first object not drawn (b when all are) */
+static unsigned long rng_until;
+static short rng_next;
+
+static int cpu_some(OBJECT *tree, int some, short a, short b, short x, short y, short w, short h);
+
+static int over_budget(short drawn)
+{
+	return rng_until && drawn && tos_ms() >= rng_until;
+}
+
+static void some_draw(OBJECT *tree, int some, short a, short b, short x, short y, short w, short h)
+{
+	short i, drawn = 0;
+	rng_next = b;
+	if (cpu_some(tree, some, a, b, x, y, w, h))
+		return;
+	if (some == 1) {
+		objc_draw(tree, a, 0, x, y, w, h);
+		return;
+	}
+	if (some == 2)
+		objc_draw(tree, 0, 0, x, y, w, h);
+	for (i = a; i < b; i++) {
+		if (tree[i].ob_flags & HIDETREE)
+			continue;
+		if (over_budget(drawn)) {
+			rng_next = i;
+			return;
+		}
+		objc_draw(tree, i, 0, x, y, w, h);
+		drawn++;
+	}
+}
+
 /* while a piece of a dialog window is drawn: that piece, which the app's
    own drawing keeps within (dlg_cut) */
 static short lim[4];
@@ -392,7 +431,7 @@ static int lim_on;
 /* the dialog's window, the part (x, y, w, h) of it drawn again through
    the AES's list of what shows of it: the tree, then what the app draws
    over it */
-static void win_paint(short i, short x, short y, short w, short h)
+static void win_paint_some(short i, short x, short y, short w, short h, int some, short a, short b)
 {
 	short rx, ry, rw, rh;
 	wind_update(BEG_UPDATE);
@@ -402,7 +441,9 @@ static void win_paint(short i, short x, short y, short w, short h)
 		if (clip(&rx, &ry, &rw, &rh, x, y, w, h)) {
 			lim[0] = rx, lim[1] = ry, lim[2] = rw, lim[3] = rh;
 			lim_on = 1;
-			if (dw[i].tree)
+			if (dw[i].tree && some)
+				some_draw(dw[i].tree, some, a, b, rx, ry, rw, rh);
+			else if (dw[i].tree)
 				objc_draw(dw[i].tree, 0, 8, rx, ry, rw, rh);
 			if (dw[i].draw)
 				dw[i].draw(rx, ry, rw, rh);
@@ -412,6 +453,11 @@ static void win_paint(short i, short x, short y, short w, short h)
 	}
 	graf_mouse(M_ON, 0);
 	wind_update(END_UPDATE);
+}
+
+static void win_paint(short i, short x, short y, short w, short h)
+{
+	win_paint_some(i, x, y, w, h, 0, 0, 0);
 }
 
 int dlg_cut(short *x, short *y, short *w, short *h)
@@ -1053,7 +1099,53 @@ long dlg_fast_count(void)
 {
 	return fast_count;
 }
+
+/* some_draw's objects the CPU's way where fast_draw's conditions hold (TOS's own screen, flat, text.c's drawing
+   in it): the objects in the order the tree has them, each drawn whole before the next, so what overlaps comes out
+   as objc_draw's with none of fast_draw's reckoning of what the AES draws later; the root's ground first (some 2).
+   1 if drawn, 0 where the AES does it all */
+static int cpu_some(OBJECT *tree, int some, short a, short b, short cx, short cy, short cw, short cch)
+{
+	short ch = aes_ch(), clip[4], i, to = some == 1 ? (short)(a + 1) : b, drawn = 0;
+	if (!dlg_fast_on || !scr_cpu_wins || !scr_cpu_wins() || ch < 0 || dlg_windowed() || !root_ok(tree))
+		return 0;
+	clip[0] = cx;
+	clip[1] = cy;
+	clip[2] = cx + cw - 1;
+	clip[3] = cy + cch - 1;
+	scr_clip(clip);
+	if (some == 2)
+		box_paint(tree[0].ob_x, tree[0].ob_y, tree[0].ob_width, tree[0].ob_height, (signed char)(tree[0].ob_spec >> 16),
+			  (short)((tree[0].ob_spec >> 12) & 0x0f), box_pen(tree[0].ob_spec), tree[0].ob_state);
+	for (i = a; i < to; i++) {
+		SHOWN sh;
+		short kind;
+		if (tree[i].ob_flags & HIDETREE)
+			continue;
+		reach(tree, i, (short)(tree[0].ob_x + tree[i].ob_x), (short)(tree[0].ob_y + tree[i].ob_y), &sh);
+		if (sh.x2 < cx || sh.y2 < cy || sh.x1 >= cx + cw || sh.y1 >= cy + cch)
+			continue;
+		if (over_budget(drawn)) {
+			rng_next = i;
+			break;
+		}
+		kind = fast_kind(tree, i, ch);
+		if (kind == K_AES)
+			objc_draw(tree, i, 0, cx, cy, cw, cch);
+		else
+			cpu_object(&tree[i], kind, sh.x, sh.y, ch, -1);
+		drawn++;
+	}
+	scr_clip(0);
+	return 1;
+}
 #else
+
+static int cpu_some(OBJECT *tree, int some, short a, short b, short x, short y, short w, short h)
+{
+	(void)tree, (void)some, (void)a, (void)b, (void)x, (void)y, (void)w, (void)h;
+	return 0;
+}
 
 /* without -DDLG_CPU (accessories, programs for the 68030 only): every
    dialog objc_draw's, none of the CPU's drawing linked in (EMAILCHK.ACC
@@ -1242,6 +1334,38 @@ void dlg_draw(OBJECT *tree, short obj)
 		objc_draw(tree, 0, 8, x, y, w, h);
 }
 
+/* the area (x, y, w, h) of the open dialog drawn by some_draw: through the window's list of what shows, or
+   straight over the screen */
+static void draw_some(OBJECT *tree, int some, short a, short b, short x, short y, short w, short h)
+{
+	short i = ndw - 1;
+	if (i >= 0 && dw[i].h > 0) {
+		win_paint_some(i, x, y, w, h, some, a, b);
+		return;
+	}
+	graf_mouse(M_OFF, 0);
+	some_draw(tree, some, a, b, x, y, w, h);
+	graf_mouse(M_ON, 0);
+}
+
+void dlg_draw_one(OBJECT *tree, short obj)
+{
+	short x, y;
+	rng_until = 0;
+	objc_offset(tree, obj, &x, &y);
+	draw_some(tree, 1, obj, 0, x, y, tree[obj].ob_width, tree[obj].ob_height);
+}
+
+short dlg_draw_range(OBJECT *tree, short area, short first, short end, int ground, unsigned long budget_ms)
+{
+	short x, y;
+	rng_until = budget_ms && !dlg_in_window() ? tos_ms() + budget_ms : 0;
+	objc_offset(tree, area, &x, &y);
+	draw_some(tree, ground ? 2 : 3, first, end, x - 3, y - 3, tree[area].ob_width + 6, tree[area].ob_height + 6);
+	rng_until = 0;
+	return rng_next;
+}
+
 #ifdef DLG_CLICK
 #include "click.h"
 
@@ -1416,6 +1540,37 @@ short dlg_evnt(short flags, short clicks, short mask, short state,
 	}
 }
 
+/* objc_find(tree, 0, 8, mx, my) in C: the last (topmost) object that shows and holds the point, children
+   after their parent, -1 outside the root. The AES's walk through a Settings dialog's hundred objects took
+   an 8 MHz ST 45 to 50 ms a click (TOS 1.04, 9 Nov 2026); this is under a millisecond */
+static short find_in(OBJECT *tree, short i, short ox, short oy, short depth, short mx, short my)
+{
+	short x = (short)(ox + tree[i].ob_x), y = (short)(oy + tree[i].ob_y), found = i, k;
+	if ((tree[i].ob_flags & HIDETREE) || mx < x || my < y || mx >= x + tree[i].ob_width || my >= y + tree[i].ob_height)
+		return -1;
+	if (depth > 0 && tree[i].ob_head >= 0) {
+		for (k = tree[i].ob_head;; k = tree[k].ob_next) {	/* the last child's next is the parent */
+			short r = find_in(tree, k, x, y, (short)(depth - 1), mx, my);
+			if (r >= 0)
+				found = r;
+			if (tree[k].ob_next == i || tree[k].ob_next < 0)
+				break;
+		}
+	}
+	return found;
+}
+
+int dlg_find_own = 1;
+
+/* the AES's own where it draws 3D (an indicator's or activator's border is part of the object: AES 4 reckons it
+   in objc_find), ours where it doesn't */
+short dlg_find(OBJECT *tree, short mx, short my)
+{
+	if (!dlg_find_own || (tree[0].ob_flags & 0x0600))		/* FL3DMASK */
+		return objc_find(tree, 0, 8, mx, my);
+	return find_in(tree, 0, 0, 0, 8, mx, my);
+}
+
 short dlg_do(OBJECT *tree, short start, short cancel)
 {
 	short next, edit = 0, idx = 0, cont = 1, m[8];
@@ -1467,7 +1622,7 @@ short dlg_do(OBJECT *tree, short start, short cancel)
 			}
 		}
 		if ((e.which & MU_BUTTON) && cont) {
-			next = objc_find(tree, 0, 8, e.mx, e.my);
+			next = dlg_find(tree, e.mx, e.my);
 			if (next < 0) {
 				Bconout(2, 7);		/* outside the box: the bell, as form_do */
 				next = 0;

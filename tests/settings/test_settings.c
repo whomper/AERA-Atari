@@ -152,6 +152,9 @@ static void reset(void)
 	pop_answer = -1;
 	pop_kept = 1;
 	updates = update_low = dial_start = dial_finish = draws = bells = timers = 0;
+	ndraw_log = 0;
+	fake_ms = 0;
+	draw_cost = 0;
 	win_made = win_open = 0;
 	win_name[0] = 0;
 	ap_count = 1;
@@ -296,6 +299,28 @@ static void geometry(short cw, short ch, short sw, short pw, short h, const char
 
 /* ---------------- the cases ---------------- */
 
+static void find_check(void)
+{
+	OBJECT *t = TREE;
+	short x0 = t[0].ob_x, y0 = t[0].ob_y;
+	short tab2 = ref_tab[2];
+	checkf(dlg_find(t, x0 + t[tab2].ob_x + 5, y0 + t[tab2].ob_y + 5) == tab2, "dlg_find: a click on page 2's name finds it");
+	checkf(dlg_find(t, x0 + t[o_num].ob_x + 4, y0 + t[o_num].ob_y + 4) == o_num, "dlg_find: a click on a field of the shown page finds it");
+	checkf(dlg_find(t, x0 + t[ref_ok].ob_x + 3, y0 + t[ref_ok].ob_y + 3) == ref_ok, "dlg_find: OK");
+	checkf(dlg_find(t, x0 + t[ref_cancel].ob_x + 3, y0 + t[ref_cancel].ob_y + 3) == ref_cancel, "dlg_find: Cancel (the one before OK)");
+	checkf(dlg_find(t, x0 + t[o_box1].ob_x + 3, y0 + t[o_box1].ob_y + 3) == o_box1, "dlg_find: a tick's box");
+	checkf(dlg_find(t, x0 + t[o_box1].ob_x + 3, y0 + t[o_box1].ob_y + 3) == objc_find(t, 0, 8, x0 + t[o_box1].ob_x + 3, y0 + t[o_box1].ob_y + 3),
+	       "dlg_find answers what the stand-in AES's objc_find does");
+	checkf(dlg_find(t, x0 + 2, y0 + t[0].ob_height - 3) == 0, "dlg_find: the box where nothing else is: the root (0)");
+	checkf(dlg_find(t, x0 - 1, y0 + 5) == -1 && dlg_find(t, x0 + t[0].ob_width, y0 + 5) == -1 && dlg_find(t, x0 + 5, y0 - 1) == -1,
+	       "dlg_find: outside the box: -1");
+	/* the hidden page's button is not found: page 2's button is at a place page 1 has a field */
+	checkf(dlg_find(t, x0 + t[o_btn].ob_x + 5, y0 + t[o_btn].ob_y + 5) != o_btn, "dlg_find: an object of a page not shown is passed over");
+	t[o_num].ob_flags |= HIDETREE;
+	checkf(dlg_find(t, x0 + t[o_num].ob_x + 4, y0 + t[o_num].ob_y + 4) != o_num, "dlg_find: HIDETREE objects are skipped");
+	t[o_num].ob_flags &= ~HIDETREE;
+}
+
 static void pg_after_tab2(void)
 {
 	short i;
@@ -367,6 +392,81 @@ static void test_pages_and_ticks(void)
 		static const STEP s[] = { TAB(2), OBJ(o_box2), OBJ(o_lbldis), OBJ(o_g2), CALL(pg_ticks2), OBJ(o_g2), CALL(pg_ticks3), CANCELB, END };
 		r = run(&d, s);
 		checkf(s_tick2 == 1 && s_group1 == 1 && s_group2 == 0, "Cancel puts the ticks back (%d %d %d)", s_tick2, s_group1, s_group2);
+	}
+}
+
+
+/* ---------------- the page switch draws only what changed (9 Nov 2026) ---------------- */
+
+static int log_at;
+static void sw_mark(void)
+{
+	log_at = ndraw_log;
+	timers = 0;
+}
+
+static int in_log(short obj, int from)
+{
+	int i, n = 0;
+	for (i = from; i < ndraw_log; i++)
+		n += draw_log[i] == obj;
+	return n;
+}
+
+static void sw_check(void)
+{
+	int i, deep = 0, ground = 0, once = 1, old_drawn = 0;
+	short k, missed = -1;
+	for (i = log_at; i < ndraw_log; i++) {
+		deep += draw_depth[i] != 0;		/* a walk through the tree is depth 8 */
+		ground += draw_log[i] == 0;
+	}
+	checkf(deep == 0 && ndraw_log > log_at, "a page switch: %d objc_draw calls, every one of a single object (depth 0), none a walk",
+	       ndraw_log - log_at);
+	checkf(ground == 1, "the root is drawn once, alone, as the page's ground (%d times)", ground);
+	checkf(in_log(ref_tab[1], log_at) == 1 && in_log(ref_tab[2], log_at) == 1 && in_log(ref_tab[3], log_at) == 0,
+	       "the two names that changed are drawn, once each, the third is not");
+	for (k = first[2]; k <= last[2]; k++)
+		if (!(TREE[k].ob_flags & HIDETREE) && in_log(k, log_at) != 1) {
+			once = 0;
+			missed = k;
+		}
+	checkf(once, "every object of the new page is drawn once (object %d is not)", missed);
+	for (k = first[1]; k <= last[1]; k++)
+		old_drawn += in_log(k, log_at);
+	checkf(old_drawn == 0, "none of the old page's objects (hidden) is drawn (%d)", old_drawn);
+	checkf(in_log(ref_cancel, log_at) == 1 && in_log(ref_ok, log_at) == 1,
+	       "Cancel and OK are drawn again, once: the area's 3 pixels reach their frames");
+	checkf(in_log(set_obj_pages(cur), log_at) == 0 && in_log(1, log_at) == 0, "neither the band nor the pages' own box is drawn");
+}
+
+static void sw_banded(void)
+{
+	checkf(timers >= 4, "at 15 ms an object and turns of 20 ms the switch made %d event calls between its parts", timers);
+	sw_check();
+}
+
+static void test_page_switch(void)
+{
+	SET_DEF d = def3(pages3, 3);
+	reset();
+	{
+		static const STEP s[] = { CALL(sw_mark), TAB(2), CALL(sw_check), CANCELB, END };
+		run(&d, s);
+	}
+	/* every object takes 15 ms: the page is drawn in turns, an event call between, each object once */
+	reset();
+	draw_cost = 15;
+	{
+		static const STEP s[] = { CALL(sw_mark), TAB(2), CALL(sw_banded), CANCELB, END };
+		run(&d, s);
+	}
+	draw_cost = 0;
+	/* dlg_find: the AES's hit test in C. A tab, a field, a hidden object's place, the box's gap, outside */
+	reset();
+	{
+		static const STEP s[] = { CALL(find_check), CANCELB, END };
+		run(&d, s);
 	}
 }
 
@@ -969,6 +1069,7 @@ int main(void)
 	geometry(8, 16, 12, 44, 20, "EWeb: list 12, page 44, 20 rows");
 	geometry(8, 8, 0, 0, 17, "8x8 cells (ST medium)");
 	test_pages_and_ticks();
+	test_page_switch();
 	test_keys_and_values();
 	test_check();
 	test_widgets();
