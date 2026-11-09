@@ -29,8 +29,69 @@ LIST_Y = 181
 ROW = 16
 
 
+def slim(work):
+    """the run's disks are 200 MB (a copy of the C: drive and its image): gone once the log is read"""
+    for n in ("hd", "hd.img", "ext2.img"):
+        p = os.path.join(work, n)
+        if os.path.isdir(p):
+            shutil.rmtree(p, ignore_errors=True)
+        elif os.path.exists(p):
+            os.remove(p)
+
+
 def row_y(k):
     return LIST_Y + 1 + k * ROW + ROW // 2
+
+
+LONG = ["A long file name.mp3", "Mixed Case Song - Artist (2019 remix).MP3",
+        "short.wav", "very_long_filename_without_spaces_0123456789_0123456789.wav"]
+LONGDIR = "Long Folder Name With Spaces"
+
+
+def long_names(work, img, display, prg):
+    """the dialog on a folder of an ext2 drive (run.py --ext2, D:) with long names: every music file is listed
+    whole (^A takes them all) and a folder of a long name opens and gives its file. Before 9 Nov 2026 the
+    list held only the names that fit 8+3, on MiNT with Fsfirst"""
+    src = os.path.join(work, "ext2src")
+    d = os.path.join(src, "fptlong")
+    os.makedirs(os.path.join(d, LONGDIR))
+    for n in LONG + ["notes.txt", ".hidden.mp3", LONGDIR + "/inner file in folder.mp3"]:
+        with open(os.path.join(d, n), "wb") as f:
+            f.truncate(100)
+    with open(os.path.join(src, "lfnprobe.txt"), "w") as f:
+        f.write("probe\n")
+    steps = ["until FPT open 150", "wait 3", "shot", "ctrl a", "wait 2", "shot", "key 0x1c", "until FPT dir 30"]
+    cmd = [sys.executable, os.path.join(XAAES, "run.py"), os.path.join(work, "x"), img, prg, "--ext2", src,
+           "--display", display, "--steps", ";".join(steps)]
+    r = subprocess.run(cmd, cwd=XAAES, capture_output=True, text=True)
+    print(r.stdout[-300:])
+    log = open(os.path.join(work, "x", "hatari.log"), errors="replace").read()
+    slim(os.path.join(work, "x"))
+    took = [l[9:] for l in log.splitlines() if l.startswith("FPT took ")]
+    fails = []
+    m = re.match(r"([a-p]):\\fptlong\\", took[0]) if took else None
+    drive = m.group(1) if m else "d"
+    want = ["%s:\\fptlong\\%s" % (drive, n) for n in LONG]
+    if took != want:
+        fails.append("^A took %s, wanted %s" % (took, want))
+    print("  ext2, long names: took %d of %d files" % (len(took), len(want)))
+    return fails
+
+
+def long_folder(work, img, display, prg):
+    """a double click on a folder with a long name opens it; a double click on its file takes it (the full path)"""
+    steps = ["until FPT open 150", "wait 3", "dclick 300 %d" % row_y(0), "wait 3", "shot",
+             "dclick 300 %d" % row_y(0), "until FPT dir 30"]
+    cmd = [sys.executable, os.path.join(XAAES, "run.py"), os.path.join(work, "x2"), img, prg, "--ext2",
+           os.path.join(work, "ext2src"), "--display", display, "--steps", ";".join(steps)]
+    r = subprocess.run(cmd, cwd=XAAES, capture_output=True, text=True)
+    print(r.stdout[-300:])
+    log = open(os.path.join(work, "x2", "hatari.log"), errors="replace").read()
+    slim(os.path.join(work, "x2"))
+    took = [l[9:] for l in log.splitlines() if l.startswith("FPT took ")]
+    ok = len(took) == 1 and re.fullmatch(r"[a-p]:\\fptlong\\%s\\inner file in folder.mp3" % LONGDIR, took[0])
+    print("  ext2, long folder: took %s" % took)
+    return [] if ok else ["the long folder's file: took %s" % took]
 
 
 def main():
@@ -72,6 +133,7 @@ def main():
     r = subprocess.run(cmd, cwd=XAAES, capture_output=True, text=True)
     print(r.stdout[-600:])
     log = open(os.path.join(work, "x", "hatari.log"), errors="replace").read()
+    slim(os.path.join(work, "x"))
     fails = []
     g = re.findall(r"FPT geom (.*)", log)
     lst = re.search(r"list=(\d+),(\d+),(\d+),(\d+)", g[-1]) if g else None
@@ -95,6 +157,8 @@ def main():
     if took != ["C:\\MUSIC\\LIVE\\X.MP3"]:
         fails.append("a double click on a file took %s" % took)
     print("  XaAES: folders opened %d, took %s" % (folders, took))
+    fails += long_names(os.path.join(work, "long"), img, display, prg)
+    fails += long_folder(os.path.join(work, "long"), img, display, prg)
     for f in fails:
         print("FAIL  " + f)
     print("all passed" if not fails else "%d failed" % len(fails))

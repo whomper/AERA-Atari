@@ -13,8 +13,12 @@
 #ifndef AERA_DIRLIST_H
 #define AERA_DIRLIST_H
 
+#define DL_NAME 256		/* the longest name and its NUL (MiNT's: 255); a longer one is left out */
+
 typedef struct {
-	char name[14];		/* 8.3, as GEMDOS gives it */
+	const char *name;	/* as the file system gives it (8.3 from GEMDOS, a long name from MiNT: the folder
+				   read with Dopendir, ui/filepick.c), in the list's own pool: valid until dl_clear or
+				   dl_free */
 	long size;
 	unsigned short date;	/* GEMDOS's: year - 1980 << 9 | month << 5 | day */
 	unsigned short time;
@@ -37,6 +41,7 @@ typedef struct {
 	DENT *e;
 	int n, cap;		/* all the folder's entries, sorted */
 	int *view, nview;	/* those shown: indexes into e */
+	struct dl_pool *pool;	/* the names' memory, in chunks (a name never moves) */
 	int type, sort;		/* type: an index into types */
 	char mask[14];		/* "" or "*": everything */
 	const DL_TYPE *types;	/* dl_init: one, "All files" */
@@ -47,8 +52,8 @@ void dl_init(DLIST *d);
 void dl_types(DLIST *d, const DL_TYPE *t, int n);	/* the app's; type 0 then */
 void dl_free(DLIST *d);
 void dl_clear(DLIST *d);	/* its entries gone (another folder), the type, sort and mask kept */
-/* an entry of the folder read ("." and ".." are left out): 0 when there's
-   no memory for it */
+/* an entry of the folder read ("." and ".." are left out; a name of DL_NAME
+   or more is left out): 0 when there's no memory for it */
 int dl_add(DLIST *d, const char *name, long size, unsigned short date, unsigned short time, int dir);
 /* sorted (folders first, then the files, each as d->sort has it), and
    the view made again from the type and the mask (folders always) */
@@ -56,7 +61,7 @@ void dl_sort(DLIST *d);
 void dl_filter(DLIST *d);
 DENT *dl_at(DLIST *d, int row);		/* the view's row: 0 past it */
 
-int dl_match(const char *mask, const char *name);	/* * and ?, case aside */
+int dl_match(const char *mask, const char *name);	/* * and ?, case aside; no backtracking blow-up on a long name */
 int dl_type_ok(const DLIST *d, int type, const char *name);
 const char *dl_type_name(const DLIST *d, int type);	/* its name: "?" past the table */
 const char *dl_sort_name(int sort);	/* "By name", ... */

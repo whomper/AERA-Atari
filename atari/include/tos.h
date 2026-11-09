@@ -98,6 +98,14 @@ static inline long trap1_wwlll(short fn, short a, long b, long c, long d)
 	return r;
 }
 
+static inline long trap1_wwllll(short fn, short a, long b, long c, long d, long e)
+{
+	register long r __asm__("d0");
+	__asm__ volatile("move.l %6,-(%%sp)\n\tmove.l %5,-(%%sp)\n\tmove.l %4,-(%%sp)\n\tmove.l %3,-(%%sp)\n\tmove.w %2,-(%%sp)\n\tmove.w %1,-(%%sp)\n\ttrap #1\n\tlea 20(%%sp),%%sp"
+		: "=r"(r) : "r"(fn), "r"(a), "r"(b), "r"(c), "r"(d), "r"(e) : TRAP_CLOBBER);
+	return r;
+}
+
 static inline long trap13_w(short fn)
 {
 	register long r __asm__("d0");
@@ -187,6 +195,15 @@ static inline long trap14_wl(short fn, long a)
 #define Dfree(b, d)        trap1_wlw(0x36, (long)(b), (d))
 #define Fattrib(n, w, a)   trap1_wlww(0x43, (long)(n), (w), (a))
 #define Fdatime(p, h, w)   trap1_wlww(0x57, (long)(p), (h), (w))
+
+/* MiNT's (cookie 'MiNT'; -32 where GEMDOS doesn't know them): the process's domain (0 TOS, 1 MiNT: Pdomain(-1)
+   asks), a folder read with its long names, one entry's attributes */
+#define Pdomain(d)         trap1_ww(0x119, (d))
+#define Dopendir(p, f)     trap1_wlw(0x128, (long)(p), (f))
+#define Dreaddir(n, h, b)  trap1_wwll(0x129, (n), (long)(h), (long)(b))
+#define Dclosedir(h)       trap1_wl(0x12b, (long)(h))
+#define Fxattr(f, p, x)    trap1_wwll(0x12c, (f), (long)(p), (long)(x))
+#define Dxreaddir(n, h, b, x, r) trap1_wwllll(0x142, (n), (long)(h), (long)(b), (long)(x), (long)(r))
 
 /* MiNT and MiNTnet (GEMDOS extensions; -32 EINVFN when absent) */
 #define Fcntl(h, a, c)     trap1_wwlw(0x104, (h), (long)(a), (c))
