@@ -120,7 +120,7 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   on a page without one Esc is Cancel.
   **There is no exception for a field that only filters a list:** Esc empties the filter, and on an empty one it does
   nothing more. The dialog closes only by its Cancel button or Undo. EPlay's Add files (`filepick.c`: `a == 27 &&
-  !s_mask[0]`, hub) and EContact's choose mode (its toolbar's Cancel, or Undo, ends it) cancelled on an empty field
+  !s_mask[0]`; fixed there on 9 Nov 2026, EPlay takes it with its sync) and EContact's choose mode (its toolbar's Cancel, or Undo, ends it) cancelled on an empty field
   and change. Decided 9 Nov 2026 (D28, C15).
 - **A one-line text field of a window empties on Esc too** and nothing else happens (EHypView's library search,
   a list's filter). EWeb's address field puts back the page's address. **A text of several lines never empties
@@ -262,8 +262,8 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
     left-justified: a space, the choice padded to the width, and the system font's down arrow `\x02` in the last
     cell: `sprintf(label, " %-21s\x02", choice)` for a button 23 cells wide (EHypView `start_show`); EFTP's
     `choice_label` makes the same for 28 cells, with the right-hand note (an offset) before the arrow. It is
-    never a plain `G_BUTTON` and never a drop-down the app draws (EPlay's Add files draws plain `G_BUTTON`s
-    centred, `"%s \x02"`: C9). In 3D it is raised; flat it is a framed box.
+    never a plain `G_BUTTON` and never a drop-down the app draws (EPlay's Add files drew plain `G_BUTTON`s
+    centred, `"%s \x02"`: C9, fixed in `filepick.c` on 9 Nov 2026). In 3D it is raised; flat it is a framed box.
   - **The menu's items** start with two spaces; the ticked one starts with `\x08` (the Atari check mark) in
     place of the first space: `"%c %s"` with `'\x08'` or `' '`. `popup()` puts the check mark half a cell in
     and every item's words 2 cells in from the left edge. The shared `popup_m()` adds the margin itself
