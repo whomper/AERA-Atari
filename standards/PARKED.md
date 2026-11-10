@@ -76,6 +76,14 @@ starts before he says so. The hub adds to it; each line says where the work stan
   which needs answers about the FireBee's sound first (below). A FireBee owner offered to test ColdFire
   builds (the V4e core, `-mcpu=5475`); the other programs run there as they are, through the system's
   emulation of the instructions the chip lacks.
+- **Packaging (Erez, 10 Nov 2026):** the FireBee edition is made as one release, not a separate product. Each
+  app's release carries three builds side by side: the ST's (68000), the Falcon's and accelerated machines'
+  (68030 and up, as today) and the FireBee's (ColdFire, `-mcpu=5475`). EWeb and EPlay are named; EPDF follows
+  the same shape unless Erez says otherwise. This is a written exception to guideline 7.4's "one program for
+  every Atari" for these apps: EWeb already has `EWEBST.PRG`, and the FireBee build is a third file with its
+  own name, chosen by its session (nothing under `common/` decides it). The program a user starts is the one
+  for their machine; each build says so in its About box, and a wrong one is refused with an alert by
+  `cpucheck.c` as the 68030 build already is on an ST.
 - The work is mostly `common/`: ColdFire versions of the assembly (crt0, crash, inflate_fast, mont030,
   sting, nf), TLS without the DSP, and for EWeb its script overlay on the ColdFire FPU (doubles only).
   EWeb's DESIGN.md, "A FireBee edition", has what was checked. Hatari has no ColdFire: the GEM checks need
