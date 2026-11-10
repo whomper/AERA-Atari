@@ -84,6 +84,19 @@ starts before he says so. The hub adds to it; each line says where the work stan
   own name, chosen by its session (nothing under `common/` decides it). The program a user starts is the one
   for their machine; each build says so in its About box, and a wrong one is refused with an alert by
   `cpucheck.c` as the 68030 build already is on an ST.
+- **What the FireBee's operating systems page says** (firebee.org, "The FireBee operating systems", read 10 Nov;
+  it has nothing on sound, the MFP, a YM2149 or a DSP, so those stay the tester's to answer):
+  - **FireTOS** (TOS 4.04 for MiNT, Didier Mequignon's ColdFire port) is the default: GEM, accessories, desktops,
+    a **STiNG-compatible TCP/IP stack** (our programs' network code uses STinG), a USB, SD, IDE and CF driver set,
+    Videl modes in 256, 65k and 16M colours. Its `cf68klib` emulates the 68k instructions the ColdFire lacks, so
+    today's 68000 and 68030 builds already run there, "if cleanly programmed for a GEM environment", at emulation
+    speed.
+  - **EmuTOS** is native ColdFire and fast, but has **no `cf68klib`: it cannot run a 68k program at all** unless a
+    68k emulator is added. A ColdFire build is the only one that runs under EmuTOS, which is a reason for the
+    third build as well as for speed.
+  - **FreeMiNT** runs on the FireTOS (the "FireBee FreeMiNT Setup", a ready multitasking GEM setup with a browser
+    and desktops) and as a ColdFire build from GitHub; the two are not interchangeable, and the setup must not
+    be booted with EmuTOS. A ColdFire build is therefore tested under FireTOS, FireTOS + MiNT and EmuTOS.
 - The work is mostly `common/`: ColdFire versions of the assembly (crt0, crash, inflate_fast, mont030,
   sting, nf), TLS without the DSP, and for EWeb its script overlay on the ColdFire FPU (doubles only).
   EWeb's DESIGN.md, "A FireBee edition", has what was checked. Hatari has no ColdFire: the GEM checks need
