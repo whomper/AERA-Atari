@@ -207,3 +207,14 @@ which he did not rule on.
 EPDF's reply arrived after the evaluation was written (EPDF 2.2; its `ui-family` branch is unreleased): it agrees
 with MD1, MD4 and the controls rows, reports that its Find dialog exists (`find.c`), and chose B2 for EConvert,
 which D34 confirms.
+
+## Decided by Erez, one by one, 10 Nov 2026
+
+1. **D25, keys in Settings:** kept as built (Tab/Shift+Tab, Space, arrows, Up/Down in the page list, the thin ring after a key).
+2. **D4, Find words:** the rule as written: ECal `Find...`, EMail `Find`, EContact `Find`; places unchanged.
+3. **ClaudeST's Options order (D6, D13):** dialog items first, ticks after, with a later release (not the 2.4 fix).
+4. **D41/D42, EPlay's column titles:** bold dim like the others; EPlay changes.
+5. **Test configuration:** 256 colours confirmed (Falcon-4:256, TOS 4.04, 4 MB, NVDI).
+6. **D49, taglines:** no article ("Calendar for the ST, TT and Falcon").
+7. **Changing the Settings page from a text field:** no direct key; Tab to the page list, then Up/Down.
+8. **C21, EHypView's "Look there anyway?":** kept; D30 covers numbers only, a missing folder is a question.
