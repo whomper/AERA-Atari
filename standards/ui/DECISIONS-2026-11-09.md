@@ -218,3 +218,12 @@ which D34 confirms.
 6. **D49, taglines:** no article ("Calendar for the ST, TT and Falcon").
 7. **Changing the Settings page from a text field:** no direct key; Tab to the page list, then Up/Down.
 8. **C21, EHypView's "Look there anyway?":** kept; D30 covers numbers only, a missing folder is a question.
+
+### Decided by Erez, one by one, 10 Nov 2026 (second round)
+
+9. **D17, where Insert's menu opens:** at the selection: the selected row's top-left (lists, folders), the text cursor (editor), the chosen words (reader); with no selection, the pane's top-left (ECal: the selected event, else the selected day, else the pointer).
+10. **D18, ECal's dialog tips:** 0.7 s like every other tip, through `tooltip.c`.
+11. **D45, where the side pane's ⇧^S item goes in an app with no View menu:** in the app's own menu: EMail, a tick `Folder pane  ⇧^S` at the top of Folder; ClaudeST, `Hide chat list` / `Show chat list  ⇧^S` in Chat.
+12. **D30, EUpdate's hours alert:** `[1][Check every 1 to 168 hours.|Please type a number|from 1 to 168.][ OK ]`, the field kept as typed. **Copy:** `Copy ^C` in both the pop-up and the bar.
+13. **D2, EHypView's Index key:** ⇧^T (next to Contents ^T).
+14. **D49, EContact's tagline:** `Contacts for the ST, TT and Falcon`.
