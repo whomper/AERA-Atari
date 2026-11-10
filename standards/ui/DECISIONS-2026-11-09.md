@@ -140,7 +140,7 @@ Done first, in `common/` and the standards (numbers are the evaluation's section
 - **Item 5, `common/ui/tooltip.c`** from EFTP's `tip_show`, 0.7 s, BubbleGEM (D18). *Done 9 Nov 2026* (hub); apps adopt.
 - **Item 6, `popup()`:** adds its margin (D15) and opens over a button on request (D27); `popup.h`'s example
   fixed (MG14); `set_popup` and `set_tick_group` grey one choice (D24). *Margin and example done 9 Nov 2026* (`popup_m()`,
-  hub; apps adopt); "over this button" and the grey single choice are still to do.
+  hub; apps adopt); "over this button" (`popup_over`, 10 Nov) and the grey single choice (`set_popup_enable`, 9 Nov) are done.
 - **New:** the Font and Languages dialogs get the band and 10-wide buttons (D22, D26); the dialog loop and the
   Settings engine learn the keyboard reach (D25) and refuse out-of-range numbers where the engine owns them (D30);
   the window arrows go to the pane under the pointer (D37); one `theme.c` with the one selection colour (D42); a
