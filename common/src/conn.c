@@ -234,7 +234,8 @@ static void log_old_name(char *old)
 			dot = n;
 	}
 	memcpy(old, conn_logfile, dot);
-	strcpy(old + dot, ".OLD");
+	/* the log's own case (6.6: apps write lowercase names): "ecal.log" -> "ecal.old" */
+	strcpy(old + dot, dot + 1 < n && conn_logfile[dot + 1] >= 'a' && conn_logfile[dot + 1] <= 'z' ? ".old" : ".OLD");
 }
 
 static void log_write(const char *s, long n)
