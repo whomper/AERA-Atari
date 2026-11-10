@@ -70,14 +70,23 @@ starts before he says so. The hub adds to it; each line says where the work stan
 
 ## FireBee edition (Erez, 9 Nov 2026)
 
-- Target: EWeb and EPDF, once the family rework and alignment are finished (the UI standards, the shared
-  dialog engine and the apps' adoption) and EWeb has reached 1.0. A FireBee owner offered to test ColdFire
+- Target: EWeb, EPDF and, since 10 Nov, EPlay (Erez asked for it "just like the EWeb plan"), once the family
+  rework and alignment are finished (the UI standards, the shared dialog engine and the apps' adoption) and
+  EWeb has reached 1.0. Order: EWeb first (it builds the ColdFire layer of `common/`), then EPDF, then EPlay,
+  which needs answers about the FireBee's sound first (below). A FireBee owner offered to test ColdFire
   builds (the V4e core, `-mcpu=5475`); the other programs run there as they are, through the system's
   emulation of the instructions the chip lacks.
 - The work is mostly `common/`: ColdFire versions of the assembly (crt0, crash, inflate_fast, mont030,
   sting, nf), TLS without the DSP, and for EWeb its script overlay on the ColdFire FPU (doubles only).
   EWeb's DESIGN.md, "A FireBee edition", has what was checked. Hatari has no ColdFire: the GEM checks need
   the tester's FireBee; QEMU's cfv4e runs the host tests and counts.
-- Not part of it: EPlay (its sound goes through the Falcon's hardware and DSP, so a FireBee build would be
-  a new audio driver, a separate decision).
-
+- EPlay's part (its session's list, 10 Nov): no DSP56001, so MP3 decodes on the ColdFire with the C model it
+  already has (`src/mp3/mp3dsp.c`; its int64 arithmetic must be checked, the V4e has no 64-bit `mulu.l` or
+  `divu.l`); the SN76489 files need a software model; its own assembly (`feed.S`, `hostirq.S`, `term.c`'s
+  trap 13, `div64.c`) and common's. **The big unknowns are the FireBee's, and only the tester can answer
+  them:** whether FireTOS or MiNT gives a Falcon-compatible XBIOS sound API (Setbuffer, Devconnect,
+  Soundcmd) over the AC'97 codec and which DMA ring and rates; whether an MFP Timer A exists (EPlay feeds its
+  ring from it); whether a YM2149 (or the FPGA's copy) answers at $FF8800. One question to put to the tester
+  through Erez, before any work: EPlay's next release carries a small probe program (`FBPROBE.PRG`, 68000
+  code, its notes say it is for the FireBee) that reports those facts to a text file; Erez or the tester
+  runs it and sends the file back.
