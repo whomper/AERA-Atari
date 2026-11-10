@@ -71,10 +71,20 @@ import zipfile
 ERZ_MACHINE = "Falcon-4:256"
 
 
+def nvdi_here(env=None):
+    """True when Erez's NVDI is on this computer (the folder Machine.nvdi() reads)"""
+    e = os.environ if env is None else env
+    src = e.get("AERA_NVDI", os.path.join(os.path.expanduser("~"), ".aera", "nvdi", "x"))
+    return os.path.exists(os.path.join(src, "auto", "nvdi.prg"))
+
+
 def erz_env(env=None):
-    """the environment that makes a rig run Erez's configuration: NVDI on every Falcon it starts"""
+    """the environment that makes a rig run Erez's configuration: NVDI on every Falcon it starts. Where this
+    computer has no NVDI it is left off (the stand-in: the same machine on EmuTOS, as describe() says), so a rig
+    can call this unconditionally; AERA_WITH_NVDI set by hand still stops with 'no NVDI here'."""
     e = dict(os.environ if env is None else env)
-    e["AERA_WITH_NVDI"] = "1"
+    if nvdi_here(e):
+        e["AERA_WITH_NVDI"] = "1"
     return e
 
 
