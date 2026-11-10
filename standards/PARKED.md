@@ -97,6 +97,18 @@ starts before he says so. The hub adds to it; each line says where the work stan
   - **FreeMiNT** runs on the FireTOS (the "FireBee FreeMiNT Setup", a ready multitasking GEM setup with a browser
     and desktops) and as a ColdFire build from GitHub; the two are not interchangeable, and the setup must not
     be booted with EmuTOS. A ColdFire build is therefore tested under FireTOS, FireTOS + MiNT and EmuTOS.
+- **What the maker's hardware page says** (Medusa Computer Systems, medusacomputer.com/firebee.html, read 10 Nov;
+  the page is dated February 2018 and describes the first board, a Series 2 exists, so the tester's machine
+  wins where they differ): ColdFire MCF5474 at 266 MHz (400 MIPS); 512 MB DDR plus 128 MB of video and special
+  RAM, and 512 KB of static RAM "for DSP and others"; 8 MB flash for the operating systems. Atari-compatible
+  ports: TT/Falcon IDE, ST/TT floppy, TT-SCSI, ACSI, ROM port, printer, serial, MIDI, keyboard and mouse, and
+  **"ST-Sound (mixed to line out and mono out in the AC'97)"**; video through DVI-I (ST, TT and Falcon video
+  modes, up to 1600x1200 or 1920x1200); Ethernet 10/100, USB 2.0 host, CF, SD, PCI. Sound: **an AC'97 stereo
+  codec with DMA sound output and 48 kHz sampling input**. **The Falcon DSP is listed as a planned extension
+  "in the FPGA"**, not present: no DSP56001 to count on. For EPlay this answers part of what the probe asks:
+  there is an ST-sound source (a YM2149 look-alike, so likely at $FF8800, to confirm), and a DMA sound output
+  on an AC'97 codec, with nothing said about it being register-compatible with the Falcon's; Timer A is not
+  mentioned.
 - The work is mostly `common/`: ColdFire versions of the assembly (crt0, crash, inflate_fast, mont030,
   sting, nf), TLS without the DSP, and for EWeb its script overlay on the ColdFire FPU (doubles only).
   EWeb's DESIGN.md, "A FireBee edition", has what was checked. Hatari has no ColdFire: the GEM checks need
