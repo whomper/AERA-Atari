@@ -5,6 +5,31 @@ once per candidate; one boot per test, not several of the same (guideline 1.2). 
 on the hub's machine from its queue logs (a Falcon boot is about 2.4 min, a speed run 2-7 min per
 machine, the whole EPlay set about 30 min); an app's own column is that session's figure.
 
+## Decided 10 Nov 2026 (Erez): one configuration, and the lighter set
+
+**Erez's configuration** is the one every AERA app's testing has once: **a Falcon with TOS 4.04, 4 MB and NVDI, in
+256 colours** (`Falcon-4:256`, `AERA_WITH_NVDI=1`; `machines.ERZ_MACHINE`, `machines.erz_env()`). His own Falcon has
+14 MB, but 4 MB runs it as well and is the stock Falcon (68030 at 16 MHz, no FPU). Each app **replaces one of its
+Falcon runs with it** and does not run the same function twice on two Falcons. Where a session's container has no
+TOS images or NVDI (EMail, EPDF, EPlay), the same rig runs on EmuTOS without NVDI and says so in its report
+(`describe()` names "Erez's configuration" only when it really was his TOS and NVDI); **the hub runs it for real**.
+This holds for every app, maintenance apps at the next release they make anyway.
+
+**The hub's set per candidate (kind 3: a change that draws, starts or loops over data), replacing the old one:**
+
+| # | What | Machine | Minutes |
+|---|---|---|---|
+| 1 | clean clone, `make`, `make test` (only the hash and a build if the session reported the checks) | host | 1 |
+| 2 | the speed rows, paired: the last release and the candidate, one run each | Erez's configuration | 5 |
+| 3 | the same, for an app with an ST edition | `ST-1:mono` (TOS 1.04) | 5-12 |
+| 4 | start, menu, About, one dialog, move and close a window, quit, no CRASH.LOG, no alert | TT 1280x960 + MiNT + XaAES (`common/tests/xaaes/run.py --machine tt`) | 1 |
+| 5 | a true-colour shot | `Falcon:65536` + NVDI, drawing candidates only | 3 |
+
+About 15 minutes of hub time a candidate, one queue at a time. **No longer a gate:** `acc_all` (monthly, first and
+second boot, on Erez's configuration), the plain-VDI Falcon run (once, only for a drawing candidate), repeated runs
+of a row (a second and third pair only for a row the first pair flags), the app's own `make test` again, and runs
+of an ST row on a second ST. A change to the docs alone takes no run (guidelines 1.2).
+
 ## Axes
 
 | Axis | Values |
