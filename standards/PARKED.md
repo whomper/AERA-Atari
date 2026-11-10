@@ -123,3 +123,10 @@ starts before he says so. The hub adds to it; each line says where the work stan
   through Erez, before any work: EPlay's next release carries a small probe program (`FBPROBE.PRG`, 68000
   code, its notes say it is for the FireBee) that reports those facts to a text file; Erez or the tester
   runs it and sends the file back.
+- **MP3 on the CPU (a user's note, relayed by Erez 10 Nov; from EPlay):** the 68060 machines (the Raven clone and
+  others) and the FireBee decode MP3 on the CPU with little load. MxPlay has a ColdFire MPx module; AniPlayer
+  uses the MCF5474's hardware MAC (EMAC) for MPEG audio. The Raven Rev2 has a DSP56303, not a 56001: another
+  host port and sound wiring, so EPlay's DSP programs would not run on it as they are. For EPlay that means a CPU
+  MP3 path from its C model of the DSP decoder: on 68060s with no Falcon DSP (chosen at run time) and in the
+  FireBee edition, with EMAC for the synthesis filter and the IMDCT later. Erez decides; nothing is started.
+  (EPlay's FBPROBE 1.16 ran on Falcon-4, STE, TT and ST:mono here, and is with the 1.16 release for the tester.)
