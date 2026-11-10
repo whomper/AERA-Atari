@@ -130,3 +130,7 @@ starts before he says so. The hub adds to it; each line says where the work stan
   MP3 path from its C model of the DSP decoder: on 68060s with no Falcon DSP (chosen at run time) and in the
   FireBee edition, with EMAC for the synthesis filter and the IMDCT later. Erez decides; nothing is started.
   (EPlay's FBPROBE 1.16 ran on Falcon-4, STE, TT and ST:mono here, and is with the 1.16 release for the tester.)
+  **Decided (Erez, 10 Nov 2026, from EPlay):** "68060 support with the YM2612 and FireBee release". MP3 on the CPU
+  from EPlay's C model goes into the release that brings the YM2612: on 68060 machines with no Falcon DSP,
+  chosen at run time, never on a 68030. The FireBee's CPU MP3 goes in its own release (EMAC later). In EPlay's
+  DESIGN.md.
