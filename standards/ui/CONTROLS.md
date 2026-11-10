@@ -290,7 +290,7 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
     `proto_pick`) and EContact (`popup_over`) put the menu's top-left at the button's top-left whatever is ticked;
     ECal does the same, but through `field.c` `dlg_run` (`FT_POPUP`) into `popup.c` `popup()`, not `popup_over`
     (corrected 9 Nov); EMail's Translate pop-up and EPlay's Add files (`below()`, hub) open below the button. They
-    change, and the shared `popup()` gets an "over this button" call (hub work). Decided 9 Nov 2026 (D27, C8).
+    change, and the shared popup has an "over this button" call, `popup_over()` (hub, 10 Nov 2026). Decided 9 Nov 2026 (D27, C8).
 - **A choice from a long list is not a pop-up:** the button shows the choice and ends in "...", with no arrow,
   and opens a dialog with the list (EMail's and EFTP's time zones, `zone_label`: 28 cells, "..." in the last
   three). An arrow that opens a dialog promises what it doesn't do.

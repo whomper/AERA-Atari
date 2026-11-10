@@ -132,8 +132,8 @@ uses the AES's slider column; one click, one step). In detail, all in `common/ui
   pointer is over the list (`win_message`), because some AESes send a wheel as `WM_ARROWED`.
   **No app handles a wheel message** (`WM_WHEEL`): the Speed table's "the wheel" is not met by any app.
   **No wheel is wanted unless Erez asks** (the Speed table no longer lists it). **One rule: the window's arrows
-  scroll the pane under the pointer, else the slider's pane.** EContact does it today; the others change with a hub
-  change in `common/`. Decided 9 Nov 2026 (D37, W9).
+  scroll the pane under the pointer, else the slider's pane.** EContact does it today; the others change with the hub's
+  `common/ui/arrowed.c` (`arrow_target`, 10 Nov 2026). Decided 9 Nov 2026 (D37, W9).
 - **One click, one step** (28 Oct): the AES's second `WM_ARROWED` is dropped by `evnt_multi_`.
 
 ---
@@ -316,7 +316,7 @@ uses the AES's slider column; one click, one step). In detail, all in `common/ui
   EContact's `draw.c:sel_color` searches pens 2 to 255 for the colour nearest (120, 400, 880), against 5.2's
   rule; 16-colour `P_SEL` is (0,0,667) in EFTP and EUpdate and (0,0,533) in EMail. **`theme.c` is the family's palette,
   with one 16-colour selection colour, (0,0,667) as EFTP and EUpdate have it:** EMail changes, and the hub keeps the
-  one `theme.c`. ECal and EContact keep their palette unless Erez says otherwise; EContact's `sel_color` reads pens 0
+  one `theme.c` (`common/ui/theme.c`, `theme.h`, 10 Nov 2026: six base roles, the app's own handed to `theme_init`). ECal and EContact keep their palette unless Erez says otherwise; EContact's `sel_color` reads pens 0
   to 15 when next touched (5.2). EPlay's design D (its own pens and selection, plain column titles) stays. Decided
   9 Nov 2026 (D42, W16).
 - **The Hebrew keyboard's badge** sits: in EUpdate, EFTP, ECal and EContact at the toolbar row's right end
