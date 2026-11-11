@@ -211,7 +211,12 @@ long dlg_fast_count(void);
    (the AES would give a button still down as another press).
    dlg_touch_up waits for it now, for a loop that acts on the release
    (5.8: the row drawn on the press, the rest on the release): PRESS_IN,
-   PRESS_OUT or PRESS_DRAG (click.h), or -1 when no row is held */
+   PRESS_OUT or PRESS_DRAG (click.h), or -1 when no row is held.
+   Between the press handed back and the next dlg_evnt (or dlg_touch_up)
+   draw the changed rows only (the old and the new chosen, a button that
+   became enabled), the rest after the release: a quick double click's
+   release and second press that fall inside a long redraw are read as one
+   press (EMail's Move dialog, 2.16: the double was never seen) */
 #ifdef DLG_CLICK
 #define DLG_CLICKS 1
 void dlg_touch(OBJECT *tree, short *next, short x, short y);
