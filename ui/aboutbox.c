@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "gemui.h"
 #include "aboutbox.h"
+#include "aboutpen.h"
 #include "alert.h"
 #include "dialog.h"
 #include "crash.h"
@@ -385,23 +386,6 @@ static void icon256_draw(const unsigned char *px, const unsigned char *map, shor
    palette is TOS's, else the nearest (an app's theme may have taken pens
    16 and up: EMail's). Nothing is lent, so nothing else on the screen
    changes colour while the box is open. */
-/* the nearest of n colours c[] to want (a pen's rgb, 0 to 1000 a channel):
-   its pen, pens[i] where the colours are a list, else i */
-static short nearest_pen(const short (*c)[3], const short *pens, short n, const short *want)
-{
-	long best = -1;
-	short i, pen = 0;
-	for (i = 0; i < n; i++) {
-		long d = 0, e;
-		short k;
-		for (k = 0; k < 3; k++)
-			e = c[i][k] - want[k], d += e * e;
-		if (best < 0 || d < best)
-			best = d, pen = pens ? pens[i] : i;
-	}
-	return pen;
-}
-
 /* A few of the icon's pens changed (an app's theme.c takes pens 16 to 21):
    each takes the nearest of the 16 system pens and the icon's own pens that
    kept their colour (16 + about 20 vq_color calls). When many changed
@@ -436,9 +420,9 @@ static void icon256_pens(const short (*rgb)[4], unsigned char *map)
 		short pen = rgb[i][0];
 		if (!ok[i]) {
 			if (pal)
-				pen = nearest_pen((const short (*)[3])pal, 0, 256, &rgb[i][1]);
+				pen = about_nearest_pen((const short (*)[3])pal, 0, 256, &rgb[i][1]);
 			else if (nc)
-				pen = nearest_pen((const short (*)[3])cc, cpen, nc, &rgb[i][1]);
+				pen = about_nearest_pen((const short (*)[3])cc, cpen, nc, &rgb[i][1]);
 		}
 		map[rgb[i][0]] = (unsigned char)pen;
 	}
