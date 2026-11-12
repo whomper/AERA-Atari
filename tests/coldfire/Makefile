@@ -14,7 +14,7 @@ BASE   ?= origin/main
 CF     := -mcpu=5475 -O2 -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic -fno-pie \
           -fno-tree-loop-distribute-patterns -nostdinc -isystem $(GCCINC) -I. -I$(C)/src -Wall
 LD     := $(CC) -mcpu=5475 -nostdlib -static -no-pie -Wl,-z,noexecstack
-TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf
+TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c
 
 all: $(TESTS)
 
@@ -53,6 +53,27 @@ $(B)/nf.o: $(C)/atari/nf.S | $(B)
 $(B)/test_nf: $(B)/test_nf.o $(B)/nf.o $(B)/libc.o $(B)/rt.o
 	$(LD) -o $@ $^
 
+# inflate_fast.S: tests/inflate's asm_check corpus through inflate_piece
+# with the ColdFire loop (-DINFLATE_ASM) and with the C's, both as ColdFire
+# code, each compared with the host's C byte for byte
+INF    := $(C)/tests/inflate
+$(B)/inflate_fast.o: $(C)/atari/inflate_fast.S | $(B)
+	$(CC) -mcpu=5475 -c -o $@ $<
+$(B)/inflate_asm.o: $(C)/src/inflate.c | $(B)
+	$(CC) $(CF) -Iinc -I$(INF)/stub -DINFLATE_ASM -c -o $@ $<
+$(B)/inflate_c.o: $(C)/src/inflate.c | $(B)
+	$(CC) $(CF) -Iinc -I$(INF)/stub -c -o $@ $<
+$(B)/test_inflate.o: test_inflate.c rt.h | $(B)
+	$(CC) $(CF) -Iinc -I$(INF)/stub -c -o $@ $<
+$(B)/test_inflate: $(B)/test_inflate.o $(B)/inflate_asm.o $(B)/inflate_fast.o $(B)/libc.o $(B)/rt.o
+	$(LD) -o $@ $^
+$(B)/test_inflate_c: $(B)/test_inflate.o $(B)/inflate_c.o $(B)/libc.o $(B)/rt.o
+	$(LD) -o $@ $^
+$(INF)/build/corpus.bin $(INF)/build/out_c.bin:
+	$(MAKE) -C $(INF) build/asm_check_c
+	$(INF)/build/asm_check_c gen $(INF)/build/corpus.bin
+	$(INF)/build/asm_check_c run $(INF)/build/corpus.bin $(INF)/build/out_c.bin
+
 $(B):
 	mkdir -p $@
 
@@ -61,6 +82,12 @@ test: $(TESTS)
 	$(QEMU) $(B)/test_crt0_acc
 	$(QEMU) $(B)/test_sting
 	$(QEMU) $(B)/test_nf
+	$(MAKE) $(INF)/build/corpus.bin
+	$(QEMU) $(B)/test_inflate $(INF)/build/corpus.bin $(B)/out_asm.bin
+	cmp $(INF)/build/out_c.bin $(B)/out_asm.bin
+	$(QEMU) $(B)/test_inflate_c $(INF)/build/corpus.bin $(B)/out_c.bin
+	cmp $(INF)/build/out_c.bin $(B)/out_c.bin
+	@echo "inflate: the ColdFire loop and the C as ColdFire code give the host's C every byte and answer"
 
 # every .S in atari/ for the 68000 and the 68030, against BASE's
 same: | $(B)

@@ -21,6 +21,7 @@ static void check(const char *what, int ok)
 	}
 }
 
+#ifndef ACC
 static int pterm(int code)
 {
 	check("Pterm gives main's answer", code == 42);
@@ -30,13 +31,15 @@ static int pterm(int code)
 	out(fails ? "crt0: failed\n" : "crt0: an application started, shrunk and ended as on TOS\n");
 	return fails != 0;
 }
+#endif
 
 int main(void)
 {
 	char here;
 	check("_BasePage", _BasePage == (void *)fake_bp);
 	/* (crt0's stack is the 48 KB after _is_acc in its BSS) */
-	check("main on crt0's stack", &here > (char *)&_is_acc && &here < (char *)&_is_acc + 2 + 3 + 49152);
+	unsigned long at = (unsigned long)&here, acc = (unsigned long)&_is_acc;
+	check("main on crt0's stack", at > acc && at < acc + 2 + 3 + 49152);
 #ifdef ACC
 	check("_is_acc 1", _is_acc == 1);
 	check("nothing given back", gd_calls == 0);

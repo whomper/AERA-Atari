@@ -55,18 +55,70 @@ long read_file(const char *path, unsigned char *buf, long cap)
 	return n;
 }
 
-/* a small heap for the code under test: a bump allocator */
-static unsigned char heap[8 << 20];
+/* a small heap for the code under test: blocks with their size before
+   them, freed ones kept on a list and taken again first fit (the same
+   few sizes come back stream after stream) */
+static unsigned char heap[24 << 20];
 static long heap_at;
+typedef struct blk { size_t size; struct blk *next; } BLK;
+static BLK *freed;
 void *malloc(size_t n)
 {
-	void *p;
+	BLK **pp, *b;
 	n = (n + 7) & ~(size_t)7;
-	if (heap_at + (long)n > (long)sizeof heap)
+	for (pp = &freed; (b = *pp) != NULL; pp = &b->next)
+		if (b->size >= n) {
+			*pp = b->next;
+			return b + 1;
+		}
+	if (heap_at + (long)(n + sizeof(BLK)) > (long)sizeof heap)
 		return NULL;
-	p = heap + heap_at;
-	heap_at += (long)n;
-	return p;
+	b = (BLK *)(heap + heap_at);
+	heap_at += (long)(n + sizeof(BLK));
+	b->size = n;
+	return b + 1;
 }
 void *calloc(size_t a, size_t b) { void *p = malloc(a * b); if (p) memset(p, 0, a * b); return p; }
-void free(void *p) { (void)p; }
+void free(void *p)
+{
+	BLK *b;
+	if (p == NULL)
+		return;
+	b = (BLK *)p - 1;
+	b->next = freed;
+	freed = b;
+}
+
+/* util.c's growing buffer (inflate.c's codes use it), without its stdio */
+#include "util.h"
+static int grow(SBUF *b, long n)
+{
+	char *p;
+	long cap;
+	if (n < 0)
+		return 0;
+	if (b->len + n + 1 <= b->cap)
+		return 1;
+	cap = b->cap ? b->cap : 64;
+	while (cap < b->len + n + 1)
+		cap *= 2;
+	if ((p = malloc((size_t)cap)) == NULL)
+		return 0;
+	if (b->s != NULL) {
+		memcpy(p, b->s, (size_t)b->len + 1);
+		free(b->s);
+	}
+	b->s = p;
+	b->cap = cap;
+	return 1;
+}
+int sb_room(SBUF *b, long n) { return grow(b, n); }
+int sb_add(SBUF *b, const char *s, long n)
+{
+	if (!grow(b, n))
+		return 0;
+	memcpy(b->s + b->len, s, (size_t)n);
+	b->len += n;
+	b->s[b->len] = 0;
+	return 1;
+}
