@@ -14,7 +14,7 @@ BASE   ?= origin/main
 CF     := -mcpu=5475 -O2 -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic -fno-pie \
           -fno-tree-loop-distribute-patterns -nostdinc -isystem $(GCCINC) -I. -I$(C)/src -Wall
 LD     := $(CC) -mcpu=5475 -nostdlib -static -no-pie -Wl,-z,noexecstack
-TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc
+TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting
 
 all: $(TESTS)
 
@@ -40,12 +40,21 @@ $(B)/test_crt0: $(B)/crt0_start.o $(B)/crt0.o $(B)/test_crt0.o $(B)/gemdos.o $(B
 $(B)/test_crt0_acc: $(B)/crt0_start_acc.o $(B)/crt0.o $(B)/test_crt0_acc.o $(B)/gemdos.o $(B)/libc.o $(B)/rt_nostart.o
 	$(LD) -o $@ $^
 
+# sting.S: sting_call against Pure C stand-ins (sting_fn.S)
+$(B)/sting.o: $(C)/atari/sting.S | $(B)
+	$(CC) -mcpu=5475 -c -o $@ $<
+$(B)/sting_fn.o: sting_fn.S | $(B)
+	$(CC) -mcpu=5475 -c -o $@ $<
+$(B)/test_sting: $(B)/test_sting.o $(B)/sting.o $(B)/sting_fn.o $(B)/libc.o $(B)/rt.o
+	$(LD) -o $@ $^
+
 $(B):
 	mkdir -p $@
 
 test: $(TESTS)
 	$(QEMU) $(B)/test_crt0
 	$(QEMU) $(B)/test_crt0_acc
+	$(QEMU) $(B)/test_sting
 
 # every .S in atari/ for the 68000 and the 68030, against BASE's
 same: | $(B)
