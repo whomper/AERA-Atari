@@ -14,7 +14,7 @@ BASE   ?= origin/main
 CF     := -mcpu=5475 -O2 -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic -fno-pie \
           -fno-tree-loop-distribute-patterns -nostdinc -isystem $(GCCINC) -I. -I$(C)/src -Wall
 LD     := $(CC) -mcpu=5475 -nostdlib -static -no-pie -Wl,-z,noexecstack
-TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host
+TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host $(B)/test_crash
 
 all: $(TESTS)
 
@@ -87,6 +87,15 @@ $(B)/test_mont: $(B)/test_mont.o $(B)/rsa030.o $(B)/mont030.o $(B)/libc.o $(B)/r
 $(B)/test_mont_host: test_mont.c $(C)/src/rsa030.c | $(B)
 	cc -O2 -Wall -DHOST -I$(C)/src -o $@ test_mont.c $(C)/src/rsa030.c
 
+# crash.S: its entries through a ColdFire frame (crash_fake.S), crash.c's
+# part stood in for in test_crash.c
+$(B)/crash.o: $(C)/atari/crash.S | $(B)
+	$(CC) -mcpu=5475 -c -o $@ $<
+$(B)/crash_fake.o: crash_fake.S | $(B)
+	$(CC) -mcpu=5475 -c -o $@ $<
+$(B)/test_crash: $(B)/test_crash.o $(B)/crash.o $(B)/crash_fake.o $(B)/gemdos.o $(B)/libc.o $(B)/rt.o
+	$(LD) -Wl,-N -Wl,--no-warn-rwx-segments -o $@ $^
+
 $(B):
 	mkdir -p $@
 
@@ -104,6 +113,9 @@ test: $(TESTS)
 	./$(B)/test_mont_host > $(B)/mont_host.txt
 	$(QEMU) $(B)/test_mont > $(B)/mont_cf.txt
 	cat $(B)/mont_cf.txt
+	$(QEMU) $(B)/test_crash
+	$(QEMU) $(B)/test_crash take
+	$(QEMU) $(B)/test_crash linef
 	cmp $(B)/mont_host.txt $(B)/mont_cf.txt && echo "mont: the ColdFire's mont030, dbl030 and RSA give the host's C every word"
 
 # every .S in atari/ for the 68000 and the 68030, against BASE's

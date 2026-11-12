@@ -12,11 +12,6 @@ extern void (*sig_handler)(int, void *, void *);
 long gd_mshrink_base, gd_mshrink_size, gd_calls;
 int (*gd_pterm)(int code);
 
-typedef struct {
-	unsigned long uc_flags, uc_link, ss_sp, ss_flags, ss_size;
-	unsigned long version;
-	unsigned long gregs[18];	/* d0-d7, a0-a6, sp, pc, sr */
-} UCTX;
 
 static void handler(int sig, void *info, void *ucv)
 {
@@ -48,7 +43,7 @@ static void handler(int sig, void *info, void *ucv)
 	uc->gregs[16] = pc;
 }
 
-void gd_install(void)
+void sig_install(int sig, void (*h)(int, void *, void *))
 {
 	struct {
 		void *handler;
@@ -57,11 +52,16 @@ void gd_install(void)
 		unsigned long mask[2];
 	} sa;
 	memset(&sa, 0, sizeof sa);
-	sig_handler = handler;
+	sig_handler = h;
 	sa.handler = (void *)sig_entry;
 	sa.flags = 4;			/* SA_SIGINFO */
-	if (sys_call4(174, 4, (long)&sa, 0, 8) != 0) {	/* rt_sigaction(SIGILL) */
+	if (sys_call4(174, sig, (long)&sa, 0, 8) != 0) {	/* rt_sigaction */
 		out("gemdos: rt_sigaction failed\n");
 		sys_exit(3);
 	}
+}
+
+void gd_install(void)
+{
+	sig_install(4, handler);	/* SIGILL */
 }
