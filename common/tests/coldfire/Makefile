@@ -15,7 +15,7 @@ BASE   ?= origin/main
 CF     := -mcpu=5475 -O2 -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic -fno-pie \
           -fno-tree-loop-distribute-patterns -nostdinc -isystem $(GCCINC) -I. -I$(C)/src -Wall
 LD     := $(CC) -mcpu=5475 -nostdlib -static -no-pie -Wl,-z,noexecstack
-TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host $(B)/test_crash $(B)/test_tls
+TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host $(B)/test_crash $(B)/test_tls $(B)/test_cpucheck_cf $(B)/test_cpucheck_030
 
 all: $(TESTS)
 
@@ -130,6 +130,27 @@ $(B)/test_tls: $(B)/tls_test_030.o $(B)/tls_rsa030.o $(B)/mont030.o $(B)/tls_i31
                $(B)/tls_i31_c.o $(B)/libbearssl.a $(B)/ll64.o
 	$(LD) -o $@ $(filter-out $(B)/libbearssl.a $(B)/ll64.o,$^) $(B)/libbearssl.a $(B)/ll64.o
 
+# cpucheck_cf.S: the same bytes for the 68000 and the ColdFire, then run
+# as ColdFire code (_CF_ in the jar) and in a 68030 program (no _CF_)
+$(B)/cpucheck_cf.o: $(C)/atari/cpucheck_cf.S | $(B)
+	$(CC) -mcpu=5475 -c -o $@ $<
+	$(CC) -m68000 -c -o $(B)/cpucheck_000.o $<
+	$(CROSS)objcopy -O binary -j .text -j .data $@ $(B)/k_cf.bin
+	$(CROSS)objcopy -O binary -j .text -j .data $(B)/cpucheck_000.o $(B)/k_000.bin
+	cmp $(B)/k_cf.bin $(B)/k_000.bin
+	$(CROSS)objcopy --redefine-sym main=main_check $@
+$(B)/test_cpucheck_cf: test_cpucheck.c $(B)/cpucheck_cf.o $(B)/gemdos.o $(B)/libc.o $(B)/rt.o
+	$(CC) $(CF) -DWANT_CF -c -o $(B)/test_cpucheck_cf.o test_cpucheck.c
+	$(LD) -o $@ $(B)/test_cpucheck_cf.o $(B)/cpucheck_cf.o $(B)/gemdos.o $(B)/libc.o $(B)/rt.o
+# (the harness as 68030 code: rt.S is both; libgcc for its sums)
+$(B)/test_cpucheck_030: test_cpucheck.c $(B)/cpucheck_cf.o gemdos.c libc.c rt.S
+	$(CC) $(subst -mcpu=5475,-m68030,$(CF)) -c -o $(B)/t030.o test_cpucheck.c
+	$(CC) $(subst -mcpu=5475,-m68030,$(CF)) -c -o $(B)/gemdos030.o gemdos.c
+	$(CC) $(subst -mcpu=5475,-m68030,$(CF)) -c -o $(B)/libc030.o libc.c
+	$(CC) -m68030 -c -o $(B)/rt030.o rt.S
+	$(CC) -m68030 -nostdlib -static -no-pie -Wl,-z,noexecstack -o $@ $(B)/t030.o $(B)/cpucheck_cf.o \
+		$(B)/gemdos030.o $(B)/libc030.o $(B)/rt030.o -lgcc
+
 $(B):
 	mkdir -p $@
 
@@ -148,6 +169,8 @@ test: $(TESTS)
 	$(QEMU) $(B)/test_mont > $(B)/mont_cf.txt
 	cat $(B)/mont_cf.txt
 	$(QEMU) $(B)/test_tls
+	$(QEMU) $(B)/test_cpucheck_cf
+	qemu-m68k -cpu m68030 $(B)/test_cpucheck_030
 	$(QEMU) $(B)/test_crash
 	$(QEMU) $(B)/test_crash take
 	$(QEMU) $(B)/test_crash linef
