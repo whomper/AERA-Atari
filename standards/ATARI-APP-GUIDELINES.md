@@ -1633,6 +1633,15 @@ bars (D34).
     has an empty line before it. A setting with no note of its own (EUpdate's `HAVEDATE=` under
     `HAVE=`) is a paragraph too. Reading skips empty lines; writing back keeps them.
   - The program writes it back keeping comments and unknown lines.
+  - **The INF is written only when a setting changed** (Erez, 12 Nov 2026). Quitting, closing a window or
+    leaving a dialog with nothing different from what was read at the start (or last written) writes no file:
+    no open, no write, no rename, and the file's date stays. A change the user makes (a setting, a window's
+    place or size, a pane's width, a font, a last-used folder or account) still writes it, once, at the
+    moment the rules in 6.5 allow (at once for a setting the user just chose; at quit for the rest). The
+    program keeps what it read and compares, or marks the setting dirty where it is changed; it never
+    writes "to be safe". A program that rewrites a file in a new version's form (the old key read once,
+    D43, D44) writes it once, on the first run that read an old form. This covers `NAME.INF` only; caches,
+    logs and data files follow 6.5.
   - **Window, pane and font keys are `WINDOW=x,y,w,h`, `PANES=` and `FONT=name,points`** (Erez, 9 Nov 2026): the
     focus apps now, the others when they next move their settings. **An app that changes a key may read the old key
     once,** so the user keeps the window and the font: the new key wins and only the new one is written. This is the
@@ -2150,6 +2159,7 @@ program's window.
 | 5.1 Minimum size content-bound and the open check the same number; the first window on the whole desk (D38, D39) | ✗ | ✗ | ? | ✗ | ✗ | ? | ? (EUpdate ?) | ? | ? |
 | 5.1 Column titles bold dim (D41; EPlay's design D stays, D42) | — | — | ? | ? | — | — | — (EUpdate ✗) | — | — |
 | 5.2 One 16-colour selection colour, `theme.c` the family's (D42) | — | — | ✗ | ? | — | — | — (EUpdate ?) | — | — |
+| 6.1 INF written only when a setting changed, not on every exit (Erez, 12 Nov 2026) | ? | ? | ? | ? | ? | ? | ? | ? | ? |
 | 6.1 INF keys `WINDOW=x,y,w,h`, `PANES=`, `FONT=name,points`; the old key read once (D43, D44) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ? (EUpdate ✗) | ✗ | ✗ |
 | 4.4 The clipboard sentences on the status line, never an alert (D50) | ? | ✗ | ✗ | ? | ✗ | ✗ | ✗ (EUpdate ✗) | ✗ | — |
 | 4.5 The notification button reads `Show` when it brings a window forward (D51) | ? | ✗ | ? | ? | — | ? | ? (EUpdate ✗) | — | — |
