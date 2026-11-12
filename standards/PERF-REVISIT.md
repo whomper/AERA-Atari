@@ -23,6 +23,11 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   About opened 165 → 180 on the second machine). Accepted (12 Nov). To revisit if 1.6 or later
   show the same rows slower again.
 
+- **EPlay 1.28** (NVDI, Falcon-4, same machine, two runs of 1.27): "A row dragged to another place"
+  85–90 ms → 165 ms (limit 300); everything else within ±5 ms, WAV start 635 → 650 (limit 2000).
+  Put to Erez on 12 Nov; EPlay asked to find the cause with the AESGAP stretch log (a drag
+  shouldn't touch the VGM/OPL2 code).
+
 ## Rows over their limit and still open
 
 - **common's Settings engine** opens over 150 ms on Falcon-4 (EPlay 185 of 200 ms) and
