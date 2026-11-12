@@ -2,8 +2,9 @@
 # Copyright (C) 2026 AERA | Erez Yaary
 # common's assembly built for the ColdFire (-mcpu=5475, the FireBee) and run
 # under qemu-m68k -cpu cfv4e, as Linux programs with no C library (the m68k
-# one here is 68020 code): make test. make same: each .S in atari/ built for
-# the 68000 and the 68030 is byte for byte what BASE (origin/main) builds.
+# one here is 68020 code): make test. make same: each .S in atari/ and
+# tlsovl/ built for the 68000 and the 68030 is byte for byte what BASE
+# (origin/main) builds.
 CROSS  ?= m68k-linux-gnu-
 CC     := $(CROSS)gcc
 GCCINC := $(shell $(CC) -print-file-name=include 2>/dev/null)
@@ -14,7 +15,7 @@ BASE   ?= origin/main
 CF     := -mcpu=5475 -O2 -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic -fno-pie \
           -fno-tree-loop-distribute-patterns -nostdinc -isystem $(GCCINC) -I. -I$(C)/src -Wall
 LD     := $(CC) -mcpu=5475 -nostdlib -static -no-pie -Wl,-z,noexecstack
-TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host $(B)/test_crash
+TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host $(B)/test_crash $(B)/test_tls
 
 all: $(TESTS)
 
@@ -96,6 +97,39 @@ $(B)/crash_fake.o: crash_fake.S | $(B)
 $(B)/test_crash: $(B)/test_crash.o $(B)/crash.o $(B)/crash_fake.o $(B)/gemdos.o $(B)/libc.o $(B)/rt.o
 	$(LD) -Wl,-N -Wl,--no-warn-rwx-segments -o $@ $^
 
+# TLS without the DSP: tests/tls030's test_030.c (br_i31_montymul with
+# mont31_030.S against BearSSL's C, rsa030 with mont030.S against
+# br_rsa_i31_public) with BearSSL, the assembly and ll64.c (in place of the
+# 68020 libgcc) all ColdFire code
+BSSL    := $(C)/third_party/bearssl
+BSSLSRC := $(filter-out $(BSSL)/src/int/i31_montmul.c,$(wildcard $(BSSL)/src/*/*.c))
+BSSLOBJ := $(patsubst $(BSSL)/src/%.c,$(B)/bssl/%.o,$(BSSLSRC))
+BSSLCF  := -mcpu=5475 -O2 -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic -fno-pie \
+           -fno-tree-loop-distribute-patterns -w -nostdinc -isystem $(GCCINC) -I$(C)/atari/include \
+           -I$(BSSL)/inc -I$(BSSL)/src -DBR_USE_URANDOM=0 -DBR_USE_GETENTROPY=0 -DBR_USE_UNIX_TIME=0 \
+           -DBR_USE_WIN32_TIME=0 -DBR_USE_WIN32_RAND=0 -DBR_RDRAND=0
+$(B)/bssl/%.o: $(BSSL)/src/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(BSSLCF) -c -o $@ $<
+$(B)/libbearssl.a: $(BSSLOBJ)
+	rm -f $@
+	$(CROSS)ar rcs $@ $^
+$(B)/tls_test_030.o: $(C)/tests/tls030/test_030.c | $(B)
+	$(CC) $(BSSLCF) -Wall -I$(C)/src -c -o $@ $<
+$(B)/tls_rsa030.o: $(C)/src/rsa030.c | $(B)
+	$(CC) $(BSSLCF) -I$(C)/src -c -o $@ $<
+$(B)/tls_i31_030.o: $(C)/tlsovl/i31_montmul_030.c | $(B)
+	$(CC) $(BSSLCF) -c -o $@ $<
+$(B)/tls_i31_c.o: $(BSSL)/src/int/i31_montmul.c | $(B)
+	$(CC) $(BSSLCF) -Dbr_i31_montymul=br_i31_montymul_c -c -o $@ $<
+$(B)/mont31_030.o: $(C)/tlsovl/mont31_030.S | $(B)
+	$(CC) -mcpu=5475 -c -o $@ $<
+$(B)/ll64.o: $(C)/atari/ll64.c | $(B)
+	$(CC) $(BSSLCF) -c -o $@ $<
+$(B)/test_tls: $(B)/tls_test_030.o $(B)/tls_rsa030.o $(B)/mont030.o $(B)/tls_i31_030.o $(B)/mont31_030.o \
+               $(B)/tls_i31_c.o $(B)/libbearssl.a $(B)/ll64.o
+	$(LD) -o $@ $(filter-out $(B)/libbearssl.a $(B)/ll64.o,$^) $(B)/libbearssl.a $(B)/ll64.o
+
 $(B):
 	mkdir -p $@
 
@@ -113,22 +147,23 @@ test: $(TESTS)
 	./$(B)/test_mont_host > $(B)/mont_host.txt
 	$(QEMU) $(B)/test_mont > $(B)/mont_cf.txt
 	cat $(B)/mont_cf.txt
+	$(QEMU) $(B)/test_tls
 	$(QEMU) $(B)/test_crash
 	$(QEMU) $(B)/test_crash take
 	$(QEMU) $(B)/test_crash linef
 	cmp $(B)/mont_host.txt $(B)/mont_cf.txt && echo "mont: the ColdFire's mont030, dbl030 and RSA give the host's C every word"
 
-# every .S in atari/ for the 68000 and the 68030, against BASE's
+# every .S in atari/ and tlsovl/ for the 68000 and the 68030, against BASE's
 same: | $(B)
-	@ok=1; for f in $(C)/atari/*.S; do n=$$(basename $$f .S); \
-	  git show $(BASE):common/atari/$$n.S > $(B)/base.S 2>/dev/null || continue; \
+	@ok=1; for f in $(C)/atari/*.S $(C)/tlsovl/*.S; do n=$$(basename $$f .S); d=$$(basename $$(dirname $$f)); \
+	  git show $(BASE):common/$$d/$$n.S > $(B)/base.S 2>/dev/null || continue; \
 	  for cpu in 68000 68030; do \
 	    $(CC) -m$$cpu -c -o $(B)/base.o $(B)/base.S 2>/dev/null || continue; \
 	    $(CC) -m$$cpu -c -o $(B)/new.o $$f && \
 	    $(CROSS)objcopy -O binary -j .text -j .data $(B)/new.o $(B)/new.bin && \
 	    $(CROSS)objcopy -O binary -j .text -j .data $(B)/base.o $(B)/base.bin && \
 	    cmp -s $(B)/new.bin $(B)/base.bin || { echo "same: $$n.S for the $$cpu differs from $(BASE)'s"; ok=0; }; \
-	  done; done; [ $$ok = 1 ] && echo "same: every .S in atari/ is $(BASE)'s, byte for byte, for the 68000 and the 68030"
+	  done; done; [ $$ok = 1 ] && echo "same: every .S in atari/ and tlsovl/ is $(BASE)'s, byte for byte, for the 68000 and the 68030"
 
 clean:
 	rm -rf build
