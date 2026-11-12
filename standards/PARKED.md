@@ -113,6 +113,18 @@ starts before he says so. The hub adds to it; each line says where the work stan
   sting, nf), TLS without the DSP, and for EWeb its script overlay on the ColdFire FPU (doubles only).
   EWeb's DESIGN.md, "A FireBee edition", has what was checked. Hatari has no ColdFire: the GEM checks need
   the tester's FireBee; QEMU's cfv4e runs the host tests and counts.
+- **common's part, drafted by EWeb's session on `hub/firebee` (12 Nov 2026), for the hub to merge:** each
+  file a commit, each with a ColdFire path under `#ifdef __mcoldfire__` and a test under `qemu-m68k -cpu
+  cfv4e` (`common/tests/coldfire`, its README; `make same` checks the 68000 and 68030 builds stay byte for
+  byte as they were): `crt0.S`, `sting.S`, `nf.S` (no NatFeats: on a V4e their opcodes are `mvs.b`),
+  `inflate_fast.S` (and inflate.c's own loop), `mont030.S`, the crash catcher (`crash.S` and `crash.c`, a
+  ColdFire's frames), TLS without the DSP (`tlsovl`'s `make CPU=5475`, `mont31_030.S`, `atari/ll64.c` for the
+  64-bit arithmetic the 68020 libgcc would give, `libc.c`'s loops; tests/mem as ColdFire code too), and
+  `cpucheck_cf.S` (the third build's first code, the same bytes for a 68000 and a ColdFire: `_CF_` or the
+  alert). Left for the apps' builds: the inline assembly in common's C (`tos.c`, `tos.h`'s bindings, `gem.c`,
+  `ctime.c`, `ovl.c`, `pic.c`, `dspec.c`, `aboutbox.c`, `badge.c`, `text.c`, `offdraw.c`), which GCC's
+  `__mc68000__` also lets through on a ColdFire; each app's build and About box line; and what only a real
+  FireBee can prove (the README's list: TOS's own answers, supervisor-mode frames, STinG, speed, the screen).
 - EPlay's part (its session's list, 10 Nov): no DSP56001, so MP3 decodes on the ColdFire with the C model it
   already has (`src/mp3/mp3dsp.c`; its int64 arithmetic must be checked, the V4e has no 64-bit `mulu.l` or
   `divu.l`); the SN76489 files need a software model; its own assembly (`feed.S`, `hostirq.S`, `term.c`'s
