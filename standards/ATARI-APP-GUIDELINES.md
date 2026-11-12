@@ -2159,7 +2159,7 @@ program's window.
 | 5.1 Minimum size content-bound and the open check the same number; the first window on the whole desk (D38, D39) | ✗ | ✗ | ? | ✗ | ✗ | ? | ? (EUpdate ?) | ? | ? |
 | 5.1 Column titles bold dim (D41; EPlay's design D stays, D42) | — | — | ? | ? | — | — | — (EUpdate ✗) | — | — |
 | 5.2 One 16-colour selection colour, `theme.c` the family's (D42) | — | — | ✗ | ? | — | — | — (EUpdate ?) | — | — |
-| 6.1 INF written only when a setting changed, not on every exit (Erez, 12 Nov 2026) | ? | ? | ? | ? | ? | ? | ? | ? | ? |
+| 6.1 INF written only when a setting changed, not on every exit (Erez, 12 Nov 2026) | ✗ (writes without comparing; 2.48) | ✗ (Settings OK rewrites; next release) | ✗ (writes at quit twice; 2.18) | ✗ (writes at quit; a fix release now, Erez's word) | ✓ (fixed in 2.1, gui-test infsame) | ✗ (Settings OK, Font OK, drags; next release) | ✓ (only on change; 1.5 also for a hand-edited file; EUpdate ✗: writes on every call; next release) | ✓ (EPDF and EConvert; a permanent rig check next) | ✗→✓ (quit already on change; Settings OK fixed in the next candidate) |
 | 6.1 INF keys `WINDOW=x,y,w,h`, `PANES=`, `FONT=name,points`; the old key read once (D43, D44) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ? (EUpdate ✗) | ✗ | ✗ |
 | 4.4 The clipboard sentences on the status line, never an alert (D50) | ? | ✗ | ✗ | ? | ✗ | ✗ | ✗ (EUpdate ✗) | ✗ | — |
 | 4.5 The notification button reads `Show` when it brings a window forward (D51) | ? | ✗ | ? | ? | — | ? | ? (EUpdate ✗) | — | — |
