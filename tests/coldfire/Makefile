@@ -14,7 +14,7 @@ BASE   ?= origin/main
 CF     := -mcpu=5475 -O2 -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic -fno-pie \
           -fno-tree-loop-distribute-patterns -nostdinc -isystem $(GCCINC) -I. -I$(C)/src -Wall
 LD     := $(CC) -mcpu=5475 -nostdlib -static -no-pie -Wl,-z,noexecstack
-TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c
+TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host
 
 all: $(TESTS)
 
@@ -74,6 +74,19 @@ $(INF)/build/corpus.bin $(INF)/build/out_c.bin:
 	$(INF)/build/asm_check_c gen $(INF)/build/corpus.bin
 	$(INF)/build/asm_check_c run $(INF)/build/corpus.bin $(INF)/build/out_c.bin
 
+# mont030.S: Montgomery products, doublings and rsa030.c's RSA against the
+# same program on the host with the two in 64-bit C
+$(B)/mont030.o: $(C)/atari/mont030.S | $(B)
+	$(CC) -mcpu=5475 -c -o $@ $<
+$(B)/rsa030.o: $(C)/src/rsa030.c | $(B)
+	$(CC) $(CF) -Iinc -c -o $@ $<
+$(B)/test_mont.o: test_mont.c rt.h | $(B)
+	$(CC) $(CF) -Iinc -c -o $@ $<
+$(B)/test_mont: $(B)/test_mont.o $(B)/rsa030.o $(B)/mont030.o $(B)/libc.o $(B)/rt.o
+	$(LD) -o $@ $^
+$(B)/test_mont_host: test_mont.c $(C)/src/rsa030.c | $(B)
+	cc -O2 -Wall -DHOST -I$(C)/src -o $@ test_mont.c $(C)/src/rsa030.c
+
 $(B):
 	mkdir -p $@
 
@@ -88,6 +101,10 @@ test: $(TESTS)
 	$(QEMU) $(B)/test_inflate_c $(INF)/build/corpus.bin $(B)/out_c.bin
 	cmp $(INF)/build/out_c.bin $(B)/out_c.bin
 	@echo "inflate: the ColdFire loop and the C as ColdFire code give the host's C every byte and answer"
+	./$(B)/test_mont_host > $(B)/mont_host.txt
+	$(QEMU) $(B)/test_mont > $(B)/mont_cf.txt
+	cat $(B)/mont_cf.txt
+	cmp $(B)/mont_host.txt $(B)/mont_cf.txt && echo "mont: the ColdFire's mont030, dbl030 and RSA give the host's C every word"
 
 # every .S in atari/ for the 68000 and the 68030, against BASE's
 same: | $(B)
