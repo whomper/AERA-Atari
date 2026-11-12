@@ -73,7 +73,8 @@ starts before he says so. The hub adds to it; each line says where the work stan
 - Target: EWeb, EPDF and, since 10 Nov, EPlay (Erez asked for it "just like the EWeb plan"), once the family
   rework and alignment are finished (the UI standards, the shared dialog engine and the apps' adoption) and
   EWeb has reached 1.0. Order: EWeb first (it builds the ColdFire layer of `common/`), then EPDF, then EPlay,
-  which needs answers about the FireBee's sound first (below). A FireBee owner offered to test ColdFire
+  which needs answers about the FireBee's sound first (below). **12 Nov 2026 (Erez):** "EWeb has FireBee working,
+  we can start our EPlay support": EPlay starts now, ahead of EPDF; EPDF follows when Erez says. A FireBee owner offered to test ColdFire
   builds (the V4e core, `-mcpu=5475`); the other programs run there as they are, through the system's
   emulation of the instructions the chip lacks.
 - **Packaging (Erez, 10 Nov 2026):** the FireBee edition is made as one release, not a separate product. Each
