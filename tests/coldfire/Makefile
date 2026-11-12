@@ -15,7 +15,7 @@ BASE   ?= origin/main
 CF     := -mcpu=5475 -O2 -fomit-frame-pointer -ffreestanding -fno-builtin -fno-pic -fno-pie \
           -fno-tree-loop-distribute-patterns -nostdinc -isystem $(GCCINC) -I. -I$(C)/src -Wall
 LD     := $(CC) -mcpu=5475 -nostdlib -static -no-pie -Wl,-z,noexecstack
-TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host $(B)/test_crash $(B)/test_tls $(B)/test_cpucheck_cf $(B)/test_cpucheck_030
+TESTS  := $(B)/test_crt0 $(B)/test_crt0_acc $(B)/test_sting $(B)/test_nf $(B)/test_inflate $(B)/test_inflate_c $(B)/test_mont $(B)/test_mont_host $(B)/test_crash $(B)/test_tls $(B)/test_cpucheck_cf $(B)/test_cpucheck_030 $(B)/test_rows_cf $(B)/test_rows_030
 
 all: $(TESTS)
 
@@ -151,6 +151,24 @@ $(B)/test_cpucheck_030: test_cpucheck.c $(B)/cpucheck_cf.o gemdos.c libc.c rt.S
 	$(CC) -m68030 -nostdlib -static -no-pie -Wl,-z,noexecstack -o $@ $(B)/t030.o $(B)/cpucheck_cf.o \
 		$(B)/gemdos030.o $(B)/libc030.o $(B)/rt030.o -lgcc
 
+# ui/text.c's row loops: C on the ColdFire, the assembly on a 68030, one sum
+$(B)/rows.c: $(C)/ui/text.c | $(B)
+	sed -n '/^#ifdef __mcoldfire__$$/,/^static void rows_copy_mid(/p' $< | sed '$$d' > $@
+$(B)/test_rows_cf: test_rows.c $(B)/rows.c $(B)/libc.o $(B)/rt.o
+	$(CC) $(CF) -I$(B) -o $@.o -c test_rows.c
+	$(LD) -o $@ $@.o $(B)/libc.o $(B)/rt.o
+$(B)/test_rows_030: test_rows.c $(B)/rows.c libc.c rt.S
+	$(CC) $(subst -mcpu=5475,-m68030,$(CF)) -I$(B) -o $@.o -c test_rows.c
+	$(CC) $(subst -mcpu=5475,-m68030,$(CF)) -c -o $(B)/libc030r.o libc.c
+	$(CC) -m68030 -c -o $(B)/rt030r.o rt.S
+	$(CC) -m68030 -nostdlib -static -no-pie -Wl,-z,noexecstack -o $@ $@.o $(B)/libc030r.o $(B)/rt030r.o -lgcc
+
+# the C files given a ColdFire path, for the 68000 and the 68030 against
+# BASE's (make same)
+CSAME  := atari/gem.c src/ovl.c ui/text.c atari/libc.c src/inflate.c atari/crash.c tlsovl/head.c
+CSINC  := -O2 -ffreestanding -fno-builtin -nostdinc -isystem $(GCCINC) -I$(C)/atari/include -I$(C)/src \
+          -I$(C)/atari -I$(C)/ui -I$(C)/tlsovl/src -I$(C)/tests/tlsovl/stub -I$(C)/third_party/bearssl/inc -w
+
 $(B):
 	mkdir -p $@
 
@@ -169,6 +187,10 @@ test: $(TESTS)
 	$(QEMU) $(B)/test_mont > $(B)/mont_cf.txt
 	cat $(B)/mont_cf.txt
 	$(QEMU) $(B)/test_tls
+	$(QEMU) $(B)/test_rows_cf > $(B)/rows_cf.txt
+	qemu-m68k -cpu m68030 $(B)/test_rows_030 > $(B)/rows_030.txt
+	cat $(B)/rows_cf.txt
+	cmp $(B)/rows_cf.txt $(B)/rows_030.txt && echo "rows: text.c's C rows on the ColdFire give its assembly's every byte"
 	$(QEMU) $(B)/test_cpucheck_cf
 	qemu-m68k -cpu m68030 $(B)/test_cpucheck_030
 	$(QEMU) $(B)/test_crash
@@ -187,6 +209,15 @@ same: | $(B)
 	    $(CROSS)objcopy -O binary -j .text -j .data $(B)/base.o $(B)/base.bin && \
 	    cmp -s $(B)/new.bin $(B)/base.bin || { echo "same: $$n.S for the $$cpu differs from $(BASE)'s"; ok=0; }; \
 	  done; done; [ $$ok = 1 ] && echo "same: every .S in atari/ and tlsovl/ is $(BASE)'s, byte for byte, for the 68000 and the 68030"
+	@ok=1; for f in $(CSAME); do \
+	  git show $(BASE):common/$$f > $(B)/base.c || { ok=0; continue; }; \
+	  for cpu in 68000 68030; do \
+	    $(CC) -m$$cpu $(CSINC) -I$(C)/$$(dirname $$f) -c -o $(B)/base.o $(B)/base.c && \
+	    $(CC) -m$$cpu $(CSINC) -I$(C)/$$(dirname $$f) -c -o $(B)/new.o $(C)/$$f && \
+	    $(CROSS)objcopy -O binary -j .text -j .data -j .rodata $(B)/new.o $(B)/new.bin && \
+	    $(CROSS)objcopy -O binary -j .text -j .data -j .rodata $(B)/base.o $(B)/base.bin && \
+	    cmp -s $(B)/new.bin $(B)/base.bin || { echo "same: $$f for the $$cpu differs from $(BASE)'s"; ok=0; }; \
+	  done; done; [ $$ok = 1 ] && echo "same: $(CSAME) as $(BASE)'s, byte for byte, for the 68000 and the 68030"
 
 clean:
 	rm -rf build
