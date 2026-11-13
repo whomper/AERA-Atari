@@ -44,6 +44,18 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   faster), Falcon-4:16 arrow held up 930 -> 965 (noisy), page scrolled 50 -> 55; the ST's -O2 code costs 109 KB of
   free memory (774 -> 665 KB on ST:mono). Accepted by Erez (13 Nov).
 
+- **EMail's off-screen page** (5b99151b, Falcon-4:256 NVDI): a page down the letter 45 -> 75 ms (limit 150), the price
+  of the page shown whole. Accepted by Erez (13 Nov).
+- **EFTP's arena** (after 2.7): the 400-folder download's start 575 -> 595 ms on his Falcon; code placement in the
+  68030's cache (the ST the same). Accepted by Erez (13 Nov, option a).
+- **EPlay 1.32**: VGM About 150 -> 160, two list rows +5 (placement). Accepted by Erez (13 Nov); EPlay pins the tick's
+  hot path.
+
+## Open: code placement on the 68030
+EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
+the code landed against the 68030's 256-byte instruction cache. The hub looks for one way for the family (EPlay's
+pinning first, then aligned hot functions or a link order), so that paired runs stop showing it.
+
 ## Rows over their limit and still open
 
 - **EPlay 1.28** (NVDI, Falcon-4, same machine, two runs of 1.27): "A row dragged to another place"
