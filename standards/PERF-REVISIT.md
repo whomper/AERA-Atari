@@ -58,6 +58,12 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   pages are 4 % faster (novel -11 %, magazine -21 %). Read as cache placement (rows swung 3-5 % across builds with
   no code of theirs changed; the ST shows none). Released by Erez's word (13 Nov).
 
+- **EWeb's monochrome contrast fix** (after 1.7): ST:mono news page finished 2275 -> 2425 ms (a pass per page);
+  Falcon-4:16 arrow held up 965 -> 1000 (noisy). Accepted by Erez (13 Nov).
+- **EHypView 2.1** (head-first loading, option A): a link pressed on the Falcon 25 -> 40 (Falcon-4:16), <20 -> 30
+  (Falcon-4:256 NVDI); a big page's top 90/100 -> 110 (data-cache placement); the start 760 -> 360 (Falcon),
+  3025 -> 1125 (ST). Accepted by Erez (13 Nov).
+
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
 the code landed against the 68030's 256-byte instruction cache. The hub looks for one way for the family (EPlay's
