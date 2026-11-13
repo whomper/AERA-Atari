@@ -66,7 +66,7 @@ family recipe once 1.33 is out: the files of the main flow's hot loop first in t
 Rolled out to every app (Erez, 13 Nov: "roll out the link-order recipe to all apps"; guidelines, Speed). Each app
 answers with its commit and the hot loop's figure before and after. State (13 Nov):
 - EPlay: in 1.33 (the tick 324 -> 235 us).
-- EUpdate: b673a93f, the family's CRC 21.8 -> 14.6 s; the start 475 -> 485 ms, with Erez.
+- EUpdate: b673a93f, the family's CRC 21.8 -> 14.6 s; the start 475 -> 485 ms accepted by Erez (13 Nov), for 2.05.
 - EFTP: committed, no measurable change (the places fixed for later growth).
 - EMail: tried (text draw bidi charset first), slower (a line down 30 -> 40, start 760 -> 805), reverted;
   another try only from a 68030 profile of the line-down path.
