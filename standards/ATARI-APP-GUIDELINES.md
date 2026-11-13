@@ -1147,8 +1147,9 @@ CONTACTS.TXT when the user chooses it (below).
   - In a text of several lines, they take the line the cursor is in (in EMail's header lines, the value
     after "To: ").
   - ^V inserts at the cursor; a field of one line takes the first line only.
-- **Passwords are never copied out of a field, shown or hidden;** pasting into one works (EMail and EUpdate
-  still copy it once the eye is open: ui/DEVIATIONS.md C12).
+- **Passwords are never copied out of a field, shown or hidden;** pasting into one works. The shared field does
+  it (`LFIELD.secret`, with `db_pass` and the eye in `common/ui`, 13 Nov 2026); EMail and EUpdate copied it once
+  the eye was open until they take it (ui/DEVIATIONS.md C12).
 - **Lists copy their selection's text form;** ^X and ^V do nothing there:
   - EMail: the message shown, or the folder's name.
   - EFTP: the chosen files' full names, a line each.

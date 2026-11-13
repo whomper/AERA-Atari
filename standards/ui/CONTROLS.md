@@ -184,9 +184,12 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   put the cursor where the click was and show the focused field with a second line round it.
 - **A password** shows one `*` per character (`lf_init(..., mask '*')`) and is never copied out: ^C and ^X do
   nothing, pasting works. The eye button after it (a 16 x 16 `G_IMAGE`, 1 cell after the field, `TOUCHEXIT`)
-  shows or hides it. **While it is shown it must still not be copied** (`lf_mask` takes the mask away, so the
-  app keeps its own flag: EFTP's `pw_of` does; EMail and EUpdate copy it, C12; ECal and EContact never copy an
-  `FT_PASS`). A separate "secret" flag in `LFIELD` is hub work.
+  shows or hides it. **While it is shown it must still not be copied.** *Done 13 Nov 2026 in `common/ui`:*
+  `lf_init` with a mask sets `LFIELD.secret`, which `^C` and `^X` test, not the mask, so the eye can show the
+  password and nothing is copied; `db_pass(b, x, y, text, len, cap)` (dlgbuild.c) makes the field with its eye
+  (`eye.c`: the open eye, crossed out while the password shows, 16 rows, 8 on ST medium) and `dlg_do` turns it
+  (`lf_eye_click`: the cursor stays where it was). The app adds `eye.c` to its build; an app that has no password
+  needs nothing. EFTP's `pw_of`, EMail's and EUpdate's own eyes go (B).
 - **Hebrew.** AES-based fields keep the text in storage order and show it left to right, as GEM draws it; a
   Hebrew word is typed and shown in the order of the Atari character set. ECal's and EContact's own fields
   keep logical order and show it through the bidi code, with the cursor keys swapped in a right-to-left text

@@ -15,7 +15,7 @@ finished, that the maintenance apps take B as work and then return to maintenanc
 
 | # | Item | Why it is agreed | State |
 |---|---|---|---|
-| A1 | `dlg_do`: the password eye and the long fields (`LFIELD`), a separate "secret" flag so a password is never copied while shown, Cancel found by its role not its label, `flush_keys`, the bell outside the box (C11, C12; task #226) | DEVIATIONS C11, C12: hub; D30 | open |
+| A1 | `dlg_do`: the password eye and the long fields (`LFIELD`), a separate "secret" flag so a password is never copied while shown, Cancel found by its role not its label, `flush_keys`, the bell outside the box (C11, C12; task #226) | DEVIATIONS C11, C12: hub; D30 | **done 13 Nov** (`LFIELD.secret`, `db_pass`, `common/ui/eye.c`, `lf_eye_click` in `dlg_do`; tests/dialog 154 and 161 checks, tests/settings 186; the apps' own eyes go in B) |
 | A2 | Settings engine and Add files open within 150 ms on Falcon-4 (EPlay 185 and 165 ms; task #224) | the guidelines' Speed times | open |
 | A3 | About box and `text_box` in the AES's 3D look where the AES draws 3D (5.6; task #129) | D-list 5.6 | open |
 | A4 | Insert opens the context menu: the shared piece, and the generated Keys table (3.3, 3.2; task #64) | D16, D17 | open |
