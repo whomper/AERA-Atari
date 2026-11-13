@@ -33,17 +33,28 @@ The rows of [DEVIATIONS.md](DEVIATIONS.md) marked `decided: fix`, `fix` or `hub`
 the shared code of A and the pieces already done. Each session answers its rows with a commit or a release; the
 hub ticks them in the table in section 8 of the guidelines. The sessions are not asked until A is finished.
 
-## C. For Erez to settle first (the `Still open` points)
+## C. For Erez to settle first (what the `Still open` lists still hold after his answers of 10 Nov)
 
-One at a time, with the hub's recommendation. Controls: D25's keyboard proposal (the focus ring, Up and Down
-in the page list, no direct key for the page); the radio group's place in a Settings page (D24); the words of
-the out-of-range alerts (D30); EHypView's "Look there anyway?"; press or release for ticks and pop-ups (D32, D33).
-Windows: further windows' first place (D39); EPlay's column titles (D41 against D42); which panes are a sidebar
-(D45); the INF keys D43 does not name and whether EHypView and ClaudeST save `WINDOW=`; the job format of EFTP's
-narrow Transfers rows (D35); whether EPlay's selected tracks copy (D21); EConvert B2's rest and the About taglines'
-article (D49); one-line fields and Esc (D46); ECal's dialog tips (D18). Menus: the keys for Mark as unread and
-Index (D1, D2); Find's words and place (D4); where the `⇧^S` item sits (D45); ClaudeST's Options order
-(D6, D13); where Insert's menu opens (MD20); EUpdate's `Copy name ^C`; `Write a log` (D8); EPDF's zoom keys (MD28).
+Erez settled on 10 Nov: D25 (the keys in Settings as built), D4's words, ClaudeST's Options order, EPlay's column
+titles, the 256-colour configuration, the taglines (no article), the page keys from a text field, EHypView's
+"Look there anyway?", where Insert's menu opens, ECal's tips, the side pane's item in EMail and ClaudeST, EUpdate's
+hours alert and `Copy ^C`, EHypView's Index key (⇧^T), EContact's tagline. What the `Still open` paragraphs of
+MENUS, CONTROLS and WINDOWS still hold, to be put to him one at a time with the hub's recommendation (the hub first
+checks each against the apps' sessions, so that nothing already answered is asked again):
+
+1. D1: EMail's new key for Mark as unread (EMail proposes, Erez approves).
+2. D24: a radio group's place in a Settings page (the engine's proposal, with the first app that uses one).
+3. D30: the words of the out-of-range alerts of each app (ECal's are the model; EUpdate's are decided).
+4. Press or release for ticks, pop-ups and list rows (D32, D33: his answers spoke of buttons only).
+5. D39: where a further window (EWeb's ^N, EHypView's cascade) opens first.
+6. D45: which panes are a sidebar (EHypView's Subjects pane).
+7. D43: the INF keys it does not name (`PANECOLS=`, `PANE=`, `SIDEBAR=`, `HEBFONT=`) and whether EHypView and ClaudeST save `WINDOW=`.
+8. D35: EFTP's narrow Transfers rows (`100/200KB`).
+9. D21: whether EPlay's selected tracks copy.
+10. EConvert B2's remaining points.
+11. D46: whether a search field in a window with a list also empties on Esc.
+12. D8: whether every app must have `Write a log`.
+13. MD28: EPDF's zoom keys (`^+` `^-`), which EPDF asked separately.
 
 ## D. The announcement
 
