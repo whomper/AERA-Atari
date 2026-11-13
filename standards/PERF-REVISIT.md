@@ -32,6 +32,11 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   25-30, Down 25/25 -> 30-35 (limit 50 for each). Accepted by Erez (13 Nov: "release"); likely
   code placement after 1.28's new code. To revisit if EPlay is ever tuned for speed.
 
+- **ClaudeST start change** (branch startup a5452a7e, for 2.7; ST:med, EmuTOS stand-in, paired): page up 140 -> 155 ms
+  (limit 150: now 5 over), the ring is not drawn in a page scroll, so read as run noise. Accepted by Erez
+  (13 Nov). The change itself speeds the start 1,735 -> 1,600 ms (ST:mono) and 625 -> 565 ms (Falcon-4:256 NVDI),
+  Recents 445 -> 325 ms.
+
 ## Rows over their limit and still open
 
 - **EPlay 1.28** (NVDI, Falcon-4, same machine, two runs of 1.27): "A row dragged to another place"
