@@ -18,6 +18,11 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   225 ms (two of five). Within the limit; nothing in the settings code is on that path, and
   ST-1 is the same for both. Unexplained, accepted as it is (12 Nov). To revisit: AESGAP's
   per-stretch log for that action, 2.5 against the candidate.
+- **Dialog opening times on the 8 MHz ST** (Erez, 13 Nov: "accept the About box opening time as I am more
+  interested in the actual functional performance for now on the main flows of every app"): the About box
+  (230-270 ms) and common's Settings dialog on ST:mono, TOS 1.04 (EMail's 395 ms, EHypView's 320 ms; page
+  switch 55 ms; limit 150 and 50), accepted as they are. Falcon-4 is within (Settings 130, Add files 105-110).
+  Not profiled (the profiler gave no split). To revisit if the ST's dialogs are ever tuned.
 - **EWeb 1.5** (NVDI, Falcon-4) against 1.4: about a dozen rows 5–20 ms slower, three 5 ms
   faster (home page shown 540 → 560, sample page loaded 425 → 440, Settings closed 110 → 125,
   About opened 165 → 180 on the second machine). Accepted (12 Nov). To revisit if 1.6 or later
@@ -33,12 +38,6 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   85–90 ms → 165 ms (limit 300); everything else within ±5 ms, WAV start 635 → 650 (limit 2000).
   Slower, not over its limit; Erez 12 Nov: EPlay fixes it in the next release (AESGAP stretch log first; a drag
   shouldn't touch the VGM/OPL2 code).
-- **common's Settings engine and Add files** (13 Nov, measured again): on Falcon-4 within the limit
-  (SETDEMO: EMail's Settings 135, EHypView's 120; EPlay 1.29 and 1.30: Settings 130, Add files 105-110; the
-  185 and 165 ms were earlier versions). On the 8 MHz ST (ST:mono, TOS 1.04) the Settings dialog opens in
-  one stretch of 395 ms (EMail's, six pages) and 320 ms (EHypView's), limit 150, and a page switch takes
-  55 ms (limit 50). Open: where the 395 ms goes (the profiler gave no split yet; gemprof's break on
-  `settings_run` returned 0 ms).
 - **EWeb, Falcon-4 NVDI**, as 1.5: home page shown 560 (100), sample page loaded 440 (100),
   pictures page loaded 455 (100), a page scrolled 800 (150), Settings closed 470 (300),
   About closed 435 (300); second machine: Settings opened 225 (150), About opened 180 (150),
