@@ -45,7 +45,9 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   free memory (774 -> 665 KB on ST:mono). Accepted by Erez (13 Nov).
 
 - **EMail's off-screen page** (5b99151b, Falcon-4:256 NVDI): a page down the letter 45 -> 75 ms (limit 150), the price
-  of the page shown whole. Accepted by Erez (13 Nov).
+  of the page shown whole. Accepted by Erez (13 Nov), then taken out at his word the same day ("something is starting to
+  feel slower and slower"): EMail 0867ddd6 reverts it; 2.19 ships only steps no slower on any row. common/ui/offpage.c
+  stays, with no user, until an app shows it faster on every row.
 - **EFTP's arena** (after 2.7): the 400-folder download's start 575 -> 595 ms on his Falcon; code placement in the
   68030's cache (the ST the same). Accepted by Erez (13 Nov, option a).
 - **EPlay 1.32**: VGM About 150 -> 160, two list rows +5 (placement). Accepted by Erez (13 Nov); EPlay pins the tick's
