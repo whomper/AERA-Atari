@@ -456,6 +456,11 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
       Timer A at 500 a second; common's `dspec.c`, `dsprsa.c` and `dspjpeg.c` poll already), and keep
       a guard for a spurious interrupt. Erez's Falcon with 0.7: 234 s at 44.1 kHz on the S/PDIF clock,
       no spurious interrupt, 15 granules late of 8,979 frames.
+    - no TOS call from an interrupt or a timer handler, on any machine: no XBIOS, BIOS or GEMDOS trap
+      (Buffptr, Supexec, Setexc...). TOS isn't re-entrant: a tick landing inside the AES's or VDI's
+      trap breaks it, and MiNT breaks on a trap from interrupt context at once (EPlay 1.31-1.34 on a
+      FireBee rebooted on any GUI action; 1.35 counts the frames by _hz_200 in the tick and reads
+      Buffptr in GEM's turn). Read the hardware's registers, or leave the call to the main loop.
   - **The DSP's time is measured on `Falcon-4` only** (EPlay, 1 Nov 2026): Hatari runs the DSP at
     the 68030's pace, so on the 32 MHz `Falcon` profile it has some 3 times the spare time it has on
     `Falcon-4`, where both run as on Erez's stock Falcon. A DSP figure (a job's ms, a player's spare
