@@ -64,8 +64,15 @@ assembly (`HOT := feed vgm vgmplay ym ...` before main.o; link.ld keeps input or
 group; an `aligned(256)` on the group's first function would fix its cache index if the startup objects grow. The
 family recipe once 1.33 is out: the files of the main flow's hot loop first in the link, then a paired run.
 Rolled out to every app (Erez, 13 Nov: "roll out the link-order recipe to all apps"; guidelines, Speed). Each app
-answers with its commit and the hot loop's figure before and after: EPlay (1.33) | EMail | ECal | EContact | EFTP |
-EHypView | ClaudeST | EWeb | EPDF | EUpdate.
+answers with its commit and the hot loop's figure before and after. State (13 Nov):
+- EPlay: in 1.33 (the tick 324 -> 235 us).
+- EUpdate: b673a93f, the family's CRC 21.8 -> 14.6 s; the start 475 -> 485 ms, with Erez.
+- EFTP: committed, no measurable change (the places fixed for later growth).
+- EMail: tried (text draw bidi charset first), slower (a line down 30 -> 40, start 760 -> 805), reverted;
+  another try only from a 68030 profile of the line-down path.
+- ECal: tried (text draw), mixed (start picture 1020 -> 710, today 600 -> 740), kept out of 2.48; a profiled group later.
+- EContact, ClaudeST, EWeb, EPDF, EHypView: after their current work.
+Lesson: the group must come from a profile of the 68030 build, and a group that makes a row slower is reverted, not kept.
 
 ## Rows over their limit and still open
 
