@@ -55,6 +55,11 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
 the code landed against the 68030's 256-byte instruction cache. The hub looks for one way for the family (EPlay's
 pinning first, then aligned hot functions or a link order), so that paired runs stop showing it.
+EPlay's pinning (13 Nov, for 1.33): link order only, the hot path's objects listed first after crt0 and the startup
+assembly (`HOT := feed vgm vgmplay ym ...` before main.o; link.ld keeps input order). The tick's average 324 -> 235 us
+(1.31: 286-292), About while playing 160 -> 135-140 ms. A change inside the hot files can still move it within the
+group; an `aligned(256)` on the group's first function would fix its cache index if the startup objects grow. The
+family recipe once 1.33 is out: the files of the main flow's hot loop first in the link, then a paired run.
 
 ## Rows over their limit and still open
 
