@@ -51,6 +51,9 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
 - **EPlay 1.32**: VGM About 150 -> 160, two list rows +5 (placement). Accepted by Erez (13 Nov); EPlay pins the tick's
   hot path.
 
+- **ECal 2.48** (Falcon-4:256, real TOS 4.04 + NVDI): the week view's longest slice 65 -> 75 (twice), the year's 65 -> 70/75
+  (limit 100), the whole pictures sooner (week 760 -> 635, year 2465 -> 2290). Accepted by Erez (13 Nov).
+
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
 the code landed against the 68030's 256-byte instruction cache. The hub looks for one way for the family (EPlay's
