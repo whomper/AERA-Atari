@@ -33,8 +33,12 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   85–90 ms → 165 ms (limit 300); everything else within ±5 ms, WAV start 635 → 650 (limit 2000).
   Slower, not over its limit; Erez 12 Nov: EPlay fixes it in the next release (AESGAP stretch log first; a drag
   shouldn't touch the VGM/OPL2 code).
-- **common's Settings engine** opens over 150 ms on Falcon-4 (EPlay 185 of 200 ms) and
-  Add files opens at 165 ms (limit 150) (task: hub, common).
+- **common's Settings engine and Add files** (13 Nov, measured again): on Falcon-4 within the limit
+  (SETDEMO: EMail's Settings 135, EHypView's 120; EPlay 1.29 and 1.30: Settings 130, Add files 105-110; the
+  185 and 165 ms were earlier versions). On the 8 MHz ST (ST:mono, TOS 1.04) the Settings dialog opens in
+  one stretch of 395 ms (EMail's, six pages) and 320 ms (EHypView's), limit 150, and a page switch takes
+  55 ms (limit 50). Open: where the 395 ms goes (the profiler gave no split yet; gemprof's break on
+  `settings_run` returned 0 ms).
 - **EWeb, Falcon-4 NVDI**, as 1.5: home page shown 560 (100), sample page loaded 440 (100),
   pictures page loaded 455 (100), a page scrolled 800 (150), Settings closed 470 (300),
   About closed 435 (300); second machine: Settings opened 225 (150), About opened 180 (150),
