@@ -60,6 +60,9 @@ assembly (`HOT := feed vgm vgmplay ym ...` before main.o; link.ld keeps input or
 (1.31: 286-292), About while playing 160 -> 135-140 ms. A change inside the hot files can still move it within the
 group; an `aligned(256)` on the group's first function would fix its cache index if the startup objects grow. The
 family recipe once 1.33 is out: the files of the main flow's hot loop first in the link, then a paired run.
+Rolled out to every app (Erez, 13 Nov: "roll out the link-order recipe to all apps"; guidelines, Speed). Each app
+answers with its commit and the hot loop's figure before and after: EPlay (1.33) | EMail | ECal | EContact | EFTP |
+EHypView | ClaudeST | EWeb | EPDF | EUpdate.
 
 ## Rows over their limit and still open
 

@@ -231,6 +231,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   Supexec, about 0.06 ms a read under NVDI on a stock Falcon and more where a network driver hooks the
   XBIOS. Don't read it per item in a loop: every 16 items or so on a 68020 or better (EContact's search:
   160 ms of 2,000 reads), and measure on the 68000 before changing it there.
+- **The hot loop is pinned by link order** (Erez, 13 Nov 2026: "roll out the link-order recipe to all apps"; EPlay's
+  measurement): on a 68030 (256-byte instruction cache) a row could move 10-35 ms when unrelated code moved
+  (EPlay, EContact, EFTP). Each app's Makefile lists the objects of its main flows' hot loops first, right after
+  crt0 and the startup assembly (common's `link.ld` keeps input order: `*(.text .text.*)`), so a change elsewhere
+  can't move them. Code and flags stay as they are; the 68000 builds may keep their order (no cache there). Done
+  as its own commit with a paired whole-rig run on `Falcon-4:256` with NVDI and the hot loop's figure before and
+  after; an app whose startup objects change size may add `aligned(256)` on the group's first function.
 - **What the user waits for: the longest stretch** from the event that started it to the program's
   next event call (`-DAES_PROFILE`'s `AESGAP` lines, `common/atari/gem.c`). It is measured on
   `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on all three also under
