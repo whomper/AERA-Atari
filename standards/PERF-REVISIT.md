@@ -7,6 +7,13 @@ on which machine, and what was decided. Limits are the guidelines' ("Speed"); ti
 longest stretch between event calls (`AESGAP`) from the speed rig unless said otherwise.
 Nothing here is a fault until Erez says so: it is a list to go through, not a work queue.
 
+## The speed round of 12-13 Nov 2026 is closed
+
+Erez, 13 Nov: "yes to the stricter rule ... Then we should stop with the performance improvements and place the
+applications back in maintenance, those that where in that mode before." From now on a speed change ships only if
+no row is slower (guidelines, Speed). The rows below were accepted before that rule; they stay as they are until
+speed is the focus again.
+
 ## Accepted by Erez (revisit when speed becomes the focus)
 
 - **About box opened over 150 ms** in common's `aboutbox.c`: 230–270 ms on a Falcon (ClaudeST

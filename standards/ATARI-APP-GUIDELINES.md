@@ -213,8 +213,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - **What it computes is the same:** a change to a loop, a parser, a layout or a codec is checked against
     the old code's output on the same inputs (the app's corpus, the fuzz inputs, the host tests), byte for
     byte, and its tests keep passing, with a new test for each path it adds.
-  - **Nothing else gets slower:** the whole speed rig runs before and after as one paired run, every row, not
-    only the row aimed at; a row slower goes to Erez (the standing rule of 11 Nov) before the release.
+  - **Nothing else gets slower** (Erez, 13 Nov 2026, after "something is starting to feel slower and slower"): the
+    whole speed rig runs before and after as one paired run, every row, not only the row aimed at, on his
+    configuration (`Falcon-4:256` with NVDI) and the ST. A speed change ships only if no row is slower beyond the
+    rig's one tick (5 ms) across the pairs; a row that holds slower is fixed or the change is reverted, never
+    accepted. The one exception is a fault fix the user sees (a wrong picture, a doubled row), and its cost goes to
+    Erez first.
   - **The rest of the app's rigs run** for the area touched (files, keys, the accessory, MiNT/XaAES where a
     dialog or a window is touched), not only the speed rig; memory is measured where the 1 MB ST or a
     stock Falcon is tight (EContact's 350 contacts, EWeb's big page).
