@@ -79,7 +79,9 @@ answers with its commit and the hot loop's figure before and after. State (13 No
   5-10 ms faster, About 330 -> 375/390. Stays as 2.8.
 - EUpdate: released in 2.05.
 - EPDF: in 2.15 (pdftext, pdfobj, inflate first): no measurable change in Hatari; kept for later growth.
-- EContact, EWeb, EHypView: after their current work.
+- EHypView: tried (pagedraw, text, core_page, core_lh5), no gain (rows within a tick, two a tick slower), reverted:
+  under NVDI a draw's time is the VDI's.
+- EContact, EWeb: after their current work.
 Lesson: the group must come from a profile of the 68030 build, and a group that makes a row slower is reverted, not kept.
 
 ## Rows over their limit and still open
