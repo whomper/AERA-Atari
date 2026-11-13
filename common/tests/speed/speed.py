@@ -219,20 +219,25 @@ class Rig:
         time.sleep(1)
         self.click(title_x + 20, row_y)
 
-    def act(self, what, budget, do, job=False):
+    def act(self, what, budget, do, job=False, moving=False):
         """does it, waits until the Atari is still, and keeps the longest
         stretch that came meanwhile. job=True for an action that starts a
         sliced job (a long Copy, a load): its first stretch, the key's own,
         is held to budget, and the turns after it to a background slice's
         time (JOB_000 on a 68000, JOB_030 else), a second line in the
         table: what the user feels is the key answered at once and Esc
-        between turns (the hub, 31 Oct 2026, from EPDF's Copy)"""
+        between turns (the hub, 31 Oct 2026, from EPDF's Copy). A screen
+        that never comes to rest fails the run (its row would time whatever
+        came after it), unless moving=True: an action whose screen keeps
+        changing by design (a playing position, a throbber) and that its
+        caller checks some other way (EMail found it, 13 Nov 2026)"""
         start = os.path.getsize(self.log)
         self.in_act = True
         try:
             do()
             time.sleep(1)
-            self.still()
+            if not self.still() and not moving:
+                raise RuntimeError("%r: the screen didn't come to rest" % what)
         finally:
             self.in_act = False
             self.release()
