@@ -223,6 +223,14 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     forward by a release at once, before any other work.
   - **Where no real TOS or NVDI is in the session,** say "stand-in" and leave what only the real ones can
     show to the hub's family check.
+  - **The speed rig proves what it times** (13 Nov 2026: EFTP's, EMail's, EPDF's and EHypView's rigs had
+    rows timing the wrong item or nothing): every wait fails the run when it times out (common's
+    `Rig.start` does, 0d1b1ac), and every row checks that it opened, moved or showed what its name says
+    (a trace line, the server's own log, the window's pixels changed) before its figure is used.
+- **The clock is a trap call** (13 Nov 2026, EContact's measurement): `tos_ms()`/`pf_ms()` go through
+  Supexec, about 0.06 ms a read under NVDI on a stock Falcon and more where a network driver hooks the
+  XBIOS. Don't read it per item in a loop: every 16 items or so on a 68020 or better (EContact's search:
+  160 ms of 2,000 reads), and measure on the 68000 before changing it there.
 - **What the user waits for: the longest stretch** from the event that started it to the program's
   next event call (`-DAES_PROFILE`'s `AESGAP` lines, `common/atari/gem.c`). It is measured on
   `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on all three also under
