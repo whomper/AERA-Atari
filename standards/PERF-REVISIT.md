@@ -22,6 +22,10 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   faster (home page shown 540 → 560, sample page loaded 425 → 440, Settings closed 110 → 125,
   About opened 165 → 180 on the second machine). Accepted (12 Nov). To revisit if 1.6 or later
   show the same rows slower again.
+- **EPlay 1.28 and its drag fix** (Falcon-4:256 NVDI, paired, two runs each): three rows 10 ms slower than
+  1.27, the same in 1.28 and in the fix: MP3 position bar let go 40/35 -> 45-50, a row selected 20/20 ->
+  25-30, Down 25/25 -> 30-35 (limit 50 for each). Accepted by Erez (13 Nov: "release"); likely
+  code placement after 1.28's new code. To revisit if EPlay is ever tuned for speed.
 
 ## Rows over their limit and still open
 
