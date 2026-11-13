@@ -54,6 +54,10 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
 - **ECal 2.48** (Falcon-4:256, real TOS 4.04 + NVDI): the week view's longest slice 65 -> 75 (twice), the year's 65 -> 70/75
   (limit 100), the whole pictures sooner (week 760 -> 635, year 2465 -> 2290). Accepted by Erez (13 Nov).
 
+- **EPDF 2.15** (Falcon-4, reading times): manual +3.6 %, AES-256 open 16.6 -> 17.5 s (+5.5 %), Hebrew +1.1 %, while all
+  pages are 4 % faster (novel -11 %, magazine -21 %). Read as cache placement (rows swung 3-5 % across builds with
+  no code of theirs changed; the ST shows none). Released by Erez's word (13 Nov).
+
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
 the code landed against the 68030's 256-byte instruction cache. The hub looks for one way for the family (EPlay's
@@ -74,7 +78,8 @@ answers with its commit and the hot loop's figure before and after. State (13 No
 - ClaudeST: tried three groups, not adopted: its hot loops are all in claudest.o, so only common's code moves; pages
   5-10 ms faster, About 330 -> 375/390. Stays as 2.8.
 - EUpdate: released in 2.05.
-- EContact, EWeb, EPDF, EHypView: after their current work.
+- EPDF: in 2.15 (pdftext, pdfobj, inflate first): no measurable change in Hatari; kept for later growth.
+- EContact, EWeb, EHypView: after their current work.
 Lesson: the group must come from a profile of the 68030 build, and a group that makes a row slower is reverted, not kept.
 
 ## Rows over their limit and still open
