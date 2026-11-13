@@ -204,6 +204,25 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   the times below on these machines is changed before it ships. When the change would alter what the
   user sees (the look, a feature left out on slow machines), it goes to Erez with the numbers: his
   decision.
+- **Optimising must not break anything** (Erez, 13 Nov 2026: "with all the optimization work going on, we
+  must be extra careful not to create regressions"). Every speed change is written with extra care and
+  proved before it ships:
+  - **What it draws is the same:** a change to drawing leaves every pixel as it was; compare screenshots of
+    the old and the new build (the app's rigs, common's `tests/text`, `pixel` rigs) on `ST:mono`, `ST:med`,
+    `Falcon:16`, `Falcon-4:256` and under NVDI where the images are there, and name any difference.
+  - **What it computes is the same:** a change to a loop, a parser, a layout or a codec is checked against
+    the old code's output on the same inputs (the app's corpus, the fuzz inputs, the host tests), byte for
+    byte, and its tests keep passing, with a new test for each path it adds.
+  - **Nothing else gets slower:** the whole speed rig runs before and after as one paired run, every row, not
+    only the row aimed at; a row slower goes to Erez (the standing rule of 11 Nov) before the release.
+  - **The rest of the app's rigs run** for the area touched (files, keys, the accessory, MiNT/XaAES where a
+    dialog or a window is touched), not only the speed rig; memory is measured where the 1 MB ST or a
+    stock Falcon is tight (EContact's 350 contacts, EWeb's big page).
+  - **One change at a time, small, reversible:** each optimisation is its own commit with its numbers (the
+    `AESGAP` stretches before and after) and the checks that proved it. A fault found afterwards is fixed
+    forward by a release at once, before any other work.
+  - **Where no real TOS or NVDI is in the session,** say "stand-in" and leave what only the real ones can
+    show to the hub's family check.
 - **What the user waits for: the longest stretch** from the event that started it to the program's
   next event call (`-DAES_PROFILE`'s `AESGAP` lines, `common/atari/gem.c`). It is measured on
   `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on all three also under
