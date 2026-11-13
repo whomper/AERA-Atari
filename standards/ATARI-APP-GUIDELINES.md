@@ -458,6 +458,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
       Timer A at 500 a second; common's `dspec.c`, `dsprsa.c` and `dspjpeg.c` poll already), and keep
       a guard for a spurious interrupt. Erez's Falcon with 0.7: 234 s at 44.1 kHz on the S/PDIF clock,
       no spurious interrupt, 15 granules late of 8,979 frames.
+    - no `__builtin_memcpy` (or `memcpy` where the build doesn't say `-fno-builtin`) of 2 or 4 bytes
+      to or from an address that may be odd, in code a 68000 runs: GCC 13 for `-m68000` makes it a
+      `move.w`/`move.l` whatever the alignment (`-mstrict-align` doesn't stop it), an address error
+      on the ST (EWeb 1.10: EWEBST.PRG bombed on any Windows-1252 page with an accented letter at an
+      odd place, html.c's four-byte copy). Copy bytes one by one there, or guard the long copy for a
+      68020 and later, and pin an even address with a `_Static_assert` where the code relies on it.
     - no TOS call from an interrupt or a timer handler, on any machine: no XBIOS, BIOS or GEMDOS trap
       (Buffptr, Supexec, Setexc...). TOS isn't re-entrant: a tick landing inside the AES's or VDI's
       trap breaks it, and MiNT breaks on a trap from interrupt context at once (EPlay 1.31-1.34 on a
