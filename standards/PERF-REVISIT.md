@@ -71,7 +71,10 @@ answers with its commit and the hot loop's figure before and after. State (13 No
 - EMail: tried (text draw bidi charset first), slower (a line down 30 -> 40, start 760 -> 805), reverted;
   another try only from a 68030 profile of the line-down path.
 - ECal: tried (text draw), mixed (start picture 1020 -> 710, today 600 -> 740), kept out of 2.48; a profiled group later.
-- EContact, ClaudeST, EWeb, EPDF, EHypView: after their current work.
+- ClaudeST: tried three groups, not adopted: its hot loops are all in claudest.o, so only common's code moves; pages
+  5-10 ms faster, About 330 -> 375/390. Stays as 2.8.
+- EUpdate: released in 2.05.
+- EContact, EWeb, EPDF, EHypView: after their current work.
 Lesson: the group must come from a profile of the 68030 build, and a group that makes a row slower is reverted, not kept.
 
 ## Rows over their limit and still open
