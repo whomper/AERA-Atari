@@ -99,6 +99,11 @@ answers with its commit and the hot loop's figure before and after. State (13 No
 - EContact, EWeb: after their current work.
 Lesson: the group must come from a profile of the 68030 build, and a group that makes a row slower is reverted, not kept.
 
+- **EWeb 1.9, the condensed faces for Arial/Helvetica pages** (a visible fix under the one exception): the ST's first
+  use of a condensed face unpacks it once a session, ~250 ms (sample page loaded 245 -> 285, finished 655 -> 684,
+  pictures 829 -> 839, 3 pages up 1125 -> 1140); Falcon-4:256 home 790 -> 800, 4 pages down 1390 -> 1400; EWEB.FNT
+  2.7 -> 3.6 MB. Accepted by Erez (13 Nov).
+
 ## Rows over their limit and still open
 
 - **EPlay 1.28** (NVDI, Falcon-4, same machine, two runs of 1.27): "A row dragged to another place"
