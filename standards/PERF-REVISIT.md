@@ -37,6 +37,13 @@ Nothing here is a fault until Erez says so: it is a list to go through, not a wo
   (13 Nov). The change itself speeds the start 1,735 -> 1,600 ms (ST:mono) and 625 -> 565 ms (Falcon-4:256 NVDI),
   Recents 445 -> 325 ms.
 
+- **EContact 2.3** (Falcon round, paired): the start 825 -> 860 ms (Falcon-4:256 NVDI; +10 by layout, the rest the
+  AES's and NVDI's time by profile), accessory opened 470 -> 480, ST:med the list's arrow line 85/80 -> 95 (two pairs;
+  EmuTOS stand-in; limit 50, over before). Accepted by Erez (13 Nov). To revisit with EContact's arrow-line work.
+- **EWeb 1.7** (the ST edition's round): ST:mono 3 pages up longest 300 -> 310, ST:med 355 -> 385 (the whole action
+  faster), Falcon-4:16 arrow held up 930 -> 965 (noisy), page scrolled 50 -> 55; the ST's -O2 code costs 109 KB of
+  free memory (774 -> 665 KB on ST:mono). Accepted by Erez (13 Nov).
+
 ## Rows over their limit and still open
 
 - **EPlay 1.28** (NVDI, Falcon-4, same machine, two runs of 1.27): "A row dragged to another place"
