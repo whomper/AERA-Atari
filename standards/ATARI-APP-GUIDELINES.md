@@ -239,7 +239,9 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   as its own commit with a paired whole-rig run on `Falcon-4:256` with NVDI and the hot loop's figure before and
   after; an app whose startup objects change size may add `aligned(256)` on the group's first function. Pick
   the group from a profile of the 68030 build, not the ST's; a group that makes any row slower is reverted
-  (EMail's first group, 13 Nov: a line 30 -> 40 ms).
+  (EMail's first group, 13 Nov: a line 30 -> 40 ms). Where the hot path is a few functions inside a big file,
+  mark them with common's `HOT_CODE("NNname")` (`src/hotcode.h`) and link with `-Wl,--sort-section=name`
+  (EPlay 1.34).
 - **What the user waits for: the longest stretch** from the event that started it to the program's
   next event call (`-DAES_PROFILE`'s `AESGAP` lines, `common/atari/gem.c`). It is measured on
   `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on all three also under
