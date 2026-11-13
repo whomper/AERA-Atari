@@ -121,12 +121,19 @@ class Rig:
         # fonts load for a minute behind one
         if auto and ready is None:
             ready = "AESSTART"
-        t_end = time.time() + (boot or (120 if self.nvdi else 45) * (2 if self.st else 1))
+        wait = boot or (120 if self.nvdi else 45) * (2 if self.st else 1)
+        t_end = time.time() + wait
         while time.time() < t_end:
             time.sleep(2)
             if ready is None or ready in self.console():
                 if self.still(most=10):
                     break
+        else:
+            # a wait that ends without what it waits for fails the run: the
+            # rows after it would time something else (EFTP's speed rig timed
+            # the wrong folder from 1.76 to 13 Nov 2026, EPlay found this one)
+            if ready is not None and ready not in self.console():
+                raise RuntimeError("the start: %r not seen in %d s" % (ready, wait))
         if auto:
             # the start is AESSTART and every stretch until the screen came to
             # rest: a program that opens its window after its first event
