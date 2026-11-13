@@ -230,7 +230,9 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - **The speed rig proves what it times** (13 Nov 2026: EFTP's, EMail's, EPDF's and EHypView's rigs had
     rows timing the wrong item or nothing): every wait fails the run when it times out (common's
     `Rig.start` does, 0d1b1ac), and every row checks that it opened, moved or showed what its name says
-    (a trace line, the server's own log, the window's pixels changed) before its figure is used.
+    (a trace line, the server's own log, the window's pixels changed) before its figure is used. A rig closes
+    a dialog with Undo, never Esc: Esc empties the text field with the cursor and the dialog stays open (3.5;
+    ECal's rig timed keys typed into an open dialog, 2.47-2.49).
 - **The clock is a trap call** (13 Nov 2026, EContact's measurement): `tos_ms()`/`pf_ms()` go through
   Supexec, about 0.06 ms a read under NVDI on a stock Falcon and more where a network driver hooks the
   XBIOS. Don't read it per item in a loop: every 16 items or so on a 68020 or better (EContact's search:
