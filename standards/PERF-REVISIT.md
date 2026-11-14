@@ -78,6 +78,12 @@ speed is the focus again.
   270 -> 280, the mini player window 140 -> 155, VGM Settings closed 75 -> 90; faster: VGZ start under NVDI
   2585 -> 2550, VGM Play let go 180 -> 155. STE: no row slower. Accepted by Erez as the feature's cost
   (14 Nov: "Release EPlay").
+- **EHypView 2.3** (the Window menu; colour_pick on muls.w, which had evicted __mulsi3 from the 68030's
+  cache: the Falcon's picture rows level with 2.2 or faster): slower in both of two pairs, cause not found:
+  the ST start +15 (the bar's one more title), Tab to a link ST:mono +10 and Falcon-4:256 NVDI +25/+30, the
+  full-text key ST:mono +10, IMAGES.HYP's line ST:mono +10/+15, drawn ST:med +10, start NVDI +10, the
+  front page's start ST:mono +10 and line ST:med +10. Released for Erez to test on his machines (14 Nov:
+  "It might be ok. I'll test").
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
