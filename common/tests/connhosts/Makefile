@@ -11,6 +11,7 @@ test: $(B)/test_connhosts
 	./$(B)/test_connhosts 1
 	./$(B)/test_connhosts 2
 	./$(B)/test_connhosts 3
+	./$(B)/test_connhosts 4
 clean:
 	rm -rf $(B)
 .PHONY: test clean

@@ -45,7 +45,8 @@ extern long conn_bufsize;
 /* the root certificates (CACERT.PEM), loaded at the first TLS connection */
 extern char conn_cacert[200];
 /* where the hosts that need ECDSA or every cipher are kept across
-   sessions (the program's folder, e.g. tlshosts.dat), or "": none */
+   sessions; "" (the default): tlshosts.dat in tls_sigs_path's folder, or
+   nowhere if that is "" too */
 extern char conn_hosts_path[200];
 /* "TLS 1.2, ECDHE-RSA, ChaCha20-Poly1305, resumed", or "" */
 const char *conn_security(CONN *c);

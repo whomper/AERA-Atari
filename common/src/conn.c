@@ -20,7 +20,7 @@ int conn_tls_retry;
 
 /* servers that only have ECDSA certificates, and servers that refused
    ChaCha20 alone: later connections offer that at once. Kept across
-   sessions in conn_hosts_path when the program names one (a line
+   sessions in conn_hosts_path, or beside SIGS.DAT (hosts_path; a line
    "ecdsa HOST" or "aes HOST" each, read at the first handshake, written
    only when a host is added): without it every session's first
    connection to such a host was refused twice before the hello that
@@ -50,6 +50,29 @@ static int add_host(char list[NHOSTS][64], int *next, const char *host)
 
 #define HOSTS_MAX (2L * NHOSTS * 72)	/* the file at its longest */
 
+/* conn_hosts_path, or else tlshosts.dat in SIGS.DAT's folder, where every
+   program with TLS keeps what TLS learns: no program has to name it (a
+   line added to EWeb's main.c moved what it links after and cost its
+   page rows 10-15 ms on a stock Falcon, 14 Nov 2026); "" if neither */
+static const char *hosts_path(void)
+{
+	static char p[200];
+	const char *s;
+	long n;
+	if (conn_hosts_path[0])
+		return conn_hosts_path;
+	if (!p[0] && tls_sigs_path[0]) {
+		for (s = tls_sigs_path + strlen(tls_sigs_path); s > tls_sigs_path && s[-1] != '\\' && s[-1] != '/'; s--)
+			;
+		n = (long)(s - tls_sigs_path);
+		if (n + 13 < (long)sizeof(p)) {
+			memcpy(p, tls_sigs_path, (size_t)n);
+			strcpy(p + n, "tlshosts.dat");
+		}
+	}
+	return p;
+}
+
 /* through pf_open/pf_read/pf_write only, which every program's plat has */
 static void hosts_read_once(void)
 {
@@ -59,7 +82,7 @@ static void hosts_read_once(void)
 	if (hosts_read)
 		return;
 	hosts_read = 1;
-	if (!conn_hosts_path[0] || (h = pf_open(conn_hosts_path, PF_READ)) < 0)
+	if (!hosts_path()[0] || (h = pf_open(hosts_path(), PF_READ)) < 0)
 		return;
 	f = malloc(HOSTS_MAX + 1);
 	while (f && len < HOSTS_MAX && (got = pf_read(h, f + len, HOSTS_MAX - len)) > 0)
@@ -86,7 +109,7 @@ static void hosts_save(void)
 {
 	char *b, *q;
 	int i, h;
-	if (!conn_hosts_path[0] || !(b = malloc(HOSTS_MAX + 1)))
+	if (!hosts_path()[0] || !(b = malloc(HOSTS_MAX + 1)))
 		return;
 	q = b;
 	for (i = 0; i < NHOSTS; i++) {
@@ -95,7 +118,7 @@ static void hosts_save(void)
 		if (aes_hosts[i][0])
 			q += sprintf(q, "aes %s\n", aes_hosts[i]);
 	}
-	if ((h = pf_open(conn_hosts_path, PF_WRITE)) >= 0) {
+	if ((h = pf_open(hosts_path(), PF_WRITE)) >= 0) {
 		pf_write(h, b, q - b);
 		pf_close(h);
 	}
