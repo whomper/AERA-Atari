@@ -100,6 +100,8 @@ speed is the focus again.
 - **common's planar copy** (scr_rows, scr_put: each 16-pixel group's planes together, Erez's scroll colour
   lines): ECal's scroll step Falcon-4:256 NVDI 40 -> 55 ms, Falcon-4:16 20 -> 30, in Hatari. Accepted by Erez
   (14 Nov: "go with (a), release it"). Each app that takes it pairs its own scroll rows.
+- **ClaudeST 2.10** (Write a log, Erez's 6.5 rule): Settings opened on the ST 230 -> 250-260 ms (one row more,
+  the family's tick box), the Falcon 100 -> 105. Accepted by Erez (14 Nov: "yes, release ClaudeST 2.10").
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
