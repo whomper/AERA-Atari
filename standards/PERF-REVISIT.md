@@ -72,6 +72,12 @@ speed is the focus again.
 - **EHypView 2.1** (head-first loading, option A): a link pressed on the Falcon 25 -> 40 (Falcon-4:16), <20 -> 30
   (Falcon-4:256 NVDI); a big page's top 90/100 -> 110 (data-cache placement); the start 760 -> 360 (Falcon),
   3025 -> 1125 (ST). Accepted by Erez (13 Nov).
+- **EPlay 1.36** (OPL3 VGM on the DSP, the per-track lowering; the program 12.8 KB smaller, the ticks and the
+  start paths pinned): code placement left, Falcon-4:16 the mini player's start 535 -> 565, the Mega Drive VGZ
+  start 2400 -> 2430, About with a VGM playing 200 -> 220; Falcon-4:256 NVDI About with an MP3 playing
+  270 -> 280, the mini player window 140 -> 155, VGM Settings closed 75 -> 90; faster: VGZ start under NVDI
+  2585 -> 2550, VGM Play let go 180 -> 155. STE: no row slower. Accepted by Erez as the feature's cost
+  (14 Nov: "Release EPlay").
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
