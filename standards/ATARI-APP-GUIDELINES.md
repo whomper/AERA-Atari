@@ -1836,6 +1836,13 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   file is read once per start.
 - **No disk while idle.** Whether a file changed is checked when the window opens or a job starts,
   never on a timer.
+- **No log without its switch** (Erez, 14 Nov 2026: "they must have a log on and off menu item and setting
+  storage"). A program that writes a log of its own (`NAME.LOG`: connections, measurements, a quit's
+  steps, anything else) has `Write a log` as a tick in Options (last, 3.1) and in Settings, one setting kept
+  in step, stored in its INF as `LOG=` and off until the user ticks it. With it off, nothing is written: no
+  file, not one line. `CRASH.LOG` is the one exception, written by the crash handler (6.4) only after a
+  crash. Found without it on 14 Nov: EHypView (`ehypview.log`, its quit's steps), ClaudeST (`CLAUDEST.LOG`,
+  the same) and EPlay (`EPLAY.LOG`, every run).
 - **The log is capped** (hub, 9 Nov 2026): `conn.c` writes `NAME.LOG` in blocks, one open a flush, and a
   write that would take it over 256 KB (`conn_log_max`) moves it to `NAME.OLD` (an older one goes) and
   starts a new one, so the last 256 to 512 KB are kept and no log grows without end. The size comes from
@@ -2196,6 +2203,7 @@ program's window.
 | 3.1 to 6.3 and 5.10, 5.11: the UI standards in `ui/` (menus, controls, windows); each app answers the rows of `ui/DEVIATIONS.md` that name it (9 Nov) | maintenance | maintenance | maintenance | maintenance | maintenance | maintenance | to check | to check | to check |
 | 3.1 Options: the account or site item, Settings, Font (no key), a line, the ticks (D6, D7, D13) | ✗ | ✗ | ? | ✗ | ✗ | ✗ | ? (EUpdate ?) | ✗ | ✗ |
 | 3.1 `Write a log` and `Direct connection`, in the menu and in Settings (D8, D9) | ✗ | ✗ | ✗ | ✗ | — | — | ? (EUpdate ✗) | — | ? |
+| 6.5 No log without `Write a log` (a tick in Options and Settings, `LOG=`, off at first), CRASH.LOG excepted (Erez, 14 Nov) | ✓ | ✓ | ✓ | ✓ | ✗ (ehypview.log: quit steps) | ✗ (CLAUDEST.LOG: quit steps) | ✓ (EUpdate ✓) | ✓ (writes none) | ✗ (EPLAY.LOG every run) |
 | 3.1 A one-window program lists Quit alone; a line above the Close/Next/Quit group (D3, MD9) | ✗ | ? | ? | ? | ✗ | ✗ | ? (EUpdate ?) | ? | ? |
 | 3.1 Find in Edit, an app's own search in its menu and named; Select all in the menu of the things selected (D4, D20, D21) | ? | ? | ✗ | — | — | ? | ? (EUpdate ?) | ? | ✗ |
 | 3.1, 4.3 Help is `NAME help  Help` and `Keys...`; EHypView `EHypView help`, its Help key the page (D10, D11) | ✗ | ✗ | ? | ? | ✗ | ? | ? (EUpdate ?) | ✗ | ✗ |
