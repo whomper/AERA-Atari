@@ -1154,7 +1154,10 @@ static uint32_t sig_check(const br_ec_impl *impl, const void *hash, size_t hash_
 /* the last sessions, by server: a new connection to the same server
    resumes one (TLS session ID) and skips the key exchange and the
    certificate checks, seconds of arithmetic on a 68030 */
-#define NSESS 4
+/* 16, not 4: a page that draws on several secure hosts keeps them all
+   (EWeb, 14 Nov 2026: resumed 1.2 s against 7.4 s in full on
+   atari-home.de on a stock Falcon); about 2.5 KB */
+#define NSESS 16
 static struct {
 	char host[64];
 	br_ssl_session_parameters sp;
