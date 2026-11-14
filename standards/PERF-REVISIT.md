@@ -97,6 +97,9 @@ speed is the focus again.
 - **EPDF 2.26** (libjpeg's monitor every 16 MCUs and a turn before the DSP's start, AERA-Atari 30d7f2c): View
   > Pages' progressive photo page +70-75 ms (0.8 %) for its longest stretch 245 -> 70. Accepted by Erez
   before the release, in EPDF's session (14 Nov: "yes, accept the p3 cost and release when checks pass").
+- **common's planar copy** (scr_rows, scr_put: each 16-pixel group's planes together, Erez's scroll colour
+  lines): ECal's scroll step Falcon-4:256 NVDI 40 -> 55 ms, Falcon-4:16 20 -> 30, in Hatari. Accepted by Erez
+  (14 Nov: "go with (a), release it"). Each app that takes it pairs its own scroll rows.
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
