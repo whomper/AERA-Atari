@@ -102,6 +102,8 @@ speed is the focus again.
   (14 Nov: "go with (a), release it"). Each app that takes it pairs its own scroll rows.
 - **ClaudeST 2.10** (Write a log, Erez's 6.5 rule): Settings opened on the ST 230 -> 250-260 ms (one row more,
   the family's tick box), the Falcon 100 -> 105. Accepted by Erez (14 Nov: "yes, release ClaudeST 2.10").
+- **EPDF 2.26, the sync to 480f2ef**: in bands p2 18810 -> 18890 ms (+80, 0.4 %), CONVTEST p6 +60 (0.06 %), layout
+  after the sync (EPDF's pads put its own code back). Released before the speed.py pairs were in; open (14 Nov).
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
