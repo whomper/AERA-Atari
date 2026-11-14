@@ -30,10 +30,13 @@ makes anyway.
 - **Titles, in this order, leaving out those with nothing in them:**
   **Desk · File · Edit · View · [the app's own] · Options · Help.** All ten apps follow this. The app's own
   titles come after View: EMail Message and Folder; EFTP Local, Remote and Transfers; EUpdate Repository;
-  EWeb Bookmarks; EHypView Navigate and Bookmarks; ECal Event; EContact Contact; ClaudeST Chat; EPDF Page;
+  EWeb Bookmarks and Window; EHypView Navigate, Bookmarks and Window; ECal Event; EContact Contact; ClaudeST Chat; EPDF Page;
   EPlay Play. A title with nothing to hold is left out (EContact has no Edit; EPDF has no Options until it moves Settings and Font
   there: MD1, D6).
   A title's text is `" File "`: a space each side.
+- **A program with several windows has a Window title** (Erez, 13 and 14 Nov 2026: EWeb 1.11, then EHypView), the last
+  of its own titles, before Options: its windows, oldest first, by what each shows (a page's title); the one in front
+  ticked; choosing another tops it (`WF_TOP`, as Next window does). Close window and Next window stay in File (3.1).
 - **The Desk title is the product name, `" EMail "`, never the word "Desk"** (1.1). Its menu is
   `About NAME...` and nothing else of the app's. The builder adds a line and six slots that the AES fills
   with the accessories' names, and makes this menu at least 22 characters wide (`common/ui/mbar.c`:
