@@ -248,6 +248,10 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   (EMail's first group, 13 Nov: a line 30 -> 40 ms). Where the hot path is a few functions inside a big file,
   mark them with common's `HOT_CODE("NNname")` (`src/hotcode.h`) and link with `-Wl,--sort-section=name`
   (EPlay 1.34).
+  A fast path for one machine or screen mode added inside a shared hot function is `noinline`
+  (`__attribute__((noinline))`), so the other machines' loops keep their places in the 68030's cache: ST
+  medium's unrolled cells, inlined into `text_plain`, made every Falcon's text 20 % slower with the same
+  instructions (common 298d3f1, EPDF, 14 Nov 2026).
 - **What the user waits for: the longest stretch** from the event that started it to the program's
   next event call (`-DAES_PROFILE`'s `AESGAP` lines, `common/atari/gem.c`). It is measured on
   `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on all three also under
