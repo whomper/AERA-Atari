@@ -91,6 +91,9 @@ speed is the focus again.
 - **EPDF 2.24** (EConvert's photo quantising turns: it held the machine 340 ms; the showcase's turns
   355 -> 170): CONVTEST on Falcon-4:256, the two photo pages +195 and +110 ms of 36-38 s each, the turns'
   own cost (098183d's fault-fix exception). Released before Erez was asked; put to him after (14 Nov).
+- **EPDF 2.25** (a stroke's outline turns: the chart page held the machine 140 ms; bands skip strokes outside
+  them): CONVTEST page 2 +65 ms of 36 s (about half the program's size alone). Accepted by Erez before the
+  release, in EPDF's session (14 Nov).
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
