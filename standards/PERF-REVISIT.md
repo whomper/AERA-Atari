@@ -88,6 +88,9 @@ speed is the focus again.
   site 1.0-3.3 s faster): ST:mono About box opened 155 -> 165, Falcon-4:16 home page shown 520 -> 530, both
   placement (pads that put the code back moved other rows more: EWeb's DESIGN.md, "Code layout and the
   68030's caches"). Falcon-4:256 NVDI within a tick. Released on Erez's word (14 Nov: "Release").
+- **EPDF 2.24** (EConvert's photo quantising turns: it held the machine 340 ms; the showcase's turns
+  355 -> 170): CONVTEST on Falcon-4:256, the two photo pages +195 and +110 ms of 36-38 s each, the turns'
+  own cost (098183d's fault-fix exception). Released before Erez was asked; put to him after (14 Nov).
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
