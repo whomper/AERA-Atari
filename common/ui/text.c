@@ -221,6 +221,28 @@ static void cells_st_high(unsigned char *d, const unsigned char *sp, short n)
 	}
 }
 
+/* n whole cells of 8x8 on ST medium's screen (two planes, 160 bytes a
+   line) from d on, the first at pixel px: each glyph row one load and its
+   two planes' bytes stored at fixed places (the loop over rows with a
+   step, 700 cycles a cell, was most of a page scrolled: 124 of 170 ms) */
+static void cells_st_med(unsigned char *d, const unsigned char *sp, short n, short px)
+{
+	for (; n > 0; n--, px += 8) {
+		const unsigned char *g = glyph + *sp++;
+		unsigned char v;
+
+		v = g[0];	d[0] = v;	d[2] = v;
+		v = g[256];	d[160] = v;	d[162] = v;
+		v = g[512];	d[320] = v;	d[322] = v;
+		v = g[768];	d[480] = v;	d[482] = v;
+		v = g[1024];	d[640] = v;	d[642] = v;
+		v = g[1280];	d[800] = v;	d[802] = v;
+		v = g[1536];	d[960] = v;	d[962] = v;
+		v = g[1792];	d[1120] = v;	d[1122] = v;
+		d += (px & 8) ? 3 : 1;
+	}
+}
+
 /* n whole cells from d on, rows r0 on (nr of them), the first at pixel
    px: the same byte in every plane (pen 1 sets all of a pixel's planes,
    pen 0 none), planes 2, 4 or 8 */
@@ -432,6 +454,8 @@ void text_plain(short h, short x, short y, const char *s, long n)
 					k = last - i + 1;
 					if (step == 2)
 						cells_st_high(d, sp, (short)k);
+					else if (step == 4 && sf_bpl == 160 && ch == 8 && nr == 8)
+						cells_st_med(d, sp, (short)k, px);
 					else
 						cells_planes(d, sp, (short)k, px, r0, nr, step);
 					sp += k;
