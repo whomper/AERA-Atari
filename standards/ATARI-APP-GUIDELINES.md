@@ -1910,6 +1910,10 @@ for every app (the ones in maintenance too: section 8).
   `tests/dns`).
 - **A Direct connection does TLS 1.2 on the Atari** (a TT, a Falcon, any 68020 or better; TLS.OVL, 7.4):
   - BearSSL, with RSA and the curves on the Falcon's DSP.
+  - **Session secrets never touch the disk** (Erez, 14 Nov 2026: "no, keep session secrets off the disk"): a
+    TLS session is resumed only within a run, from memory (16 kept, `tls.c`'s `NSESS`). What may be kept
+    between runs is what isn't secret: `ROOTS.DAT`, `SIGS.DAT`, `SEED.DAT`, and the hosts that need ECDSA or
+    every cipher (`conn_hosts_path`).
   - The chain, host name and date are always checked against `ROOTS.DAT`, which is built from
     `CACERT.PEM`: once the handshake is over and before any data goes either way (TLS.OVL 1.1,
     25 Oct 2026). During it only the server's key is taken, so a server that drops a slow handshake
