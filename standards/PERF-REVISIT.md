@@ -84,6 +84,10 @@ speed is the focus again.
   full-text key ST:mono +10, IMAGES.HYP's line ST:mono +10/+15, drawn ST:med +10, start NVDI +10, the
   front page's start ST:mono +10 and line ST:med +10. Released for Erez to test on his machines (14 Nov:
   "It might be ok. I'll test").
+- **EWeb 1.12** (TLS.OVL 1.16, the hosts kept in tlshosts.dat; the second session's first connect to such a
+  site 1.0-3.3 s faster): ST:mono About box opened 155 -> 165, Falcon-4:16 home page shown 520 -> 530, both
+  placement (pads that put the code back moved other rows more: EWeb's DESIGN.md, "Code layout and the
+  68030's caches"). Falcon-4:256 NVDI within a tick. Released on Erez's word (14 Nov: "Release").
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
