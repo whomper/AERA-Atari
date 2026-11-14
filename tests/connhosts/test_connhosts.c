@@ -118,8 +118,13 @@ int main(int argc, char **argv)
 		check(connect_once("ecdsa.example") == 1, "one hello");
 		check(!(last_flags & TLS_RSA_ONLY) && !(last_flags & TLS_CHACHA_ONLY), "and it offered ECDSA and every cipher");
 		check(connect_once("other.example") == 3, "another host still learns its way");
+	} else if (run == 3) {
+		printf("== no conn_hosts_path: tlshosts.dat beside SIGS.DAT\n");
+		conn_hosts_path[0] = 0;
+		str_copy(tls_sigs_path, "build/sigs.dat", sizeof(tls_sigs_path));
+		check(connect_once("ecdsa.example") == 1, "one hello, from the first session's file");
 	} else {
-		printf("== no conn_hosts_path: nothing kept\n");
+		printf("== neither path: nothing kept\n");
 		conn_hosts_path[0] = 0;
 		check(connect_once("ecdsa.example") == 3, "three hellos, as before the change");
 	}
