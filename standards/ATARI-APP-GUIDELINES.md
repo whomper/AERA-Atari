@@ -1840,6 +1840,13 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   file is read once per start.
 - **No disk while idle.** Whether a file changed is checked when the window opens or a job starts,
   never on a timer.
+- **NatFeats only where a test asks** (Erez, 15 Nov 2026: "make it a .INF setting so that it can be added in
+  our testing but have no bearing outside"). The emulator's console (common's `nf_debug`, `nf_probe`,
+  `nf_find`) is looked for only when the app sets `nf_on` (`tos.h`), from `NATFEATS=1` in its INF, read before
+  its first log line; only the test rigs write the key, it is in no Settings page, and with it absent nothing
+  is probed and a real machine never runs the probe's illegal instruction. (A Vampire V4SA's Atari core, its
+  VBR away from 0, ended EMail and EHypView and hung EWeb, EPDF and EPlay at that probe. nf.S also takes the
+  vector from VBR now.) Common's own test programs set `nf_on = 1` themselves.
 - **The log is written as it happens** (Erez, 15 Nov 2026: "apps should write log at once as otherwise it
   may be ineffective to trace errors"). With Write a log on, every line is on the disk when it is logged
   (common's `conn_log`, AERA-Atari after 6476179): a crash or a freeze leaves the log up to its last line.
