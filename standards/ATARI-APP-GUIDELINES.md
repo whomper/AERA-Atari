@@ -1840,6 +1840,12 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   file is read once per start.
 - **No disk while idle.** Whether a file changed is checked when the window opens or a job starts,
   never on a timer.
+- **The log is written as it happens** (Erez, 15 Nov 2026: "apps should write log at once as otherwise it
+  may be ineffective to trace errors"). With Write a log on, every line is on the disk when it is logged
+  (common's `conn_log`, AERA-Atari after 6476179): a crash or a freeze leaves the log up to its last line.
+  Nothing is held for a job or for the run; `conn_log_hold` no longer holds. An app's own logger that keeps
+  lines in memory (EPlay's held run log until 1.39) writes them at once too. The cost, a write a line, is paid
+  only while the log is on: the open budgets (6.5) are counted with it off.
 - **No log without its switch** (Erez, 14 Nov 2026: "they must have a log on and off menu item and setting
   storage"). A program that writes a log of its own (`NAME.LOG`: connections, measurements, a quit's
   steps, anything else) has `Write a log` as a tick in Options (last, 3.1) and in Settings, one setting kept
