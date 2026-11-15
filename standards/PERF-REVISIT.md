@@ -117,6 +117,10 @@ speed is the focus again.
   Accepted by Erez (15 Nov).
 - **libjpeg's tick every 8** (jdcoefct.c): EPDF's progressive photo page +80-90 ms of 9.3-15.4 s (under 1 %) for
   its longest stretch 70 -> 45-50; bands' page 6 +60. Accepted by Erez (15 Nov: "yes, go with the tick every 8").
+- **EPlay 1.38** (OPL2/OPL3 on a 68060's CPU, the log at once, NATFEATS, m_loop's limits), on TOS 4.04:
+  Falcon-4:16 the VGM's start 2,410 -> 2,455, About with a VGM 210-215 -> 220-230, 3 s after a seek 20-25 -> 40;
+  NVDI the VGM's start 2,570 -> 2,610, About 460 -> 470-475, Settings opened 275 -> 300, closed 55-65 -> 65-75
+  (45 ms of an AES idle wait now counted in the start). Accepted by Erez in EPlay's session (15 Nov).
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
