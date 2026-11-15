@@ -107,6 +107,14 @@ speed is the focus again.
   p6 +60 is the rig's spread (103,635-103,730 over four rounds). Released before the speed.py pairs were in; open (14 Nov). With it ST:med against 2.25: next page
   245 -> 255, the last page 200 -> 205, the start 665 -> 675 (none of EPDF's own changes runs there). Closed by
   2.28 (common b85acda/298d3f1, ST medium's cells unrolled): a page scrolled 115, next page 200, all within.
+- **EHypView 2.4** (the planar copy, Write a log): a big page's line ST:med 115 -> 130, Falcon-4:16 60 -> 80,
+  Falcon-4:256 NVDI 85 -> 105; IMAGES.HYP and the front page +5-20 on the Falcons; Settings opened ST +15-20.
+  Accepted by Erez (15 Nov: "yes to 1, 3 and 4").
+- **EPlay 1.37** (the stall restart, Write a log, TLS.OVL 1.17): Settings during a VGM Falcon-4:16 165-185 ->
+  195-205; Play let go during a VGM under NVDI 150-160 -> 185-190 (cause not found); the STE's Delete 255-265 ->
+  310-315 (background timing). Accepted by Erez (15 Nov).
+- **EPDF 2.29** (the fill turns, the stream read in pieces): CONVTEST page 1 14,135 -> 14,230 ms (0.7 %).
+  Accepted by Erez (15 Nov).
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
