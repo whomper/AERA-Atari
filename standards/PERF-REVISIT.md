@@ -209,6 +209,15 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   View menu's Page strip item (Erez's) and two returns with no AES or VDI call, each under a tick. Judged by the
   hub, 15 Nov 2026: the start as a whole is unchanged.
 
+- **EWeb 1.14 and 1.15, `Falcon-4:256` with NVDI: a measuring artefact, not a regression** (hub, 15 Nov 2026). On
+  the 4 MB Falcon the news page sits at the edge of memory, and font.c marked a face it couldn't read for want of
+  memory as failed for good: no glyphs, its lines measured short (page height 14577 against 17601). 1.14 as
+  released fell on that side, 1.15 didn't, by a few hundred bytes free at start. So 1.14's news-page and scroll
+  rows there (a page scrolled 355, an arrow held 520) were measured on a page without its text; 1.15's (390,
+  645) are the true figures, and 1.14's c2p gain under NVDI (415 -> 360) is partly the artefact. Falcon-4:16 (the
+  page's height the same both ways) stands. Fixed in EWeb 1.16 (a face short of memory tried again); speed.py
+  checks the news page's height from then on. Erez asked to optimise (15 Nov): measured against 1.15.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
