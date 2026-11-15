@@ -134,9 +134,13 @@ Erez's.
   - Erez works in 640x480 with 16 colours, sometimes 256, with **TOS 4.04** and **NVDI 5** (17 Oct
     2026). His own NVDI 5.03 is with the hub (19 Oct 2026), outside git as the TOS images are:
     `m.nvdi()` in `machines.py` installs it, with his ASSIGN.SYS, drivers and Bitstream fonts.
-    ECal, EContact and EHypView have it too (19 Oct 2026), in `~/.aera/nvdi/x`, so they can test
-    under NVDI themselves. Every ST app session also has Erez's TOS 1.04 and 4.04 in `~/.aera/tos`
-    (19 Oct 2026; never in git, never sent anywhere): **each session runs its own GEM rigs on them
+    **Every session has them** (Erez, 15 Nov 2026): the cloud environment's setup script fetches his
+    ZIP (the link is his, kept in that script and nowhere in git) at each fresh container and puts TOS
+    1.04, 1.62, 3.06 and 4.04 in `~/.aera/tos` (`tos104us.img`, `tos162.img`, `tos306.img`,
+    `tos404.img`) and NVDI 5.03 in `~/.aera/nvdi/x`; a session that started before it (or whose
+    container was kept) runs the same lines itself, as the hub sends them. Never in git, never in a
+    test's `hd` left behind, never sent anywhere else. Rigs that run without them say so ("stand-in,
+    EmuTOS") and are not a release's record when they could have run. **Each session runs its own GEM rigs on them
     (and under NVDI where it has it) before asking Erez for a release**, and sends the hub the commit
     and its results. The hub doesn't repeat them: it runs the family checks (`acc_all.py --use`, the
     programs together) and the NVDI runs a session can't, then says "clear" or what failed. CI stays
