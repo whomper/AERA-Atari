@@ -199,6 +199,10 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   only rdraw.o and ovl.o moved, everything from textwin.c on shifted by 256 (0 mod 256), and a text-view next
   page runs neither. Recorded as noise by the hub, 15 Nov 2026 (EPDF's session, three pairs).
 
+- **EWeb 1.14** against 1.13 (the 68030's new chunky-to-planes), `Falcon-4:16`: a page scrolled 44 -> 50 (A B B A,
+  minimum); 1.13's own runs gave 44 and 50. Every other row the same or faster (Falcon-4:256 with NVDI a row put
+  1.08 -> 0.91 ms, scrolls 15-28 % faster). Judged noise by the hub, 15 Nov 2026.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
