@@ -203,6 +203,12 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   minimum); 1.13's own runs gave 44 and 50. Every other row the same or faster (Falcon-4:256 with NVDI a row put
   1.08 -> 0.91 ms, scrolls 15-28 % faster). Judged noise by the hub, 15 Nov 2026.
 
+- **EPDF 2.33 candidate** (de28eec3, the page strip, off), `ST:mono` TOS 1.04: the start row 665 -> 700 is the
+  rig's summing at threshold 20 (2.32's 25 ms timer turn left out when a foreign WM_REDRAW lands beside it); with
+  AES_PROFILE=5, two runs each, AESSTART through the opening is 960 ms in both. AESSTART itself 615 -> 625: the
+  View menu's Page strip item (Erez's) and two returns with no AES or VDI call, each under a tick. Judged by the
+  hub, 15 Nov 2026: the start as a whole is unchanged.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
