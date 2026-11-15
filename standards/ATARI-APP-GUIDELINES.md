@@ -1843,7 +1843,8 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 - **NatFeats only where a test asks** (Erez, 15 Nov 2026: "make it a .INF setting so that it can be added in
   our testing but have no bearing outside"). The emulator's console (common's `nf_debug`, `nf_probe`,
   `nf_find`) is looked for only when the app sets `nf_on` (`tos.h`), from `NATFEATS=1` in its INF, read before
-  its first log line; only the test rigs write the key, it is in no Settings page, and with it absent nothing
+  its first log line; only the test rigs write the key, it is in no Settings page, the app writes it back only
+  when it read it (EMail's way: a rig's key survives the INF rewritten, a user never gets it), and with it absent nothing
   is probed and a real machine never runs the probe's illegal instruction. (A Vampire V4SA's Atari core, its
   VBR away from 0, ended EMail and EHypView and hung EWeb, EPDF and EPlay at that probe. nf.S also takes the
   vector from VBR now.) Common's own test programs set `nf_on = 1` themselves.
