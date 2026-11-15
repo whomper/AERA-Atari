@@ -130,6 +130,9 @@ speed is the focus again.
   copy). Falcon-4:256 NVDI: the news page shows where 1.12 couldn't (its first figures: a line 85, a page 415,
   Settings closed 320); a stock 4 MB Falcon has no room for the kept page there, so every scroll draws (to_planes
   0.81 ms a row). Accepted by Erez in EWeb's session (15 Nov: "Release").
+- **EMail 2.20** (the V4SA fix, NATFEATS, the log at once, TLSFB.OVL): the start on Falcon-4:256 NVDI 760 -> 770,
+  ST-1 TOS 1.04 2675 -> 2685, with every symbol outside the changed files back at 2.19's place mod 256 (the
+  residual). Accepted by Erez in EMail's session (15 Nov: "Accept the 10 ms and release 2.20").
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
