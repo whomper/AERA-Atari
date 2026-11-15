@@ -125,6 +125,11 @@ speed is the focus again.
   WAV playing 695 -> 705, with a VGM playing 2,610 -> 2,640. Accepted by Erez (15 Nov: "yes, release EPlay
   1.39"). The STE's own rows on TOS 1.62, its first record (About 230, Settings 345, Next 405, Down 250 against
   150/150/185/50), are its baseline; a phase for them waits for Erez.
+- **EWeb 1.13** (the V4SA fix, the log at once, atariscne.org's pictures), on Erez's TOS 1.04: ST:mono "3 pages up"
+  780 -> 1140 (the same draws; the page's end in one stretch, so the keys land differently: an extra 310 ms scroll
+  copy). Falcon-4:256 NVDI: the news page shows where 1.12 couldn't (its first figures: a line 85, a page 415,
+  Settings closed 320); a stock 4 MB Falcon has no room for the kept page there, so every scroll draws (to_planes
+  0.81 ms a row). Accepted by Erez in EWeb's session (15 Nov: "Release").
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
