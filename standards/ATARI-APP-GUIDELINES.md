@@ -111,7 +111,11 @@ Erez's.
     binding before their own check). Its `main()` is common's `atari/cpucheck.c`, the one file
     built `-m68000`: on a 68000 it shows the program's `cpu_alert` and quits, elsewhere it calls
     `app_main()`. Every such program has a rig on `ST:mono` that sees the alert and the desktop
-    again.
+    again. A program with a FireBee edition of its own also defines `cpu_cf_alert`, naming that
+    edition: where the jar has `_CF_` (FireTOS's `_CPU` of 60 passes `cpu_need`, and the 68030 code
+    after it dies at its first 64-bit `mulu.l`: EWeb, 15 Nov 2026, on the FireBee stand-in) it is
+    shown and the program quits. A program without one goes on as before (weak, AERA-Atari after
+    9a8c7c9; `common/tests/coldfire`'s `test_cpucheck_c`).
   - **`appl_getinfo` only where the AES has it** (28 Oct 2026): TOS 4.04's AES (3.40) answers it
     with "Illegal AES function call" (EMail's first try at an `SW_DEFDIR` start). Common's
     `appl_getinfo()` asks only on AES 4.0 and later, with the `?AGI` cookie or under MagiC, and
