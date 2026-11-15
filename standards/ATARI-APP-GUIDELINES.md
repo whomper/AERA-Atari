@@ -1871,6 +1871,11 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   file, not one line. `CRASH.LOG` is the one exception, written by the crash handler (6.4) only after a
   crash. Found without it on 14 Nov: EHypView (`ehypview.log`, its quit's steps), ClaudeST (`CLAUDEST.LOG`,
   the same) and EPlay (`EPLAY.LOG`, every run).
+- **Mxalloc may not exist** (EPlay, 15 Nov 2026): TOS 1.x has no Mxalloc and answers -32 (EINVFN), which is
+  not "no memory". Every call of an app's own (outside common, whose bigbuf.c, libc.c, aboutline.c and offpage.c
+  already do) falls back to Malloc on -32, as EPlay's `x_alloc` does; Mxalloc(-1, mode) for a size is Malloc(-1)
+  there. EPlay 1.38 and every release before it could add no file on a real STE (TOS 1.62); EmuTOS has Mxalloc,
+  so no rig saw it until the rigs ran on Erez's TOS.
 - **The log is capped** (hub, 9 Nov 2026): `conn.c` writes `NAME.LOG` in blocks, one open a flush, and a
   write that would take it over 256 KB (`conn_log_max`) moves it to `NAME.OLD` (an older one goes) and
   starts a new one, so the last 256 to 512 KB are kept and no log grows without end. The size comes from
