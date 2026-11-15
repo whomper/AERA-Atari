@@ -163,6 +163,7 @@ Erez's.
   | `TT` | TT030: 68030 at 32 MHz, 68882, 4 MB ST RAM + 16 MB TT RAM | `ttmed`, `mono`, `med` | none (EmuTOS) |
   | `Falcon` | Erez's Falcon with the DFB1: 68030 + 68882, 14 MB ST RAM + 128 MB TT RAM, DSP, VGA | `16`, `256` | 4.04 |
   | `Falcon-4` | a Falcon030 as sold: 68030 at 16 MHz, no FPU, 4 MB ST RAM, no TT RAM, VGA | `16`, `256` | 4.04 |
+  | `FireBee` | a stand-in, not a FireBee: a Falcon with a 68060 and its FPU, 14 MB ST RAM + 128 MB TT RAM, no DSP, VGA, with FireTOS's cookies (`C:\AUTO\FBSTAND.PRG`; added 15 Nov 2026) | `16`, `256` | none (EmuTOS always: TOS 4.04 runs no 68060) |
 
   - Each machine has its own settings: its own NVRAM (no rig's settings leak into another's) and the
     Falcon's screen mode, which a real TOS 4 takes from `C:\NEWDESK.INF`.
@@ -177,6 +178,18 @@ Erez's.
     their files to an empty floppy drive).
   - An ST has no clock: on `ST` and `ST-1`, `C:\AUTO\CLOCK.PRG` sets this computer's date and time
     at boot, as one does on a real ST from the Control Panel (from ECal's rigs). Rigs drop their own.
+  - **`FireBee` is a stand-in** (15 Nov 2026): on a FireBee the family's 68000 programs run under
+    FireTOS, which says `_CPU` 60 and `_CF_`, and there is no DSP. Two faults shipped because no rig
+    looked like that (EContact loaded PIC.OVL for `_CPU` >= 20; `ovl.c`'s cache flush ran `movec
+    cacr`, which a ColdFire lacks). `C:\AUTO\FBSTAND.PRG` sets `_CPU` to 60, adds `_CF_` and clears
+    `_SND`'s DSP bit (bit 3), in place, or in a bigger jar it keeps resident when TOS's is full.
+    It catches what a 68000 build does when it finds a FireBee: the `_CF_` paths (`tls_ovl.c`
+    loading `tlsfb.ovl`, `pic_ovl.c` leaving PIC.OVL out, `ovl.c` pushing each cache line with
+    `cpushl`) and any test of `_CPU` or the DSP that forgets the FireBee. It cannot catch ColdFire
+    code (TLSFB.OVL, EWEBFB.PRG: `common/tests/coldfire` runs common's under `qemu-m68k -cpu
+    cfv4e`), FireTOS's own emulation of the 68000 instructions a ColdFire lacks (the stand-in runs
+    them as a 68060), nor the FireBee's hardware: a tester's FireBee is still the record.
+    `common/tests/firebee/run.py` checks the machine from inside.
   - Which machines a change passes: a 68000 build on `ST-1` and `ST` (`mono` and `med`); the
     68030 code (the Falcon editions, BearSSL, EHypView's colour) on `TT` and `Falcon`; drawing and
     pictures on `Falcon:16` and `Falcon:256` too. AES messages and drag and drop also under MiNT
