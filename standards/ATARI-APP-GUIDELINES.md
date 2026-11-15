@@ -1848,6 +1848,11 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   is probed and a real machine never runs the probe's illegal instruction. (A Vampire V4SA's Atari core, its
   VBR away from 0, ended EMail and EHypView and hung EWeb, EPDF and EPlay at that probe. nf.S also takes the
   vector from VBR now.) Common's own test programs set `nf_on = 1` themselves.
+- **TLSFB.OVL for the FireBee** (Erez, 15 Nov 2026: "yes to TLSFB.OVL, FireBee editions only on report"). Every
+  app with a Direct connection ships `tlsfb.ovl` beside `tls.ovl` (common's `tlsovl/tlsfb.ovl`, the same sources
+  built for the ColdFire: `make CPU=5475`); `tls_ovl.c` loads it by itself where the `_CF_` cookie is set, and
+  `ovl.c` flushes the ColdFire's caches its own way there. A native FireBee edition of a program (EWeb's
+  EWEBFB.PRG, EPlay's EPLAYFB.PRG) is made only when a FireBee user reports the app too slow.
 - **The log is written as it happens** (Erez, 15 Nov 2026: "apps should write log at once as otherwise it
   may be ineffective to trace errors"). With Write a log on, every line is on the disk when it is logged
   (common's `conn_log`, AERA-Atari after 6476179): a crash or a freeze leaves the log up to its last line.
