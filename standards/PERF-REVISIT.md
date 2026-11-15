@@ -190,6 +190,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   NVDI no row slower. Accepted by Erez in EPlay's session, 15 Nov 2026. Revisit with the XBIOS path without
   interrupts.
 
+- **EPDF 2.33's page previews** (EConvert's Settings > General > Page previews, off by default; Erez 15 Nov 2026:
+  "accept and make it a setting flag, off by default"): CONVTEST on `Falcon-4:256`, 9 pages, 249,230 ms (2.32)
+  -> 249,420 off (run-to-run spread) and 266,840 on, about +1.9 s a page, the 640-pixel canvas read again. On
+  the Pi a few ms. Accepted by Erez in EPDF's session.
+
 ## Small differences judged noise (not to chase)
 
 - **EPlay 1.27** against 1.26, NVDI: rows within 5–15 ms either way (Add of three 105 → 120,
