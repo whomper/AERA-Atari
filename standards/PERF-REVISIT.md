@@ -187,6 +187,10 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
 
 - **EPlay 1.27** against 1.26, NVDI: rows within 5–15 ms either way (Add of three 105 → 120,
   Delete 65 → 60); the release changed only MP3 and the INF.
+- **EPDF 2.32** against 2.31, `Falcon-4:16` (TOS 4.04): next page 90 → 105 (limit 300) in the release's
+  pair; two more interleaved pairs 100 / 105 and 105 / 100, means 98 / 103, inside one tick. Placement agrees:
+  only rdraw.o and ovl.o moved, everything from textwin.c on shifted by 256 (0 mod 256), and a text-view next
+  page runs neither. Recorded as noise by the hub, 15 Nov 2026 (EPDF's session, three pairs).
 
 ## How to add a line
 
