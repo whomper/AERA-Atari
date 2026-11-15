@@ -115,6 +115,8 @@ speed is the focus again.
   310-315 (background timing). Accepted by Erez (15 Nov).
 - **EPDF 2.29** (the fill turns, the stream read in pieces): CONVTEST page 1 14,135 -> 14,230 ms (0.7 %).
   Accepted by Erez (15 Nov).
+- **libjpeg's tick every 8** (jdcoefct.c): EPDF's progressive photo page +80-90 ms of 9.3-15.4 s (under 1 %) for
+  its longest stretch 70 -> 45-50; bands' page 6 +60. Accepted by Erez (15 Nov: "yes, go with the tick every 8").
 
 ## Open: code placement on the 68030
 EPlay (1.32), EContact (2.3) and EFTP (the arena) each saw a row move 10-35 ms with no change to its code, from where
