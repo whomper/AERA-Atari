@@ -183,6 +183,13 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
 - **TLS first connection**: one 235 ms stretch with no log line (hub task: place it with a
   trail per record, then split).
 
+- **EPlay 1.40** (TLSFB.OVL, phase 11 step 4b: the XBIOS's sound in EPLAY.PRG, the FireBee's stop fix): started
+  with 8 files given, the first playing, `Falcon-4:16` 635 -> 660 ms and `STE:mono` 1,955 -> 1,965 ms (both runs
+  of each pair). No work on that path; one pad round (14 pads, every pinned function back at 0 mod 256) changed
+  nothing and was dropped, and the STE has no cache: a start crossing a 5 ms clock step as the code grows. Under
+  NVDI no row slower. Accepted by Erez in EPlay's session, 15 Nov 2026. Revisit with the XBIOS path without
+  interrupts.
+
 ## Small differences judged noise (not to chase)
 
 - **EPlay 1.27** against 1.26, NVDI: rows within 5–15 ms either way (Add of three 105 → 120,
