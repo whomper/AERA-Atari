@@ -216,6 +216,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   Nov 2026: a 2 s ring of a 1,000 Hz square rewritten unchanged every 100 ms, nine drop-outs; left alone, one).
   A rig that plays through the XBIOS on Hatari says so and doesn't count them; a real machine is the record.
 
+- **EWeb 1.18** (Settings > General > Narrow letters for pages made for Arial, NARROW=; Erez asked for it, 16
+  Nov 2026): `Falcon-4:16` Settings opened 160 -> 170 and closed 45 -> 55 (the dialog two rows taller), the home
+  page shown 465 -> 475 and the pictures' page 395 -> 405 (the same slices' work: placement). Accepted by Erez
+  before release ("Release now"). `Falcon-4:256` NVDI within a tick; ST edition unchanged.
+
 ## Small differences judged noise (not to chase)
 
 - **EPlay 1.27** against 1.26, NVDI: rows within 5–15 ms either way (Add of three 105 → 120,
