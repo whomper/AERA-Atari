@@ -195,6 +195,18 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   -> 249,420 off (run-to-run spread) and 266,840 on, about +1.9 s a page, the 640-pixel canvas read again. On
   the Pi a few ms. Accepted by Erez in EPDF's session.
 
+- **EPlay 1.41** (the guard against NVDI's read before a raster's line, the sound and DSP given back after a
+  crash, four single-file takes at common e7b46a9): About box opened, playing, `Falcon-4:256` NVDI 470 -> 485;
+  Position bar let go, VGM playing, 245 -> 255/260; `STE:mono` started with a WAV 1,800 -> 1,820 (three
+  pairs). No work on those paths; one pad round moved nothing and slowed Add, so dropped. Accepted by Erez, 16
+  Nov 2026 (the hub's recommendation). Revisit with EPlay's full sync of common.
+- **EWeb 1.17's memory phase ended short of its target** (Erez, 16 Nov 2026, the hub's recommendation): the news
+  page's peak -433 KB (drawbench), but after two earlier pages it doesn't fit whole on a 4 MB Falcon at 256
+  colours under NVDI; the target restated as the news page whole as the first page after start. Left: the
+  display list in pieces, finer sheet pruning.
+- **EPDF on `Falcon-4:256`:** a line, a line up, a line while reading and Select all at 70-80 ms are under the
+  80 ms row Erez gave a whole-window move or invert in 256 colours (16 Nov 2026; guidelines, Speed).
+
 ## Small differences judged noise (not to chase)
 
 - **EPlay 1.27** against 1.26, NVDI: rows within 5–15 ms either way (Add of three 105 → 120,

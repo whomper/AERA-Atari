@@ -286,6 +286,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   | scrolls a page (Shift+arrow, a click in the track) | 150 ms |
   | opens a menu entry's dialog, a pop-up or an alert | 150 ms |
   | on an 8 MHz ST in low or medium resolution (`ST:low`, `ST:med`), opens the About box | 200 ms |
+  | on a stock Falcon in 256 colours (`Falcon-4:256`), moves or inverts the whole window: a line scrolled, Select all | 80 ms |
   | on an 8 MHz ST (`ST`, `ST-1`), opens a dialog that covers about half the screen or more (Settings) | 300 ms |
   | has the main window drawn whole at its size (opened, topped, uncovered) | 300 ms |
   | moves or resizes a window: what comes into view drawn | 300 ms |
@@ -302,6 +303,14 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   memory and shown whole, opens in 140 ms in ST high and some 185 ms in ST medium (EPDF 0.5). The
   other way to 150 ms, drawing straight onto the screen, would show the box build up. It stays
   150 ms in ST high and on the Falcon.
+
+  The whole window moved or inverted in 256 colours is Erez's (16 Nov 2026, the hub's recommendation):
+  a stock Falcon's text window of some 600 x 420 at 8 planes is 250 KB read and 250 KB written over
+  the ST RAM bus it shares with the screen, about 60 ms however it is coded (common's `scr_rows` is
+  movem blocks at the bus's rate; NVDI's XOR the same: EPDF's gemprof, 16 Nov). Moving it in two
+  halves would bring a line under 50 ms but show a seam for a frame, the kind of artefact the planar
+  copy was made to remove (Erez's colour lines, 14 Nov). So 80 ms there: the bus and a turn. Every
+  other row keeps its time on `Falcon-4:256`, and 16 colours and the ST keep 50 ms for a line.
 
   Longer jobs (a sync, a load, a search through everything, a page laid out) never run as one
   stretch. They run in slices (`common/ui/bgwork.c`, as 2.2's accessories do), so a key or Esc is
