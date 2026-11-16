@@ -207,6 +207,15 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
 - **EPDF on `Falcon-4:256`:** a line, a line up, a line while reading and Select all at 70-80 ms are under the
   80 ms row Erez gave a whole-window move or invert in 256 colours (16 Nov 2026; guidelines, Speed).
 
+- **EPlay 1.42** (the XBIOS's sound alone with no interrupt, mxPlay's way): with one pad round (14 pads, every
+  text section at 1.41's place mod 256), `Falcon-4:256` NVDI started with a WAV playing 675 -> 695/700 and
+  started in the mini player 560 -> 580 (three pairs); no work added on the Falcon's start, feedxb.o (never run
+  there) 700 bytes smaller. Accepted by Erez, 16 Nov 2026 (the hub's recommendation: pads in, these two
+  accepted).
+- **Hatari's XBIOS sound** drops a third of a millisecond now and then while the CPU writes to ST RAM (EPlay, 16
+  Nov 2026: a 2 s ring of a 1,000 Hz square rewritten unchanged every 100 ms, nine drop-outs; left alone, one).
+  A rig that plays through the XBIOS on Hatari says so and doesn't count them; a real machine is the record.
+
 ## Small differences judged noise (not to chase)
 
 - **EPlay 1.27** against 1.26, NVDI: rows within 5–15 ms either way (Add of three 105 → 120,
