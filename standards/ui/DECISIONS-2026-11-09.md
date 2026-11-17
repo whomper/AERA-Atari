@@ -238,3 +238,10 @@ which D34 confirms.
 - **Order for EWeb, EPDF and EPlay:** their section-8 rows are worked after the release each has in flight, before the next step of its phase.
 - **ClaudeST, D43:** `WINDOW=x,y,w,h` saved at quit only when the place changed (6.1), checked against the screen at the start; the whole desk when there is none (Erez, 17 Nov 2026: "Approve your recommendations").
 - **ClaudeST, D43/D44:** `SIDEBAR=` becomes `PANES=`; `SIDEBAR=` is read once. `HEBFONT=` stays.
+- **ECal (Erez, 17 Nov 2026: "approve 1,3,4,5. 2 remove Hebrew and 6 do it in this release"):**
+  1. Toolbar tips as ECal proposed: "Show or hide the calendar list (⇧^S)", "The week before (Shift+←)", "The next week (Shift+→)" (the view's unit), "Today (T)", "The day/week/month/year view (D/W/M/Y)", "A new event (N)", "Refresh the calendars (^R)" with "With Shift: everything again (Shift+^R)", "Every command, in a menu" on ≡.
+  2. The "Hebrew in font" setting is removed from ECal.
+  3. "Read calendars" as four radio buttons: "At start", "1 minute", "5 minutes", "Opened".
+  4. The event dialog's repeat end stays a pop-up in the Repeat row.
+  5. Keys gains "Insert: the right-click menu" (D17).
+  6. C24, the older FIELD dialogs to the AES look (the event, Calendar info, accounts, Find, Go to), in this release.
