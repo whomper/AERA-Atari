@@ -262,6 +262,15 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   cost (img.c `img_page_colours`, `var_snap`). Accepted by Erez ("Release now"), 17 Nov 2026. To look at: the
   tables made once a page, not once a picture, if a later round measures them.
 
+- **EPlay 1.44** (layout 332: constants and data at 1.43's places mod 256, BSS at 1.42's) against 1.43, pairs
+  finished after the release, which went out on Erez's "go ahead with 332 and release 1.44" (17 Nov 2026).
+  `Falcon-4:256` with NVDI: 8 files given 730 -> 740, Volume + 10 (the rig's floor) -> 20, 25 (limit 50);
+  faster: the WAV start 705 -> 680, a VGM's start 2545 -> 2525. `Falcon-4:16`: a VGM's start 2440 -> 2490
+  (limit 2000, over before); the WAV start 635 -> 630 (1.43's accepted row). Layout 323 gave Falcon-4:16 its
+  WAV 610 and VGM 2395 but cost NVDI a VGM start of +100 and About and Settings +25: no layout found suits
+  both. `STE:mono` (no pads): starts faster; Next 185 -> 205 by medians, several rows two-valued in both
+  builds. To look at in 1.45: a layout for both Falcons (the search per section, mkpad.py), the STE's pads.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
