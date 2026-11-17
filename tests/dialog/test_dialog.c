@@ -832,6 +832,71 @@ static void test_long_fields(void)
 	check(!lf_of(tree, F1) && !lf_eye_click(tree, ROW, &i, 0), "lf_forget: the eyes let go with the fields");
 }
 
+/* dlg_keys (the app's keys, settings.c's and EFTP's keyboard reach, D25): 0 leaves the key to dlg_do, 1 takes it,
+   2 ends dlg_do with the object it names, as a click on it would */
+static short key_goes, key_field;
+static int app_keys(OBJECT *t, short key, short kstate, short edit, short *field)
+{
+	(void)t, (void)kstate, (void)edit;
+	if ((key & 0xff) != ' ')
+		return 0;
+	*field = key_field;
+	return key_goes;
+}
+
+static void test_keys_end(void)
+{
+	short r;
+	dlg_keys = app_keys;
+
+	setup();
+	key_goes = 2, key_field = OK;
+	{
+		static const STEP s[] = { KEY(0x3920), END };
+		r = run(F1, CANCEL, s);
+	}
+	check(r == OK && (tree[OK].ob_state & SELECTED) && draws >= 1 && ed_end == 1 && !strcmp(text[0], "hello"),
+	      "dlg_keys 2 on an EXIT button: dlg_do returns it, drawn selected as after a click, the field ended untyped");
+	tidy("dlg_keys 2");
+
+	setup();
+	key_goes = 2, key_field = ROW;
+	{
+		static const STEP s[] = { KEY(0x3920), END };
+		r = run(F1, CANCEL, s);
+	}
+	check(r == ROW && !(tree[ROW].ob_state & SELECTED) && !strcmp(text[0], "hello"),
+	      "dlg_keys 2 on a TOUCHEXIT: dlg_do returns it, its state the app's");
+	tidy("dlg_keys 2, a TOUCHEXIT");
+
+	setup();
+	key_goes = 2, key_field = 0;
+	{
+		static const STEP s[] = { KEY(0x3920), KEY(K('a')), KEY(KEY_RETURN), END };
+		r = run(F1, CANCEL, s);
+	}
+	check(r == OK && !strcmp(text[0], "helloa"), "dlg_keys 2 with no object: the key taken, as 1, the dialog goes on");
+
+	setup();
+	key_goes = 1, key_field = F2;
+	{
+		static const STEP s[] = { KEY(0x3920), KEY(K('z')), KEY(KEY_RETURN), END };
+		r = run(F1, CANCEL, s);
+	}
+	check(r == OK && !strcmp(text[0], "hello") && !strcmp(text[1], "worldz"),
+	      "dlg_keys 1: the key taken, the cursor to the field it named, as before");
+
+	setup();
+	key_goes = 0, key_field = OK;
+	{
+		static const STEP s[] = { KEY(0x3920), KEY(KEY_RETURN), END };
+		r = run(F1, CANCEL, s);
+	}
+	check(r == OK && !strcmp(text[0], "hello "), "dlg_keys 0: the key dlg_do's, typed into the field, as before");
+	tidy("dlg_keys 0");
+	dlg_keys = 0;
+}
+
 /* dlg_3d: the AES's 3D flags (0x0200 indicator, 0x0400 background, 0x0600
    activator) on each kind of object, none in a list (a white framed box)
    and none when the setting says flat */
@@ -1053,6 +1118,7 @@ int main(void)
 	dlg_find_own = 0;		/* this stand-in's objc_find answers from the script; dlg_find is tested in ../settings */
 
 	test_3d();
+	test_keys_end();
 
 	setup();
 	{

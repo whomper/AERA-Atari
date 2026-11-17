@@ -1887,7 +1887,18 @@ short dlg_do(OBJECT *tree, short start, short cancel)
 				}
 			} else if (dlg_keys && (hk = dlg_keys(tree, e.kreturn, e.kstate, edit, &want)) != 0) {
 				/* the app's own key (settings.c's focus, Space, the arrows); it says where the text cursor goes */
-				if (want > 0) {
+				if (hk == 2 && want > 0) {
+					/* the key acts on an object (Space on a button, a tick): dlg_do ends with it, as a
+					   click on it would, an EXIT button drawn selected for the caller to deselect */
+					if ((tree[want].ob_flags & EXIT) && !(tree[want].ob_state & SELECTED)) {
+						tree[want].ob_state |= SELECTED;
+						redraw(tree, want);
+					}
+					next = want;
+					cont = 0;
+				} else if (hk == 2) {
+					/* no object: the key taken, as 1 */
+				} else if (want > 0) {
 					next = want;
 				} else if (want < 0 && edit > 0) {
 					objc_edit(tree, edit, 0, &idx, ED_END);
