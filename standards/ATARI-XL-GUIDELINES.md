@@ -390,9 +390,11 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 ## 10. Where each program stands (October 2026)
 
 **Maintenance (Erez, 1 Nov 2026).** EDOS and EFTP_XL are in maintenance mode while EWeb, EPDF and
-EPlay go to 1.0 (ATARI-APP-GUIDELINES.md, section 8): no new features or catching up with rules or
-`xl/`, a release only for a fault or something Erez reports, and nothing run in the background. Only
-Erez ends it, explicitly.
+EPlay go to 1.0 (ATARI-APP-GUIDELINES.md, section 8): no new features, and nothing run in the
+background. Every family rule holds for them as for the focus apps (Erez, 17 Nov 2026: "all
+applications must adhere to family rules and be notified"): the hub notifies them of each new or
+changed rule and each `xl/` fix, and whether that needs a release is reviewed with Erez; a fault fix
+always does. Only Erez ends maintenance, explicitly.
 
 | Rule | EDOS | EFTP_XL |
 |---|---|---|

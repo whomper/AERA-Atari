@@ -9,10 +9,14 @@ This repo is the reference for the AERA Atari family. It holds:
   `test_ax.py` and `test_sim.py` before pushing)
 
 - **Focus and maintenance (Erez, 1 Nov 2026).** EWeb, EPDF and EPlay are the focus until 1.0; every
-  other app is in maintenance mode (ATARI-APP-GUIDELINES.md, section 8): no syncs, no new rules
-  rolled out, releases only for faults. Shared work serves the three first. Only Erez ends it,
-  explicitly: never send a frozen app a sync or a rule to adopt without that.
-- **A change to a standard is a change to every app** (in maintenance: the three focus apps). When a rule changes:
+  other app is in maintenance mode (ATARI-APP-GUIDELINES.md, section 8): no new features or speed
+  rounds. Shared work serves the three first. Only Erez ends it, explicitly.
+- **Every app follows every family rule, maintenance or not** (Erez, 17 Nov 2026: "all applications
+  must adhere to family rules and be notified. We will review whether they need to issue a release."):
+  notify every app (the 8-bit ones of XL rules and `xl/` fixes) of each new or changed rule and each
+  shared fix, with what it must do; whether that needs a release is put to Erez, except a fault fix,
+  which always does.
+- **A change to a standard is a change to every app.** When a rule changes:
   - say so in the commit message
   - update the "Where each app stands" table at the end of `standards/ATARI-APP-GUIDELINES.md`
     (or, for the 8-bit, `standards/ATARI-XL-GUIDELINES.md`)

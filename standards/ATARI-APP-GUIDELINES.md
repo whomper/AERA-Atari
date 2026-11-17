@@ -2139,11 +2139,16 @@ for every app (the ones in maintenance too: section 8).
 **Focus and maintenance (Erez, 1 Nov 2026).** EWeb, EPDF and EPlay have the family's effort until
 they reach 1.0. Every other app (ECal, EContact, EMail, EFTP, EHypView, ClaudeST, EUpdate, and
 AERA-Gateway, EDOS and EFTP_XL) is in maintenance mode:
-- no new features, speed rounds, clean-ups, or catching up with a new or changed rule here;
-- no sync of `common/`, `xl/` or `gateway/`: shared code moving is no reason to rebuild or release;
-- a release only for a security or data-loss fault, a crash or breakage Erez reports, something
-  outside that stops it working (a certificate, a server), or something EWeb, EPDF or EPlay need from
-  it; such a release takes only that fix (one change from `common/`, not a sync) and says why;
+- no new features and no speed rounds of its own;
+- **every family rule holds for it as for the focus apps** (Erez, 17 Nov 2026: "there needs to be a
+  constant behavior across all applications. In the future, all applications must adhere to family
+  rules and be notified. We will review whether they need to issue a release." and "Applications on
+  maintenance does not mean they contain faults"). The hub notifies every app, maintenance or not, of
+  each new or changed rule and each shared fix; the app adopts it (with the shared code it needs) and
+  ticks its row here. Whether that needs a release of its own is reviewed with Erez through the hub;
+  a fault fix always does;
+- a release otherwise only for a security or data-loss fault, a crash or breakage, something outside
+  that stops it working (a certificate, a server), or something EWeb, EPDF or EPlay need from it;
 - its session runs nothing in the background and waits for Erez or the hub.
 
 One change goes to every app all the same (Erez, 2 Nov 2026): file names in lowercase (6.6), with
@@ -2155,9 +2160,8 @@ fixes only, no new features; it stays in every release as 1.0 has it. Its rigs (
 family's newer ST rules (the About box's 200 ms, NVDI on the ST of 2 Nov) apply to it as to an app in
 maintenance: with its next release, if there is one. `EWEB.PRG` (Falcon and TT) is unchanged.
 
-Only Erez ends it, by saying so explicitly (for instance, that every app is to take the latest
-shared code and release). Until then this table's ✗ and ? for those apps stay as they are; a rule
-added or changed here applies to the three focus apps. What the frozen apps would do next is kept
+Only Erez ends it, by saying so explicitly. A rule added or changed here applies to every app; this
+table's ✗ and ? are work for the app concerned, in maintenance too (Erez, 17 Nov 2026). What the frozen apps would do next is kept
 in [PARKED.md](PARKED.md), to go through with Erez when the three reach 1.0.
 
 ✓ = done, ✗ = missing or different, ~ = partly done, ? = not reported yet. EWeb's column (0.11, a program for the TT and Falcon) is from its session's report. EPDF's
