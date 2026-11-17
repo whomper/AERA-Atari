@@ -284,6 +284,18 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   placement by the hub, 17 Nov 2026. To look at: what evicts that line (the partner access, or a page's
   cacheability), then inflate's bits kept in registers, so no layout moves the row.
 
+- **ECal step 1 (153d26c)** against 2.52, the fault release (crash at interrupt time, MiNTnet, NVDI's guard
+  bytes, the log kept open): `Falcon-4:256` with NVDI the start's longest stretch 85 -> 105, next week 580 -> 625,
+  next month 1025 -> 1065; `Falcon-4:16` pictures +10 to +27; `ST:mono` the month view 152 -> 165. Not traced to
+  code: pads back at 2.52's places changed nothing, 2.52's own spread is as wide, VIEWSLICE builds show the start
+  faster; the rows move with where the 70 ms view slices fall. Accepted by Erez, 17 Nov 2026 ("Approve your
+  recommendations"). To look at: ECal's slicing against the copy, so a slice and the copy never share a turn.
+- **EUpdate 2.09** against 2.08, `Falcon-4:256` with NVDI: the start 480 -> 490. Timed with MFP timer C, 2.09's
+  start code is 1.3 ms faster; the tick's phase. Accepted by Erez, 17 Nov 2026.
+- **2344fcf's scroll copy (Erez's colour-line fix, accepted 14 Nov)** as the apps took it: EFTP 2.12 the local
+  line scroll 60 -> 70 (`Falcon-4:256` NVDI); EMail 2.21 a line down the letter 35 -> 50 (at its limit), the list's
+  page 90 -> 105, Find left 50 -> 60. To do in common: planar_rows as fast as the VDI's copy under NVDI.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
