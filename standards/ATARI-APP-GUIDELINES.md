@@ -1897,12 +1897,15 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   built for the ColdFire: `make CPU=5475`); `tls_ovl.c` loads it by itself where the `_CF_` cookie is set, and
   `ovl.c` flushes the ColdFire's caches its own way there. A native FireBee edition of a program (EWeb's
   EWEBFB.PRG, EPlay's EPLAYFB.PRG) is made only when a FireBee user reports the app too slow.
-- **The log is written as it happens** (Erez, 15 Nov 2026: "apps should write log at once as otherwise it
-  may be ineffective to trace errors"). With Write a log on, every line is on the disk when it is logged
-  (common's `conn_log`, AERA-Atari after 6476179): a crash or a freeze leaves the log up to its last line.
-  Nothing is held for a job or for the run; `conn_log_hold` no longer holds. An app's own logger that keeps
-  lines in memory (EPlay's held run log until 1.39) writes them at once too. The cost, a write a line, is paid
-  only while the log is on: the open budgets (6.5) are counted with it off.
+- **The log is written as it happens, the file kept open a second at most** (Erez, 15 Nov 2026: "apps should
+  write log at once as otherwise it may be ineffective to trace errors"; 17 Nov 2026: "Yes, build the log middle
+  way into the fix release. If other AERA apps behave the same where they open and close the log file ever so
+  often, they need to change accordingly as well"). Each line is one write at once to a file kept open; the
+  close, where GEMDOS writes the FAT and the directory (140 ms a line on Erez's DFB1's IDE, against 1.4 ms for the
+  write), comes in the event wait once a line has waited a second, at once before a connection, at an error, at
+  a crash's report, a save, the quit and appl_exit, never inside a TLS handshake (common's `conn.c`, 7db762f). An
+  accessory closes it before every event call (2.2). A freeze loses at most the last second's lines. An app's
+  own logger outside `conn.c` does the same.
 - **No log without its switch** (Erez, 14 Nov 2026: "they must have a log on and off menu item and setting
   storage"). A program that writes a log of its own (`NAME.LOG`: connections, measurements, a quit's
   steps, anything else) has `Write a log` as a tick in Options (last, 3.1) and in Settings, one setting kept
