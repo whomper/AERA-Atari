@@ -249,6 +249,13 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   page's height the same both ways) stands. Fixed in EWeb 1.16 (a face short of memory tried again); speed.py
   checks the news page's height from then on. Erez asked to optimise (15 Nov): measured against 1.15.
 
+- **EPlay 1.43** against 1.42 (crash.c's interrupt-time guard, cd4bc7a; the SSI-miss counter; Output DSP's
+  volume on the samples), `Falcon-4:16`: started with a CD-quality WAV playing 610 -> 635 in three pairs out of
+  three, the start only; its limit is the start's. The text is at 1.41's places mod 256 (pads remade); data and
+  BSS moved (the counter's, crash.c's savptr_one/ipl_user, the crash hook). Accepted by Erez, 17 Nov 2026,
+  so the CT60 tester got the disk-safety fix at once. To look at in 1.44: data placement (a pad for .data/.bss,
+  as EPDF 2.36's EP_PAD_L_DATA did for its Copy).
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
