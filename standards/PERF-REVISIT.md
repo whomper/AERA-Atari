@@ -276,6 +276,14 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   a layout that didn't ship. The figures stand for the record; the rows are judged again on builds padded
   symbol by symbol (common/tools/profpad.py, f89e601).
 
+- **EPlay 1.45** against 1.44 (net_tos.c only), `Falcon-4:256` with NVDI: a Mega Drive VGM's start 2555 -> 2605
+  in three pairs, the timed build at the shipped layout symbol by symbol (padcheck.py). Not 1.45's code: 1.44
+  with 512 bytes added at the end of its constants (its data, BSS and stack where 1.45's are) measures 2605
+  too. Hatari's profiler: the same instructions and i-cache misses; the d-cache hits on one load in common's
+  inflate.c z_take, the bit buffer at the same absolute heap address in both, fall 13,668 -> 180. Taken as
+  placement by the hub, 17 Nov 2026. To look at: what evicts that line (the partner access, or a page's
+  cacheability), then inflate's bits kept in registers, so no layout moves the row.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
