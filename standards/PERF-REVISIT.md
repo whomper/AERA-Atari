@@ -290,6 +290,10 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   code: pads back at 2.52's places changed nothing, 2.52's own spread is as wide, VIEWSLICE builds show the start
   faster; the rows move with where the 70 ms view slices fall. Accepted by Erez, 17 Nov 2026 ("Approve your
   recommendations"). To look at: ECal's slicing against the copy, so a slice and the copy never share a turn.
+- **EHypView, Settings on the engine (step 2, A2's class, accepted 13 Nov)**: a whole page switch on `ST-1` (TOS 1.04)
+  250 -> 300-400 ms (its own dialog drew it in one piece; the engine in 20 ms turns, each within the rule). TOS 1.04
+  drops a press made inside the switch, so the rig's double click on ST-1 is 400 ms apart. To do in common: the
+  turns take MU_BUTTON with the timer, and a press there finishes the page and goes to the next dlg_do.
 - **EPlay 1.46** against 1.45 (logarithmic volume, the log kept open, the DSP at a station's start): the
   mini-player's start 545 -> 555 (`Falcon-4:16`), 575 -> 585 (`Falcon-4:256` NVDI), bisected to the common sync
   e75bf15..b51644b (cb0ed5a83 545, 88f67714d 555): to trace in common; Settings opened while a VGM plays 185 -> 205
