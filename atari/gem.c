@@ -150,6 +150,7 @@ static void event_tag(short op)
    wait, a second after a line at most (conn.c, log_write's note) */
 extern void conn_log_idle(void) __attribute__((weak));
 extern void conn_log_flush(void) __attribute__((weak));
+extern short _is_acc;		/* crt0.S */
 
 static short aes(short op, short nin, short nout, short nain, short naout)
 {
@@ -159,6 +160,11 @@ static short aes(short op, short nin, short nout, short nain, short naout)
 	u32 t0 = 0;
 	if (ev && conn_log_idle)
 		conn_log_idle();
+	/* an accessory's files belong to the program in front, which may end
+	   while we wait: no log file left open across an event call there
+	   (2.2), only a program keeps it a second */
+	if (ev && _is_acc && conn_log_flush)
+		conn_log_flush();
 	if (ev && gap_from && starting) {
 #ifdef AES_PROFILE
 		u32 g = tos_ms() - gap_from;
