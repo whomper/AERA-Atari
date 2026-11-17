@@ -256,6 +256,12 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   so the CT60 tester got the disk-safety fix at once. To look at in 1.44: data placement (a pad for .data/.bss,
   as EPDF 2.36's EP_PAD_L_DATA did for its Copy).
 
+- **EWeb 1.19** against 1.18 (a picture's flat areas snapped to the page's own colours at 256 colours, the
+  "white dots" fix; common 1c01cfd), A B B A, minimum: the news page on `Falcon-4:16` 814 -> 820, `Falcon-4:256`
+  with NVDI the home page 644 -> 650 and the sample page 559 -> 565, a tick and a hair each: the snap tables'
+  cost (img.c `img_page_colours`, `var_snap`). Accepted by Erez ("Release now"), 17 Nov 2026. To look at: the
+  tables made once a page, not once a picture, if a later round measures them.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
