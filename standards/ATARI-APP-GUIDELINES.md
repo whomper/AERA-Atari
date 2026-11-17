@@ -608,8 +608,8 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
 - **Releases go out without asking Erez** (Erez's decision, 23 Oct 2026). When work on `main` is ready,
   the app's session releases it on its own:
   - the repo's own checks pass;
-  - the rigs the repo's CLAUDE.md asks for pass (on EmuTOS where the session has nothing else);
-  - the hub's checks follow the release and don't block it (the next bullet).
+  - the candidate has passed the regression gate (the next bullet): every configuration, no row
+    slower, then the hub's family check.
 
   It doesn't wait for a yes, and it releases as soon as the work is done rather than collecting it.
   The session then gives Erez the release's link in one line, with anything he has to do (the Gateway's
@@ -619,16 +619,29 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   priorities and conflicts, Gateway packages, ports). A release inside an approved phase is not one of
   them. A change to the docs alone needs no release of its own: it goes out with the
   next one.
-- **The hub's checks follow the release; a fault is fixed forward, never rolled back** (Erez, 7 Nov 2026:
-  "C, but the app never rolls back, fixes and issues a new release, prioritized"). The app releases when its
-  own checks pass: its rigs on EmuTOS, its speed pre-check, its screenshots. It sends the hub the commit
-  and the link. After the release the hub runs the configurations of `standards/TEST-MATRIX.md` on Erez's
-  TOS images and NVDI, and reports to the app, and to Erez when a finding reaches the user. A fault the
-  hub or Erez finds is fixed by **a new release with the next number, which comes before any other work
-  of that session**. The old release stays where it is, with one line in the new one's notes saying what
-  it fixes: no revert, no "withdrawn" notice, no deleting. The hub's checks no longer gate a release in
-  EWeb, EPDF, EPlay and EMail (the apps now in the phases); the apps in maintenance keep the earlier rule
-  until Erez ends maintenance (section 8).
+- **The regression gate: every configuration, and no speed lost, before a release** (Erez, 17 Nov 2026:
+  "Since we are now at an evolved phase, we need to be extra careful with regression issues as there are users
+  of our software. This means testing across all configurations" and "make sure we don't loose performance").
+  It replaces 7 Nov's "the hub's checks follow the release". Every candidate that changes code, in every app
+  (maintenance or not), goes through, in this order:
+  1. the repo's own checks (`make`, `make test`, `make itest` and the rest its CLAUDE.md names);
+  2. **its rigs on every configuration of `standards/TEST-MATRIX.md`'s gate table that the app runs on**, on
+     Erez's TOS images and NVDI (every session has them since 15 Nov: EmuTOS is for development and CI
+     only, never the gate's evidence), each one named in the report with `describe()`; a configuration the
+     app can't run on is named with why;
+  3. **the paired speed run against the last release on Erez's configuration and on the stock machines the
+     app runs on (`Falcon-4:16`, `ST:mono`)**, the timed build at the shipped layout
+     (`common/tools/profpad.py`): no row slower beyond one tick on any of them (098183d); a slower row is
+     fixed first, and only Erez accepts one;
+  4. **the hub's family check on the candidate** (the real programs together, the accessories' first and
+     second boot): the hub answers with go or the faults it found.
+
+  Only then is it released. A fault found anyway, by a user, the hub or Erez, is fixed forward by a new
+  release with the next number, before any other work of that session; the old release stays, with one
+  line in the new one's notes saying what it fixes (no revert, no "withdrawn" notice, no deleting). **Every
+  fault a user reports becomes a case in the app's rigs** (or the hub's, for one between programs) in the
+  same release that fixes it, run at every later candidate, so it can't come back unseen. A change to the
+  docs alone still takes the short path (below).
 - **Text-only changes take the short path** (Erez's decision, 18 Oct 2026). A change to the docs alone
   (README, `docs/`, the guide the help file is made from, CLAUDE.md) is pushed to `main` as soon as
   it reads right and the help file still builds and says the program's version (`make help`, or

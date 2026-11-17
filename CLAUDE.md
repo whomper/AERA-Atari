@@ -16,6 +16,11 @@ This repo is the reference for the AERA Atari family. It holds:
   notify every app (the 8-bit ones of XL rules and `xl/` fixes) of each new or changed rule and each
   shared fix, with what it must do; whether that needs a release is put to Erez, except a fault fix,
   which always does.
+- **The regression gate (Erez, 17 Nov 2026):** every code candidate of every app is tested on every
+  configuration of `standards/TEST-MATRIX.md`'s gate table on Erez's TOS and NVDI, paired for speed against
+  the last release on Erez's configuration, `Falcon-4:16` and `ST:mono` (no row slower beyond a tick), and
+  checked by the hub with the real programs together, before it is released; a user's fault becomes a rig
+  case in the release that fixes it. The hub's family check answers each candidate with go or faults.
 - **A change to a standard is a change to every app.** When a rule changes:
   - say so in the commit message
   - update the "Where each app stands" table at the end of `standards/ATARI-APP-GUIDELINES.md`

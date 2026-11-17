@@ -5,6 +5,33 @@ once per candidate; one boot per test, not several of the same (guideline 1.2). 
 on the hub's machine from its queue logs (a Falcon boot is about 2.4 min, a speed run 2-7 min per
 machine, the whole EPlay set about 30 min); an app's own column is that session's figure.
 
+## The regression gate (Erez, 17 Nov 2026): every configuration, no speed lost, before the release
+
+"Since we are now at an evolved phase, we need to be extra careful with regression issues as there are users of
+our software. This means testing across all configurations" and "make sure we don't loose performance". Every
+code candidate runs its rigs on each row below that the app runs on, on Erez's TOS images and NVDI; then the
+paired speed run against the last release on rows 1, 2 and 8 (no row slower beyond a tick on any); then the
+hub's family check; and only then is released (guidelines 1.2, "The regression gate"). The sections after this
+one stay as the record of each check; where they say "follows the release" or "no longer a gate", this wins.
+
+| # | Configuration | Machine (`machines.py`) | TOS | VDI | AES | Which apps |
+|---|---|---|---|---|---|---|
+| 1 | Erez's configuration (speed pair too) | `Falcon-4:256` | 4.04 | NVDI | TOS | all GEM apps |
+| 2 | stock Falcon, 16 colours, no NVDI (speed pair too) | `Falcon-4:16` | 4.04 | TOS's | TOS | all GEM apps |
+| 3 | Falcon, true colour | `Falcon:65536` | 4.04 | NVDI | TOS | all GEM apps |
+| 4 | TT | `TT:ttmed`, `TT:ttlow` | 3.06 | TOS's and NVDI | TOS | all GEM apps |
+| 5 | MiNT + XaAES | `common/tests/xaaes` (`--machine tt`, `--machine ct60`, `--ext2`) | 4.04 / 3.06 | NVDI | XaAES | all GEM apps |
+| 6 | 68060 (a CT60's stand-in) | `common/tests/xaaes --machine ct60`, and plain TOS | 4.04 | NVDI | TOS, XaAES | all that run on a 68030 |
+| 7 | FireBee stand-in | `FireBee:16`, `FireBee:256` | EmuTOS | — | TOS | all GEM apps; ColdFire code also `common/tests/coldfire` |
+| 8 | ST, mono and colour (speed pair on `ST:mono`) | `ST:mono`, `ST:med`, `ST:low`; `ST-1` where an app runs in 1 MB | 1.04 | TOS's and NVDI | TOS | apps with 68000 code |
+| 9 | STE | `STE` | 1.62 | TOS's | TOS | apps with 68000 code (EPlay's STE sound) |
+| 10 | accessories, first and second boot | `ST-1:mono`, `Falcon:16` (`acc_all` and the app's own acc rigs) | 1.04 / 4.04 | NVDI | TOS | apps with an accessory |
+| 11 | network paths | the app's own: plain (STinG), through the Gateway, Direct (TLS.OVL, tlsfb.ovl) | — | — | — | apps that connect |
+| 12 | NatFeats off | one boot with no `NATFEATS=` in the INF: starts, runs, quits, no CRASH.LOG | 4.04 | NVDI | TOS | all GEM apps |
+
+Each row is one boot per rig unless it fails. A row the app can't run (no 68000 code, no network) is named in the
+report with why. The hub's family check is rows 1 and 5 with the real programs together, and `acc_all` on row 10.
+
 ## Decided 10 Nov 2026 (Erez): one configuration, and the lighter set
 
 **Erez's configuration** is the one every AERA app's testing has once: **a Falcon with TOS 4.04, 4 MB and NVDI, in
