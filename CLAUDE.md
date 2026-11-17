@@ -25,6 +25,9 @@ This repo is the reference for the AERA Atari family. It holds:
   - say so in the commit message
   - update the "Where each app stands" table at the end of `standards/ATARI-APP-GUIDELINES.md`
     (or, for the 8-bit, `standards/ATARI-XL-GUIDELINES.md`)
+- **A new function in `common/` goes last in its file** (17 Nov 2026, 90b1bbd): the apps link with
+  `--gc-sections`, so a function an app starts calling in the middle of an object moves every function after it,
+  and no pad between objects can put them back (EContact's key_state_init, popup_m).
 - **Brand images are generated.** Edit `brand/social.json` or `brand/tools/mkpreview.py`, then run
   `python3 brand/tools/mkpreview.py`, and `python3 brand/tools/mkhelpbanner.py` for the help files'
   banners (`common/help/NAME.IMG`). Don't hand-edit the PNGs or the IMGs.
