@@ -290,11 +290,14 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   code: pads back at 2.52's places changed nothing, 2.52's own spread is as wide, VIEWSLICE builds show the start
   faster; the rows move with where the 70 ms view slices fall. Accepted by Erez, 17 Nov 2026 ("Approve your
   recommendations"). To look at: ECal's slicing against the copy, so a slice and the copy never share a turn.
+- **ClaudeST 2.11**, common's Settings engine (A2, accepted 13 Nov): Settings opened 220 -> 235-240 (`ST:mono`),
+  100-105 -> 110 (`Falcon-4:16`), 105-110 -> 125 (`Falcon-4:256` NVDI). The About box 330 -> 230.
 - **EUpdate 2.09** against 2.08, `Falcon-4:256` with NVDI: the start 480 -> 490. Timed with MFP timer C, 2.09's
   start code is 1.3 ms faster; the tick's phase. Accepted by Erez, 17 Nov 2026.
 - **2344fcf's scroll copy (Erez's colour-line fix, accepted 14 Nov)** as the apps took it: EFTP 2.12 the local
   line scroll 60 -> 70 (`Falcon-4:256` NVDI); EMail 2.21 a line down the letter 35 -> 50 (at its limit), the list's
-  page 90 -> 105, Find left 50 -> 60. To do in common: planar_rows as fast as the VDI's copy under NVDI.
+  page 90 -> 105, Find left 50 -> 60; ClaudeST 2.11 a line 60 -> 75, a streamed piece 90 -> 105, a slice
+  125 -> 135, a row pressed <20 -> 20 (`Falcon-4:256` NVDI), a line 45 -> 50-55 (`Falcon-4:16`). To do in common: planar_rows as fast as the VDI's copy under NVDI.
 
 ## How to add a line
 
