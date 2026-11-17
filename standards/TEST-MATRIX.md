@@ -19,7 +19,7 @@ one stay as the record of each check; where they say "follows the release" or "n
 | 1 | Erez's configuration (speed pair too) | `Falcon-4:256` | 4.04 | NVDI | TOS | all GEM apps |
 | 2 | stock Falcon, 16 colours, no NVDI (speed pair too) | `Falcon-4:16` | 4.04 | TOS's | TOS | all GEM apps |
 | 3 | Falcon, true colour | `Falcon:65536` | 4.04 | NVDI | TOS | all GEM apps |
-| 4 | TT | `TT:ttmed`, `TT:ttlow` | 3.06 | TOS's and NVDI | TOS | all GEM apps |
+| 4 | TT | `TT:ttmed`, `TT:ttlow`; NVDI with `AERA_WITH_NVDI=1 AERA_NVDI_ON=Falcon,TT` | 3.06 | TOS's and NVDI | TOS | all GEM apps |
 | 5 | MiNT + XaAES | `common/tests/xaaes` (`--machine tt`, `--machine ct60`, `--ext2`) | 4.04 / 3.06 | NVDI | XaAES | all GEM apps |
 | 6 | 68060 (a CT60's stand-in) | `common/tests/xaaes --machine ct60`, and plain TOS | 4.04 | NVDI | TOS, XaAES | all that run on a 68030 |
 | 7 | FireBee stand-in | `FireBee:16`, `FireBee:256` | EmuTOS | — | TOS | all GEM apps; ColdFire code also `common/tests/coldfire` |
