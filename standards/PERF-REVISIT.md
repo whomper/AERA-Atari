@@ -290,6 +290,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   code: pads back at 2.52's places changed nothing, 2.52's own spread is as wide, VIEWSLICE builds show the start
   faster; the rows move with where the 70 ms view slices fall. Accepted by Erez, 17 Nov 2026 ("Approve your
   recommendations"). To look at: ECal's slicing against the copy, so a slice and the copy never share a turn.
+- **EPlay 1.46** against 1.45 (logarithmic volume, the log kept open, the DSP at a station's start): the
+  mini-player's start 545 -> 555 (`Falcon-4:16`), 575 -> 585 (`Falcon-4:256` NVDI), bisected to the common sync
+  e75bf15..b51644b (cb0ed5a83 545, 88f67714d 555): to trace in common; Settings opened while a VGM plays 185 -> 205
+  (`Falcon-4:16`, the VGM tick's drum work); About closed 70-75 -> 95 (NVDI; aboutbox.c opens it 35-65 faster);
+  the STE's WAV start 1730 -> 1765 (within its spread). Accepted by Erez, 17 Nov 2026 ("Accept, release 1.46").
 - **ClaudeST 2.11**, common's Settings engine (A2, accepted 13 Nov): Settings opened 220 -> 235-240 (`ST:mono`),
   100-105 -> 110 (`Falcon-4:16`), 105-110 -> 125 (`Falcon-4:256` NVDI). The About box 330 -> 230.
 - **EUpdate 2.09** against 2.08, `Falcon-4:256` with NVDI: the start 480 -> 490. Timed with MFP timer C, 2.09's
