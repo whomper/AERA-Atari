@@ -227,3 +227,12 @@ which D34 confirms.
 12. **D30, EUpdate's hours alert:** `[1][Check every 1 to 168 hours.|Please type a number|from 1 to 168.][ OK ]`, the field kept as typed. **Copy:** `Copy ^C` in both the pop-up and the bar.
 13. **D2, EHypView's Index key:** ⇧^T (next to Contents ^T).
 14. **D49, EContact's tagline:** `Contacts for the ST, TT and Falcon`.
+
+## Added 17 Nov 2026 (Erez: "Approve your recommendations")
+
+- **EWeb, D9:** Settings' tick reads `Direct connection`, as the menu does (not "Direct connection: TLS on this Atari").
+- **EWeb, D24:** Scripts in Settings are three radio buttons, `Off` / `Chosen sites` / `Every site`, in place of the two ticks.
+- **EHypView, D43:** `WINDOW=x,y,w,h` saves the library window only; viewers open as now. D39's whole desk applies until a place is saved.
+- **EHypView, D43/D44:** `PANECOLS=` becomes `PANES=`; `PANECOLS=` is read once.
+- **EHypView, speed:** a line scrolled on an 8 MHz ST (125 ms against 50) is left for after EWeb, EPDF and EPlay reach 1.0.
+- **Order for EWeb, EPDF and EPlay:** their section-8 rows are worked after the release each has in flight, before the next step of its phase.
