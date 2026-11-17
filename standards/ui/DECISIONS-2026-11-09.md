@@ -236,3 +236,5 @@ which D34 confirms.
 - **EHypView, D43/D44:** `PANECOLS=` becomes `PANES=`; `PANECOLS=` is read once.
 - **EHypView, speed:** a line scrolled on an 8 MHz ST (125 ms against 50) is left for after EWeb, EPDF and EPlay reach 1.0.
 - **Order for EWeb, EPDF and EPlay:** their section-8 rows are worked after the release each has in flight, before the next step of its phase.
+- **ClaudeST, D43:** `WINDOW=x,y,w,h` saved at quit only when the place changed (6.1), checked against the screen at the start; the whole desk when there is none (Erez, 17 Nov 2026: "Approve your recommendations").
+- **ClaudeST, D43/D44:** `SIDEBAR=` becomes `PANES=`; `SIDEBAR=` is read once. `HEBFONT=` stays.
