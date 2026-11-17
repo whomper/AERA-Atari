@@ -270,6 +270,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   WAV 610 and VGM 2395 but cost NVDI a VGM start of +100 and About and Settings +25: no layout found suits
   both. `STE:mono` (no pads): starts faster; Next 185 -> 205 by medians, several rows two-valued in both
   builds. To look at in 1.45: a layout for both Falcons (the search per section, mkpad.py), the STE's pads.
+  **Measured on misaligned builds** (hub, 17 Nov 2026): EPlay's profiling build, which the rig times, sat
+  off the shipped layout (the merged .str1.1 strings; EWeb, EPDF and EUpdate had the same). Timed at 1.44's
+  shipped layout per section, 8 files given is 745/740 and the mini player 580, so the 730 and 560 above were
+  a layout that didn't ship. The figures stand for the record; the rows are judged again on builds padded
+  symbol by symbol (common/tools/profpad.py, f89e601).
 
 ## How to add a line
 
