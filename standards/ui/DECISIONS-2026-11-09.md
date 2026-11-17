@@ -245,3 +245,4 @@ which D34 confirms.
   4. The event dialog's repeat end stays a pop-up in the Repeat row.
   5. Keys gains "Insert: the right-click menu" (D17).
   6. C24, the older FIELD dialogs to the AES look (the event, Calendar info, accounts, Find, Go to), in this release.
+- **ClaudeST (Erez, 17 Nov 2026: "yes, remove it from ClaudeST too"):** the "Hebrew in fonts" setting is removed; `HEBFONT=` is read once and dropped (D44). No app has the setting now.
