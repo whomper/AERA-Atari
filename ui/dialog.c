@@ -1796,6 +1796,19 @@ int dlg_later_waiting(void)
 	return sl_n > sl_next;
 }
 
+/* until the left button is let go (a second at most): a press acted on while held isn't taken again */
+static void button_up(void)
+{
+	short mx, my, mb, ks, n, m[8];
+	AEVENT e;
+	for (n = 0; n < 50; n++) {
+		graf_mkstate(&mx, &my, &mb, &ks);
+		if (!(mb & 1))
+			return;
+		dlg_evnt(MU_TIMER, 0, 0, 0, 20, m, &e);
+	}
+}
+
 /* what Undo presses, and Esc where no field has the cursor, when the caller gives cancel 0: the tree's "Cancel" exit
    button, else its only exit button (OK in a box that only says something); 0 when neither is there, and then they
    do nothing (EFTP's esc_button, the guidelines 3.5) */
@@ -1920,6 +1933,9 @@ short dlg_do(OBJECT *tree, short start, short cancel)
 				if (!cont && lf_eye_click && lf_eye_click(tree, next, &idx, edit)) {
 					cont = 1;	/* a password's eye: the stars or the text, the dialog goes on */
 					next = 0;
+					/* and nothing more until the button is up: asked for again while it was held, the
+					   press came back at once and turned the eye back (EFTP, 17 Nov 2026) */
+					button_up();
 				}
 #ifdef DLG_CLICK
 				if (!cont)
