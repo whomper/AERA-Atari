@@ -294,6 +294,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   250 -> 300-400 ms (its own dialog drew it in one piece; the engine in 20 ms turns, each within the rule). TOS 1.04
   drops a press made inside the switch, so the rig's double click on ST-1 is 400 ms apart. To do in common: the
   turns take MU_BUTTON with the timer, and a press there finishes the page and goes to the next dlg_do.
+- **EPlay 1.47** against 1.46 (Erez's 10 s back and forward buttons, the XBIOS gapless fix, common 86e37d2): `STE` the
+  start with 8 files 1910 -> 1965, Next 155 -> 185-200, Return 350 -> 360; `Falcon-4:16` the window 585 -> 595, a VGM's
+  start 2220 -> 2240, Volume + 20 -> 35; `Falcon-4:256` NVDI the window 640 -> 660, a WAV's start 700 -> 725, 8 files
+  720 -> 745, the mini player 585 -> 605, a VGM's start 2350 -> 2385. Likely the layout (code that didn't change moved).
+  Accepted by Erez, 18 Nov 2026 ("Accept, release 1.47"). To look at: EPlay's next pads against 1.47.
 - **EPlay 1.46** against 1.45 (logarithmic volume, the log kept open, the DSP at a station's start): the
   mini-player's start 545 -> 555 (`Falcon-4:16`), 575 -> 585 (`Falcon-4:256` NVDI), bisected to the common sync
   e75bf15..b51644b (cb0ed5a83 545, 88f67714d 555): to trace in common; Settings opened while a VGM plays 185 -> 205
