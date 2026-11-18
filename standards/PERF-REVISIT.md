@@ -306,6 +306,8 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   the STE's WAV start 1730 -> 1765 (within its spread). Accepted by Erez, 17 Nov 2026 ("Accept, release 1.46").
 - **ClaudeST 2.11**, common's Settings engine (A2, accepted 13 Nov): Settings opened 220 -> 235-240 (`ST:mono`),
   100-105 -> 110 (`Falcon-4:16`), 105-110 -> 125 (`Falcon-4:256` NVDI). The About box 330 -> 230.
+  Undone in 2.12 (common 796e05e, Settings in turns): 145 (`ST:mono`), 60 (`Falcon-4:16`), 65 (`Falcon-4:256` NVDI),
+  paired against 2.11, 18 Nov 2026.
 - **EUpdate 2.09** against 2.08, `Falcon-4:256` with NVDI: the start 480 -> 490. Timed with MFP timer C, 2.09's
   start code is 1.3 ms faster; the tick's phase. Accepted by Erez, 17 Nov 2026.
 - **2344fcf's scroll copy (Erez's colour-line fix, accepted 14 Nov)** as the apps took it: EFTP 2.12 the local
