@@ -313,6 +313,17 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   page 90 -> 105, Find left 50 -> 60; ClaudeST 2.11 a line 60 -> 75, a streamed piece 90 -> 105, a slice
   125 -> 135, a row pressed <20 -> 20 (`Falcon-4:256` NVDI), a line 45 -> 50-55 (`Falcon-4:16`). To do in common: planar_rows as fast as the VDI's copy under NVDI.
 
+- **EHypView step 2 (2.7)** against 2.6, the library on the whole desk (D39): the search's rows drawn 297 -> 345
+  (`ST:mono`), 222 -> 252 (`ST:med`), 152 -> 177 (`Falcon-4:16`), 135 -> 165 (`Falcon-4:256` NVDI); ^U's page
+  uncovered 142 -> 180 (`Falcon-4:16`), 125 -> 147 (NVDI); full-text search's Return 197 -> 207 (`ST:mono`),
+  200 -> 210 (`ST:med`). The bigger window, not the code (the old place gives 2.6's times). The front page at the
+  start 370 -> 380 (`ST:med`), placement (365-380 across builds since 2.6). Accepted by Erez, 18 Nov 2026 ("Accept
+  at D39", "Accept"). These rows are timed at D39's layout from now on.
+- **ECal 2.54** (step 2): Settings opened on the Falcons 60/80 -> 90 (common's Settings engine, A2's class); a tip
+  taken away, Today let go 82 -> 100 (`ST:mono`, its 200 within), 65 -> 75 (`Falcon-4:16`); the accessory's boot on
+  `ST-1` 45 opens against a budget of 30 (the feed's write buffer; a refresh 12 of 12): the budget raised to 45.
+  Accepted by Erez, 18 Nov 2026 ("Accept both", "Raise budget to 45").
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
