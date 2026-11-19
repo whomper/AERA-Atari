@@ -342,6 +342,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   EFTP's start 625 and resize 585-620 on `ST:mono`, EMail's Settings 330 (the AES's objc_draw). To look at: the ST's
   drawing made faster, then pieces again where they cost no more than 10 %.
 
+- **ECal 2.55** (the FireBee fix, common c0fa029) against 2.54, no ECal code changed: today's picture 2545 -> 2620
+  (`ST:mono`), the week 835-905 -> 930 (`Falcon-4:16`), next month up to 1145 (`Falcon-4:256` NVDI), the start there
+  980 -> 700 faster. The build's layout (2.54's own code built twice: 2065 and 2545 on the ST). Accepted by Erez,
+  19 Nov 2026 ("Accept, release now"). To look at: ECal's lifted speed work (pictures 16-30% faster on its branch).
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
