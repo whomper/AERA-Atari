@@ -347,6 +347,12 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   980 -> 700 faster. The build's layout (2.54's own code built twice: 2065 and 2545 on the ST). Accepted by Erez,
   19 Nov 2026 ("Accept, release now"). To look at: ECal's lifted speed work (pictures 16-30% faster on its branch).
 
+- **EMail 2.25** (the redraw rule of 19 Nov 2026: 300 ms or less in one piece) against 2.24: the longest stretch of
+  the rows whose pieces became one redraw grew, as the rule means it to (a click 65 -> 85 and Find left 60 -> 80 on
+  `Falcon-4:256` NVDI; on `ST:mono` a click 130 -> 195, next short 135 -> 200, Find e 105 -> 140), each under 300; the
+  time to the result is no later beyond a tick on any machine (EMail's paired AESDONE runs). Under Erez's approval of
+  the rule ("Work on 1, keep Open"), not a separate acceptance.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
