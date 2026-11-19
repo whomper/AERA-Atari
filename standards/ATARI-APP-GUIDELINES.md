@@ -373,6 +373,15 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     100 ms piece, so pieces of 100 ms cost +58 to +105 % in total (ST:mono: news 3310 whole,
     5819 in pieces), where the Falcon's cost +2 to +9 %. An app whose pieces cannot meet the
     10 % at 100 ms measures larger pieces and puts the figures to Erez.
+    **On the 8 MHz ST, a window's redraw is drawn whole** (Erez, 19 Nov 2026: "Draw whole on the
+    ST", after EMail's and EFTP's figures: EMail's main window 480 ms whole against 865-1,035 in
+    100 ms pieces and 535 a pane a turn; EFTP's window shown 40-60 % later in pieces). Where the
+    pieces can't meet the 10 % on the ST, the app draws whole there, at whatever its stretch, and
+    says so in its speed rig's rows; the Falcons and TT keep the rule above (whole at 300 ms or
+    less, which every app's redraws already are). EWeb's ST edition keeps its exception. Also
+    decided (EMail): a dialog the AES draws in one call (objc_draw) stays one piece (330 ms on
+    ST:mono, Settings); a window's slider may come a turn after its scroll when drawing it with
+    the scroll would take the scroll over its time.
   - What stays in slices is work that is not drawing: a sync, a load, a search, a page laid out,
     a folder's tags, a decode. Its result is drawn in one piece when ready, or one finished part at
     a time, each part in one piece.

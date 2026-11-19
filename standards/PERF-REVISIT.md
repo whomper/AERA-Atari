@@ -332,6 +332,16 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   `ST-1` 45 opens against a budget of 30 (the feed's write buffer; a refresh 12 of 12): the budget raised to 45.
   Accepted by Erez, 18 Nov 2026 ("Accept both", "Raise budget to 45").
 
+- **The About box under NVDI on TOS** (common a769b86, EUpdate's patch): opened 210 -> 130 on `Falcon-4:256` NVDI (its
+  150), closed 50 -> 120 (its 300): the windows under it redrawn in place of the copy back. Every app that syncs it.
+  Accepted by Erez, 19 Nov 2026 ("Accept").
+- **EContact 2.10** against 2.9, without release pads (they cost a 1 MB ST its 350 contacts): the start 815 -> 845
+  (`Falcon-4:256` NVDI), the books-read stretch 220 -> 230 (`Falcon-4:16`, PIC.OVL's step until EContact calls 1.2's
+  steps). Accepted by Erez, 19 Nov 2026 ("Accept, release now"). To look at: EContact's speed work (books read ~150).
+- **The ST's whole redraws** (Erez, 19 Nov 2026, "Draw whole on the ST"): EMail's main window 380-480 on `ST:mono`,
+  EFTP's start 625 and resize 585-620 on `ST:mono`, EMail's Settings 330 (the AES's objc_draw). To look at: the ST's
+  drawing made faster, then pieces again where they cost no more than 10 %.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
