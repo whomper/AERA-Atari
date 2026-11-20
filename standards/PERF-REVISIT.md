@@ -363,6 +363,13 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   a new layout (^S, sizing) 280-390 ms in one piece: in bands 395-470, 30 % longer. Both accepted by Erez,
   20 Nov 2026 ("Accept", "Accept whole").
 
+- **EHypView 2.9 on the 8 MHz ST** (`ST:mono` / `ST:med`; `Falcon-4:16` all within): Tab to a link 60/55 (50), a
+  letter in the library 50/55 (50), full-text Return 65/60 (50), a search's rows made 140/145 (100), drawn 250/210
+  (150), full-text slices 110/115 (100); all faster than 2.8. Accepted by Erez, 20 Nov 2026 ("Accept, release 2.9").
+  To look at: the name search's first turn (MAX_PAGE_ROWS) and its slice.
+- **EContact 2.11, with common 72e4e66**: `ST:mono` "let go: its card" 80 -> 90 against 2.10 (its own runs 80-90).
+  Accepted by Erez, 20 Nov 2026 ("Accept").
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
