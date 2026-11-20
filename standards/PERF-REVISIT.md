@@ -376,6 +376,10 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   next month's picture 1240 -> 1250, the year view's stretch 65 -> 70-75, the start's picture 1105 -> 1115 ("Release
   as it is"). Accepted by Erez in ECal's session.
 
+- **EPDF 2.41** (with common 72e4e66): the start on Erez's configuration 330 -> 345, the About box on `Falcon-4:16`
+  120 -> 130 (median); the About box closed on his configuration 40 -> 85 is the family's NVDI trade of 19 Nov
+  (accepted then). Accepted by Erez, 20 Nov 2026 ("Accept, release 2.41"). To look at: about_prepare in EPDF.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
