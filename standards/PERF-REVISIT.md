@@ -353,6 +353,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   time to the result is no later beyond a tick on any machine (EMail's paired AESDONE runs). Under Erez's approval of
   the rule ("Work on 1, keep Open"), not a separate acceptance.
 
+- **EHypView 2.9's line scroll** (BIG.HYP, 616 x ~330): `ST:mono` 70, `ST:med` 60, `Falcon-4:16` 55 against 50
+  (2.8: 130, 115, 75). The copy is scr_rows, 30 ms on the ST and the bus's 35-42 on the stock Falcon (TOS's
+  vro_cpyfm the same, common's tests/text); the rest is the strip and the scroll's one wind_update/graf_mouse pair.
+  Accepted by Erez, 20 Nov 2026 ("Accept").
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
