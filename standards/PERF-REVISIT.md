@@ -358,6 +358,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   vro_cpyfm the same, common's tests/text); the rest is the strip and the scroll's one wind_update/graf_mouse pair.
   Accepted by Erez, 20 Nov 2026 ("Accept").
 
+- **EContact 2.11**: on `ST:mono` Clr/Home 70, the list's arrow 80, Backspace 65 against 50 (2.10: 110, 115, 110),
+  the rest TOS 1.04's AES drawing the list's pane bar (guidelines 5.1). On `Falcon-4:256` NVDI the whole window after
+  a new layout (^S, sizing) 280-390 ms in one piece: in bands 395-470, 30 % longer. Both accepted by Erez,
+  20 Nov 2026 ("Accept", "Accept whole").
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
