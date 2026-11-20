@@ -811,7 +811,8 @@ gets a reader started, and sends the rest elsewhere.
   `NAME.ACC` and `NAME.PRG` are the same file under two names.
 - **ACC memory comes from a fixed heap**, taken once before the first event call and then measured
   (`common/ui/accmem.c`, 20 Oct 2026). The first start takes the app's own figure, but at most half
-  of what is free, and a quarter when 1 MB or more is free, so two accessories leave half the machine
+  of what is free (under 1 MB free, half and up to 8 KB more while the app's `acc_heap_leave` is still
+  left: 20 Nov 2026, EHypView's front page on a 1 MB Falcon), and a quarter when 1 MB or more is free, so two accessories leave half the machine
   to the program in front (on a 4 MB Falcon with NVDI's fonts about 1.5 MB is free when the
   accessories load; two halves left EMail none for NVDI's workstation). With more than two `.ACC`
   files in the boot drive's root, half of what is free is shared out among them on their first start
