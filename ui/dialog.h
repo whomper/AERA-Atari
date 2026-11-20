@@ -64,9 +64,6 @@ int dlg_later_waiting(void);		/* 1 while objects wait */
    TOS 1.04 drops a press made while a program draws; a press taken between turns isn't lost. */
 void dlg_press_later(short x, short y, short kstate);
 int dlg_press_waiting(void);		/* 1 while one waits */
-/* the AES's file selector from inside a dialog: the screen let go while it is up where the dialog is a window,
-   so the AES and the desktop can give back what it uncovers as it is dragged; on TOS as fsel_exinput */
-short dlg_fsel(char *path, char *name, short *button, const char *title);
 
 /* The band's badge (the Hebrew keyboard's, the guidelines 5.3), drawn by the app over the dialog's title band from
    dlg_band, on TOS where the band shows: when dlg_do starts and after F10 (the band drawn again first). NULL: none */
