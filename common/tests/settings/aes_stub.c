@@ -303,15 +303,8 @@ short graf_mouse(short num, void *form)
 	return 1;
 }
 
-/* (dialog.c's dlg_fsel calls it; no test opens the selector) */
-short fsel_exinput(char *path, char *name, short *button, const char *title)
-{
-	(void)path;
-	(void)name;
-	(void)title;
-	*button = 0;
-	return 1;
-}
+/* (gem.c's: dialog.c sets it when a dialog opens in a window) */
+int (*gem_screen_held)(void);
 
 short graf_mkstate(short *mx, short *my, short *mb, short *ks)
 {

@@ -905,7 +905,7 @@ static int run_system(const FP_SPEC *sp, char *dir, char recent[FP_RECENT][FP_PA
 	else
 		snprintf(path, sizeof(path), "%c:\\*.*", (char)('A' + Dgetdrv()));
 	name[0] = 0;
-	dlg_fsel(path, name, &button, sp->title);
+	fsel_exinput(path, name, &button, sp->title);
 	fsel_settle();
 	if (!button || !name[0] || !dl_folder_of(path, folder, sizeof(folder)) ||
 	    !dl_join(folder, name, full, sizeof(full)))
