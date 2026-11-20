@@ -568,6 +568,16 @@ short form_dial(short flag, short x, short y, short w, short h)
 
 /* dlg_win_button's: the button's state now, and where it is let go */
 static short fake_watch, watches;
+/* (dialog.c's dlg_fsel calls it; no test opens the selector) */
+short fsel_exinput(char *path, char *name, short *button, const char *title)
+{
+	(void)path;
+	(void)name;
+	(void)title;
+	*button = 0;
+	return 1;
+}
+
 short graf_mkstate(short *mx, short *my, short *mb, short *ks)
 {
 	*mx = *my = *ks = 0;

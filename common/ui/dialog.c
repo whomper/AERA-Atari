@@ -396,6 +396,22 @@ int dlg_in_window(void)
 	return ndw > 0 && dw[ndw - 1].h > 0;
 }
 
+/* the AES's file selector from inside a dialog: where the dialog is a window (MiNT, MagiC, MyAES) the screen is let
+   go while the selector is up, which is the AES's own window, moved by the user: held, nobody could give back
+   what it uncovered (the desktop, the windows under it, ours), and it left copies of itself at each step of a drag
+   (a tester's V4SA, EUpdate's "Where its files go", 19 Nov 2026). On TOS, as fsel_exinput */
+short dlg_fsel(char *path, char *name, short *button, const char *title)
+{
+	short r;
+	int held = dlg_in_window();
+	if (held)
+		wind_update(END_UPDATE);
+	r = fsel_exinput(path, name, button, title);
+	if (held)
+		wind_update(BEG_UPDATE);
+	return r;
+}
+
 static int clip(short *x, short *y, short *w, short *h, short cx, short cy, short cw, short ch)
 {
 	short x2 = *x + *w < cx + cw ? *x + *w : cx + cw;
@@ -1542,7 +1558,13 @@ static short dlg_evnt_(short flags, short clicks, short mask, short state,
 				/* the work area stays on 16 pixels across */
 				wind_calc(WC_WORK, DLG_KIND, msg[4], msg[5], msg[6], msg[7], &wx, &wy, &ww, &wh);
 				msg[4] += ((wx + 8) & ~15) - wx;
+				/* (without the screen held: the AES gives back what the window uncovered, the desktop and the
+				   windows under it, while it moves; held, an AES that redraws those through its screen
+				   manager or the desktop's owner left the dialog's old places on the screen, trails at each
+				   step of a drag: a tester's V4SA, EUpdate's and EPlay's file dialogs, 19 Nov 2026) */
+				wind_update(END_UPDATE);
 				wind_set(dw[k].h, WF_CURRXYWH, msg[4], msg[5], msg[6], msg[7]);
+				wind_update(BEG_UPDATE);
 				if (dw[k].tree)
 					wind_get(dw[k].h, WF_WORKXYWH, &dw[k].tree[0].ob_x,
 						 &dw[k].tree[0].ob_y, &d1, &d1);
