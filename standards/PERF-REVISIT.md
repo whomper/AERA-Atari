@@ -370,6 +370,12 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
 - **EContact 2.11, with common 72e4e66**: `ST:mono` "let go: its card" 80 -> 90 against 2.10 (its own runs 80-90).
   Accepted by Erez, 20 Nov 2026 ("Accept").
 
+- **ECal 2.56** (Erez, 20 Nov 2026: "we must not increase delays and latency"): the whole window kept in one piece
+  ("Whole, as 2.55": in pieces 895-930 against 490 on `Falcon-4:16`; whole now 380 there); the background letters'
+  stretch with FreeMono 14 under NVDI 45 -> 85 ("accept the background letters, fix the rest"); on `Falcon-4:16`
+  next month's picture 1240 -> 1250, the year view's stretch 65 -> 70-75, the start's picture 1105 -> 1115 ("Release
+  as it is"). Accepted by Erez in ECal's session.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
