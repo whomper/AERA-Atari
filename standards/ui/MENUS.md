@@ -229,7 +229,7 @@ These keys mean the same in every app. An app may leave one unused, but **never 
 | ^N | New: event, contact, message, chat, folder, window (a connection is `^K` in EFTP) | ^A | Select all |
 | ^O | Open (file, hypertext, PDF, playlist) | ^C ^X ^V | Copy, Cut, Paste (GEM clipboard) |
 | ^S | Save (EMail: put in the Outbox) | Undo key | Viewers: Back (⇧: Forward); ^Z does this in EWeb only |
-| ^U | Close window (a one-window PRG: quit) | ^P | Print (reserved; no app has it) |
+| ^U | Close window (a one-window PRG: quit) | ^P | Print... (File; EMail 2.27, EPDF from 2.43: common/ui/print.c) |
 | ^W | Next window, the app's own, in turn (one window: nothing) | ^I | Get info / properties (EFTP Permissions, EUpdate Get info) |
 | ^Q | Quit (ACC: close window) | ^, | Settings... |
 | ^F | Find (⇧^F: see 2.2) | Del | Delete the selection (never in a text field) |
@@ -588,7 +588,7 @@ As built at the tags; the rules of 1.5 say where each is going.
 - **Greying** is done in `menu_update()` (EMail, EFTP, EUpdate, EWeb, EContact), `event_items` (ECal),
   `update_menu` (EHypView), `menu_states` (EPDF). The caches that spare AES calls: `enable()` comparing
   `ob_state & DISABLED` (EMail, EFTP), a remembered last value (ECal, EWeb, EHypView, EPDF), a bit mask (EUpdate).
-- **Not in the code:** a Print command; a context-sensitive Help page (not wanted now: D12); a `menu_drop` in any app but EContact (the shared `dlg_evnt` drops it now).
+- **Not in the code:** a context-sensitive Help page (not wanted now: D12); a `menu_drop` in any app but EContact (the shared `dlg_evnt` drops it now).
 
 ---
 

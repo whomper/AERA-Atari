@@ -958,7 +958,7 @@ meaning**. Every app's own keys and the matching rules: [ui/MENUS.md](ui/MENUS.m
 | ^N | New (event, contact, message, chat, folder, window; EFTP's connection is ^K) | ^A | Select all |
 | ^O | Open | ^C ^X ^V | Copy, Cut, Paste (GEM clipboard) |
 | ^S | Save | Undo key | A dialog: Cancel (3.5); a job: stop (playback is not a job); viewers: Back (⇧: Forward). ^Z is Back in EWeb only |
-| ^U | Close window (a one-window PRG: quit; its menu lists Quit alone) | ^P | Print (reserved) |
+| ^U | Close window (a one-window PRG: quit; its menu lists Quit alone) | ^P | Print... (File > Print..., through common/ui/print.c: NVDI's print dialog where WDIALOG is loaded, else the default printer; the family's words, Erez 21 Nov 2026) |
 | ^W | Next window: the app's own, in turn (one window: nothing) | ^I | Get info / properties |
 | ^Q | Quit (ACC: close window) | ^, | Settings... |
 | ^F | Find | Del | Delete the selection (never in a text field) |
