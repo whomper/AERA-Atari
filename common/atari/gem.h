@@ -295,6 +295,8 @@ void *pdlg_create(short flags);
 short pdlg_delete(void *dlg);
 void *pdlg_new_settings(void *dlg);
 short pdlg_free_settings(void *set);
+short pdlg_dflt_settings(void *dlg, void *set);
+short pdlg_validate_settings(void *dlg, void *set);
 short pdlg_use_settings(void *dlg, void *set);
 short pdlg_save_default_settings(void *dlg, void *set);
 short pdlg_do(void *dlg, void *set, const char *name, short options);

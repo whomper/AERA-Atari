@@ -1555,6 +1555,7 @@ void v_updwk(short h) { vdi(4, 0, 0, h); }
    PRN_SETTINGS, whose layout the app reads only through these calls and a few documented fields */
 void *pdlg_create(short flags)
 {
+	addrout[0] = 0;				/* an AES without WDIALOG leaves it */
 	aintin[0] = flags;
 	aes(200, 1, 0, 0, 1);
 	return addrout[0];
@@ -1583,6 +1584,8 @@ void *pdlg_new_settings(void *dlg)
 }
 
 short pdlg_free_settings(void *set) { aintin[0] = 6; addrin[0] = set; return aes(205, 1, 1, 1, 0); }
+short pdlg_dflt_settings(void *dlg, void *set) { return pdlg_sub(7, dlg, set); }
+short pdlg_validate_settings(void *dlg, void *set) { return pdlg_sub(8, dlg, set); }
 short pdlg_use_settings(void *dlg, void *set) { return pdlg_sub(9, dlg, set); }
 short pdlg_save_default_settings(void *dlg, void *set) { return pdlg_sub(10, dlg, set); }
 
