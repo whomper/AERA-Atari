@@ -395,6 +395,9 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   shown" 465 against 450 ms (a 5 ms-threshold timing 460 against 455, every part the same: slices 375, title, bars);
   under NVDI two rows the rig marks not measurable, the news page +10 ms and an arrow held up +20 ms. Erez accepted
   them ("Accept, release 1.24", 21 Nov 2026). To look at: the home page's draw (to_planes, the put) if 1.25 touches it.
+  The released candidate (7a1ea5aef, the 4 MB reload's fix: layout_keep_list) paired again: the sample page on
+  Falcon-4:16 405 -> 415 ms and the pictures' page on Erez's configuration 480 -> 495, neither slower in a second
+  session (1.23 moves up to 15 ms between sessions); Erez accepted them ("Accept, release", 21 Nov 2026).
 
 ## How to add a line
 
