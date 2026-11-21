@@ -385,6 +385,12 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   To look at: 1.22's rebuild came out 2 pixels taller than its first load with layout 85 ms against 235; and the
   big page's reload on the 4 MB Falcon under NVDI has only a few KB to spare (EWeb's report).
 
+- **EMail 2.26** (the tester's large message, a fault fix, 21 Nov 2026) against 2.25: Settings opened on `ST:mono`
+  280 -> 295 ms in all three pairs (Falcon-4:16 95-100 -> 105), the new row on the Mail page ("Messages larger than
+  [500] KB: without attachments", one framed field and its lines). Erez accepted it ("Accept", 21 Nov 2026), under
+  the 330 ms he accepted for Settings on the ST on 19 Nov. To look at: Settings' Mail page built in a turn of its own,
+  if a later release has a reason to touch it.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
