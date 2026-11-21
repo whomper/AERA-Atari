@@ -380,6 +380,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   120 -> 130 (median); the About box closed on his configuration 40 -> 85 is the family's NVDI trade of 19 Nov
   (accepted then). Accepted by Erez, 20 Nov 2026 ("Accept, release 2.41"). To look at: about_prepare in EPDF.
 
+- **EWeb 1.23**: Back on Erez's configuration (`Falcon-4:256` NVDI, no room to keep the page: both rebuild it)
+  575 -> 590, the same in every run. Accepted by Erez in EWeb's session, 21 Nov 2026 ("Accept, release 1.23").
+  To look at: 1.22's rebuild came out 2 pixels taller than its first load with layout 85 ms against 235; and the
+  big page's reload on the 4 MB Falcon under NVDI has only a few KB to spare (EWeb's report).
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
