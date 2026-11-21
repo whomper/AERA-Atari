@@ -391,6 +391,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   the 330 ms he accepted for Settings on the ST on 19 Nov. To look at: Settings' Mail page built in a turn of its own,
   if a later release has a reason to touch it.
 
+- **EWeb 1.24** (Erez's live-view faults and image maps, 21 Nov 2026) against 1.23: Falcon-4:16 "the home page
+  shown" 465 against 450 ms (a 5 ms-threshold timing 460 against 455, every part the same: slices 375, title, bars);
+  under NVDI two rows the rig marks not measurable, the news page +10 ms and an arrow held up +20 ms. Erez accepted
+  them ("Accept, release 1.24", 21 Nov 2026). To look at: the home page's draw (to_planes, the put) if 1.25 touches it.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
