@@ -1940,6 +1940,9 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
     `name-x.y.zip` ('-' before '.'), so the standard package comes last. A release carries the two zips and
     nothing that sorts after the standard one, and checks through the API, before it is announced, that the
     list ends with the standard zip.
+  - **The first zips-only release's notes** say, in one line: "If you set Files in EUpdate's Get info for this
+    program, empty it." An EUpdate whose Files names a loose file finds nothing in a release of zips (EUpdate,
+    22 Nov 2026: its row says no file is chosen); DEFAULTS.INF names none, so only Files typed by hand.
   - **EUpdate's own move** (Erez, 22 Nov 2026, "Bridge for 2.15"): today's FireBee EUpdate is EUPDFB.PRG
     2.14, which knows no FireBee package. So EUpdate 2.15's standard package still carries EUPDFB.PRG, its
     2.15 ColdFire build, for that release only. 2.15 on a FireBee then takes the FireBee package, writes
