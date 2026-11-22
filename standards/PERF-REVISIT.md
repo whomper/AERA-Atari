@@ -399,6 +399,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   Falcon-4:16 405 -> 415 ms and the pictures' page on Erez's configuration 480 -> 495, neither slower in a second
   session (1.23 moves up to 15 ms between sessions); Erez accepted them ("Accept, release", 21 Nov 2026).
 
+- **EPlay 1.51** (the window's first height and the mini player's place; VGM and an EMAC MP3 decoder on the FireBee,
+  21 Nov 2026) against 1.50: Falcon-4:16's start 590 -> 600 ms and, under NVDI, the volume bar pressed at a quarter
+  10 -> 20 ms, both runs agreeing; the start runs the same code (where it lies in memory). Erez accepted them
+  ("Accept, release 1.51", 22 Nov 2026). To look at: a pad round on the start if 1.52 moves it again.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
