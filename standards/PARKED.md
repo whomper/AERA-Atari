@@ -147,3 +147,18 @@ starts before he says so. The hub adds to it; each line says where the work stan
   from EPlay's C model goes into the release that brings the YM2612: on 68060 machines with no Falcon DSP,
   chosen at run time, never on a 68030. The FireBee's CPU MP3 goes in its own release (EMAC later). In EPlay's
   DESIGN.md.
+
+## A new program: the passwords vault (Erez, 22 Nov 2026)
+
+Erez asked for the Mac's iCloud passwords on the Falcon, stored encrypted. There's no direct sync. iCloud
+Keychain is end-to-end encrypted, its keys are held only by trusted Apple devices, and Apple gives other
+programs no way in; reverse-engineering it would break with Apple's updates and risk the whole keychain. The
+way he chose ("Plan it, start after 1.0s"): a new AERA program that imports the CSV the Mac's Passwords app
+exports (File > Export All Passwords) and keeps only an encrypted copy.
+- AES-256 under a key made from the master password, the key's derivation set to about a second on a stock
+  Falcon. Search, show, copy to the clipboard; it locks itself, the clipboard and its memory wiped.
+- The import from a disk or an SD card, not the network; the CSV offered for deletion afterwards. A refresh is
+  another export and import.
+- Later: the family's own passwords (EMail, ECal, EFTP) from it, under one master password.
+The hub writes the design (the import, the file, the encryption, the window and the words) for Erez's
+approval before work starts.
