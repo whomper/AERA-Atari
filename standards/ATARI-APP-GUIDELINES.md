@@ -1934,6 +1934,15 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
     2026: "this special FireBee treatment is just for AERA applications, standard GitHub projects are not
     affected"): `-firebee.zip` where `_CF_` is set, the other zip elsewhere. Any other repository is handled as
     before.
+  - **Upload order**: an EUpdate up to 2.14 takes every zip of a release, one after the other, and the
+    last one wins. So the release workflow uploads `-firebee.zip` first and the standard zip last, and the
+    release checks the asset order through GitHub's API before it is announced.
+  - **EUpdate's own move** (Erez, 22 Nov 2026, "Bridge for 2.15"): today's FireBee EUpdate is EUPDFB.PRG
+    2.14, which knows no FireBee package. So EUpdate 2.15's standard package still carries EUPDFB.PRG, its
+    2.15 ColdFire build, for that release only. 2.15 on a FireBee then takes the FireBee package, writes
+    EUPDATE.PRG, removes EUPDFB.PRG (and EWeb's and EPlay's `*FB.PRG` as it writes theirs) and says once:
+    "EUpdate is now EUPDATE.PRG on the FireBee too (EUPDFB.PRG is gone). Start EUPDATE.PRG from now on."
+    From 2.16 the standard package has no EUPDFB.PRG.
   - **Tests**: the ColdFire code under qemu-m68k -cpu cfv4e where it runs as a Linux program (common's
     `tests/coldfire` way: an app's core against its host build); each build's alert on the wrong machine (the
     FireBee stand-in, a Falcon, an ST), an accessory's boot reaching the desktop. GEM, the screen and the real
