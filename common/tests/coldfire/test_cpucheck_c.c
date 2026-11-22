@@ -28,6 +28,9 @@ short _is_acc = 1;
 #ifdef ACC_NAME
 const char cpu_acc_name[] = "  Test";
 #endif
+#ifdef ACC_ALERT
+const char cpu_acc_alert[] = "[3][put the other .ACC in its place][ OK ]";
+#endif
 static int mesags;
 static void acc_end(void);
 #endif
@@ -58,6 +61,10 @@ static void sig(int s, void *info, void *ucv)
 		void **addrin = pb[4];
 		if (nops < 8)
 			ops[nops++] = control[0];
+#ifdef ACC_ALERT
+		if (control[0] == 52)
+			check("an accessory's own words (cpu_acc_alert)", addrin[0] == (void *)cpu_acc_alert);
+#endif
 		if (control[0] == 52) {
 			check("form_alert(1, ...)", intin[0] == 1 && control[1] == 1 && control[3] == 1);
 			alerted = addrin[0];

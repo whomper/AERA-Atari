@@ -20,6 +20,9 @@ short _is_acc = 1;
 #ifdef ACC_NAME
 const char cpu_acc_name[] = "  Test";
 #endif
+#ifdef ACC_ALERT
+const char cpu_acc_alert[] = "[3][put the other .ACC in its place][ OK ]";
+#endif
 static int mesags;
 static void acc_end(void);
 #endif
@@ -51,8 +54,13 @@ static void sig(int s, void *info, void *ucv)
 		if (nops < 8)
 			ops[nops++] = control[0];
 		if (control[0] == 52)
+#ifdef ACC_ALERT
+			check("form_alert(1, cpu_acc_alert)", intin[0] == 1 && addrin[0] == (void *)cpu_acc_alert &&
+			      control[1] == 1 && control[3] == 1);
+#else
 			check("form_alert(1, cpu_alert)", intin[0] == 1 && addrin[0] == (void *)cpu_alert &&
 			      control[1] == 1 && control[3] == 1);
+#endif
 #ifdef ACC
 		if (control[0] == 23) {
 			short *msg = addrin[0];
