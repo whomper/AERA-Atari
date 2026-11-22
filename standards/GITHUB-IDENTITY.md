@@ -127,8 +127,13 @@ should update its remote:
   Write the decision and its date: "decided 22 Nov 2026", "the owner's decision (22 Nov 2026)", or
   simply what the program does and why. Never "Erez asked", "Erez, 22 Nov 2026", "Erez accepted" or
   the like. The author line, copyright lines, About boxes and help files keep "AERA | Erez Yaary" as
-  above: that is the name of the maker, not a record of requests. New text follows this at once; old
-  text is cleaned when its file is next touched for another reason (no sweep of its own). The record
+  above: that is the name of the maker, not a record of requests. Nor is the owner named any other way
+  (decided the same day): not as the test machine ("Erez's configuration", "Erez's TOS images", "his
+  Falcon") but "the reference configuration (Falcon-4:256, TOS 4.04, NVDI)" or "real TOS 1.04 and
+  4.04"; not as a contact ("send the log through Erez") but "send the log to AERA"; and in CLAUDE.md
+  files "the owner" ("the owner's part", "until the owner ends it"). New text follows this at once; old
+  text is cleaned when its file is next touched for another reason (no sweep of its own), except the
+  published release notes, cleaned once (each repository's Notes workflow, from the repo template). The record
   of who decided what stays with the sessions, off GitHub.
 - **Branches.** `main` is the default branch everywhere. Under Settings → General, tick
   "Automatically delete head branches" so merged branches tidy themselves away.
