@@ -426,6 +426,10 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   ms). Accepted (22 Nov 2026). To look at: the list's drawing back at its old places. The line scroll in 256 colours
   under NVDI stays at 80 ms (the rows' move alone 55-60): a faster move there is its own job.
 
+- **ClaudeST 2.15** (the family rules not yet met; 22 Nov 2026) against 2.14: the start on Falcon-4:256 with NVDI
+  +10-15 ms, and the reply's first piece on the Falcons +10-15 ms. Recents is 10-25 ms faster on every machine.
+  Accepted (22 Nov 2026).
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
