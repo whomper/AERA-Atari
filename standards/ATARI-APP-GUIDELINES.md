@@ -1398,8 +1398,21 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   window if it's the ACC.
 - **Colours:**
   - Use the 16 standard VDI pens.
-  - In 256-colour modes an app may set pens 16 and up for its theme (EMail's `theme.c`), and puts them
+  - In 256-colour modes an app may set pens 16 to 31 for its theme (common's `theme.c`), and puts them
     back on exit.
+  - **Pictures may borrow pens 192–255** (decided 22 Nov 2026) for a picture's own colours, in
+    256-colour modes. A fixed palette such as NVDI's 6×6×6 cube has no colours near skin, so a photo
+    dithered to it breaks into specks; 64 colours of the photo's own look like the photo.
+    - Only the app whose window is on top holds them. It reads the pens' colours (`vq_color`) when it
+      takes them and gives them back when it closes or quits, when an accessory gets AC_CLOSE, and as
+      soon as another window is on top (WM_UNTOPPED where the AES sends it, else `wind_get(WF_TOP)` at
+      each event). The crash handler gives them back too. Common's `ui/picpens.c` does all of this.
+    - While it doesn't hold them, its pictures are drawn with the screen's palette as before, and
+      drawn again when it takes or gives them back, so a picture never shows in pens it doesn't
+      hold.
+    - The colours are chosen by PIC.OVL's `quant` (68020 and up). Without PIC.OVL (an ST, a
+      FireBee), pictures keep the screen's palette.
+    - Only these 64: an app's other own pens (a theme, EConvert's band) stay in 16–31.
   - Pens 0–15 are only borrowed by the About box (1.3).
   - **A colour the app uses but does not set itself comes from pens 0–15 only** (23 Oct 2026). That
     covers greys, lines and calendar colours. Take the colour it has in TOS's standard palette and
@@ -2372,6 +2385,7 @@ program's window.
 | 6.1 INF keys `WINDOW=x,y,w,h`, `PANES=`, `FONT=name,points`; the old key read once (D43, D44) | ✓ (WINDOW=, FONT=name,points; old keys read once; tests/inftest.sh; 2.54) | ✓ (50c6d0d6; no PANES=, SIDEBAR= stays) | ✓ (30855d5d) | ✓ (9443153) | ✓ (FONT=name,points, PANES=, WINDOW= for the library; old keys read once; 2.7) | ✓ (ce598788, 56067c88, 3e5e3a66; 2.11) | ✓ (WINDOW=, e1b165c2; no Font, no panes) | ✓ (9d096ae09, font.c) | ✓ (da73a428f, WINDOW=; no panes or font) |
 | 4.4 The clipboard sentences on the status line, never an alert (D50) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ (6dd8edac) | ✓ (since 1.76: the status line, no alert) | ✓ (8d67995, 2.0) | ✓ (f91eab33, 2.11) | ✓ (9c21430c) | ✓ (b39b6cb6b) | — |
 | 4.5 The notification button reads `Show` when it brings a window forward (D51) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ ("Open | ✓ (main.c "Show") |Later", W25; Show is Erez's word) | ✓ (since 1.76: queue.c's Show) | — | ✓ (51562d82) | ✓ (8798a8dd) | — | — |
+| 5.2 Pictures borrow pens 192–255 while on top, `ui/picpens.c`, PIC.OVL's `quant` (22 Nov) | — | in work (decided 22 Nov 2026: 64 colours) | — | — | — | — | ? (its own palette while it runs: to align) | ? (pictures and pages; EConvert's band to 16–31) | — |
 
 **Rows added on 9 Nov 2026** for Erez's decisions D1 to D54 ([ui/DECISIONS-2026-11-09.md](ui/DECISIONS-2026-11-09.md)).
 ✗ = the evaluation of 9 Nov shows the app differs from the rule; ? = the app's reply says it already matches, or it
