@@ -1934,9 +1934,12 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
     2026: "this special FireBee treatment is just for AERA applications, standard GitHub projects are not
     affected"): `-firebee.zip` where `_CF_` is set, the other zip elsewhere. Any other repository is handled as
     before.
-  - **Upload order**: an EUpdate up to 2.14 takes every zip of a release, one after the other, and the
-    last one wins. So the release workflow uploads `-firebee.zip` first and the standard zip last, and the
-    release checks the asset order through GitHub's API before it is announced.
+  - **The order of the zips**: an EUpdate up to 2.14 takes every zip of a release, in the order GitHub's API
+    lists them, and the last one unpacked wins. GitHub lists a release's files by name, not by upload (EUpdate
+    on v2.12-v2.14, 22 Nov 2026; not promised by its docs), and `name-x.y-firebee.zip` sorts before
+    `name-x.y.zip` ('-' before '.'), so the standard package comes last. A release carries the two zips and
+    nothing that sorts after the standard one, and checks through the API, before it is announced, that the
+    list ends with the standard zip.
   - **EUpdate's own move** (Erez, 22 Nov 2026, "Bridge for 2.15"): today's FireBee EUpdate is EUPDFB.PRG
     2.14, which knows no FireBee package. So EUpdate 2.15's standard package still carries EUPDFB.PRG, its
     2.15 ColdFire build, for that release only. 2.15 on a FireBee then takes the FireBee package, writes
