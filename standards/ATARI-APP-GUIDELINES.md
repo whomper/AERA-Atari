@@ -1905,8 +1905,28 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 - **TLSFB.OVL for the FireBee** (Erez, 15 Nov 2026: "yes to TLSFB.OVL, FireBee editions only on report"). Every
   app with a Direct connection ships `tlsfb.ovl` beside `tls.ovl` (common's `tlsovl/tlsfb.ovl`, the same sources
   built for the ColdFire: `make CPU=5475`); `tls_ovl.c` loads it by itself where the `_CF_` cookie is set, and
-  `ovl.c` flushes the ColdFire's caches its own way there. A native FireBee edition of a program (EWeb's
-  EWEBFB.PRG, EPlay's EPLAYFB.PRG) is made only when a FireBee user reports the app too slow.
+  `ovl.c` flushes the ColdFire's caches its own way there.
+- **Every app has a native FireBee edition** (Erez, 22 Nov 2026: "Make the other apps native on the FireBee
+  too"; it replaces 15 Nov's "FireBee editions only on report"). Each program, and each accessory, is also built
+  as ColdFire code (-mcpu=5475) from its own rules by common's `tools/mkfirebee.py --elf build/NAME.elf OUT`
+  (EUpdate's and EWeb's tool made common's: it gives EUPDFB.PRG byte for byte): cpucheck.c becomes
+  `cpucheck_cf.S`, -lgcc common's `ll64.c`, and the build fails on any EMAC instruction outside a file named
+  with `--emac-ok`. The editions are named as EWeb's, EUpdate's and EPlay's: the name's first letters and
+  `fb`, 8.3, lowercase (6.6): `ecalfb`, `econtfb`, `emailfb` and `emchkfb.acc`, `eftpfb`, `ehypfb`,
+  `claudefb`, `epdffb` and `econvfb`, beside `ewebfb`, `eupdfb`, `eplayfb`. Each ships in the release beside
+  the 68000/68030 file, with `tlsfb.ovl` where the app has TLS.
+  - **Each file names the other.** The 68000/68030 program on a FireBee (`_CF_` in the jar) shows
+    `cpu_cf_alert` naming its FireBee edition and quits; the FireBee edition on any other machine shows
+    `cpu_alert` (under `__mcoldfire__`) naming the program to use. A 68000 program with no edition went on
+    under FireTOS's emulation; with one, it sends the user to it.
+  - **An accessory is installed in place of the other, never beside it**: a FireBee loads every .ACC in the
+    boot drive's root, so `ecal.acc` and `ecalfb.acc` together would run twice (the 68000 one then only says
+    which to use). EUpdate installs by the machine it runs on: on a FireBee the `fb` files of a release and
+    not their 68000 twins, elsewhere the opposite.
+  - **Tests**: the ColdFire code under qemu-m68k -cpu cfv4e where it can run as a Linux program (common's
+    `tests/coldfire` way: an app's core, parsers, drawing into memory, against its host build); the 68000
+    and 68030 files' `_CF_` alerts on the FireBee stand-in (`firebee_test.py` as EUpdate's). GEM, the
+    screen and the real speed are a FireBee's: a release, and the tester's log.
 - **The log is written as it happens, the file kept open a second at most** (Erez, 15 Nov 2026: "apps should
   write log at once as otherwise it may be ineffective to trace errors"; 17 Nov 2026: "Yes, build the log middle
   way into the fix release. If other AERA apps behave the same where they open and close the log file ever so
