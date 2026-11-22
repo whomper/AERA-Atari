@@ -1910,14 +1910,15 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   native on the FireBee too"; then "Shall we just create two packages, one for FireBee and the other for
   standard ST? ... EUpdate can then download the right package based on the running platform", and the same
   file names in both; it replaces 15 Nov's "FireBee editions only on report").
-  - **Two zips a release**: `name-x.y.zip` for the ST, TT and Falcon, as today, and `name-x.y-firebee.zip`
-    holding the very same file names (`ecal.prg`, `ecal.acc`, `ecal.hyp`...) built as ColdFire code
-    (-mcpu=5475). Installing either package replaces the files in place, so two accessories never meet in
-    a root. The loose files a release publishes stay the standard package's; the FireBee's are in its zip
-    only. TLS: the standard package carries `tls.ovl`, the FireBee's `tlsfb.ovl` (`tls_ovl.c` loads it where
-    `_CF_` is set). Overlays of an app's own keep their names in both (EPDF's `render.ovl` is the ColdFire
-    one in the FireBee package). EWeb, EUpdate and EPlay rename their `*fb` files to the standard names
-    from their next release.
+  - **Two zips a release, and nothing else** (Erez, 22 Nov 2026: "Remove all files from root and just have two
+    ZIP files, one for each platform"): `name-x.y.zip` for the ST, TT and Falcon and `name-x.y-firebee.zip`,
+    no loose files beside them. Both hold the very same file names (`ecal.prg`, `ecal.acc`, `ecal.hyp`,
+    `tls.ovl`...), the FireBee's built as ColdFire code: every file under its standard name ("rename all other
+    FB files into their standard filename"), so the FireBee package's `tls.ovl` is TLS.OVL's ColdFire build
+    (common's `tlsovl/tlsfb.ovl`, copied under that name; `tls_ovl.c` in a FireBee build loads `tls.ovl` as it
+    is), EWeb's `ewebjs.ovl` and EPDF's `render.ovl` the same. Installing either package replaces the files in
+    place, so two accessories never meet in a root. EWeb's, EUpdate's and EPlay's `*fb` files take the standard
+    names from their next release.
   - **Built** by common's `tools/mkfirebee.py --elf build/NAME.elf OUT` from the app's own rules: cpucheck.c
     becomes `cpucheck_cf.S`, -lgcc common's `ll64.c`; the build fails on any EMAC instruction or hand-written
     Line-A word in the sources (their own assembly is read, not a disassembly) outside a file named with
@@ -1929,8 +1930,10 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
     nothing at the boot (2.2), registers its Desk entry (`cpu_acc_name`) and shows its alert when opened,
     never ending (common's `cpucheck.c` and `cpucheck_cf.S`; `cpu_acc_alert`, `cpu_cf_acc_alert` for its own
     words; ECal found that returning stopped the machine).
-  - **EUpdate** fetches the package for the machine it runs on: `-firebee.zip` where `_CF_` is set, the
-    other zip elsewhere.
+  - **EUpdate** fetches the package for the machine it runs on, for AERA's own repositories only (Erez, 22 Nov
+    2026: "this special FireBee treatment is just for AERA applications, standard GitHub projects are not
+    affected"): `-firebee.zip` where `_CF_` is set, the other zip elsewhere. Any other repository is handled as
+    before.
   - **Tests**: the ColdFire code under qemu-m68k -cpu cfv4e where it runs as a Linux program (common's
     `tests/coldfire` way: an app's core against its host build); each build's alert on the wrong machine (the
     FireBee stand-in, a Falcon, an ST), an accessory's boot reaching the desktop. GEM, the screen and the real
