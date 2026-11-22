@@ -31,12 +31,12 @@ refuse:
 	lea	pb_init,%a0		| appl_init
 	bsr.w	aes
 	move.l	#_is_acc,%d0		| an accessory (crt0's flag; weak: none outside an app)
-	beq.s	4f
+	beq.w	4f
 	move.l	%d0,%a0
 	move.w	(%a0),%d0
 	ext.l	%d0
 	tst.l	%d0
-	beq.s	4f
+	beq.w	4f
 | an accessory never ends (crt0's loop would stop the machine) and says nothing at the boot: its Desk
 | entry (cpu_acc_name, weak), and the alert when the user opens it (Erez, 22 Nov 2026; ECal found the hang)
 	move.l	#cpu_acc_name,%d0
@@ -58,8 +58,10 @@ refuse:
 	beq.s	5b
 	moveq	#1,%d0
 	move.w	%d0,intin
+	move.l	#cpu_acc_alert,%d0	| the accessory's own words where it has them (weak)
+	bne.s	6f
 	move.l	#cpu_alert,%d0
-	move.l	%d0,addrin
+6:	move.l	%d0,addrin
 	lea	pb_alert,%a0		| form_alert(1, cpu_alert)
 	bsr.w	aes
 	bra.s	5b
@@ -123,3 +125,4 @@ addrout:	.space	4
 msgbuf:		.space	16
 	.weak	_is_acc
 	.weak	cpu_acc_name
+	.weak	cpu_acc_alert

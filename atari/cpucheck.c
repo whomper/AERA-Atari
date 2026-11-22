@@ -35,6 +35,9 @@ extern const char cpu_cf_alert[] __attribute__((weak));
 /* an accessory's Desk menu entry ("  ECal"): where it is defined, an accessory on the wrong machine registers
    it and shows its alert when the user opens it; without it, it waits without a word */
 extern const char cpu_acc_name[] __attribute__((weak));
+/* an accessory's own words, where its program's don't fit ("put X.ACC in its place", [ OK ]); else the program's */
+extern const char cpu_acc_alert[] __attribute__((weak));
+extern const char cpu_cf_acc_alert[] __attribute__((weak));
 extern short _is_acc __attribute__((weak));	/* crt0.S: 1 when started as a desk accessory */
 int app_main(void);
 
@@ -112,6 +115,10 @@ int main(void)
 		say = cpu_cf_alert;
 	if (say) {
 		if (&_is_acc && _is_acc) {
+			if (say == cpu_alert && cpu_acc_alert)
+				say = cpu_acc_alert;
+			else if (say == cpu_cf_alert && cpu_cf_acc_alert)
+				say = cpu_cf_acc_alert;
 			/* an accessory never ends (crt0's loop would stop the machine) and says nothing at the
 			   boot (the guidelines, 2.2): its entry, and the alert when the user opens it (Erez, 22 Nov
 			   2026: every app native on the FireBee; ECal found the hang) */
