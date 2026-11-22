@@ -404,6 +404,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   10 -> 20 ms, both runs agreeing; the start runs the same code (where it lies in memory). Erez accepted them
   ("Accept, release 1.51", 22 Nov 2026). To look at: a pad round on the start if 1.52 moves it again.
 
+- **ECal 2.57** (the FireBee packages, common c184d49; 22 Nov 2026) against 2.56, four pairs each: Falcon-4:16's
+  month again 1140 -> 1170 ms and Falcon-4:256 with NVDI's month drawn whole 695 -> 722 ms; ST:mono the same. None of
+  the changed code runs while drawing, and a build padded to 2.56's layout didn't bring them back. Erez accepted them
+  ("Release as it is", 22 Nov 2026). To look at: where the month's data and the off-screen buffer land in memory.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
