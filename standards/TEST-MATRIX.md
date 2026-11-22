@@ -74,6 +74,7 @@ of an ST row on a second ST. A change to the docs alone takes no run (guidelines
 | Check | Machines, boots | Min | What it catches | Proposal (hub) |
 |---|---|---|---|---|
 | acc_all | Falcon:16: plain, NVDI, NVDI again (3 boots) | 7 | the program and four accessories breaking each other: memory, a menu, a crash | NVDI once, NVDI again once, plain once only on a drawing/start change: 2 boots, 3 on kind 3 |
+| acc_all, 1 MB | ST-1:mono, TOS 1.04: each accessory candidate with each of the family's ST programs in front (EFTP, EMail, ClaudeST, EHypView), and each ST program candidate beside each accessory (one a run) | 1 a pair | an accessory's growth taking a program's room, or the other way (22 Nov 2026: EContact 2.13 left EFTP no room, unseen while its accessory ran alone); a pair already refused by the last releases is named, not counted | every candidate that grows the load (text+data+bss) or the accessory's first heap |
 | speed, Falcon | Falcon-4:16 plain, NVDI | 4-14 | an action over its time on a stock Falcon | NVDI full run; plain once, and only the rows that differ in drawing (not repeated for a repeat) |
 | speed, ST | ST:mono, ST:med | 12 | the same on an 8 MHz ST (TOS 1.04: no NVDI) | unchanged |
 | speed, 256 | Falcon-4:256 (EPDF, EWeb) | 3 | 256-colour drawing | only when the change is in drawing |
