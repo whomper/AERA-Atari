@@ -1919,6 +1919,11 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
     `cpu_cf_alert` naming its FireBee edition and quits; the FireBee edition on any other machine shows
     `cpu_alert` (under `__mcoldfire__`) naming the program to use. A 68000 program with no edition went on
     under FireTOS's emulation; with one, it sends the user to it.
+  - **An accessory on the wrong machine never ends and says nothing at the boot** (2.2; ECal found that
+    returning from `main` fell into crt0's loop, which stops the machine): common's `cpucheck.c` and
+    `cpucheck_cf.S` register its Desk entry from `cpu_acc_name` (each accessory defines it, e.g. `"  ECal"`)
+    and wait on `evnt_mesag`, showing the alert when the user opens it; without `cpu_acc_name` it waits without a
+    word. A program still shows the alert at once and quits.
   - **An accessory is installed in place of the other, never beside it**: a FireBee loads every .ACC in the
     boot drive's root, so `ecal.acc` and `ecalfb.acc` together would run twice (the 68000 one then only says
     which to use). EUpdate installs by the machine it runs on: on a FireBee the `fb` files of a release and

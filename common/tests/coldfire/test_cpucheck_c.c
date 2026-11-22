@@ -21,6 +21,16 @@ const char cpu_cf_alert[] = "[3][run the FireBee edition][ Quit ]";
 static int app_called, ops[8], nops, fails;
 static const void *alerted;
 int app_main(void) { app_called = 1; return 42; }
+#ifdef ACC
+/* an accessory on the wrong machine: never ends, says nothing at the boot, its entry (ACC_NAME) and the
+   alert when it is opened; the stand-in AES ends the run at its third evnt_mesag */
+short _is_acc = 1;
+#ifdef ACC_NAME
+const char cpu_acc_name[] = "  Test";
+#endif
+static int mesags;
+static void acc_end(void);
+#endif
 
 static void check(const char *what, int ok)
 {
@@ -52,6 +62,17 @@ static void sig(int s, void *info, void *ucv)
 			check("form_alert(1, ...)", intin[0] == 1 && control[1] == 1 && control[3] == 1);
 			alerted = addrin[0];
 		}
+#ifdef ACC
+		if (control[0] == 23) {
+			short *msg = addrin[0];
+			if (++mesags == 1)
+				msg[0] = 40;		/* AC_OPEN */
+			else if (mesags == 2)
+				msg[0] = 41;		/* AC_CLOSE: nothing to do */
+			else
+				acc_end();
+		}
+#endif
 		intout[0] = 1;
 	} else {
 		out("cpucheck.c: SIGILL at "); out_hex(pc); out("\n");
@@ -79,6 +100,27 @@ static void run(const char *name, long cpu, int cf, long cfval, const void *want
 		check(name, app_called && r == 42 && nops == 0);
 	}
 }
+
+#ifdef ACC
+static void acc_end(void)
+{
+	int i;
+#ifdef ACC_NAME
+	static const int want[6] = { 10, 35, 23, 52, 23, 23 };
+	check("accessory: appl_init, menu_register, evnt_mesag, form_alert at AC_OPEN, evnt_mesag on", nops == 6);
+	for (i = 0; i < 6 && i < nops; i++)
+		check("accessory: the calls in order", ops[i] == want[i]);
+#else
+	static const int plain[4] = { 10, 23, 23, 23 };
+	check("accessory without a name: appl_init, then evnt_mesag only", nops == 4);
+	for (i = 0; i < 4 && i < nops; i++)
+		check("accessory without a name: the calls in order", ops[i] == plain[i]);
+#endif
+	check("accessory: app_main never called", !app_called);
+	out(fails ? "cpucheck.c: failed\n" : "cpucheck.c: an accessory on the wrong machine waits, its alert at AC_OPEN\n");
+	sys_exit(fails != 0);
+}
+#endif
 
 int main(void)
 {
