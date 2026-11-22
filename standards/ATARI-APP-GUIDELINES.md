@@ -1906,33 +1906,35 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   app with a Direct connection ships `tlsfb.ovl` beside `tls.ovl` (common's `tlsovl/tlsfb.ovl`, the same sources
   built for the ColdFire: `make CPU=5475`); `tls_ovl.c` loads it by itself where the `_CF_` cookie is set, and
   `ovl.c` flushes the ColdFire's caches its own way there.
-- **Every app has a native FireBee edition** (Erez, 22 Nov 2026: "Make the other apps native on the FireBee
-  too"; it replaces 15 Nov's "FireBee editions only on report"). Each program, and each accessory, is also built
-  as ColdFire code (-mcpu=5475) from its own rules by common's `tools/mkfirebee.py --elf build/NAME.elf OUT`
-  (EUpdate's and EWeb's tool made common's: it gives EUPDFB.PRG byte for byte): cpucheck.c becomes
-  `cpucheck_cf.S`, -lgcc common's `ll64.c`, and the build fails on any EMAC instruction outside a file named
-  with `--emac-ok`. The editions are named as EWeb's, EUpdate's and EPlay's: the name's first letters and
-  `fb`, 8.3, lowercase (6.6): `ecalfb`, `econtfb`, `emailfb` and `emchkfb.acc`, `eftpfb`, `ehypfb`,
-  `claudefb`, `epdffb` and `econvfb`, beside `ewebfb`, `eupdfb`, `eplayfb`. Each ships in the release beside
-  the 68000/68030 file, with `tlsfb.ovl` where the app has TLS.
-  - **Each file names the other.** The 68000/68030 program on a FireBee (`_CF_` in the jar) shows
-    `cpu_cf_alert` naming its FireBee edition and quits; the FireBee edition on any other machine shows
-    `cpu_alert` (under `__mcoldfire__`) naming the program to use. A 68000 program with no edition went on
-    under FireTOS's emulation; with one, it sends the user to it.
-  - **An accessory on the wrong machine never ends and says nothing at the boot** (2.2; ECal found that
-    returning from `main` fell into crt0's loop, which stops the machine): common's `cpucheck.c` and
-    `cpucheck_cf.S` register its Desk entry from `cpu_acc_name` (each accessory defines it, e.g. `"  ECal"`)
-    and wait on `evnt_mesag`, showing the alert when the user opens it; without `cpu_acc_name` it waits without a
-    word. A program still shows the alert at once and quits. Where a .PRG and its .ACC are one binary (EHypView,
-    ECal) the accessory's own words come from `cpu_acc_alert` and `cpu_cf_acc_alert` (weak: else the program's).
-  - **An accessory is installed in place of the other, never beside it**: a FireBee loads every .ACC in the
-    boot drive's root, so `ecal.acc` and `ecalfb.acc` together would run twice (the 68000 one then only says
-    which to use). EUpdate installs by the machine it runs on: on a FireBee the `fb` files of a release and
-    not their 68000 twins, elsewhere the opposite.
-  - **Tests**: the ColdFire code under qemu-m68k -cpu cfv4e where it can run as a Linux program (common's
-    `tests/coldfire` way: an app's core, parsers, drawing into memory, against its host build); the 68000
-    and 68030 files' `_CF_` alerts on the FireBee stand-in (`firebee_test.py` as EUpdate's). GEM, the
-    screen and the real speed are a FireBee's: a release, and the tester's log.
+- **Every app has a native FireBee edition, in a package of its own** (Erez, 22 Nov 2026: "Make the other apps
+  native on the FireBee too"; then "Shall we just create two packages, one for FireBee and the other for
+  standard ST? ... EUpdate can then download the right package based on the running platform", and the same
+  file names in both; it replaces 15 Nov's "FireBee editions only on report").
+  - **Two zips a release**: `name-x.y.zip` for the ST, TT and Falcon, as today, and `name-x.y-firebee.zip`
+    holding the very same file names (`ecal.prg`, `ecal.acc`, `ecal.hyp`...) built as ColdFire code
+    (-mcpu=5475). Installing either package replaces the files in place, so two accessories never meet in
+    a root. The loose files a release publishes stay the standard package's; the FireBee's are in its zip
+    only. TLS: the standard package carries `tls.ovl`, the FireBee's `tlsfb.ovl` (`tls_ovl.c` loads it where
+    `_CF_` is set). Overlays of an app's own keep their names in both (EPDF's `render.ovl` is the ColdFire
+    one in the FireBee package). EWeb, EUpdate and EPlay rename their `*fb` files to the standard names
+    from their next release.
+  - **Built** by common's `tools/mkfirebee.py --elf build/NAME.elf OUT` from the app's own rules: cpucheck.c
+    becomes `cpucheck_cf.S`, -lgcc common's `ll64.c`; the build fails on any EMAC instruction or hand-written
+    Line-A word in the sources (their own assembly is read, not a disassembly) outside a file named with
+    `--emac-ok`.
+  - **Each build names the other package** on the wrong machine (Erez: separate words for a program and an
+    accessory). A program: "ECAL.PRG is for the ST, TT and Falcon. On the FireBee, install ECal's FireBee
+    package." [Quit], and on the FireBee build "ECAL.PRG is for the FireBee. On an ST, a TT or a Falcon,
+    install ECal's standard package." [Quit]. An accessory the same with ECAL.ACC and [OK]: it shows
+    nothing at the boot (2.2), registers its Desk entry (`cpu_acc_name`) and shows its alert when opened,
+    never ending (common's `cpucheck.c` and `cpucheck_cf.S`; `cpu_acc_alert`, `cpu_cf_acc_alert` for its own
+    words; ECal found that returning stopped the machine).
+  - **EUpdate** fetches the package for the machine it runs on: `-firebee.zip` where `_CF_` is set, the
+    other zip elsewhere.
+  - **Tests**: the ColdFire code under qemu-m68k -cpu cfv4e where it runs as a Linux program (common's
+    `tests/coldfire` way: an app's core against its host build); each build's alert on the wrong machine (the
+    FireBee stand-in, a Falcon, an ST), an accessory's boot reaching the desktop. GEM, the screen and the real
+    speed are a FireBee's: the release, and the tester's log.
 - **The log is written as it happens, the file kept open a second at most** (Erez, 15 Nov 2026: "apps should
   write log at once as otherwise it may be ineffective to trace errors"; 17 Nov 2026: "Yes, build the log middle
   way into the fix release. If other AERA apps behave the same where they open and close the log file ever so
