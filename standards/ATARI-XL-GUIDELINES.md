@@ -46,6 +46,11 @@ phases, priorities and conflicts are Erez's; how it is made is the team's.
   of 16 and 17 Oct). `.PRG` is the ST's. A `.COM` is typed without its extension at the SpartaDOS
   prompt, and loaded with L in DOS 2.5's and MyDOS's menu; EDOS is also installed as `DUP.SYS` there.
 
+**On GitHub the owner is not named as the one who asked or decided** (22 Nov 2026; `GITHUB-IDENTITY.md`,
+Commits): release notes, commits, comments, docs, code comments and CLAUDE.md say what was decided and
+when, never who asked. The author and copyright lines keep the name. Old text is cleaned when next
+touched.
+
 ### 1.2 Version (must)
 - **One place holds the version:**
   - EDOS: `TTL2` in `EDOSVARS.M65`;

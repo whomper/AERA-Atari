@@ -79,6 +79,10 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
   the author of every commit: `git commit --author="AERA | Erez Yaary <yaary@me.com>"`, with Claude as
   the signing committer, so GitHub shows the commits as Verified (AERA-Atari,
   `standards/GITHUB-IDENTITY.md`).
+- **The owner is not named as the one who asked or decided** anywhere on GitHub: release notes,
+  commit messages, comments, docs, code comments, this file. Write "decided 22 Nov 2026" or what the
+  program does and why, never "Erez asked" or "Erez, <date>" (AERA-Atari, `standards/GITHUB-IDENTITY.md`).
+  The author and copyright lines keep "AERA | Erez Yaary". Old text is cleaned when next touched.
 - **Never commit:**
   - real addresses from the owner's network: use `192.168.1.x`, `PI_IP`, `ATARI_IP`
   - passwords, session keys, `.KEY` / `.INF` files from a test run

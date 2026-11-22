@@ -121,6 +121,15 @@ should update its remote:
   (`Copyright (C) 2026 AERA | Erez Yaary`), in About boxes and help files. Commits from 15 Oct 2026 on
   use it; earlier ones say "Erez Yaary", and those before 14 Oct 2026 mix "Claude", "whomper" and
   "Erez Yaary".
+- **The owner is not named as the one who asked or decided** (22 Nov 2026). Nothing written to GitHub
+  says who asked for a change or made a decision: not release notes, commit messages, comments on pull
+  requests or issues, READMEs, guides, code comments, these standards or any repository's CLAUDE.md.
+  Write the decision and its date: "decided 22 Nov 2026", "the owner's decision (22 Nov 2026)", or
+  simply what the program does and why. Never "Erez asked", "Erez, 22 Nov 2026", "Erez accepted" or
+  the like. The author line, copyright lines, About boxes and help files keep "AERA | Erez Yaary" as
+  above: that is the name of the maker, not a record of requests. New text follows this at once; old
+  text is cleaned when its file is next touched for another reason (no sweep of its own). The record
+  of who decided what stays with the sessions, off GitHub.
 - **Branches.** `main` is the default branch everywhere. Under Settings → General, tick
   "Automatically delete head branches" so merged branches tidy themselves away.
 

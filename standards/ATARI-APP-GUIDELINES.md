@@ -591,6 +591,11 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
 - **Desk menu entry.** Two spaces plus the product name: `"  ECal"`, `"  EContact"`. Not a
   description ("Contacts") and not a longer name ("ECalendar").
 
+**On GitHub the owner is not named as the one who asked or decided** (22 Nov 2026; `GITHUB-IDENTITY.md`,
+Commits): release notes, commits, comments, docs, code comments and CLAUDE.md say what was decided and
+when, never who asked. The author and copyright lines keep the name. Old text is cleaned when next
+touched.
+
 ### 1.2 Version
 - **The `VERSION` file is the version.** It holds `major.minor` (e.g. `1.32`). The same string shows in:
   - the About box
