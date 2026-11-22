@@ -420,6 +420,12 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   though nothing it changes runs then and every symbol keeps its place mod 256 (about 1 ms of drawing, 15 in 5 ms
   ticks after the 20 ms timer). Accepted (22 Nov 2026). To look at: 1.54's layout work.
 
+- **ECal 2.58** (the stock Falcon's line scroll in two turns where a step fits 50 ms; 22 Nov 2026) against 2.57: the
+  start, Falcon-4:16 longest stretch 70 -> 80 ms and picture 1055 -> 1090-1115, Falcon-4:256 with NVDI 85 -> 95,
+  ST:mono picture 3445 -> 3460-3475; no new code runs there, the calendar list's drawing moved with win.c (50 -> 55
+  ms). Accepted (22 Nov 2026). To look at: the list's drawing back at its old places. The line scroll in 256 colours
+  under NVDI stays at 80 ms (the rows' move alone 55-60): a faster move there is its own job.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
