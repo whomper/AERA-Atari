@@ -409,6 +409,12 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   the changed code runs while drawing, and a build padded to 2.56's layout didn't bring them back. Erez accepted them
   ("Release as it is", 22 Nov 2026). To look at: where the month's data and the off-screen buffer land in memory.
 
+- **EHypView 2.10** (the FireBee package, common c184d49; 22 Nov 2026) against 2.9: IMAGES.HYP's picture page drawn
+  at the start, ST:mono 390 -> 405 ms and ST:med 475 -> 485. EHypView's code on the path is 2.9's; 2.9's libc.c brings
+  the rig back to 390, yet a profiling harness gives the draw 405 ms in both: background index work landing beside
+  it. Erez accepted them ("Accept, release 2.10", 22 Nov 2026, put to him by the hub). To look at: where the index
+  job's step falls against the start's picture.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
