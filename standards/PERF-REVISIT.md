@@ -415,6 +415,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   it. Erez accepted them ("Accept, release 2.10", 22 Nov 2026, put to him by the hub). To look at: where the index
   job's step falls against the start's picture.
 
+- **EPlay 1.53** (the Output DSP crackle fix; 22 Nov 2026) against 1.52: the Mega Drive VGM start, Falcon-4:16
+  2220 -> 2235 ms and Falcon-4:256 with NVDI 2345 -> 2360, the same in every run; bisected to the salign commit,
+  though nothing it changes runs then and every symbol keeps its place mod 256 (about 1 ms of drawing, 15 in 5 ms
+  ticks after the 20 ms timer). Accepted (22 Nov 2026). To look at: 1.54's layout work.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
