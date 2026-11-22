@@ -1406,12 +1406,15 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
     - Only the app whose window is on top holds them. It reads the pens' colours (`vq_color`) when it
       takes them and gives them back when it closes or quits, when an accessory gets AC_CLOSE, and as
       soon as another window is on top (WM_UNTOPPED where the AES sends it, else `wind_get(WF_TOP)` at
-      each event). The crash handler gives them back too. Common's `ui/picpens.c` does all of this.
+      each event); its `crash_cleanup` gives them back too. Common's `ui/picpens.c` takes, saves and
+      gives them back, linked into the program or run in PIC.OVL 1.4 (`pic_ovl_pens_take`,
+      `pic_ovl_pens_give`: almost nothing resident, for a program short of memory).
     - While it doesn't hold them, its pictures are drawn with the screen's palette as before, and
       drawn again when it takes or gives them back, so a picture never shows in pens it doesn't
       hold.
-    - The colours are chosen by PIC.OVL's `quant` (68020 and up). Without PIC.OVL (an ST, a
-      FireBee), pictures keep the screen's palette.
+    - The colours are chosen by common's `src/quant.c` (a median cut), linked in or as PIC.OVL 1.4's
+      `quant` (`pic_ovl_quant`); the picture is then dithered to all 256 pens. Without them (an ST, a
+      FireBee, an older PIC.OVL), pictures keep the screen's palette.
     - Only these 64: an app's other own pens (a theme, EConvert's band) stay in 16–31.
   - Pens 0–15 are only borrowed by the About box (1.3).
   - **A colour the app uses but does not set itself comes from pens 0–15 only** (23 Oct 2026). That
