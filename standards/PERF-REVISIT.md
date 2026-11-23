@@ -430,6 +430,15 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   +10-15 ms, and the reply's first piece on the Falcons +10-15 ms. Recents is 10-25 ms faster on every machine.
   Accepted (22 Nov 2026).
 
+- **EHypView 2.11** (the family rules, cascaded viewers, picture pages' bands; 23 Nov 2026) against 2.10, ms as
+  ST:mono / ST:med / Falcon-4:16 / Falcon-4:256 with NVDI: ST:med a line on the big page 55 -> 65 and the
+  full-text search's hits 75 -> 85 (the layout: the work went down there); over the earlier accepted figures by
+  a tick, Tab to a link 65 / 65 (60 / 55), a letter in the library's search 55 (50; 2.10 the same), the search's
+  rows 145 (140), the big page's line 80 under NVDI (as 2.10). Over the guidelines' times but faster than 2.10:
+  IMAGES.HYP's line 85 / 75 / 55 / 85 (115 / 80 / 55 / 85), the help front page's line 125 / 120 / 60 / 85 and
+  its page 185 / 190 on the STs (365): a line there is a picture line of 48-80 px, the row move alone 25-30 ms of
+  an 8 MHz ST's. Accepted (23 Nov 2026). To look at when speed is the focus: the picture pages' lines.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
