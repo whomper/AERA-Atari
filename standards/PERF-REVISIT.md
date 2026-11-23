@@ -439,6 +439,13 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   its page 185 / 190 on the STs (365): a line there is a picture line of 48-80 px, the row move alone 25-30 ms of
   an 8 MHz ST's. Accepted (23 Nov 2026). To look at when speed is the focus: the picture pages' lines.
 
+- **EPlay 1.55** against 1.54, Falcon-4:256 with NVDI, a VGM's second "10 s back": medians of five pairs
+  190 -> 200 ms (the same row as 1.53 -> 1.54). Not work: under Hatari's profiler the stretch's code runs the
+  same counts and cycles in both (6,241 calls of dspopn.c's put, its wait loop never waiting), the +1.4 ms
+  is one instruction across a 16-byte line taking an instruction-cache miss every call in one emulated cache
+  state and about half the time in the other; every layout tried (data and code moved 2.5-5 KB) gives either
+  state from run to run. Judged the machine's by the hub (23 Nov 2026); no pad or code change can fix it.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
