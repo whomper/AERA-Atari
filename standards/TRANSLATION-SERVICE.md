@@ -1,9 +1,9 @@
 # Translation service (translategate) — spec v1
 
-Status: draft by the hub, 7 Nov 2026, from Erez's decisions of 5–7 Nov. Open decisions for Erez are
+Status: draft by the hub, 7 Nov 2026, from the decisions of 5–7 Nov. Open decisions for the owner are
 at the end; nothing here is built or released yet.
 
-## What Erez decided
+## What was decided
 
 - Version 1 is a switch and a language: **Translate On/Off** and a **target language**. The main
   target is English. Hebrew (Atari logical order, 0xC2–0xDC) is a first-class source.
@@ -13,7 +13,7 @@ at the end; nothing here is built or released yet.
 - A new gateway entry point only for translation; the other gateways do not change.
 - Maintenance mode is opened for EMail and for AERA-Gateway for this service only.
 
-- **EMail's use (Erez, 7 Nov):** a menu item "Translate" with a check mark is the On/Off (no check
+- **EMail's use (decided 7 Nov):** a menu item "Translate" with a check mark is the On/Off (no check
   mark: off; Settings has only the target language; the Gateway is the one the accounts use for the
   gateway). With it on, every message opened is translated whole, subject and body; the status line
   says "Translating..." and the text is shown when it comes back; translations are kept in memory
@@ -21,13 +21,13 @@ at the end; nothing here is built or released yet.
   sends just those words and shows the answer in a small pop-up without changing the screen.
   The subject and the highlighted words are one short request each.
 
-## Which apps translate, and the two ways text gets translated (Erez, 8 Nov 2026)
+## Which apps translate, and the two ways text gets translated (decided 8 Nov 2026)
 
-**EMail, EWeb and EPDF** translate (Erez: "Yes, EWeb and EPDF too"). Each has the same settings,
+**EMail, EWeb and EPDF** translate (decided 8 Nov 2026: EWeb and EPDF too). Each has the same settings,
 from the shared code: Translate On/Off, the target language, and the Languages dialog
 (`common/ui/langs.c`, below). The other apps do not.
 
-Erez's rule for how the text gets translated, to save round trips:
+The rule for how the text gets translated, to save round trips:
 
 - **Direct connection** (the Atari fetches the mail, page or file itself): the app sends the text
   for translation to translategate (`POST /translate`, as above).
@@ -40,7 +40,7 @@ So Translate = Off: nothing changes (no new request, no header). Translate = On 
 connection: one extra request per piece, to translategate. Translate = On through the Gateway: the
 same single request as today, with the target language added.
 
-**Decided (Erez, 8 Nov):** **EMail keeps the direct way even when its connection goes through the
+**Decided (decided 8 Nov):** **EMail keeps the direct way even when its connection goes through the
 Gateway**: emailgate is a relay that never reads a letter (guideline 7.3), so it does not translate;
 EMail sends the letter's text to translategate itself, one extra request on the home network, only
 with Translate On. **EPDF** translates on the Gateway **at the same time as the conversion**
@@ -50,17 +50,17 @@ machine (`translateclient.py`, no TCP hop); translategate stays the only process
 The time is the limit, not the size: a whole page or text through the Gateway is capped (the first
 part translated, the rest as it was, with how much was done), the cap proposed by the app.
 
-The request side is each app's own protocol (guideline 1.2, "Gateway code of an app must be tested by the
-app"): EMail's emailgate, EWeb's webgate, EPDF's pdfgate each take the target language in the
+The request side is each app's own protocol (guideline 1.2: an app tests its own gateway
+code): EMail's emailgate, EWeb's webgate, EPDF's pdfgate each take the target language in the
 request they already have, in the way that fits it (a header such as `X-Gateway-Translate: to=he`,
 the app's decision), and the Gateway session builds it. What is shared, and the hub's: the same
 words in the answer as `POST /translate` (`X-Translate-From`, `X-Translate-Same`, the refusal lines
 "translategate: why" with 422 for a pair not installed, 503 loading or busy, 504 over the time), the
 phases in the status line (guideline 7.3), and the rule that nothing of the text is logged or kept.
 What each app translates (a letter's subject and body; a page's visible text with its structure kept;
-a PDF's text view's paragraphs) is the app's proposal to Erez.
+a PDF's text view's paragraphs) is the app's proposal to the owner.
 
-## EWeb and EPDF: what Erez approved (8 Nov 2026, "Yes to all of it")
+## EWeb and EPDF: what was approved (8 Nov 2026, all of it)
 
 From the two apps' proposals (their sessions hold the details; the Gateway session builds the Gateway side):
 
@@ -94,9 +94,9 @@ From the two apps' proposals (their sessions hold the details; the Gateway sessi
 - **The protocol is shared** (this file). The client is written once, in `common/` (hub, first as
   `common/src/translate.c/.h`), so every app that translates uses the same code: a request is built
   from UTF-8, the answer parsed from UTF-8, and `common/` charsets do Atari text <-> UTF-8.
-- **EMail is the first consumer** (reading a letter in another language); EWeb and EPDF follow (Erez, 8 Nov).
+- **EMail is the first consumer** (reading a letter in another language); EWeb and EPDF follow (decided 8 Nov).
   Each app asks the hub before adding its use (guideline 1.2); the user-facing words, look and
-  defaults are Erez's.
+  defaults are the owner's.
 
 ## Protocol (HTTP/1.0 over plain TCP on the home network, as webgate)
 
@@ -136,16 +136,16 @@ All text is **UTF-8**. The gateway never sees Atari text. One request, one answe
 - **Log** (guideline 7.3): who connected, the language pair, the sizes in bytes and the time taken.
   **Never a word of the text**, in the log, in `journalctl`, in a crash message or in an error
   reply.
-- **Phases** (Erez, 7 Nov): the client tells the app when it is sending, when the Gateway is
+- **Phases** (decided 7 Nov): the client tells the app when it is sending, when the Gateway is
   working and when it is receiving (`conn_phase`, guideline 7.3), so the status line says where
   the time goes. Pieces of 2 KB make Sending and Receiving short; Working is most of it.
 - **Listening:** the home network only, or `--allow ATARI_IP`, as the other gateways. No connection
   onwards (the engine is local), so no `--allow-local`.
 
-## The engine on the Gateway (Erez's decision on packages; recommendation)
+## The engine on the Gateway (packages are the owner's decision; recommendation)
 
-The Gateway may only have standard Python plus what Erez approves (guideline 7.3). A neural engine is
-a package set he must approve. Options, with the hub's recommendation first:
+The Gateway may only have standard Python plus what the owner approves (guideline 7.3). A neural engine is
+a package set the owner must approve. Options, with the hub's recommendation first:
 
 1. **Argos Translate** (CTranslate2, OpenNMT models, MIT/CC licensed, fully offline): good enough
    for letters and pages, Hebrew–English both ways, about a second or two a sentence on a Gateway 4/5,
@@ -156,8 +156,8 @@ a package set he must approve. Options, with the hub's recommendation first:
 3. **Apertium (apt)**: tiny, fast, rule-based; poor for Hebrew and for free text.
 
 The Gateway session verifies the choice by running a fixed Hebrew/English test set (a dozen
-letters and sentences of Erez's kind, no private text) and reports the quality, speed and memory
-on the Gateway that Erez names, before the first release.
+made-up letters and sentences, no private text) and reports the quality, speed and memory
+on the reference Gateway, before the first release.
 
 ## Tests
 
@@ -170,23 +170,23 @@ on the Gateway that Erez names, before the first release.
   it On, the speed rig for the translate action (the window stays alive between pieces: stretch
   under the guideline limit) on `ST:mono` and `Falcon-4:16`.
 
-## Decided by Erez (7 Nov 2026)
+## Decided 7 Nov 2026
 
 1. **Port 8480** for translategate.
 2. **Argos Translate** (with CTranslate2) in its own Python virtual environment under
    `/opt/translategate`, as its own user: `python3-venv`, `pip` and the models, downloaded once at
    install and offline after that.
-3. **One Gateway machine for all the services**: decided as a Raspberry Pi 5 with 8 GB; **Erez's Gateway now is a Raspberry Pi 4 with 4 GB (7 Nov)**, and that is the target until he says otherwise (64-bit OS needed for the engine's wheels; 4 GB is the minimum `install translate` accepts). The Gateway session
+3. **One Gateway machine for all the services**: decided as a Raspberry Pi 5 with 8 GB; **the reference Gateway now is a Raspberry Pi 4 with 4 GB (7 Nov)**, and that is the target until decided otherwise (64-bit OS needed for the engine's wheels; 4 GB is the minimum `install translate` accepts). The Gateway session
    budgets memory for the engine next to the other gateways and reports quality, speed and memory
    on it with the fixed Hebrew/English set before the first release.
 4. **The name is Gateway** in everything the user sees (guideline 7.3), so the service is "the
    Gateway" in alerts and menus, never "the Pi".
 
-## Managing the installed languages from the Atari (proposal, 7 Nov 2026; Erez's request, the hub owns it)
+## Managing the installed languages from the Atari (proposal, 7 Nov 2026; asked for then, the hub owns it)
 
-Erez: "in the applications that support translation a settings area that allows to manage installed languages and by
-ticking their boxes they are actually installed ... provide the memory consumption of all languages so that the user
-decides how much memory to use. This is a shared code and activity that the hub will own."
+Asked for: in the apps that translate, a place in Settings to manage the installed languages, where ticking a
+language installs it; the memory each language takes is shown, so the user decides how much memory to use. It is
+shared code, and the hub owns it.
 
 **What the user sees** (one shared dialog, `common/ui/langs.c`, opened from the app's Settings beside "Translate into"):
 - a list of the languages Argos offers, each a tick box with its size in MB (both directions together: fr 125, pt 129,
@@ -194,7 +194,7 @@ decides how much memory to use. This is a shared code and activity that the hub 
 - a total line: "Installed 229 MB of 600 MB" (the cap is the service's memory limit less its working space; the number
   comes from the Gateway, not a guess);
 - ticking past the cap is refused with the number that does not fit; installed languages stay ticked;
-- Nothing happens on the Gateway while the user ticks and unticks, and Cancel (Undo) sends nothing. **Only when the dialog closes with OK** (Erez, 7 Nov: "the atari will instruct the translation service to install or uninstall a language only once the setting dialog closes with OK") the app sends one request with the changes, installs and removals together; a progress bar with the three phases (guideline 7.3), because 290 MB takes minutes, and
+- Nothing happens on the Gateway while the user ticks and unticks, and Cancel (Undo) sends nothing. **Only when the dialog closes with OK** (decided 7 Nov: the Atari asks the translation service to install or remove a language only when the settings dialog closes with OK) the app sends one request with the changes, installs and removals together; a progress bar with the three phases (guideline 7.3), because 290 MB takes minutes, and
   the dialog can be closed while the Gateway works (the install is a job on the Gateway; the status line shows it);
 - the "Translate into" pop-up lists only the installed languages. A language that is not installed reads
   "Settings > Languages" in the alert (EMail's wording fix then follows from this).
@@ -209,22 +209,22 @@ translategate's port, all behind the existing `--allow` address check:
 The installer fault (every ordered pair; he>de does not exist) is fixed first; this is one root action from the
 network, so it needs its own safeguard (below).
 
-**Decisions that are Erez's** (packages on the Gateway, a root action reachable from the network): (1) may the Atari
+**Decisions that are the owner's** (packages on the Gateway, a root action reachable from the network): (1) may the Atari
 ask the Gateway to install and remove language packs at all, or only the Pi's shell (as today); (2) if it may, with
 which safeguard: only from the addresses already allowed (the least), or also a key the user types once on the
 Atari (the Gateway shows no key to the network); (3) the cap: the service's MemoryMax stays 1 GB (about 420 MB for
 en+he), the dialog's cap is what the Pi's free memory allows, shown by the Gateway. Recommendation: yes, the allowed
 addresses plus a key, and the cap read from the Gateway.
 
-**Order of work** once Erez says yes: the Gateway's installer fix (their session), then the three requests; the hub
+**Order of work** once the owner says yes: the Gateway's installer fix (their session), then the three requests; the hub
 writes `common/ui/langs.c` and its host test with a fake Gateway; EMail hooks it into Settings > Connection and
-releases (maintenance lifted for that by Erez); the other apps with translation follow. Nothing is built before the
+releases (maintenance lifted for that, as decided); the other apps with translation follow. Nothing is built before the
 answer to (1).
 
-**Answered (Erez, 7 Nov):** the Atari may ask the translation service to install and remove languages, **only when the
+**Answered (decided 7 Nov):** the Atari may ask the translation service to install and remove languages, **only when the
 dialog closes with OK**: ticks alone change nothing, Cancel sends nothing. The safeguard is the existing address check
-(`--allow`); no key unless Erez asks for one. The cap and the memory total shown before OK are the Gateway's numbers.
-EMail and the Gateway are open for the translation service (Erez, 5 Nov), so the work starts: the Gateway's installer
+(`--allow`); no key unless the owner asks for one. The cap and the memory total shown before OK are the Gateway's numbers.
+EMail and the Gateway are open for the translation service (decided 5 Nov), so the work starts: the Gateway's installer
 fix and the three requests first, then `common/ui/langs.c` and its host test (the hub), then EMail's hook and release.
 
 **Built (the hub, 8 Nov 2026):** the dialog is `common/ui/langs.c/.h` (`langs_run`, then `langs_job_begin` and
@@ -232,7 +232,7 @@ fix and the three requests first, then `common/ui/langs.c` and its host test (th
 the build machine, and the dialog itself in Hatari against `fakegate.py`, a stand-in translategate that answers as
 AERA-Gateway's does (`GET /languages?all=1`, `POST /languages`, `GET /job`), through common's own network code.
 What the code settled, for the apps that hook it in (EMail, EWeb, EPDF):
-- **Opening time on the 8 MHz ST accepted (Erez, 8 Nov 2026):** the dialog opens in about 360-410 ms there against
+- **Opening time on the 8 MHz ST accepted (decided 8 Nov 2026):** the dialog opens in about 360-410 ms there against
   the 300 ms limit (the AES's own window drawing, `dlg_open`, is some 220 ms of it); the stock Falcon is within every
   limit (140-150 ms, 110-115 ms under NVDI). It is the one exception to the Speed table's dialog row, for this dialog only.
 - The list is asked when the dialog opens, with the busy bee and Esc to stop it; if the Gateway can't be had the

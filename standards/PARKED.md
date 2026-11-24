@@ -1,13 +1,13 @@
 # Parked until EWeb, EPDF and EPlay reach 1.0
 
-Erez, 1 Nov 2026: every app but EWeb, EPDF and EPlay is in maintenance mode
+Decided 1 Nov 2026: every app but EWeb, EPDF and EPlay is in maintenance mode
 (ATARI-APP-GUIDELINES.md, section 8). What those apps would have done next waits here. When
-the three focus apps reach 1.0, Erez and the hub go through this list together; nothing on it
-starts before he says so. The hub adds to it; each line says where the work stands.
+the three focus apps reach 1.0, the owner and the hub go through this list together; nothing on it
+starts before the owner says so. The hub adds to it; each line says where the work stands.
 
 ## EUpdate (1.27 the last release before the freeze)
 
-- **A Pi gateway, so an ST can update the family** (Erez, 1 Nov 2026). An 8 MHz ST can't make
+- **A Pi gateway, so an ST can update the family** (decided 1 Nov 2026). An 8 MHz ST can't make
   GitHub's secure connection itself (GitHub drops a handshake after about 10 s). What it takes:
   - an ST edition for the 68000, as EWeb's `EWEBST.PRG`;
   - a "Pi gateway" setting that talks plain HTTP to webgate (port 8280), which makes the secure
@@ -26,7 +26,7 @@ starts before he says so. The hub adds to it; each line says where the work stan
   (local branch keep-172d, not on main).
 - 1.72's other work (the presses, Find): on the same branch.
 - EMAILCHK.ACC's Direct check memory: the guideline 2.2 exception, written when its branch passes.
-- App-password instructions (iCloud, Gmail) in the README and the guide (Erez, 25 Oct).
+- App-password instructions (iCloud, Gmail) in the README and the guide (decided 25 Oct).
 - The rigs' FAKESTNG: a new connection right after EMail quits sometimes gets EMail's last reply.
 
 ## ECal (2.41)
@@ -68,19 +68,19 @@ starts before he says so. The hub adds to it; each line says where the work stan
   mouse-down (5.8), the fast drawing paths, and each rule the "Where each app stands" table
   shows them without.
 
-## FireBee edition (Erez, 9 Nov 2026)
+## FireBee edition (decided 9 Nov 2026)
 
-- Target: EWeb, EPDF and, since 10 Nov, EPlay (Erez asked for it "just like the EWeb plan"), once the family
+- Target: EWeb, EPDF and, since 10 Nov, EPlay (decided 10 Nov 2026, on the same plan as EWeb), once the family
   rework and alignment are finished (the UI standards, the shared dialog engine and the apps' adoption) and
   EWeb has reached 1.0. Order: EWeb first (it builds the ColdFire layer of `common/`), then EPDF, then EPlay,
-  which needs answers about the FireBee's sound first (below). **12 Nov 2026 (Erez):** "EWeb has FireBee working,
-  we can start our EPlay support": EPlay starts now, ahead of EPDF; EPDF follows when Erez says. A FireBee owner offered to test ColdFire
+  which needs answers about the FireBee's sound first (below). **Decided 12 Nov 2026:** with EWeb working on the FireBee,
+  EPlay's support starts now, ahead of EPDF; EPDF follows when the owner says. A FireBee owner offered to test ColdFire
   builds (the V4e core, `-mcpu=5475`); the other programs run there as they are, through the system's
   emulation of the instructions the chip lacks.
-- **Packaging (Erez, 10 Nov 2026):** the FireBee edition is made as one release, not a separate product. Each
+- **Packaging (decided 10 Nov 2026):** the FireBee edition is made as one release, not a separate product. Each
   app's release carries three builds side by side: the ST's (68000), the Falcon's and accelerated machines'
   (68030 and up, as today) and the FireBee's (ColdFire, `-mcpu=5475`). EWeb and EPlay are named; EPDF follows
-  the same shape unless Erez says otherwise. This is a written exception to guideline 7.4's "one program for
+  the same shape unless the owner says otherwise. This is a written exception to guideline 7.4's "one program for
   every Atari" for these apps: EWeb already has `EWEBST.PRG`, and the FireBee build is a third file with its
   own name, chosen by its session (nothing under `common/` decides it). The program a user starts is the one
   for their machine; each build says so in its About box, and a wrong one is refused with an alert by
@@ -133,32 +133,32 @@ starts before he says so. The hub adds to it; each line says where the work stan
   them:** whether FireTOS or MiNT gives a Falcon-compatible XBIOS sound API (Setbuffer, Devconnect,
   Soundcmd) over the AC'97 codec and which DMA ring and rates; whether an MFP Timer A exists (EPlay feeds its
   ring from it); whether a YM2149 (or the FPGA's copy) answers at $FF8800. One question to put to the tester
-  through Erez, before any work: EPlay's next release carries a small probe program (`FBPROBE.PRG`, 68000
-  code, its notes say it is for the FireBee) that reports those facts to a text file; Erez or the tester
+  through the owner, before any work: EPlay's next release carries a small probe program (`FBPROBE.PRG`, 68000
+  code, its notes say it is for the FireBee) that reports those facts to a text file; the owner or the tester
   runs it and sends the file back.
-- **MP3 on the CPU (a user's note, relayed by Erez 10 Nov; from EPlay):** the 68060 machines (the Raven clone and
+- **MP3 on the CPU (a user's note, relayed 10 Nov; from EPlay):** the 68060 machines (the Raven clone and
   others) and the FireBee decode MP3 on the CPU with little load. MxPlay has a ColdFire MPx module; AniPlayer
   uses the MCF5474's hardware MAC (EMAC) for MPEG audio. The Raven Rev2 has a DSP56303, not a 56001: another
   host port and sound wiring, so EPlay's DSP programs would not run on it as they are. For EPlay that means a CPU
   MP3 path from its C model of the DSP decoder: on 68060s with no Falcon DSP (chosen at run time) and in the
-  FireBee edition, with EMAC for the synthesis filter and the IMDCT later. Erez decides; nothing is started.
+  FireBee edition, with EMAC for the synthesis filter and the IMDCT later. The owner decides; nothing is started.
   (EPlay's FBPROBE 1.16 ran on Falcon-4, STE, TT and ST:mono here, and is with the 1.16 release for the tester.)
-  **Decided (Erez, 10 Nov 2026, from EPlay):** "68060 support with the YM2612 and FireBee release". MP3 on the CPU
+  **Decided 10 Nov 2026 (from EPlay):** the 68060 support goes with the YM2612 and the FireBee release. MP3 on the CPU
   from EPlay's C model goes into the release that brings the YM2612: on 68060 machines with no Falcon DSP,
   chosen at run time, never on a 68030. The FireBee's CPU MP3 goes in its own release (EMAC later). In EPlay's
   DESIGN.md.
 
-## A new program: the passwords vault (Erez, 22 Nov 2026)
+## A new program: the passwords vault (decided 22 Nov 2026)
 
-Erez asked for the Mac's iCloud passwords on the Falcon, stored encrypted. There's no direct sync. iCloud
+Asked for: the Mac's iCloud passwords on the Falcon, stored encrypted. There's no direct sync. iCloud
 Keychain is end-to-end encrypted, its keys are held only by trusted Apple devices, and Apple gives other
 programs no way in; reverse-engineering it would break with Apple's updates and risk the whole keychain. The
-way he chose ("Plan it, start after 1.0s"): a new AERA program that imports the CSV the Mac's Passwords app
+way chosen (planned now, started after the 1.0s): a new AERA program that imports the CSV the Mac's Passwords app
 exports (File > Export All Passwords) and keeps only an encrypted copy.
 - AES-256 under a key made from the master password, the key's derivation set to about a second on a stock
   Falcon. Search, show, copy to the clipboard; it locks itself, the clipboard and its memory wiped.
 - The import from a disk or an SD card, not the network; the CSV offered for deletion afterwards. A refresh is
   another export and import.
 - Later: the family's own passwords (EMail, ECal, EFTP) from it, under one master password.
-The hub writes the design (the import, the file, the encryption, the window and the words) for Erez's
+The hub writes the design (the import, the file, the encryption, the window and the words) for the owner's
 approval before work starts.

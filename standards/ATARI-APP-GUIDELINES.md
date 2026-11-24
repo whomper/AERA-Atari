@@ -27,52 +27,52 @@ Words used here:
 
 The last section lists where each app stands today. Step 4 of the roadmap works through it.
 
-**No compatibility code, for now (Erez, 17 Oct 2026).** Until the apps have other users, nothing
+**No compatibility code, for now (decided 17 Oct 2026).** Until the apps have other users, nothing
 reads old settings names, old file formats or answers older versions: when the family changes a
 setting, a file or a protocol, every app moves in step in its next release and the old way is
 removed in the same change. When the apps get other users, this rule ends and changes keep the old
-way working. **One exception (Erez, 9 Nov 2026):** an app that changes an INF key may read the old key once, so the
+way working. **One exception (decided 9 Nov 2026):** an app that changes an INF key may read the old key once, so the
 user keeps the window and the font: the new key wins and only the new key is written (6.1, D44).
 
-### Who decides what (Erez, 31 Oct 2026)
+### Who decides what (decided 31 Oct 2026)
 
-**Erez's part** goes to him before the work, as a decision with a short context:
+**The owner's part** goes to the owner before the work, as a decision with a short context:
 - **New programs and new ideas:** what a program is for, its core capabilities, and how it works with
   the other programs (what one hands another, the messages between them, what it leaves to another).
 - **The user experience:** what a user sees and does: the look and layout, the way through a task,
-  the words on the screen, the icons, the defaults. A change to it that he didn't ask for goes to
-  him first.
+  the words on the screen, the icons, the defaults. A change to it that nobody asked for goes to
+  the owner first.
 - **Phases:** each program's plan is a series of phases (EPDF: 0.2 the ST's speed, 0.3 big
-  documents, and so on). A session works inside the phase he approved and moves to the next only
-  when he says so. At a phase's end it sends him one phase report: what the phase set out to do,
+  documents, and so on). A session works inside the approved phase and moves to the next only
+  when the owner says so. At a phase's end it sends the owner one phase report: what the phase set out to do,
   what was done (the release links), what is left, and the next phase as a proposal.
 - **Priorities and conflicts:** which program, phase or piece of work comes first, and what happens
   when programs or sessions pull different ways (a shared resource such as the DSP, memory, a key,
-  a port, two plans for one feature). The hub sets out the options and its recommendation; he
-  decides.
+  a port, two plans for one feature). The hub sets out the options and its recommendation; the
+  owner decides.
 - Packages on the Gateway and the ports, as before.
 
 **The team's part** is how it is made, and it is decided and done without asking: the code and its
 structure, the shared code, tests, measurements, fixes, the docs, and releases inside an approved
 phase (1.2). The hub settles a technical choice on its measurements when it changes nothing a
 user sees and no phase or priority, and tells the sessions; if it does change one of those, it is
-Erez's.
+the owner's.
 
 ### The machines
 
 - **The 68000 machines:** an ST or STE with 1 MB or more, TOS or EmuTOS, STinG through a serial line
   or a cartridge network adapter, the Gateway for encryption. Every 68000 build runs here, and every
-  program is made for it (TLS.OVL stays on the disk, 7.4). One exception (Erez, 23 Oct 2026): EWeb's ST edition (EWEBST.PRG) is
+  program is made for it (TLS.OVL stays on the disk, 7.4). One exception (decided 23 Oct 2026): EWeb's ST edition (EWEBST.PRG) is
   made for a 4 MB ST (the `ST` machine), not 1 MB; a browser needs the memory. EWeb's program
   (EWEB.PRG) runs on every Falcon from 0.28, the stock 4 MB one (`Falcon-4`) included, but there on
   its own: beside the four accessories 1.5 to 1.6 MB is left and EWEB.PRG needs 1.74 MB to load
-  (EWeb's figures, 31 Oct 2026), so TOS won't start it; with them it takes 14 MB or TT RAM. Erez,
-  31 Oct 2026: the whole family loaded at once on a 4 MB machine is not a goal ("by design it
-  leaves too little for ST software"), so no program is cut down to fit beside all the
-  accessories there, and the hub's `acc_all.py` runs EWEB.PRG on `Falcon` (with the DFB1's
+  (EWeb's figures, 31 Oct 2026), so TOS won't start it; with them it takes 14 MB or TT RAM. Decided
+  31 Oct 2026: the whole family loaded at once on a 4 MB machine is not a goal (it would leave
+  too little memory for ST software), so no program is cut down to fit beside all the
+  accessories there, and the hub's `acc_all.py` runs EWEB.PRG on `Falcon` (with an accelerated Falcon's
   memory), not `Falcon-4`. Every other app's ST edition still runs on a 1 MB ST (`ST-1`).
-  **The accessories are not run on a 4 MB machine at all** (Erez, 4 Nov 2026, "remove accessories run
-  in 4M machine"): the 4 MB `ST` and `Falcon-4` stay targets for the programs (each runs there on its
+  **The accessories are not run on a 4 MB machine at all** (decided 4 Nov 2026: no accessory runs
+  on a 4 MB machine): the 4 MB `ST` and `Falcon-4` stay targets for the programs (each runs there on its
   own and meets its speed times), but nothing is made to fit beside ECal's, EContact's, EHypView's and
   EMail's accessories on them, and the hub's `acc_all.py` no longer runs there. EWeb stays the one
   exception on the ST side (its ST edition, 4 MB `ST` only, frozen after 1.0, section 8).
@@ -120,7 +120,7 @@ Erez's.
     with "Illegal AES function call" (EMail's first try at an `SW_DEFDIR` start). Common's
     `appl_getinfo()` asks only on AES 4.0 and later, with the `?AGI` cookie or under MagiC, and
     gives 0 elsewhere; call it, never the AES trap directly.
-- **Erez's Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware (the speed they are
+- **An accelerated Falcon, the fast end** (16 Oct 2026), where releases are tried on hardware (the speed they are
   measured by is the stock machines', below): a Falcon030 with
   a **DFB1** accelerator (a 68030 at 50 MHz with a **68882** maths coprocessor and **128 MB of TT
   RAM**), **NetUSBee** for the network, the Falcon's **DSP**, and for sound a **SoundPool FDI** on
@@ -135,49 +135,49 @@ Erez's.
     `tos.c`) and reads longs at any address; the 68882 helps floating point only, which no app uses
     today;
   - in Hatari, the nearest is the `Falcon` machine below (32 MHz is Hatari's most);
-  - Erez works in 640x480 with 16 colours, sometimes 256, with **TOS 4.04** and **NVDI 5** (17 Oct
-    2026). His own NVDI 5.03 is with the hub (19 Oct 2026), outside git as the TOS images are:
-    `m.nvdi()` in `machines.py` installs it, with his ASSIGN.SYS, drivers and Bitstream fonts.
-    **Every session has them** (Erez, 15 Nov 2026): the cloud environment's setup script fetches his
-    ZIP (the link is his, kept in that script and nowhere in git) at each fresh container and puts TOS
+  - The reference set-up is 640x480 with 16 colours, sometimes 256, with **TOS 4.04** and **NVDI 5** (17 Oct
+    2026). The NVDI copy, 5.03, is with the hub (19 Oct 2026), outside git as the TOS images are:
+    `m.nvdi()` in `machines.py` installs it, with its ASSIGN.SYS, drivers and Bitstream fonts.
+    **Every session has them** (decided 15 Nov 2026): the cloud environment's setup script fetches a
+    ZIP (its link kept in that script and nowhere in git) at each fresh container and puts TOS
     1.04, 1.62, 3.06 and 4.04 in `~/.aera/tos` (`tos104us.img`, `tos162.img`, `tos306.img`,
     `tos404.img`) and NVDI 5.03 in `~/.aera/nvdi/x`; a session that started before it (or whose
     container was kept) runs the same lines itself, as the hub sends them. Never in git, never in a
     test's `hd` left behind, never sent anywhere else. Rigs that run without them say so ("stand-in,
     EmuTOS") and are not a release's record when they could have run. **Each session runs its own GEM rigs on them
-    (and under NVDI where it has it) before asking Erez for a release**, and sends the hub the commit
+    (and under NVDI where it has it) before a release**, and sends the hub the commit
     and its results. The hub doesn't repeat them: it runs the family checks (`acc_all.py --use`, the
     programs together) and the NVDI runs a session can't, then says "clear" or what failed. CI stays
-    on EmuTOS. He uses GDOS fonts in every
+    on EmuTOS. GDOS fonts are used in every
     program, not only the accessories, so each program's font rig runs under NVDI
     (`AERA_WITH_NVDI=1`, on `Falcon` and `Falcon-4`). Under NVDI, `machines.py` adds Hatari's
     `--fast-boot` (TOS's memory count and NVDI's font scan together outlast a rig's boot wait on
     `Falcon-4`). NVDI's 16-colour palette is not TOS's: its light grey, pen 8, is 851 851 851
     (TOS: 733) and its dark grey, pen 9, 502; a colour pick must not take 851 for white
     (EContact 1.51 drew a selected bar black).
-- **The test machines** (Erez, 17 Oct 2026): every rig starts Hatari through
+- **The test machines** (decided 17 Oct 2026): every rig starts Hatari through
   `common/tools/machines.py` with one of these names, never with Hatari options of its own, and its
   report names the machine and the TOS (`describe()`):
 
-  | Name | Machine | Screens (first: the default) | Erez's TOS |
+  | Name | Machine | Screens (first: the default) | real TOS |
   |---|---|---|---|
-  | `ST` | Erez's 1040 ST: 68000 at 8 MHz, 4 MB | `mono`, `med`, `low` | 1.04 |
+  | `ST` | a 1040 ST: 68000 at 8 MHz, 4 MB | `mono`, `med`, `low` | 1.04 |
   | `ST-1` | the same with 1 MB, the smallest the family runs on (EWeb's ST edition: `ST`, 4 MB) | `mono`, `med`, `low` | 1.04 |
-  | `STE` | an STE: 68000 at 8 MHz, 4 MB, 8-bit DMA sound (EPlay's; added 7 Nov 2026) | `mono`, `med`, `low` | 1.62 (Erez, 7 Nov 2026; EmuTOS where `tos162.img` is not in `~/.aera/tos`) |
+  | `STE` | an STE: 68000 at 8 MHz, 4 MB, 8-bit DMA sound (EPlay's; added 7 Nov 2026) | `mono`, `med`, `low` | 1.62 (decided 7 Nov 2026; EmuTOS where `tos162.img` is not in `~/.aera/tos`) |
   | `TT` | TT030: 68030 at 32 MHz, 68882, 4 MB ST RAM + 16 MB TT RAM | `ttmed`, `mono`, `med` | none (EmuTOS) |
-  | `Falcon` | Erez's Falcon with the DFB1: 68030 + 68882, 14 MB ST RAM + 128 MB TT RAM, DSP, VGA | `16`, `256` | 4.04 |
+  | `Falcon` | an accelerated Falcon: 68030 + 68882, 14 MB ST RAM + 128 MB TT RAM, DSP, VGA | `16`, `256` | 4.04 |
   | `Falcon-4` | a Falcon030 as sold: 68030 at 16 MHz, no FPU, 4 MB ST RAM, no TT RAM, VGA | `16`, `256` | 4.04 |
   | `FireBee` | a stand-in, not a FireBee: a Falcon with a 68060 and its FPU, 14 MB ST RAM + 128 MB TT RAM, no DSP, VGA, with FireTOS's cookies (`C:\AUTO\FBSTAND.PRG`; added 15 Nov 2026) | `16`, `256` | none (EmuTOS always: TOS 4.04 runs no 68060) |
 
   - Each machine has its own settings: its own NVRAM (no rig's settings leak into another's) and the
     Falcon's screen mode, which a real TOS 4 takes from `C:\NEWDESK.INF`.
-  - The app sessions test on EmuTOS 1.4 (fetched and checked by `machines.py`). Erez's own TOS
-    images (TOS 1.04 from his ST, TOS 4.04 from his Falcon) stay with the hub, outside git: the hub
+  - The app sessions test on EmuTOS 1.4 (fetched and checked by `machines.py`). The real TOS
+    images (TOS 1.04 from an ST, TOS 4.04 from a Falcon) stay with the hub, outside git: the hub
     runs each release candidate on them before it is released.
   - The network on any machine and TOS: `m.network()` puts FAKESTNG in `C:\AUTO` and starts
     `serial_bridge.py` on the serial port. FAKESTNG makes the cookie jar TOS 1.04 lacks and turns off
     the XON/XOFF TOS 1.04 starts with (it took 0x13 bytes out of the frames).
-  - With TOS 1.04, `C:\AUTO\BOOTC.PRG` makes C: the boot drive, as the hard disk driver on Erez's ST
+  - With TOS 1.04, `C:\AUTO\BOOTC.PRG` makes C: the boot drive, as a hard disk driver on a real ST
     does (Hatari's C: is no hard disk to TOS 1.04, which would count A: and send programs looking for
     their files to an empty floppy drive).
   - An ST has no clock: on `ST` and `ST-1`, `C:\AUTO\CLOCK.PRG` sets this computer's date and time
@@ -198,35 +198,35 @@ Erez's.
     68030 code (the Falcon editions, BearSSL, EHypView's colour) on `TT` and `Falcon`; drawing and
     pictures on `Falcon:16` and `Falcon:256` too. AES messages and drag and drop also under MiNT
     and XaAES (`common/tests/xaaes`).
-  - **On a 1 MB ST, one big program or accessory at a time** (Erez, 19 Oct 2026): EMAIL.PRG (a
+  - **On a 1 MB ST, one big program or accessory at a time** (decided 19 Oct 2026): EMAIL.PRG (a
     422 KB image) doesn't start beside EContact's accessory (ECONTST.ACC holds 440–665 KB there:
     the program found about 120 KB free). The READMEs say so: EMail with EContact's accessory needs
     2 MB or more; on a 1 MB ST, EMail with ECONTACT.PRG. Two of the ST accessories don't fit
     either (22 Oct 2026): TOS 1.04 leaves about 920 KB, and ECALST.ACC (433 KB with its BSS)
     and ECONTST.ACC (487 KB) both load, leaving the AES nothing, so the ST halts at boot
     ("double bus error"). On a 1 MB ST, one of them; the other as a program.
-  - **All the accessories at once** (Erez, 19 Oct 2026; changed 4 Nov 2026): ECal, EContact, EHypView
+  - **All the accessories at once** (decided 19 Oct 2026; changed 4 Nov 2026): ECal, EContact, EHypView
     and EMail's, their latest releases, loaded together on `Falcon` (14 MB ST RAM + TT RAM, TOS 4.04,
     with and without NVDI): `common/tests/family/acc_all.py`, run by the hub. Not on the 4 MB machines
     (`ST`, `Falcon-4`) any more: see the 68000 machines above.
-- **A 68000 and a 68030 build** (Erez's question, 16 Oct 2026): each app is measuring what a build
+- **A 68000 and a 68030 build** (an open question, 16 Oct 2026): each app is measuring what a build
   for the Falcon above would gain over the 68000 one. The family's names and rules for two builds
   come here once that is known.
 
-### Speed: the stock machines set it (must; Erez, 26 Oct 2026)
+### Speed: the stock machines set it (must; decided 26 Oct 2026)
 
-Erez, 26 Oct 2026: "I want performance considerations to govern design and implementation across
-all AERA applications as most ST computers out there are not 68030 and not accelerated." He saw the
-apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
+Decided 26 Oct 2026: speed governs the design and the code of every AERA app, as most STs in use
+have no 68030 and no accelerator. The apps were slow on a real Falcon with its accelerator switched off,
+screen redraws above all.
 
 - **Design and code are judged on the slow machines:** `ST` and `ST-1` (a 68000 at 8 MHz) and
   `Falcon-4` (a stock Falcon: a 68030 at 16 MHz, only ST RAM, which it shares with the screen, no
-  FPU). The DFB1 is where a feature must be fast, not where it is measured. A design that can't meet
+  FPU). An accelerated Falcon is where a feature must be fast, not where it is measured. A design that can't meet
   the times below on these machines is changed before it ships. When the change would alter what the
-  user sees (the look, a feature left out on slow machines), it goes to Erez with the numbers: his
-  decision.
-- **Optimising must not break anything** (Erez, 13 Nov 2026: "with all the optimization work going on, we
-  must be extra careful not to create regressions"). Every speed change is written with extra care and
+  user sees (the look, a feature left out on slow machines), it goes to the owner with the numbers, to
+  decide.
+- **Optimising must not break anything** (decided 13 Nov 2026: with so much optimising going on, extra care
+  that it creates no regressions). Every speed change is written with extra care and
   proved before it ships:
   - **What it draws is the same:** a change to drawing leaves every pixel as it was; compare screenshots of
     the old and the new build (the app's rigs, common's `tests/text`, `pixel` rigs) on `ST:mono`, `ST:med`,
@@ -234,12 +234,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - **What it computes is the same:** a change to a loop, a parser, a layout or a codec is checked against
     the old code's output on the same inputs (the app's corpus, the fuzz inputs, the host tests), byte for
     byte, and its tests keep passing, with a new test for each path it adds.
-  - **Nothing else gets slower** (Erez, 13 Nov 2026, after "something is starting to feel slower and slower"): the
-    whole speed rig runs before and after as one paired run, every row, not only the row aimed at, on his
+  - **Nothing else gets slower** (decided 13 Nov 2026, after the apps were found to feel slower and slower): the
+    whole speed rig runs before and after as one paired run, every row, not only the row aimed at, on the reference
     configuration (`Falcon-4:256` with NVDI) and the ST. A speed change ships only if no row is slower beyond the
     rig's one tick (5 ms) across the pairs; a row that holds slower is fixed or the change is reverted, never
     accepted. The one exception is a fault fix the user sees (a wrong picture, a doubled row), and its cost goes to
-    Erez first.
+    the owner first.
   - **The rest of the app's rigs run** for the area touched (files, keys, the accessory, MiNT/XaAES where a
     dialog or a window is touched), not only the speed rig; memory is measured where the 1 MB ST or a
     stock Falcon is tight (EContact's 350 contacts, EWeb's big page).
@@ -258,7 +258,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   Supexec, about 0.06 ms a read under NVDI on a stock Falcon and more where a network driver hooks the
   XBIOS. Don't read it per item in a loop: every 16 items or so on a 68020 or better (EContact's search:
   160 ms of 2,000 reads), and measure on the 68000 before changing it there.
-- **The hot loop is pinned by link order** (Erez, 13 Nov 2026: "roll out the link-order recipe to all apps"; EPlay's
+- **The hot loop is pinned by link order** (decided 13 Nov 2026: the link-order recipe in every app; EPlay's
   measurement): on a 68030 (256-byte instruction cache) a row could move 10-35 ms when unrelated code moved
   (EPlay, EContact, EFTP). Each app's Makefile lists the objects of its main flows' hot loops first, right after
   crt0 and the startup assembly (common's `link.ld` keeps input order: `*(.text .text.*)`), so a change elsewhere
@@ -275,14 +275,14 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   instructions (common 298d3f1, EPDF, 14 Nov 2026).
 - **What the user waits for: the longest stretch** from the event that started it to the program's
   next event call (`-DAES_PROFILE`'s `AESGAP` lines, `common/atari/gem.c`). It is measured on
-  `ST:mono`, `ST:med` and `Falcon-4:16` with Erez's TOS 1.04 and 4.04, and on all three also under
-  NVDI with one of its GDOS fonts: the Atari community runs NVDI on its STs too (Erez, 2 Nov 2026).
+  `ST:mono`, `ST:med` and `Falcon-4:16` with real TOS 1.04 and 4.04, and on all three also under
+  NVDI with one of its GDOS fonts: the Atari community runs NVDI on its STs too (decided 2 Nov 2026).
   `Falcon-4:256` is measured where the app draws in 256 colours.
 
   | The user | Longest stretch |
   |---|---|
   | types a letter, moves the cursor, ticks a box, clicks a row or a button | 50 ms |
-  | scrolls one line or row (an arrow; a wheel is not wanted unless Erez asks, ui/WINDOWS.md 1.3); held, at least 15 rows a second | 50 ms |
+  | scrolls one line or row (an arrow; a wheel is not wanted unless it is decided so, ui/WINDOWS.md 1.3); held, at least 15 rows a second | 50 ms |
   | scrolls a page (Shift+arrow, a click in the track) | 150 ms |
   | opens a menu entry's dialog, a pop-up or an alert | 150 ms |
   | on an 8 MHz ST in low or medium resolution (`ST:low`, `ST:med`), opens the About box | 200 ms |
@@ -293,33 +293,32 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   | opens the accessory from the Desk menu: its window drawn | 500 ms |
   | starts the program from C:: its window drawn | 2 s |
 
-  The big dialog's time is Erez's (1 Nov 2026): saving and filling the screen under a dialog the
+  The big dialog's time was decided on 1 Nov 2026: saving and filling the screen under a dialog the
   size of EFTP's Settings takes some 85 ms of an 8 MHz ST's memory speed alone, and the CPU's drawing
   (common's `dialog.c`) brought Settings from 370 to 270 ms. It stays 150 ms on the Falcon, and for
   smaller dialogs on the ST.
 
-  The About box's time on an ST in colour is Erez's too (2 Nov 2026): its picture and frame cost an
+  The About box's time on an ST in colour was decided too (2 Nov 2026): its picture and frame cost an
   8 MHz ST four planes' worth of memory where ST high has one, and common's `aboutbox.c`, drawn in
   memory and shown whole, opens in 140 ms in ST high and some 185 ms in ST medium (EPDF 0.5). The
   other way to 150 ms, drawing straight onto the screen, would show the box build up. It stays
   150 ms in ST high and on the Falcon.
 
-  The whole window moved or inverted in 256 colours is Erez's (16 Nov 2026, the hub's recommendation):
+  The whole window moved or inverted in 256 colours was decided on 16 Nov 2026 (the hub's recommendation):
   a stock Falcon's text window of some 600 x 420 at 8 planes is 250 KB read and 250 KB written over
   the ST RAM bus it shares with the screen, about 60 ms however it is coded (common's `scr_rows` is
   movem blocks at the bus's rate; NVDI's XOR the same: EPDF's gemprof, 16 Nov). Moving it in two
   halves would bring a line under 50 ms but show a seam for a frame, the kind of artefact the planar
-  copy was made to remove (Erez's colour lines, 14 Nov). So 80 ms there: the bus and a turn. Every
+  copy was made to remove (the colour lines reported on 14 Nov). So 80 ms there: the bus and a turn. Every
   other row keeps its time on `Falcon-4:256`, and 16 colours and the ST keep 50 ms for a line.
 
   Longer jobs (a sync, a load, a search through everything, a page laid out) never run as one
   stretch. They run in slices (`common/ui/bgwork.c`, as 2.2's accessories do), so a key or Esc is
   answered within 100 ms. Progress is shown at least every 250 ms, and the log says what the job took.
 
-  **Drawing is not such a job: it runs in one piece, as fast as it can be (Erez, 4 Nov 2026).**
-  Erez: "We have an issue with a family rule of accepting keyboard and other interrupts while
-  drawing on screen. It creates a problematic user experience. Drawing on screen should be the
-  fastest possible across all applications."
+  **Drawing is not such a job: it runs in one piece, as fast as it can be (decided 4 Nov 2026).**
+  Answering keys and other events in the middle of drawing on the screen made a poor experience for
+  the user; drawing on the screen is to be as fast as possible in every app.
   - A redraw (a window, a pane, a list page, a dialog, a message shown, the About box, what a scroll
     or a move brings into view) is drawn from start to end with no event call, no `bg_step` and no
     "a band, a line or a pane a turn" in between. Keys and clicks that come meanwhile wait in the
@@ -331,13 +330,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     a reason to cut a picture into turns. When a picture takes longer than its time, the app makes
     the drawing cheaper and reports the number and what it tried to the hub; it does not slice it.
     Every change to drawing still gives its `AESGAP` stretches before and after.
-  - **A rule never costs speed** (Erez, 4 Nov 2026: "The rules I am setting must not collide with
-    performance, rather improve it"). Drawing whole is done together with drawing that is at least
+  - **A rule never costs speed** (decided 4 Nov 2026: the rules must not cost
+    speed, rather improve it). Drawing whole is done together with drawing that is at least
     as fast as before: a row of the speed rig that gets slower by the change (a line scrolled, a page
     scrolled, a page shown, Select all) is not a finished change. The app makes the drawing cheaper
     until the row is no worse than before the change, on `ST:mono`, `ST:med`, `Falcon-4:16` and
     `Falcon-4:256` where it draws in 256 colours, and the hub does not clear a candidate that is
-    slower. What a change could not recover goes to Erez with the numbers.
+    slower. What a change could not recover goes to the owner with the numbers.
     "No slower" is the user's wait: the time from the key or click to the moment the result is on
     the screen whole (for a draw in pieces, to the last piece). A whole draw's single stretch is
     at least its drawing, so the stretch of a row that was split before may grow; that is not a
@@ -349,7 +348,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     stretch limit is 300 ms; rows that are not a redraw (a key answered, a button pressed) keep
     their 50 ms (EPlay 0.23, 4 Nov 2026: time to the whole picture 45 to 165 ms, equal or shorter
     than 0.22; its stretches rose to 50 to 90 ms because the pieces are now one).
-  - **A draw longer than 300 ms is drawn in pieces** (Erez, 4 Nov 2026: option B, after the
+  - **A draw longer than 300 ms is drawn in pieces** (decided 4 Nov 2026: option B, after the
     EWeb ST edition's numbers: whole, a page load or scroll on an 8 MHz ST froze the program for
     1.3 to 3.3 s; sliced, the same work builds up while keys are answered within 0.1 s, at the
     same total time plus a small pause cost). So the rule above is for draws of 300 ms or less:
@@ -359,22 +358,22 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     whole, a key or click answered between pieces. The app measures both ways on `ST:mono` and
     `Falcon-4:16` and reports the total time to the finished picture, whole against pieces: the
     pieces may cost no more than 10 % in total.
-    **Pieces are in effect only where they are no slower** (Erez, 4 Nov 2026, later: "If the
-    today's family decision slows down EWeb page display, it is something we need to actively
-    decide. Performance must not go backwards or bad, just for the better always."). Where a
+    **Pieces are in effect only where they are no slower** (decided 4 Nov 2026, later: a family
+    rule that slows EWeb's pages down is a decision to be taken on purpose; speed only ever goes
+    forward). Where a
     draw in pieces finishes later than the same draw whole, even by the 10 % above, the app draws
     whole until its drawing is faster and the pieces are no slower, then switches them on; a
-    slowdown is accepted only when Erez decides it with the numbers in front of him. **EWeb draws
+    slowdown is accepted only when the owner decides it with the numbers at hand. **EWeb draws
     pages whole (as 0.69) for now**; its pieces' code stays, off, and its speed build measures
     them (`DRAWPIECES=1`, `speed.py --pieces`). The hub takes EWeb's figures whole.
-    **Exception, EWeb's ST edition (Erez, 4 Nov 2026):** its pieces are up to 300 ms, the Falcon's
+    **Exception, EWeb's ST edition (decided 4 Nov 2026):** its pieces are up to 300 ms, the Falcon's
     stay 100 ms. EWeb measured the cost: on an 8 MHz ST each turn between pieces is about 40 ms
     (screen lock, mouse, rectangle list, the AES's turn) against about 45 ms of drawing in a
     100 ms piece, so pieces of 100 ms cost +58 to +105 % in total (ST:mono: news 3310 whole,
     5819 in pieces), where the Falcon's cost +2 to +9 %. An app whose pieces cannot meet the
-    10 % at 100 ms measures larger pieces and puts the figures to Erez.
-    **On the 8 MHz ST, a window's redraw is drawn whole** (Erez, 19 Nov 2026: "Draw whole on the
-    ST", after EMail's and EFTP's figures: EMail's main window 480 ms whole against 865-1,035 in
+    10 % at 100 ms measures larger pieces and puts the figures to the owner.
+    **On the 8 MHz ST, a window's redraw is drawn whole** (decided 19 Nov 2026: drawn whole on the
+    ST, after EMail's and EFTP's figures: EMail's main window 480 ms whole against 865-1,035 in
     100 ms pieces and 535 a pane a turn; EFTP's window shown 40-60 % later in pieces). Where the
     pieces can't meet the 10 % on the ST, the app draws whole there, at whatever its stretch, and
     says so in its speed rig's rows; the Falcons and TT keep the rule above (whole at 300 ms or
@@ -387,7 +386,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     a time, each part in one piece.
   - Drawing that was split across turns for the old rule (EContact's `win_redraw_bands`,
     `win_open_bands`, `uncover_bands`; EMail's message shown "in the next turns"; a pane drawn a
-    text line a turn) is drawn whole instead: in the apps in focus now, in the others when Erez says
+    text line a turn) is drawn whole instead: in the apps in focus now, in the others when the owner says
     (section 8, maintenance).
 - **How the family meets it:**
   - **Draw only what changed.** Redraw only the AES's rectangles, clipped to them, and only the part
@@ -406,7 +405,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     laid out once and kept until the text or the width changes.
   - **A GDOS font too.** Draw a run with one `v_gtext`. When the font's advance is a fraction of a
     pixel off its cell, use one `v_justified_n`, fitted to the cells (EMail's `cells_mode`). Never
-    draw one letter to a cell. Measured on `Falcon-4:16` under Erez's NVDI, 39 letters
+    draw one letter to a cell. Measured on `Falcon-4:16` under the NVDI copy, 39 letters
     (`tests/speed/vdt.py`, 26 Oct 2026):
     - the system font: 1.1 ms;
     - FreeMono 10 pt as one run: 3.6 ms;
@@ -417,13 +416,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
   - **Text on a byte.** Start text at an x that is a multiple of 8 (a window's work area at x 1
     isn't one). So a window's work area is put on a multiple of 8 across when it opens and when
     it is moved or sized (the window lands up to 7 pixels from where it was dropped), text margins
-    are 8 pixels, and columns sit on 8-pixel steps (Erez, 26 Oct 2026). Measured with
+    are 8 pixels, and columns sit on 8-pixel steps (decided 26 Oct 2026). Measured with
     `tests/speed/vdt.py`, 39 letters of the system font:
     - TOS 1.04 on `ST`: 36.5 ms a pixel off a byte, 5.4 ms on one;
     - TOS 4.04 on `Falcon-4`: 9.1 ms against 3.4 ms;
     - NVDI: no difference.
 
-    Alignment comes first (Erez, 31 Oct 2026): where text is laid out by the AES or lines up with
+    Alignment comes first (decided 31 Oct 2026): where text is laid out by the AES or lines up with
     other text (a dialog's labels, tabs, buttons), it stays where it is, and the speed comes from
     drawing it faster there (common's text routines at any x), never from moving a label a few
     pixels onto a byte.
@@ -438,7 +437,7 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     `vst_effects`: NVDI's bold widens each letter, and the next run covers the last ones
     (EHypView 1.30, 27 Oct 2026). A row's state (unread, new) is a mark in its first column and
     blue where there is colour (the theme's blue, the pen nearest to blue: under NVDI pen 4 needn't
-    be blue; EMail), not bold (Erez, 26 Oct 2026: EMail's unread
+    be blue; EMail), not bold (decided 26 Oct 2026: EMail's unread
     messages). Clip the VDI to the AES's rectangle (or the pane in it), never to the one row
     being drawn. The area asked for only chooses what to draw.
   - **Text through `text_n`.** TOS's VDI draws text the slow way when the clip's right or bottom
@@ -454,12 +453,12 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     reason (`dialog.c`, `aboutbox.c`, `popup.c`).
   - **A box gives back what it covered.** On TOS a dialog, an alert, a popup or the About box
     keeps the screen under it (`dlg_under`) and puts it back as it closes. The windows under it
-    are not drawn again, which used to take seconds on a stock Falcon (Erez's video, 26 Oct
+    are not drawn again, which used to take seconds on a stock Falcon (a screen recording, 26 Oct
     2026). Copy whole words (x and width on multiples of 16): TOS 1.04 copies a block that
     starts inside a word a bit at a time. An app whose content changed while the box showed
     draws it again itself.
   - **A box shows whole.** A box of many parts (the About box, `aboutbox.c`) is drawn in memory
-    and copied to the screen at once, never seen being built up (Erez, 26 Oct 2026): with TOS's
+    and copied to the screen at once, never seen being built up (decided 26 Oct 2026): with TOS's
     VDI the logical screen is moved to a buffer of the box's rows while it is drawn, once a test
     pixel shows the VDI draws there. On an ST plain memory copies of the rows beat the VDI's
     raster copy, but TOS's fills beat a C loop: measure before moving drawing to the CPU.
@@ -483,23 +482,23 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     Files: 6.5.
   - **The DSP on a Falcon** takes any work it does faster than the 68030 (TLS's curves and RSA,
     EWeb's JPEG), with the 68030's own code as the fallback.
-  - **The DSP is shared** (Erez, 31 Oct 2026, with EPlay, which holds it while it plays):
+  - **The DSP is shared** (decided 31 Oct 2026, with EPlay, which holds it while it plays):
     - a program holds the DSP (`Dsp_Lock`) only while it uses it: a job for its length, a player
       while it plays, never while paused or stopped;
     - nobody waits for the DSP or asks another program to let it go: `Dsp_Lock` refused means the
       68030's code (common's `dspec.c`, `dsprsa.c` and `dspjpeg.c` do so already), slower but never
       failing;
     - a program that can't work without the DSP says so ("The DSP is in use by another program")
-      and doesn't try again in a loop. EPlay's MP3 has a 68030 way since phase 2 (Erez, 1 Nov
+      and doesn't try again in a loop. EPlay's MP3 has a 68030 way since phase 2 (decided 1 Nov
       2026: the TT, any 68030, a Falcon whose DSP is busy; its quality following the machine, half
       rate or mono on a stock Falcon or TT, so the music never breaks up), so it plays anyway.
     - a program that takes the DSP's host interrupt (EPlay's player: vector, IVR, ICR) gives it
       back at stop, at quit and on the crash handler's way out, before `Dsp_Unlock`.
     - with an FDI clocked from its S/PDIF input, the 68030's DSP host interrupt (vector 255) brought
-      spurious interrupts, a looping click and a stall on Erez's Falcon (EPlay 0.6: 111 in 10 s), and
+      spurious interrupts, a looping click and a stall on a real Falcon (EPlay 0.6: 111 in 10 s), and
       none with the FDI on its own clocks. Feed the DSP from a timer and poll the host port (EPlay 0.7,
       Timer A at 500 a second; common's `dspec.c`, `dsprsa.c` and `dspjpeg.c` poll already), and keep
-      a guard for a spurious interrupt. Erez's Falcon with 0.7: 234 s at 44.1 kHz on the S/PDIF clock,
+      a guard for a spurious interrupt. a real Falcon with 0.7: 234 s at 44.1 kHz on the S/PDIF clock,
       no spurious interrupt, 15 granules late of 8,979 frames.
     - no `__builtin_memcpy` (or `memcpy` where the build doesn't say `-fno-builtin`) of 2 or 4 bytes
       to or from an address that may be odd, in code a 68000 runs: GCC 13 for `-m68000` makes it a
@@ -514,13 +513,13 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
       Buffptr in GEM's turn). Read the hardware's registers, or leave the call to the main loop.
   - **The DSP's time is measured on `Falcon-4` only** (EPlay, 1 Nov 2026): Hatari runs the DSP at
     the 68030's pace, so on the 32 MHz `Falcon` profile it has some 3 times the spare time it has on
-    `Falcon-4`, where both run as on Erez's stock Falcon. A DSP figure (a job's ms, a player's spare
-    time) is taken from `Falcon-4`, and the real chip's from Erez's logs.
-- **Common's fast paths, in every app** (Erez, 1 Nov 2026: "all apps using the fast drawing code").
+    `Falcon-4`, where both run as on a real stock Falcon. A DSP figure (a job's ms, a player's spare
+    time) is taken from `Falcon-4`, and the real chip's from logs of a real Falcon.
+- **Common's fast paths, in every app** (decided 1 Nov 2026: every app uses the fast drawing code).
   Each app uses each of these wherever it draws that thing, and each one only where it is faster.
   The test is the app's speed rig, which must show no action slower than in the release before.
-  It is run on `ST:mono` and `Falcon-4:16`, under NVDI, and under NVDI with a GDOS font as Erez
-  runs it (Courier 14).
+  It is run on `ST:mono` and `Falcon-4:16`, under NVDI, and under NVDI with a GDOS font as the reference
+  configuration has it (Courier 14).
   EMail 1.69's lesson: `text_plain` called where `text_plain_state()` is below 0 (NVDI, a GDOS font,
   a multitasking AES) falls back to `text_n` in replace mode, which can be slower than the app's own
   way was. So each fast call is guarded, or its fallback is exactly what the app did before.
@@ -553,10 +552,10 @@ apps slow on his Falcon with the DFB1 switched off, screen redraws above all.
     It fails when a stretch is over its time, and prints each action's longest stretch, so the app's
     notes keep a table of them.
   - Hatari's CPU is cycle-exact (its default), but the Falcon's sharing of ST RAM with the screen is
-    approximated. Erez's own Falcon with the DFB1 switched off is the referee: when he finds
+    approximated. A real Falcon with its accelerator switched off is the referee: when it shows
     something slow, its numbers go in the app's notes and the rig gets a case for it. Every
     build keeps its four longest stretches, each with what started it (`aes_slowest()`,
-    `common/atari/gem.c`). The app writes them to its log at the end (LOG=1), so his machine
+    `common/atari/gem.c`). The app writes them to its log at the end (LOG=1), so a real machine
     says where it waits.
   - A change that touches drawing, a loop over the data or the start gives its stretches on `ST`
     and `Falcon-4`, before and after, in its commit message.
@@ -603,9 +602,9 @@ touched.
   - any `User-Agent` / `PRODID`
 - **A build never changes `VERSION`.** Only a release does: `tools/bump.py` in a release commit, tagged
   `v1.32` by the release workflow.
-- **There is no `-dev` label** (Erez's decision, 15 Oct 2026). Every build shows `VERSION` as it is; a
+- **There is no `-dev` label** (decided 15 Oct 2026). Every build shows `VERSION` as it is; a
   build between releases shows the last release's number, and never leaves the build machine.
-- **Only formal releases leave the build machine** (Erez's decision, 15 Oct 2026). Nobody is handed a
+- **Only formal releases leave the build machine** (decided 15 Oct 2026). Nobody is handed a
   test build, a CI artifact or a build from a branch, not even to try a fix: work
   lands on `main`, and a fix to try on real hardware goes out as a release. CI builds and checks but
   publishes nothing. If a release doesn't work, **fix forward** (below): a new release with the next number,
@@ -618,52 +617,52 @@ touched.
   differs from the one before, or the dialog's frame is there): a missed click is a FAIL. A rig that
   clicks fixed pixels says where in its header, and its checks catch the layout moving.
   The focus apps adopt this in their next candidate; the apps in maintenance (section 8) adopt it
-  only when Erez ends maintenance, as with any new rule.
-- **Releases go out without asking Erez** (Erez's decision, 23 Oct 2026). When work on `main` is ready,
+  only when the owner ends maintenance, as with any new rule.
+- **Releases go out without asking the owner** (decided 23 Oct 2026). When work on `main` is ready,
   the app's session releases it on its own:
   - the repo's own checks pass;
   - the candidate has passed the regression gate (the next bullet): every configuration, no row
     slower, then the hub's family check.
 
   It doesn't wait for a yes, and it releases as soon as the work is done rather than collecting it.
-  The session then gives Erez the release's link in one line, with anything he has to do (the Gateway's
+  The session then gives the owner the release's link in one line, with anything the owner has to do (the Gateway's
   `./update-pi.sh`, say), and sends the hub the link. A bad release is fixed forward, without
-  asking. Decisions that are Erez's still go to him before the work ("Who decides what",
+  asking. The owner's decisions still go to the owner before the work ("Who decides what",
   above: new programs and capabilities, how programs work together, the user experience, phases,
   priorities and conflicts, Gateway packages, ports). A release inside an approved phase is not one of
   them. A change to the docs alone needs no release of its own: it goes out with the
   next one.
-- **The regression gate: every configuration, and no speed lost, before a release** (Erez, 17 Nov 2026:
-  "Since we are now at an evolved phase, we need to be extra careful with regression issues as there are users
-  of our software. This means testing across all configurations" and "make sure we don't loose performance").
+- **The regression gate: every configuration, and no speed lost, before a release** (decided 17 Nov 2026:
+  extra care over regressions, as the software has users, so testing across all configurations and no loss of
+  performance).
   It replaces 7 Nov's "the hub's checks follow the release". Every candidate that changes code, in every app
   (maintenance or not), goes through, in this order:
   1. the repo's own checks (`make`, `make test`, `make itest` and the rest its CLAUDE.md names);
   2. **its rigs on every configuration of `standards/TEST-MATRIX.md`'s gate table that the app runs on**, on
-     Erez's TOS images and NVDI (every session has them since 15 Nov: EmuTOS is for development and CI
+     real TOS images and NVDI (every session has them since 15 Nov: EmuTOS is for development and CI
      only, never the gate's evidence), each one named in the report with `describe()`; a configuration the
      app can't run on is named with why;
-  3. **the paired speed run against the last release on Erez's configuration and on the stock machines the
+  3. **the paired speed run against the last release on the reference configuration and on the stock machines the
      app runs on (`Falcon-4:16`, `ST:mono`)**, the timed build at the shipped layout
      (`common/tools/profpad.py`): no row slower beyond one tick on any of them (098183d); a slower row is
-     fixed first, and only Erez accepts one;
+     fixed first, and only the owner accepts one;
   4. **the hub's family check on the candidate** (the real programs together, the accessories' first and
      second boot): the hub answers with go or the faults it found.
 
-  Only then is it released. A fault found anyway, by a user, the hub or Erez, is fixed forward by a new
+  Only then is it released. A fault found anyway, by a user, the hub or the owner, is fixed forward by a new
   release with the next number, before any other work of that session; the old release stays, with one
   line in the new one's notes saying what it fixes (no revert, no "withdrawn" notice, no deleting). **Every
   fault a user reports becomes a case in the app's rigs** (or the hub's, for one between programs) in the
   same release that fixes it, run at every later candidate, so it can't come back unseen. A change to the
   docs alone still takes the short path (below).
-- **Text-only changes take the short path** (Erez's decision, 18 Oct 2026). A change to the docs alone
+- **Text-only changes take the short path** (decided 18 Oct 2026). A change to the docs alone
   (README, `docs/`, the guide the help file is made from, CLAUDE.md) is pushed to `main` as soon as
   it reads right and the help file still builds and says the program's version (`make help`, or
   what the repo's own docs check runs). It needs no Hatari rigs, no `make itest`, no machine matrix
-  and no run on Erez's TOS, and it doesn't wait for code that is still being tested: push it ahead
+  and no run on real TOS, and it doesn't wait for code that is still being tested: push it ahead
   on its own commits. A release that changes only the docs and the help file goes out the same way
   (without asking, as every release); the release workflow's own checks still run.
-- **Only the hub tests interdependency and the family** (Erez, 8 Nov 2026: "Only you test interdependency and family tests"). **No app tests with another AERA program or accessory** ( replaces 17 Oct's "a test that
+- **Only the hub tests interdependency and the family** (decided 8 Nov 2026: only the hub tests how the programs work together). **No app tests with another AERA program or accessory** ( replaces 17 Oct's "a test that
   needs another program uses its latest release"). An app's own tests (`make test`, `make itest`, the
   Hatari rigs, the speed rig, the session checks) run the app alone: no other AERA program or accessory
   is loaded beside it, started by it or fetched for it (`getrelease.py` is not used in an app's repo). What
@@ -676,21 +675,21 @@ touched.
   stops `getrelease.py`, `machines.py`'s `accs()` and `acc_all.py` anywhere but in AERA-Atari, so an app's
   copy of `common/` cannot fetch or load another program. A rig that loads the app's own
   accessory and program together (the twin hand-over) is the app alone, and stays.
-  **An app tests its own gateway code** (Erez, 8 Nov 2026: "Gateway code of an app must be tested by the
-  app"): emailgate, ecalgate, eftpgate, webgate (with aerapens and aerajsc), pdfgate and ClaudeST's bridge
+  **An app tests its own gateway code** (decided 8 Nov 2026: an app tests its own
+  gateway code): emailgate, ecalgate, eftpgate, webgate (with aerapens and aerajsc), pdfgate and ClaudeST's bridge
   are the app's protocol. The app runs them from its read-only `gateway/` copy (its `make itest`, its
   Hatari rigs through the gateway, its fuzzing) and owns the tests of every change to them; the Gateway
   session builds and releases the change (and tests the installer, the shared rules and the units), the
   app's session tests it from the app's side before the release. This is the app alone, not
   interdependency: the gateway is shared code taken as source.
-- **A new capability goes to the hub first** (Erez, 5 Nov 2026). Before an app builds anything the family
+- **A new capability goes to the hub first** (decided 5 Nov 2026). Before an app builds anything the family
   might share (a keyboard layout, a dialog, a file format, a protocol, a drawing or timing helper, a
   setting), its session asks the hub (the AERA-Atari session) whether `common/`, `xl/` or `gateway/`
   has it or should get it, and says what it needs. The hub answers with the existing code, or builds
   it in AERA-Atari with the app's tests, and the app takes it with `tools/sync-common.sh`. An app
   never writes its own copy of something shared; a copy found later is replaced by the shared code.
   The Hebrew keyboard is the example: one `common/ui/hebkey.c` for every app.
-- **Checks by what changed** (Erez, 6 Nov 2026: "Yes to all"; faster releases, same quality). The
+- **Checks by what changed** (decided 6 Nov 2026: faster releases, same quality). The
   checks a candidate gets depend on its change, and a session says which kind it is:
   1. *Docs, tests or settings only* (README, `docs/`, CLAUDE.md, `.claude/`, a test): no rigs, no
      speed run. The built programs are byte for byte the same as the release's, which the build
@@ -703,21 +702,21 @@ touched.
      `ST`, `ST-1` and `Falcon-4` (and `--nvdi`), acc_all plain, NVDI and again.
   A result for a binary that is byte for byte the one already measured, on the same machine,
   TOS and rig version, stands and is not run again (the build output's SHA-256 names it).
-- **NVDI is the configuration that counts; one boot per test** (Erez, 7 Nov 2026: "little need to test
-  non-NVDI more than once, it's a seldom used configuration these days; reduce the number of multiple
-  boots for the same test"). Where a check exists on a Falcon, it runs under NVDI. The same check
+- **NVDI is the configuration that counts; one boot per test** (decided 7 Nov 2026: little need to test
+  without NVDI more than once, a configuration seldom used today, and fewer boots for the same
+  test). Where a check exists on a Falcon, it runs under NVDI. The same check
   without NVDI (TOS's own VDI) runs **once per release candidate**, on the one machine that differs
   most (`Falcon-4:16` for drawing and speed, `Falcon:16` for the family check), and only when the change
   draws, starts or loops over data (kind 3 above). Machines that have no NVDI (the ST editions, TT)
   are unaffected. A test that boots the same machine again with the same arguments (`--again`, a
   "second boot") runs once, under NVDI, not once per configuration. The matrix of what every app
   runs is `standards/TEST-MATRIX.md`; a check is added to it, or moved, with the reason.
-- **At least 60% of an app's Atari boots per release candidate run under NVDI, in every app** (Erez,
-  7 Nov 2026: "this is the norm these days", and "all applications should have the same NVDI testing
-  policies, not just the four of focus"). The boots of the app's own checks are counted, ST boots
+- **At least 60% of an app's Atari boots per release candidate run under NVDI, in every app** (decided
+  7 Nov 2026: NVDI is the norm today, and every app has the same NVDI testing policy, not only the
+  focus apps). The boots of the app's own checks are counted, ST boots
   (TOS 1.04 cannot run NVDI) included in the count, so an app with a fifth of its boots on the ST runs
-  about 72% of its Falcon and TT boots under NVDI. Each app's session has Erez's NVDI copy in
-  `~/.aera/nvdi/x` (ECal, EContact and EHypView since 19 Oct; the rest as Erez puts it there) and
+  about 72% of its Falcon and TT boots under NVDI. Each app's session has the NVDI copy in
+  `~/.aera/nvdi/x` (ECal, EContact and EHypView since 19 Oct; the rest as the hub puts it there) and
   runs its rigs with `AERA_WITH_NVDI=1`; the hub's paired speed comparison, the TT + MiNT run and
   the true-colour shot stay with the hub. The focus apps apply it from their next candidate; an app
   in maintenance applies it at its next release and starts nothing before (section 8). The one run
@@ -727,13 +726,13 @@ touched.
   version before's and every candidate run is above every run of the version before
   (`common/tools/speedcmp.py --base A.log [A2.log] --cand B.log [B2.log]` decides, and lists only
   those rows and the rows newly over their time). One step, or runs that overlap, is noise and
-  needs no new candidate. A row that really is slower is fixed, or its cost goes to Erez with the
+  needs no new candidate. A row that really is slower is fixed, or its cost goes to the owner with the
   numbers, as before. Compare against a run of the version before made in the same session,
   back to back with the candidate, not against an old log.
 - **Changes the whole family takes are batched.** A change that every app takes, but that does
   not change what a maintenance-mode app does or draws by default (the Hebrew badge was the
   case), goes into that app with its next release, which is for a fault. It is not released on
-  its own in each app unless Erez asks for that. The shared code is on `main` in AERA-Atari the
+  its own in each app unless that is decided. The shared code is on `main` in AERA-Atari the
   moment it is ready, with its tests.
 - Built programs are published as **GitHub Releases**, not committed, with the help file, the
   certificates and the desktop icon: each file on its own and all in a zip, built by the release
@@ -748,9 +747,9 @@ its width, the name bold and underlined, `Version X.Y`, a tagline of at most 44 
 Erez Yaary", the copyright line, the three status lines below, "Free software under the GNU GPL 2 or later."
 (no repository address) and an OK button drawn by the box.
 - It closes with Return, Esc, Space, Undo, Help or a click anywhere.
-- **Taglines** (Erez, 9 Nov 2026): EFTP's is shortened to 44 characters or fewer and EPlay's names the machines it
-  runs on; each session sends Erez the wording to approve (ui/WINDOWS.md 5, D49).
-- **The status lines say the same things in the same words in every app** (Erez, 27 Oct 2026):
+- **Taglines** (decided 9 Nov 2026): EFTP's is shortened to 44 characters or fewer and EPlay's names the machines it
+  runs on; each session sends the owner the wording to approve (ui/WINDOWS.md 5, D49).
+- **The status lines say the same things in the same words in every app** (decided 27 Oct 2026):
   at most three, in this order, a line left out where it has nothing to say.
   1. **The connection**, in apps that use the network: the network stack (STinG, MiNTnet, or "No
      network"), how the app reaches its servers ("Direct", "Gateway", "No Gateway"; ClaudeST:
@@ -774,14 +773,14 @@ Erez Yaary", the copyright line, the three status lines below, "Free software un
 - **The icon is drawn from ST RAM** (copied there), never straight from program memory. Program memory
   may be TT/Fast RAM, which the screen can't read.
 
-### 1.4 README: a front page, not the manual (must; Erez, 9 Nov 2026)
+### 1.4 README: a front page, not the manual (must; decided 9 Nov 2026)
 Nobody reads a README of five thousand words. It is a front page: it says what the program is, shows it and
 gets a reader started, and sends the rest elsewhere.
 - **Length:** about 600 words and 100 lines at most (ten Highlights fit in it). EPDF's README (about 400
   words) is the model; EWeb's rewrite is the pilot and becomes the example.
 - **What stays**, in the template's order ([repo-template](repo-template/files/README.md)):
   - the one sentence and the icon;
-  - **up to ten Highlights, one line each** (Erez, 9 Nov 2026): what the program does, at the top, before
+  - **up to ten Highlights, one line each** (decided 9 Nov 2026): what the program does, at the top, before
     anything else;
   - the screenshot;
   - Getting started: the download, the files in one short table, the steps to start, what it needs;
@@ -799,7 +798,7 @@ gets a reader started, and sends the rest elsewhere.
 - **Write it for a visitor on GitHub:** short sentences, nothing a first-time reader has to scroll past;
   facts that decide whether to download (the machines it runs on, TOS and memory needs) in the first screen.
 - A change to the README alone takes the short path (1.2). Apps in maintenance mode shorten theirs with
-  the docs-only change; Erez asked every session to on 9 Nov 2026.
+  the docs-only change (decided 9 Nov 2026, for every session).
 
 ---
 
@@ -808,7 +807,7 @@ gets a reader started, and sends the rest elsewhere.
 ### 2.1 Editions
 - **Whether an app has an ACC is the app's choice.** ECal, EContact and EHypView ship both; EFTP and
   ClaudeST are programs only. EMail is a program with a separate, smaller accessory beside it
-  (Erez, 24 Oct 2026): `EMAILCHK.ACC`, EMail check, which looks for new mail while EMail isn't
+  (decided 24 Oct 2026): `EMAILCHK.ACC`, EMail check, which looks for new mail while EMail isn't
   running, from EMail's own settings and folders, writing nothing of EMail's. It is another
   program, not `EMAIL.ACC`, so "one binary" below doesn't apply to it; everything else for an ACC
   does. The rest of section 2, and 6.1's settings in the root, are for the apps that have an ACC.
@@ -871,12 +870,12 @@ before its first event call (7 s with 6,700 pages).
   not reopened at every wait; one bigger than its buffer is written a buffer at a time. The same goes for GEMDOS memory: an accessory takes
   it only before its first event call (`acc_heap`), never later (an About box, a font), since later
   it would belong to the program in front.
-- **The accessory on par with the program** (Erez, 19 Oct 2026): it offers the same features and
+- **The accessory on par with the program** (decided 19 Oct 2026): it offers the same features and
   behaves the same, except where its memory or its place in the background forbids (these rules).
-- **GDOS fonts in an accessory** (Erez's decisions, 18 and 19 Oct 2026): `vst_load_fonts` goes
+- **GDOS fonts in an accessory** (decided 18 and 19 Oct 2026): `vst_load_fonts` goes
   before the first event call, never later. Under NVDI (the `NVDI` cookie) the accessory always loads
   them at boot, so its Font... lists the same fonts as the program and a font chosen is used at once.
-  **Suspended on 19 Oct 2026 and back the same day:** on Erez's Falcon under NVDI, ECal 2.14's
+  **Suspended on 19 Oct 2026 and back the same day:** on a real Falcon under NVDI, ECal 2.14's
   accessory stopped redrawing once a GDOS font was chosen in it. The cause was ECal's, not the rule's:
   its font dialog left a clip rectangle on the screen workstation, and NVDI clips raster copies
   (`vro_cpyfm`, `vrt_cpyfm`), so ECal's copy of its off-screen bitmap reached
@@ -935,7 +934,7 @@ The exact rules, every app's bar and the wording are in [ui/MENUS.md](ui/MENUS.m
   `Del`, `Esc`, `^Left`. An item shows a key only if that key does that command. A command that needs more
   from the user before it acts ends in "...". A tick shows a state; a command that cannot apply is greyed and
   its key does nothing; **while a job runs, the commands that would start another are greyed** (D19).
-- **Settings is in the Options menu** (Erez, 9 Nov 2026: "the family settings is accessed from Options"),
+- **Settings is in the Options menu** (decided 9 Nov 2026: the family's Settings is reached from Options),
   never in File, and its shortcut is `^,`. **Options, in this order, each item only if the app has it:** the
   account or site item (`Accounts...`, `Add account or calendar...`, `Add account...`, `Sites... ^K`: in Options,
   before Settings, in every app that has one); `Settings...  ^,`; `Font...`, with no key (EWeb and EPlay have none);
@@ -950,7 +949,7 @@ The exact rules, every app's bar and the wording are in [ui/MENUS.md](ui/MENUS.m
   every app (4.3). **Find in a page, a document or a list is in Edit; an app's own search stays in its menu and
   says what it searches; `Find...` has dots only where a dialog opens. An app with no Edit menu puts Select all
   in the menu of the things selected.** (Decided 9 Nov 2026: D3 to D10, D13, D19, D20; ui/MENUS.md 1.5.)
-- **A command on the app's own items is in that item's menu, New among them** (a tester, Erez 27
+- **A command on the app's own items is in that item's menu, New among them** (a tester's report, 27
   Oct 2026): EMail's New message is under Message, with Reply and Forward, not under File. File
   keeps what concerns files and the program (Open, Save, Close, Quit).
 
@@ -963,7 +962,7 @@ meaning**. Every app's own keys and the matching rules: [ui/MENUS.md](ui/MENUS.m
 | ^N | New (event, contact, message, chat, folder, window; EFTP's connection is ^K) | ^A | Select all |
 | ^O | Open | ^C ^X ^V | Copy, Cut, Paste (GEM clipboard) |
 | ^S | Save | Undo key | A dialog: Cancel (3.5); a job: stop (playback is not a job); viewers: Back (⇧: Forward). ^Z is Back in EWeb only |
-| ^U | Close window (a one-window PRG: quit; its menu lists Quit alone) | ^P | Print... (File > Print..., through common/ui/print.c: NVDI's print dialog where WDIALOG is loaded, else the default printer; the family's words, Erez 21 Nov 2026) |
+| ^U | Close window (a one-window PRG: quit; its menu lists Quit alone) | ^P | Print... (File > Print..., through common/ui/print.c: NVDI's print dialog where WDIALOG is loaded, else the default printer; the family's words, decided 21 Nov 2026) |
 | ^W | Next window: the app's own, in turn (one window: nothing) | ^I | Get info / properties |
 | ^Q | Quit (ACC: close window) | ^, | Settings... |
 | ^F | Find | Del | Delete the selection (never in a text field) |
@@ -978,12 +977,12 @@ Index leaves ^I: D1, D2). **Sidebar show/hide is ⇧^S in every app that has a s
 ClaudeST's chat list gain it; D45). Alt+letter is left free, because some country keyboards use it for accented
 letters. The shortcut table in each help file and `Keys...` is written by hand from the menu, not generated.
 
-**Function keys** (Erez, 9 Nov 2026): an app may use F1 to F9 for its own views; F10 stays the Hebrew keyboard's
+**Function keys** (decided 9 Nov 2026): an app may use F1 to F9 for its own views; F10 stays the Hebrew keyboard's
 (5.3), and Help is the Help key (D52). **A player's exception:** EPlay's transport keys (Space, ±10 s, ⇧Left and
 ⇧Right, `+` and `-`) and Clr/Home = Stop stay (D53). Playback is not a job: Undo stops a load or a connection, and
 the Stop key stops playback (D54).
 
-**^U closes, ^W goes to the next window** (a tester, Erez 27 Oct 2026), as the Atari's desktops and
+**^U closes, ^W goes to the next window** (a tester's report, 27 Oct 2026), as the Atari's desktops and
 programs have them (Thing, Gemini, MagiC's desktop): until then the family closed with ^W. ^W tops
 the app's next window of its own (`wind_set(WF_TOP)`), around in turn; with one window open it
 does nothing. An accessory's ^U closes its window, as its closer does (2.2).
@@ -1037,7 +1036,7 @@ section 4.
 ### 3.5 Esc and Undo (must)
 The keys, the buttons, the loops and the tests in detail: [ui/CONTROLS.md](ui/CONTROLS.md) section 2.
 **Undo closes any dialog box as if Cancel was clicked; so does Esc, except in a text field, which
-Esc empties, as GEM's `form_do` does** (Erez, 17 Oct 2026; GEM's way since 27 Oct 2026, after a
+Esc empties, as GEM's `form_do` does** (decided 17 Oct 2026; GEM's way since 27 Oct 2026, after a
 tester cancelled an account he was setting up when he meant to empty a field). An alert, which has
 no field, closes on Esc and Undo alike.
 - **The action it was about to do is not done:**
@@ -1075,7 +1074,7 @@ no field, closes on Esc and Undo alike.
 - **The crash alert stays on `form_alert`** (6.4): it has one button, and the crash path stays as
   simple as it can be.
 - **On a multitasking AES the alert is the AES's** (MiNT with XaAES, N.AES or MyAES; MagiC: where
-  `aes_count()`, the AES's `global[1]`, isn't 1; Erez, 25 Oct 2026). There every other program's
+  `aes_count()`, the AES's `global[1]`, isn't 1; decided 25 Oct 2026). There every other program's
   alerts and dialogs are the AES's own, in its look and in its windows, and ours must look the same:
   `alert()` hands its text, wrapped as ours is, to `form_alert`, and Esc does there what that AES's
   alerts do (XaAES's take Return, a click or the underlined letter, not Esc). On TOS and EmuTOS our
@@ -1157,7 +1156,7 @@ CONTACTS.TXT when the user chooses it (below).
   - EContact answers from the contacts it holds (it loads them in the background, 2.2) and never
     reads its files, raises an alert or changes the mouse form to answer.
   - EContact not there: addresses show as they are, unless the user chose the file (below).
-- **EContact's file, when EContact isn't loaded (an option, off by default; Erez, 21 Oct 2026).** For a
+- **EContact's file, when EContact isn't loaded (an option, off by default; decided 21 Oct 2026).** For a
   machine short of memory, where EContact runs as a program now and then rather than as an accessory:
   - EContact writes `CONTACTS.TXT` in its folder, in 1.40's format: Atari text, CRLF; `; ` lines are
     notes (among them `; made from 1A2B3C4D`, its names stamp, so an unchanged file isn't written
@@ -1212,12 +1211,12 @@ CONTACTS.TXT when the user chooses it (below).
 
 ### 4.3 Help
 - **Help opens the app's `.HYP` at its first page** (no app passes another page yet; EConvert is the one
-  exception; the page for what's on screen is not built and not wanted now, Erez will look at it after 1.0: D12,
+  exception; the page for what's on screen is not built and not wanted now, to be looked at after 1.0: D12,
   ui/MENUS.md 1.5). **EHypView's exception:** its Help key shows the shown hypertext's own help page; its guide
   item reads `EHypView help` with no key (D11). The help launcher (shared) tries, in
   this order, the viewer `STGUIDE=` names, then `EHYPVIEW`, `ST-GUIDE`, `HYPVIEW`, `HYP_VIEW`, using
   `VA_START "*:\NAME.HYP page"`.
-- **`STGUIDE=` is the user's own viewer** (a tester, Erez 27 Oct 2026): MiNT's and MagiC's users
+- **`STGUIDE=` is the user's own viewer** (a tester's report, 27 Oct 2026): MiNT's and MagiC's users
   name the hypertext viewer they use in the AES's environment (`setenv STGUIDE C:\HYPVIEW\HYPVIEW.APP`
   in XAAES.CNF, `#_ENV STGUIDE=` in MAGX.INF), as ST-Guide started the custom. `help_show()` reads it
   with `shel_envrn`: the viewer is asked first where it runs (its AES name is its file's name), and
@@ -1229,7 +1228,7 @@ CONTACTS.TXT when the user chooses it (below).
   - On TOS 1.x, where Mxalloc doesn't exist, use a static buffer.
   - The shared launcher, `common/ui/help.c` (from EContact's `shared_buf`), does both.
 - **If no viewer is running on MiNT or MagiC**, `help_show()` starts EHYPVIEW.PRG beside the app,
-  with the same file and page on its command line (Erez, 25 Oct 2026): the program writes its folder
+  with the same file and page on its command line (decided 25 Oct 2026): the program writes its folder
   as `FOLDER=` into `EHYPVIEW.INF` at the root of the boot drive, so it is found once it has run.
   Not on TOS, where one GEM program runs at a time. A program reads its command line with
   `cmd_line()` (`common/atari/tos.c`), which also takes MiNT's and MagiC's ARGV way of passing it;
@@ -1239,7 +1238,7 @@ CONTACTS.TXT when the user chooses it (below).
   with a button for what the app shows itself, such as its keys.
 - **Every app ships `NAME.HYP` built from `docs/GUIDE.md`** by one generator, with these chapters:
   Getting started · Windows and menus · Keyboard · Settings · Troubleshooting · About.
-- **The front page is the family's** (Erez, 17 Oct 2026): `common/tools/helpfront.py page docs/front.json`
+- **The front page is the family's** (decided 17 Oct 2026): `common/tools/helpfront.py page docs/front.json`
   makes the guide's Main page, and the text leads, the pictures support it:
   - a slim AERA banner (`common/help/NAME.IMG`, drawn by AERA-Atari's `brand/tools/mkhelpbanner.py`
     from `brand/social.json`: the icon, the name, the tag, the wordmark, the teal line);
@@ -1247,7 +1246,7 @@ CONTACTS.TXT when the user chooses it (below).
   - the program's window at half size on the right (`helpfront.py thumb` from a Hatari screen
     capture, numbered teal badges, committed as `docs/help/WINDOW.IMG`), its numbered parts
     explained on the left. It stays a 16-colour picture, while the README's and the docs'
-    screenshots are 256-colour ones (Erez, 31 Oct 2026): ST-Guide shows an 8-plane IMG in the wrong
+    screenshots are 256-colour ones (decided 31 Oct 2026): ST-Guide shows an 8-plane IMG in the wrong
     colours on a 16-colour screen;
   - how it reaches its servers, drawn with the hypertext's own `@box` and `@line` (so it lines up in
     any font and in ST-Guide), with links in it;
@@ -1280,7 +1279,7 @@ CONTACTS.TXT when the user chooses it (below).
   paste (EContact has none; ECal's has Copy event only). Items that don't apply to what has the keyboard are
   greyed. Where there is no Edit menu, Select all is in the menu of the things selected (EContact; D20).
 - **After a copy the status line says `Copied to the clipboard.`, or `Couldn't write the clipboard.` when it
-  failed; never an alert** (Erez, 9 Nov 2026, D50).
+  failed; never an alert** (decided 9 Nov 2026, D50).
 - **Writing the clipboard:** SCRAP.TXT goes in the AES's clipboard folder, made if it isn't there yet,
   else `\CLIPBRD` on the boot drive. The other `SCRAP.*` files go first, and lines end CR LF.
   Other programs are told with `SC_CHANGED` where the AES can broadcast.
@@ -1288,7 +1287,7 @@ CONTACTS.TXT when the user chooses it (below).
   dialog's edit field).
 - An app never tells the user to paste somewhere that can't paste.
 
-### 4.5 Notifications through BGEM.NG (should; a tester, Erez 27 Oct 2026)
+### 4.5 Notifications through BGEM.NG (should; a tester's report, 27 Oct 2026)
 - **Where BGEM.NG runs, news that comes by itself is a notification.** BGEM.NG (Jo Even Skarstein,
   https://atari.joska.no/bgem.ng/) is BubbleGEM made again for MiNT with XaAES or N.AES; its
   notifications are small windows stacked at the desktop's edge that close by themselves after a
@@ -1347,25 +1346,25 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
 - **Lists:** a click selects, Shift+click toggles a row, Control+click adds a range from the last row
   clicked, ^A selects all; Up/Down a row, Shift+Up/Down a page, Clr/Home and Shift+Clr/Home the first and last
   row (WINDOWS 2.2). Column titles are bold dim (D41); row heights stay as WINDOWS 2.2 lists them (D36).
-  **The window's arrows scroll the pane under the pointer, else the slider's pane; no wheel unless Erez asks**
+  **The window's arrows scroll the pane under the pointer, else the slider's pane; no wheel unless it is decided so**
   (D37). **⇧^S shows or hides every sidebar** (D45). A player's keys are an exception (EPlay: Clr/Home is Stop;
   D53). **In a window where a text field owns the keyboard** (ClaudeST's reply line) Tab moves the list cursor, Up
   and Down scroll, Return on an empty field opens the item, Insert opens the menu, and Esc stops or leaves a
   search and never empties the field (D46).
 - **Redraw** uses the AES rectangle list. Nothing is drawn outside the work area.
-- **The AES's widgets (must; Erez, 24 Oct 2026, after a MiNT tester's report).** What the AES
+- **The AES's widgets (must; decided 24 Oct 2026, after a MiNT tester's report).** What the AES
   draws in its own look (TOS, XaAES, N.AES and MyAES all have themes) is never drawn by hand:
   - **Resizing is the AES's sizer** (`SIZER` in the window's parts), never a corner of the app's
     own drawn in the work area.
   - **Where the window's content scrolls as one,** the AES's own sliders (`VSLIDE`, `HSLIDE`,
     the arrows).
-  - **The pane at the window's right edge uses the AES's own slider column** (Erez, 24 Oct
+  - **The pane at the window's right edge uses the AES's own slider column** (decided 24 Oct
     2026): `VSLIDE`, `UPARROW` and `DNARROW` in the window's parts, `WF_VSLIDE` and
     `WF_VSLSIZE` set from that pane, `WM_ARROWED` and `WM_VSLID` scroll it. With only a `SIZER`
     the AES keeps that column anyway, empty but for the box (on TOS 1.04 a row at the bottom
     too), so the pane's own bar would sit beside an empty one. Where two panes are stacked at
     the right edge, the larger one takes it; the other keeps its own bar.
-  - **One click, one step** (Erez, 28 Oct 2026): a click on a window's arrow or slider track
+  - **One click, one step** (decided 28 Oct 2026): a click on a window's arrow or slider track
     moves it a line or a page, once. The AES sends such a click twice (a second
     `WM_ARROWED`, the same, the next event, the button let go): TOS 4.04 every click, TOS 1.04
     now and then when the program draws between the messages;
@@ -1375,7 +1374,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
     at its right from `common/ui/panebar.c`: AES objects drawn by `objc_draw`, so it takes the
     AES's look for a window's own sliders, so it matches the bar beside it: TOS's dotted track
     and white slider on TOS and EmuTOS, even TOS 4's, which draws dialogs in 3D but window
-    sliders flat (Erez's EContact on TOS 4.04, 27 Oct 2026: the list's bar 3D beside the card's
+    sliders flat (EContact on TOS 4.04, 27 Oct 2026: the list's bar 3D beside the card's
     flat one); 3D where the AES draws its windows so (MagiC, XaAES, N.AES, MyAES). It is as
     wide as the AES's own slider column (`wind_calc`: 19 pixels on TOS 1.04 in ST high, 23 on
     TOS 4 in VGA, 20 under XaAES; `graf_handle`'s box is only XaAES's character cell) and its
@@ -1422,7 +1421,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
     match it to the colours pens 0–15 really have now (`vq_color`): NVDI's 16 are not TOS's. Don't
     search pens 16 and up for such a colour: they hold whatever palette is loaded (NVDI's, a
     saved one, EWeb's while it runs), and EContact 1.61's greys found there came out green on
-    Erez's Falcon under NVDI. EContact 1.62 and ECal 2.23 do it this way. Pictures may still be
+    a real Falcon under NVDI. EContact 1.62 and ECal 2.23 do it this way. Pictures may still be
     matched against all 256 pens.
   - The same in 16 colours and fewer: a UI colour is never a fixed pen number there either. A
     TT's 16 have light colours at 9 to 14 where a Falcon's have dark ones (EUpdate's "New release"
@@ -1435,7 +1434,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
 - **Dialogs, alerts, menus and context menus use the system font.**
 - **The content font can be chosen** through GDOS/NVDI (shared `font.c`) and is saved in the INF.
   Apps follow the font protocol `FONT_CHANGED` (EHypView).
-- **The Font dialog lists only fonts the program can use** (Erez, 20 Oct 2026): never a greyed
+- **The Font dialog lists only fonts the program can use** (decided 20 Oct 2026): never a greyed
   family or one that answers "can't be used" when chosen. A program that lays its text out in
   character cells (all of the family's so far) lists the system font and the fixed-width GDOS
   fonts only; proportional families are measured once (`NAME.FNT`) and left out of the list, not
@@ -1444,20 +1443,20 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   stays listed (Hebrew falls back to the system font; the Type line says so). An accessory under
   FONTGDOS or SpeedoGDOS may list the program's fonts for use from the next start, saying so: it
   can use them then.
-- **One Font dialog for the family, laid out as Atari font selectors are** (Erez, 20 Oct 2026):
+- **One Font dialog for the family, laid out as Atari font selectors are** (decided 20 Oct 2026):
   shared code in `common/ui/fontsel.c`, which every program calls, never its own copy. Side by side:
   - a **Family** list with one row per family (Courier 10 Pitch, FreeMono, Liberation Mono…), the
     system font first;
   - a small **Style** list for the chosen family: Regular, Italic, Bold, Bold Italic and any other
     style it has (Light, Condensed…), usable ones only;
-  - the **Size** list, the only place a size is chosen (no Pt: field: Erez, 20 Oct 2026);
+  - the **Size** list, the only place a size is chosen (no Pt: field: decided 20 Oct 2026);
   - below them the Type line and a small sample, "The quick brown fox jumps over the lazy dog" in
-    the font, style and size chosen, then OK and Cancel. No Hebrew samples (Erez, 20 Oct 2026):
+    the font, style and size chosen, then OK and Cancel. No Hebrew samples (decided 20 Oct 2026):
     the Type line says where a font's Hebrew comes from, and an app keeps the Hebrew layout of
     bitmap fonts it already has in its INF.
   Families and styles come from the VDI where it says them (NVDI and SpeedoGDOS: `vqt_xfntinfo`'s
   family and style names), else from the font's name (its trailing Bold, Italic, Oblique, Light…).
-  The dialog is 48 by 17 cells of the system font, a quarter smaller than the first (Erez).
+  The dialog is 48 by 17 cells of the system font, a quarter smaller than the first (20 Oct 2026).
   The keys work in all three lists (Tab moves between them; a letter jumps to a family), and the
   selection follows a click, never the pointer's rest (ClaudeST's stray row).
 - **Hebrew:**
@@ -1467,7 +1466,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
     Claude ST were the same table; the common definitions are weak, so an app keeps its own until
     it drops them), F10 switches it (in a `dlg_do` dialog too), and `dlg_do` types dialogs through
     `key_char` (plain GEM fields as well). While it is on
-    the app shows it, the same way in every app (Erez, 6 Nov 2026): the **badge** (the letters ayin
+    the app shows it, the same way in every app (decided 6 Nov 2026): the **badge** (the letters ayin
     and bet as a bitmap, 16 x 16 or 16 x 8, in any app and font: the AES's title bars and many VDI
     fonts have no Hebrew) at the **right end of a dialog's title band and of a main window's info
     line**, drawn by `hebrew_badge_right(vdi, x, y, w, h, colour)` (3 pixels in from the edge,
@@ -1478,12 +1477,12 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
     band or line. In a dialog window under a multitasking AES the title is the AES's, so there the
     info line is the only place. ECal's and EContact's `field.c` drew "\xD3\xC3" as text (tsadi and
     bet, not ayin and bet); they switch to the common badge.
-  - **No menu item for it** (Erez, 7 Nov 2026): the "Hebrew keyboard" menu entry is removed from every
+  - **No menu item for it** (decided 7 Nov 2026): the "Hebrew keyboard" menu entry is removed from every
     app; F10 switches it, as before, and everything else about it works as before (the badge, the
     dialogs, the INF). It is no longer shown in any menu. ECal's Hebrew dates is a setting, not a menu
     entry, and stays one. The help and the READMEs name F10, not the menu. A menu bar that held only that
     entry loses it (the shared menu builder takes the rows out, nothing else moves).
-  - **No setting for it either** (Erez, 8 Nov 2026): "Start with the Hebrew keyboard" is removed from
+  - **No setting for it either** (decided 8 Nov 2026): "Start with the Hebrew keyboard" is removed from
     every app's Settings. The Hebrew keyboard is an F10 behaviour only: it starts off in every program
     and dialog, F10 switches it, the badge shows while it is on. The INF has no `HEBREW=` key any more:
     an app neither reads nor writes it (a line left in an old INF is ignored). Nothing else changes (the
@@ -1491,7 +1490,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
     stays. The help and the READMEs say F10 and nothing about a start-up choice.
 
 ### 5.4 Text fields (must)
-- **A text field holds more than it shows** (Erez, 22 Oct 2026). What it takes is set by what goes
+- **A text field holds more than it shows** (decided 22 Oct 2026). What it takes is set by what goes
   into it, not by its width on the screen: the field shows a window of its text and scrolls it with
   the cursor. GEM's own fields (TOS 1 to 4, EmuTOS) take only as much as they show: EUpdate 1.2's
   token field, 30 wide, took 30 of a GitHub token's 93 characters.
@@ -1509,13 +1508,13 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   dialog loop of the app's own calls `lf_enter()` and `lf_key()`. Tested in `common/tests/dialog`.
 
 ### 5.5 App icons (must)
-- **One family of icons** (Erez, 22 Oct 2026): each app's own object, alone, with no frame, monitor or
+- **One family of icons** (decided 22 Oct 2026): each app's own object, alone, with no frame, monitor or
   badge round it. The family is in how they are drawn: 32 × 32, light from the top left, a
   near-black outline, a lighter top-left edge and a darker bottom-right one on every body, each
-  colour a step of one hue's ramp, no text (EPDF's "PDF" is the one exception: Erez, 30 Oct 2026).
+  colour a step of one hue's ramp, no text (EPDF's "PDF" is the one exception: decided 30 Oct 2026).
   Every pixel is drawn, not reduced from a bigger picture. The [256] drawing is shaded as a
   256-colour picture is, with the grey and red ramps' many steps (appicon.py's letters), not only
-  the 16 colours' few (Erez, 30 Oct 2026).
+  the 16 colours' few (decided 30 Oct 2026).
 - **The icons:**
   - ECal: a desk calendar with a clock.
   - EContact: an address card.
@@ -1526,18 +1525,18 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   - EWeb: the globe.
   - EPDF: a red book with PDF on its cover; its documents get a file icon of their own, a page with
     its corner turned and a red PDF band (`EPDFDOC`, for the desktop's `*.PDF` entry).
-  - EPlay: a loudspeaker sending out a play triangle, its ramps finer than the others' (Erez, 31 Oct
-    2026: "much more refined in terms of shading").
+  - EPlay: a loudspeaker sending out a play triangle, its ramps finer than the others' (decided 31 Oct
+    2026: finer shading).
   - EUpdate: git's mark over a disk, with an arrow down. Git's logo is Jason Long's, CC BY 3.0, so
     EUpdate credits it in its README and in its About box's fine print.
-  - EDOS: a screen with its menu, and a 5.25-inch disk (Erez, 24 Oct 2026).
+  - EDOS: a screen with its menu, and a 5.25-inch disk (decided 24 Oct 2026).
   - EFTP_XL: a 5.25-inch disk on the air, and a server.
   - AERA-Gateway: the ST, the Raspberry Pi in its case, and the cloud, connected.
 
   The last three are drawn the same way, for the READMEs, the profile and the social previews only:
   the 8-bit programs and the Gateway have no GEM desktop, so `make icons` doesn't run there.
 
-  A new app's icon is drawn with Erez in the hub, then added to `common/icons`.
+  A new app's icon is drawn with the owner in the hub, then added to `common/icons`.
 - **Three depths, each drawn by hand:** 256 colours (the master, in TOS 4.04's own palette), TOS's
   16 system colours, and black and white. Desktop icons bring no palette, so every pixel is one of
   the screen's standard colours.
@@ -1550,7 +1549,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   makes from them:
   - the desktop's `icons/NAME.RSC` (a G_CICON with the three depths and their selected images),
     in TOS's 256 colours: for TOS, EmuTOS, and NVDI with TOS's palette loaded (COLORVDI.CPX);
-  - `icons/NAMENV.RSC` (`--rscnv`, Erez, 23 Oct 2026), the same with the 256-colour image on NVDI's
+  - `icons/NAMENV.RSC` (`--rscnv`, decided 23 Oct 2026), the same with the 256-colour image on NVDI's
     own palette. The desktop draws a pixel as a hardware register, and NVDI's 256 colours share
     only 4 registers with TOS's, so `NAME.RSC` comes out in other colours under NVDI without a
     palette loaded. The release carries both, and the README says which to take. The name keeps
@@ -1559,20 +1558,20 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   - the ICN files;
   - `icon.h`, `icon16.h` and `icon256.h` for the About box (1.3) and the iconified window (5.1):
     `icon16_px` is in TOS's 16 VDI pens, drawn as they are. With 256 colours or more the About box
-    draws `icon256_px` (Erez, 22 Oct 2026): each of its colours with the pen that has it now (TOS's
+    draws `icon256_px` (decided 22 Oct 2026): each of its colours with the pen that has it now (TOS's
     own, unless an app's theme took some: then the nearest), lending none;
   - the README's pictures.
 
   An app's `make icons` runs it, and the app's own drawing scripts are removed. A change to an icon
   is made in AERA-Atari and reaches the app with `tools/sync-common.sh` and `make icons`.
 
-### 5.6 Dialogs: the 3D look (must; Erez, 24 Oct 2026)
-- **Never build a window, dialog or menu from these words alone** (Erez, 9 Nov 2026; EPDF 2.1's Settings was
+### 5.6 Dialogs: the 3D look (must; decided 24 Oct 2026)
+- **Never build a window, dialog or menu from these words alone** (decided 9 Nov 2026; EPDF 2.1's Settings was
   drawn from the text and did not look like the family's). Before drawing one, **open the family's real one** in
   Hatari (EMail 2.14's Settings for a settings dialog, EUpdate's or EFTP's window for a job window, EWeb's or
   EMail's menus for a menu bar) on TOS 4.04 and TOS 1.04, and **copy its code** (the sources named in 6.1 and
   3.1), not its idea. Where these words and the real app differ, the real app is right: tell the hub, who
-  corrects the words. A mock-up for Erez is a Hatari shot of the real thing changed, never a drawing.
+  corrects the words. A mock-up for the owner is a Hatari shot of the real thing changed, never a drawing.
 - **Where the AES draws 3D objects, every dialog and alert has its 3D look.** That is AES 3.4 and
   newer, asked through `appl_getinfo(13)` where it can be: TOS 4, MagiC, N.AES, XaAES, and
   EmuTOS's AES in 16 colours or more (EHypView's session found it, 24 Oct 2026). The box and its
@@ -1585,7 +1584,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   `dlg_modal_save` (so `alert()`) and the Font dialog call it themselves. An app that builds a
   tree and shows it some other way calls it once the tree is built (after `rsrc_obfix`), before
   it is drawn. No app sets the 3D flags by hand.
-- **There is no setting for it** (a tester, Erez 27 Oct 2026: an AES without 3D ignores the
+- **There is no setting for it** (a tester's report, 27 Oct 2026: an AES without 3D ignores the
   flags, so a setting only made dialogs flat where every other program's are 3D). The **3D
   dialogs** tick and `DIALOGS3D=` (24 Oct) are gone: an INF that still has the line is read
   without it, and the next save leaves it out. `dlg_3d_on` stays only for the tests.
@@ -1598,7 +1597,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
 - **Dialogs an app draws itself** (ECal's and EContact's) follow the same look where
   `dlg_3d_ok()`: the AES's 3D background colour, raised exit buttons, white fields.
   Their sessions propose how before doing it.
-- **Buttons are the AES's** (a tester, Erez 27 Oct 2026, of EFTP's): an exit button is a
+- **Buttons are the AES's** (a tester's report, 27 Oct 2026, of EFTP's): an exit button is a
   `G_BUTTON` with the AES's flags, drawn by the AES, never one drawn by hand or a box made to
   look like one, so it looks as every other program's buttons do on that AES.
   This is about a dialog's buttons; a toolbar's hand-drawn buttons are accepted when they behave right (3.4, D33).
@@ -1610,7 +1609,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   text) clears its place by drawing the tree there (`objc_draw`), never with white, so it sits
   on the 3D background.
 
-### 5.7 Pop-up buttons, frames and edges (must; a tester, Erez 27 Oct 2026)
+### 5.7 Pop-up buttons, frames and edges (must; a tester's report, 27 Oct 2026)
 - **A button with a down arrow opens a pop-up menu there and then:** the shared `popup()` (3.3),
   over the button, the choice it shows ticked; a click on another choice changes it at once.
   **How the button is drawn** (EHypView's `start_show`, EMail's `Translate into`): a `G_BOXTEXT` with
@@ -1638,7 +1637,7 @@ app's main window: [ui/WINDOWS.md](ui/WINDOWS.md).
   side and sends each app what differs.
 
 
-### 5.8 A click in a list: selected on press, done on release (must; Erez, 1 Nov 2026)
+### 5.8 A click in a list: selected on press, done on release (must; decided 1 Nov 2026)
 Every list works this way: folders, messages, files, contacts, events, a library's entries, a
 document's pages, a playlist.
 - **Mouse down:** the row is shown selected at once, before anything else. Only the old and the
@@ -1698,7 +1697,7 @@ document's pages, a playlist.
   the two apart: press to row drawn (50 ms) and release to the action's first stretch.
 
 
-### 5.9 The progress bar (must; Erez, 3 Nov 2026)
+### 5.9 The progress bar (must; decided 3 Nov 2026)
 One bar for a whole job, at the foot of the status bar, filling from left to right: common's
 `progbar` (`ui/progbar.h`). Its colours are fixed along its width, so filling it reveals them, and a
 bar nearly full shows them all:
@@ -1716,10 +1715,10 @@ bar nearly full shows them all:
 - `common/tests/progbar`: `make test` (the pens in each kind of screen, against TOS's, a TT's,
   NVDI's and EWeb's palettes; a bar drawn in pieces is the bar drawn whole) and `run.py WORK
   MACHINE [--nvdi]` (PRBTEST.PRG's screenshot).
-- EWeb and EPDF use it (their status bars, Erez; EConvert too); EFTP's rows, EContact's progress box and EWeb's
+- EWeb and EPDF use it (their status bars, as decided; EConvert too); EFTP's rows, EContact's progress box and EWeb's
   quit box still draw their own bars; EPlay and the apps in maintenance when they next draw progress
   (section 8). The geometry is the app's: [ui/CONTROLS.md](ui/CONTROLS.md) 7.
-- **Two written exceptions to one bar per job** (Erez, 9 Nov 2026): EFTP keeps a bar per running row in its Transfers
+- **Two written exceptions to one bar per job** (decided 9 Nov 2026): EFTP keeps a bar per running row in its Transfers
   pane, drawn with `progbar_fill` in the shared colours (D48), and EConvert keeps its two bars (D34).
 
 ### 5.10 How a dialog is run
@@ -1753,7 +1752,7 @@ bars (D34).
   - An INF left next to the PRG by an older version is copied to the root the first time.
   - A PRG-only app keeps its INF and key next to the program.
   - **"The folder it was started from" is `app_dir()`** (`atari/gem.c`, from the command `shel_read`
-    gives), never the current folder (Erez, 28 Oct 2026). TOS 1.04 and 4.04 start a program that
+    gives), never the current folder (decided 28 Oct 2026). TOS 1.04 and 4.04 start a program that
     another program starts with `shel_write` in the desktop's folder, whatever folder the caller set
     (EMail starting EWeb: EWeb missed its fonts). EmuTOS, MagiC and MiNT set it, so the emulated
     rigs never showed it; `common/tests/appdir` checks it on a real FAT floppy. Every file a program
@@ -1762,12 +1761,12 @@ bars (D34).
 - **The INF is plain text:**
   - One `NAME=value` per line, CR/LF line ends.
   - `;` comment lines that explain each setting.
-  - **An empty line after every setting** (Erez, 22 Oct 2026): a setting's `;` notes and its
+  - **An empty line after every setting** (decided 22 Oct 2026): a setting's `;` notes and its
     `NAME=value` line, then one empty line, so each reads as its own paragraph; a `[SECTION]` line
     has an empty line before it. A setting with no note of its own (EUpdate's `HAVEDATE=` under
     `HAVE=`) is a paragraph too. Reading skips empty lines; writing back keeps them.
   - The program writes it back keeping comments and unknown lines.
-  - **The INF is written only when a setting changed** (Erez, 12 Nov 2026). Quitting, closing a window or
+  - **The INF is written only when a setting changed** (decided 12 Nov 2026). Quitting, closing a window or
     leaving a dialog with nothing different from what was read at the start (or last written) writes no file:
     no open, no write, no rename, and the file's date stays. A change the user makes (a setting, a window's
     place or size, a pane's width, a font, a last-used folder or account) still writes it, once, at the
@@ -1776,12 +1775,12 @@ bars (D34).
     writes "to be safe". A program that rewrites a file in a new version's form (the old key read once,
     D43, D44) writes it once, on the first run that read an old form. This covers `NAME.INF` only; caches,
     logs and data files follow 6.5.
-  - **Window, pane and font keys are `WINDOW=x,y,w,h`, `PANES=` and `FONT=name,points`** (Erez, 9 Nov 2026): the
+  - **Window, pane and font keys are `WINDOW=x,y,w,h`, `PANES=` and `FONT=name,points`** (decided 9 Nov 2026): the
     focus apps now, the others when they next move their settings. **An app that changes a key may read the old key
     once,** so the user keeps the window and the font: the new key wins and only the new one is written. This is the
     one exception to "no compatibility code" at the top of this file (D43, D44).
 - **One Settings… dialog** (^,), the one EMail, EFTP, EUpdate, EWeb and EHypView have, built the same way
-  (Erez, 9 Nov 2026: an app that draws its own look "does not look like the family settings dialog").
+  (decided 9 Nov 2026: an app that draws its own look does not match the family's Settings dialog).
   **Copy the real one, not a description of it:** `settings_sidebar()` in EMail's `ui/dialogs.c` (EFTP's,
   EUpdate's and EWeb's `ui/dialogs.c` and EHypView's `src/gem/settings.c` are the same layout with their
   own pages). Its parts, in characters of the system font (a character is `gl_wchar` x `gl_hchar`), as
@@ -1827,7 +1826,7 @@ bars (D34).
   EWeb: General, Secure, Scripts; EHypView: General, Library. An app with one or two pages still has the
   list. ECal and EContact's FIELD dialogs are older and are to be brought to this one (a change for their next
   release; they are in maintenance).
-- **One engine** (Erez, 9 Nov 2026; the hub, 9 Nov): the dialog is `common/ui/settings.c` (`settings_run`), built with
+- **One engine** (decided 9 Nov 2026; the hub, 9 Nov): the dialog is `common/ui/settings.c` (`settings_run`), built with
   the object builder `common/ui/dlgbuild.c` (`db_begin`, `db_add`, `db_text`, `db_field`, `db_long`, `db_tick`,
   `db_button`, `db_band`, `db_end`), both lifted out of EMail 2.14's `settings_sidebar()`, `show_page()` and `d_*`
   (EFTP's, EUpdate's and EWeb's `ui/dialogs.c` and EHypView's `src/gem/settings.c` were copies of them). **An app writes only its pages**: an array of
@@ -1840,7 +1839,7 @@ bars (D34).
   Cancel, Esc and Undo put every tick, pop-up and text back as it was when the dialog opened. Return is OK, Esc and
   Undo Cancel (3.5), the long fields take their keys, the dialog opens in a window of its own under MiNT and MagiC
   (`dlg_band`, `dlg_in_window`) and is drawn again after a pop-up or a dialog of the app's over it. The header
-  `settings.h` has a complete example. **An app moves to it (EPDF first; the apps in maintenance, section 8, when Erez ends it) by deleting its own
+  `settings.h` has a complete example. **An app moves to it (EPDF first; the apps in maintenance, section 8, when the owner ends it) by deleting its own
   `settings_sidebar()`, `show_page()`, tick and page tables and loop, and says so in its commit**; no app keeps a copy. Checked in
   `common/tests/settings`: `make test` (the tree's geometry, the pages, ticks, fields, pop-ups, the keys, the limits,
   against a stand-in AES) and `run.py` (SETDEMO.PRG: EMail 2.14's six pages and EHypView 1.39's two, built with the
@@ -1881,21 +1880,21 @@ INF, and on the next start the app offers to show it (`crash_offer()` in `common
 Every open costs real time on the family's disks (an SD card on SCSI under HDDRIVER, ACSI drives):
 each `Fopen`, `Fcreate` and `Fsfirst` walks the FAT and the folder and reads sectors. Measured on
 18 Oct 2026: EContact 1.49's accessory opened files 146 times to sync 25 photos, and EHypView 1.12's
-opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
+opened its 491 KB index 123 times, 4 KB at a time. Decided 18 Oct 2026:
 - **What the user does goes to disk at once.** An event, a contact, a message or a setting the user
   made or changed is saved there and then, in one safe save (`pf_save`). Nothing the user typed
   waits in memory.
 - **Bulk work goes through memory.** A sync, a download, a transfer or an index gathers what it
   brings in memory and writes it in one go at the end of the job, or when its buffer is full: never
   a write per card, photo, event or block. What a reset loses is fetched again by the next sync.
-- **The memory: TT RAM first, else ST RAM** (Erez's decision, as EFTP does it). A program takes
+- **The memory: TT RAM first, else ST RAM** (decided, as EFTP does it). A program takes
   its job's buffer with `big_alloc` (`common/atari/bigbuf.c`, from EFTP's `pf_bigbuf`): TT RAM, a
   TT's or an accelerated Falcon's Fast RAM, when there is enough of it, else ST RAM, with 64 KB of
   TT RAM and 32 KB of ST RAM left; Malloc on TOS 1.x. The heap prefers TT RAM too (`libc.c`,
   Mxalloc mode 3) and the programs are built with PRGFLAGS 7 (they load and Malloc in TT RAM). An
   accessory has only the memory it took at boot (2.2): its `acc_heap` takes it from TT RAM when
   there is some, and its buffers come out of that heap.
-- **TT RAM to the disk** (18 Oct 2026, from EWGET's runs on Erez's Falcon): straight, in big pieces,
+- **TT RAM to the disk** (18 Oct 2026, from EWGET's runs on a real Falcon): straight, in big pieces,
   when `big_direct()` says the driver bounces DMA itself (the `_FRB` cookie: HDDRIVER sets it);
   without `_FRB`, through a piece of ST RAM (8 to 32 KB) for each Fwrite and Fread. Copying through
   ST RAM didn't stop the Falcon's crash at exit, so it is not the cause. TOS 3.06 and 4.0x set
@@ -1914,8 +1913,8 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   file is read once per start.
 - **No disk while idle.** Whether a file changed is checked when the window opens or a job starts,
   never on a timer.
-- **NatFeats only where a test asks** (Erez, 15 Nov 2026: "make it a .INF setting so that it can be added in
-  our testing but have no bearing outside"). The emulator's console (common's `nf_debug`, `nf_probe`,
+- **NatFeats only where a test asks** (decided 15 Nov 2026: an INF setting the tests can
+  add, with no bearing outside). The emulator's console (common's `nf_debug`, `nf_probe`,
   `nf_find`) is looked for only when the app sets `nf_on` (`tos.h`), from `NATFEATS=1` in its INF, read before
   its first log line; only the test rigs write the key, it is in no Settings page, the app writes it back only
   when it read it (EMail's way: a rig's key survives the INF rewritten, a user never gets it; a rig of a first start,
@@ -1923,16 +1922,16 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   is probed and a real machine never runs the probe's illegal instruction. (A Vampire V4SA's Atari core, its
   VBR away from 0, ended EMail and EHypView and hung EWeb, EPDF and EPlay at that probe. nf.S also takes the
   vector from VBR now.) Common's own test programs set `nf_on = 1` themselves.
-- **TLSFB.OVL for the FireBee** (Erez, 15 Nov 2026: "yes to TLSFB.OVL, FireBee editions only on report"). Every
+- **TLSFB.OVL for the FireBee** (decided 15 Nov 2026: TLSFB.OVL, and FireBee editions only when a report asks for one). Every
   app with a Direct connection ships `tlsfb.ovl` beside `tls.ovl` (common's `tlsovl/tlsfb.ovl`, the same sources
   built for the ColdFire: `make CPU=5475`); `tls_ovl.c` loads it by itself where the `_CF_` cookie is set, and
   `ovl.c` flushes the ColdFire's caches its own way there.
-- **Every app has a native FireBee edition, in a package of its own** (Erez, 22 Nov 2026: "Make the other apps
-  native on the FireBee too"; then "Shall we just create two packages, one for FireBee and the other for
-  standard ST? ... EUpdate can then download the right package based on the running platform", and the same
-  file names in both; it replaces 15 Nov's "FireBee editions only on report").
-  - **Two zips a release, and nothing else** (Erez, 22 Nov 2026: "Remove all files from root and just have two
-    ZIP files, one for each platform"): `name-x.y.zip` for the ST, TT and Falcon and `name-x.y-firebee.zip`,
+- **Every app has a native FireBee edition, in a package of its own** (decided 22 Nov 2026: every app
+  native on the FireBee; then two packages, one for the FireBee and one for the ST, TT and Falcon, EUpdate
+  fetching the one for the machine it runs on, and the same file names in both; it replaces 15 Nov's
+  FireBee editions only on report).
+  - **Two zips a release, and nothing else** (decided 22 Nov 2026: no loose files in the release,
+    only two zips, one for each platform): `name-x.y.zip` for the ST, TT and Falcon and `name-x.y-firebee.zip`,
     no loose files beside them. Both hold the very same file names (`ecal.prg`, `ecal.acc`, `ecal.hyp`,
     `tls.ovl`...), the FireBee's built as ColdFire code: every file under its standard name ("rename all other
     FB files into their standard filename"), so the FireBee package's `tls.ovl` is TLS.OVL's ColdFire build
@@ -1944,16 +1943,16 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
     becomes `cpucheck_cf.S`, -lgcc common's `ll64.c`; the build fails on any EMAC instruction or hand-written
     Line-A word in the sources (their own assembly is read, not a disassembly) outside a file named with
     `--emac-ok`.
-  - **Each build names the other package** on the wrong machine (Erez: separate words for a program and an
+  - **Each build names the other package** on the wrong machine (decided: separate words for a program and an
     accessory). A program: "ECAL.PRG is for the ST, TT and Falcon. On the FireBee, install ECal's FireBee
     package." [Quit], and on the FireBee build "ECAL.PRG is for the FireBee. On an ST, a TT or a Falcon,
     install ECal's standard package." [Quit]. An accessory the same with ECAL.ACC and [OK]: it shows
     nothing at the boot (2.2), registers its Desk entry (`cpu_acc_name`) and shows its alert when opened,
     never ending (common's `cpucheck.c` and `cpucheck_cf.S`; `cpu_acc_alert`, `cpu_cf_acc_alert` for its own
     words; ECal found that returning stopped the machine).
-  - **EUpdate** fetches the package for the machine it runs on, for AERA's own repositories only (Erez, 22 Nov
-    2026: "this special FireBee treatment is just for AERA applications, standard GitHub projects are not
-    affected"): `-firebee.zip` where `_CF_` is set, the other zip elsewhere. Any other repository is handled as
+  - **EUpdate** fetches the package for the machine it runs on, for AERA's own repositories only (decided 22 Nov
+    2026: the FireBee handling is for AERA's apps only; other GitHub projects are not
+    affected): `-firebee.zip` where `_CF_` is set, the other zip elsewhere. Any other repository is handled as
     before.
   - **The order of the zips**: an EUpdate up to 2.14 takes every zip of a release, in the order GitHub's API
     lists them, and the last one unpacked wins. GitHub lists a release's files by name, not by upload (EUpdate
@@ -1964,7 +1963,7 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   - **The first zips-only release's notes** say, in one line: "If you set Files in EUpdate's Get info for this
     program, empty it." An EUpdate whose Files names a loose file finds nothing in a release of zips (EUpdate,
     22 Nov 2026: its row says no file is chosen); DEFAULTS.INF names none, so only Files typed by hand.
-  - **EUpdate's own move** (Erez, 22 Nov 2026, "Bridge for 2.15"): today's FireBee EUpdate is EUPDFB.PRG
+  - **EUpdate's own move** (decided 22 Nov 2026: 2.15 as the bridge): today's FireBee EUpdate is EUPDFB.PRG
     2.14, which knows no FireBee package. So EUpdate 2.15's standard package still carries EUPDFB.PRG, its
     2.15 ColdFire build, for that release only. 2.15 on a FireBee then takes the FireBee package, writes
     EUPDATE.PRG, removes EUPDFB.PRG (and EWeb's and EPlay's `*FB.PRG` as it writes theirs) and says once:
@@ -1974,17 +1973,16 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
     `tests/coldfire` way: an app's core against its host build); each build's alert on the wrong machine (the
     FireBee stand-in, a Falcon, an ST), an accessory's boot reaching the desktop. GEM, the screen and the real
     speed are a FireBee's: the release, and the tester's log.
-- **The log is written as it happens, the file kept open a second at most** (Erez, 15 Nov 2026: "apps should
-  write log at once as otherwise it may be ineffective to trace errors"; 17 Nov 2026: "Yes, build the log middle
-  way into the fix release. If other AERA apps behave the same where they open and close the log file ever so
-  often, they need to change accordingly as well"). Each line is one write at once to a file kept open; the
-  close, where GEMDOS writes the FAT and the directory (140 ms a line on Erez's DFB1's IDE, against 1.4 ms for the
+- **The log is written as it happens, the file kept open a second at most** (decided 15 Nov 2026: a log written
+  later is of little use for tracing faults; 17 Nov 2026: the middle way, in the fix release, and every other
+  AERA app that opens and closes its log that often changes the same way). Each line is one write at once to a file kept open; the
+  close, where GEMDOS writes the FAT and the directory (140 ms a line on an accelerated Falcon's IDE, against 1.4 ms for the
   write), comes in the event wait once a line has waited a second, at once before a connection, at an error, at
   a crash's report, a save, the quit and appl_exit, never inside a TLS handshake (common's `conn.c`, 7db762f). An
   accessory closes it before every event call (2.2). A freeze loses at most the last second's lines. An app's
   own logger outside `conn.c` does the same.
-- **No log without its switch** (Erez, 14 Nov 2026: "they must have a log on and off menu item and setting
-  storage"). A program that writes a log of its own (`NAME.LOG`: connections, measurements, a quit's
+- **No log without its switch** (decided 14 Nov 2026: a menu item to turn the log on and off, kept as a
+  setting). A program that writes a log of its own (`NAME.LOG`: connections, measurements, a quit's
   steps, anything else) has `Write a log` as a tick in Options (last, 3.1) and in Settings, one setting kept
   in step, stored in its INF as `LOG=` and off until the user ticks it. With it off, nothing is written: no
   file, not one line. `CRASH.LOG` is the one exception, written by the crash handler (6.4) only after a
@@ -1994,16 +1992,16 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   not "no memory". Every call of an app's own (outside common, whose bigbuf.c, libc.c, aboutline.c and offpage.c
   already do) falls back to Malloc on -32, as EPlay's `x_alloc` does; Mxalloc(-1, mode) for a size is Malloc(-1)
   there. EPlay 1.38 and every release before it could add no file on a real STE (TOS 1.62); EmuTOS has Mxalloc,
-  so no rig saw it until the rigs ran on Erez's TOS.
+  so no rig saw it until the rigs ran on real TOS.
 - **The log is capped** (hub, 9 Nov 2026): `conn.c` writes `NAME.LOG` in blocks, one open a flush, and a
   write that would take it over 256 KB (`conn_log_max`) moves it to `NAME.OLD` (an older one goes) and
   starts a new one, so the last 256 to 512 KB are kept and no log grows without end. The size comes from
   the handle already open (the app sets `conn_log_size = pf_handle_size`), not a look at the folder. An
   app may write one `conn_log_start("NAME x.y")` line at its start; `conn.c` never does.
-- **What a call costs on Erez's Falcon** (CALIB.PRG, 5 Nov 2026; `common/tests/slowdisk`), per call,
+- **What a call costs on a real Falcon** (CALIB.PRG, 5 Nov 2026; `common/tests/slowdisk`), per call,
   TOS 4.04, IDE, a file of 1 to 32 KB:
 
-  | call | stock 16 MHz | DFB1 50 MHz |
+  | call | stock 16 MHz | accelerated, 50 MHz |
   |---|---|---|
   | create, rename, delete | 245 ms | 75 to 115 ms |
   | make or remove a folder | 300 to 380 ms | 270 to 315 ms |
@@ -2016,10 +2014,10 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
   second on the stock Falcon. So: few files, each written once, in one piece; no file made,
   renamed or deleted where one written in place does (EWeb's two-slot files); a pack's index read
   once and its records read in pieces. The speed rig charges these times (`slowdisk`): the stock
-  column on `Falcon-4`, the DFB1's on `Falcon`.
+  column on `Falcon-4`, the accelerated one on `Falcon`.
 - **TOS's pool:** every open file and every folder looked into takes an entry in TOS's small
   internal pool, and folders keep theirs; when it runs out TOS halts ("OUT OF INTERNAL MEMORY", on
-  Erez's Falcon with the family's accessories, 19 Oct 2026). Fewer opens and fewer folders are
+  a real Falcon with the family's accessories, 19 Oct 2026). Fewer opens and fewer folders are
   the lasting cure; every README's Getting started also tells the user to put `FOLDR100.PRG`
   (renamed `FOLDR400.PRG`) first in `AUTO` (the repo template).
 - **Checked:** the rigs count each job's opens and lookups from Hatari's GEMDOS trace (EContact's
@@ -2031,7 +2029,7 @@ opened its 491 KB index 123 times, 4 KB at a time. Erez's decision, 18 Oct 2026:
 ### 6.6 File names in lowercase (must)
 On MiNT a drive can be case-sensitive (ext2, minix): there `EWEB.INF` and `eweb.inf` are two
 files, and a program that asks for one doesn't find the other. A tester found the family's programs
-missing their own files on an ext2 drive (24 Oct and 2 Nov 2026). Erez's decision, 2 Nov 2026:
+missing their own files on an ext2 drive (24 Oct and 2 Nov 2026). Decided 2 Nov 2026:
 every name the family gives a file or a folder is in lowercase, in the code and in the releases,
 for every app (the ones in maintenance too: section 8).
 - **In the code**, every file and folder a program opens, creates, looks for, renames or deletes by
@@ -2047,7 +2045,7 @@ for every app (the ones in maintenance too: section 8).
   pages, where Atari users write them in capitals (`EWEB.INF`).
 - **Names from outside** (a file chosen in the file selector, dropped, given by VA_START or found in
   a folder's listing) are used exactly as they came.
-- **What is on a disk already** isn't looked for under its old name (Erez, 2 Nov 2026: a fresh
+- **What is on a disk already** isn't looked for under its old name (decided 2 Nov 2026: a fresh
   start): someone who installed an earlier release on an ext2 drive deletes its folder and installs
   the new one, which each app's first release under this rule says once in its notes.
 - **Checks.** The hub runs each app's release under FreeMiNT with its folder on an ext2 drive.
@@ -2061,7 +2059,7 @@ for every app (the ones in maintenance too: section 8).
 ### 7.1 Connections
 - **Transport:** the shared `net_tos` (STinG, or MiNTnet when present). Every networked app's
   README (Getting started) and guide tell STinG users to set the Delay in `STING.CPX` to 10 on a
-  Falcon or TT, 25-50 on an ST: STinG polls the card that often, and on Erez's Falcon with a
+  Falcon or TT, 25-50 on an ST: STinG polls the card that often, and on a real Falcon with a
   NetUSBee Delay 10 took downloads from 40 to 75 KB/s (EFTP, 20 Oct 2026). No app's code can do
   better than STinG's pace.
 - **DNS:** STinG's resolver, else the built-in one with a **random transaction ID**. Every count
@@ -2069,7 +2067,7 @@ for every app (the ones in maintenance too: section 8).
   `tests/dns`).
 - **A Direct connection does TLS 1.2 on the Atari** (a TT, a Falcon, any 68020 or better; TLS.OVL, 7.4):
   - BearSSL, with RSA and the curves on the Falcon's DSP.
-  - **Session secrets never touch the disk** (Erez, 14 Nov 2026: "no, keep session secrets off the disk"): a
+  - **Session secrets never touch the disk** (decided 14 Nov 2026: session secrets stay off the disk): a
     TLS session is resumed only within a run, from memory (16 kept, `tls.c`'s `NSESS`). What may be kept
     between runs is what isn't secret: `ROOTS.DAT`, `SIGS.DAT`, `SEED.DAT`, and the hosts that need ECDSA or
     every cipher (`conn_hosts_path`).
@@ -2101,14 +2099,14 @@ for every app (the ones in maintenance too: section 8).
   unencrypted").
 - **Never logged**, never in `CRASH.LOG`, never in a screenshot used in docs.
 - **The log stays small:** `NAME.LOG` is capped at 256 KB and rolls over to `NAME.OLD` (6.5), so a log
-  Erez sends or a user attaches is bounded; what is never logged (above) is never kept in `.OLD` either.
+  a tester sends or a user attaches is bounded; what is never logged (above) is never kept in `.OLD` either.
 
 ### 7.3 The Gateway
 - **They live in [AERA-Gateway](https://github.com/whomper/AERA-Gateway)**: emailgate (EMail),
   ecalgate (ECal and EContact), eftpgate (EFTP), and `aeragate.py`, the rules below in one place.
   The apps carry `gateway/` as a read-only copy (`tools/sync-gateway.sh`), as they carry `common/`.
-  ClaudeST's bridge stays in ClaudeST until it moves (Erez, 5 Nov 2026).
-- **The Gateway session owns the gateway as one unit** (Erez, 7 Nov 2026). Everything that runs on
+  ClaudeST's bridge stays in ClaudeST until it moves (decided 5 Nov 2026).
+- **The Gateway session owns the gateway as one unit** (decided 7 Nov 2026). Everything that runs on
   the Gateway (the services, the installer, `aeragate.py`, the port table, CI, the one `VERSION`, the
   release, `update-pi.sh`) is committed, tested and released by AERA-Gateway's own session. The app
   sessions are the experts: each writes and maintains its service and decides its protocol (EMail
@@ -2122,16 +2120,16 @@ for every app (the ones in maintenance too: section 8).
     only, one `VERSION`. It integrates, runs the unit's checks and releases, then gives the link to
     the app session and the hub.
   - An app release that needs a gateway change names the gateway version it needs and goes out after
-    that release; a port or a package on the Gateway is Erez's decision first.
+    that release; a port or a package on the Gateway is the owner's decision first.
   - In maintenance mode this is unchanged: what a focus app asks for goes on, through the same path.
-- **The name is Gateway** (Erez, 7 Nov 2026): the user sees **Gateway**, never "Pi" or "Pi gateway",
+- **The name is Gateway** (decided 7 Nov 2026): the user sees **Gateway**, never "Pi" or "Pi gateway",
   in every app: the status line ("Gateway"), Settings' Secure page ("Through the Gateway: address,
   port"), menus, alerts ("The Gateway doesn't answer: is it on?"), the About box, the help guide, the
   README and the release notes. "Raspberry Pi" stays only where the hardware itself is meant (the
   install steps: "on a Raspberry Pi"). The INF keys (`GATE=`, `GATEPORT=`) and the code's names stay.
   Each app changes its words with its next release (the apps in maintenance with a release they
   make anyway, no release of their own for it).
-- **Work handed to the Gateway shows three phases** (Erez, 7 Nov 2026): when an app sends something
+- **Work handed to the Gateway shows three phases** (decided 7 Nov 2026): when an app sends something
   for the Gateway to process (a letter to translate, a PDF to convert, a page to render), the
   status line tells where the time goes, in the order it passes:
   1. **Sending**: "Sending to the Gateway... 12 KB" (the size, and as it goes the part already sent);
@@ -2141,7 +2139,7 @@ for every app (the ones in maintenance too: section 8).
      line may add "page 3 of 12"; Receiving starts at the final status line, never at a 1xx);
      the user can press Esc;
   3. **Receiving**: "Receiving from the Gateway... 3 KB".
-  Then the status line returns to what it showed. The words are proposed here and are Erez's to
+  Then the status line returns to what it showed. The words are proposed here and are the owner's to
   change. The code is common's: a gateway client calls `conn_phase(GATE_SEND / GATE_WAIT /
   GATE_RECEIVE / GATE_DONE, bytes)` (`conn.h`; `translate.c` does for translating) and the app sets
   its status line from the handler; progress inside Sending and Receiving comes from
@@ -2166,7 +2164,7 @@ for every app (the ones in maintenance too: section 8).
   change only with the app's OK.
 - **No test-only switches** such as `--insecure` in the installed service.
 - **Docs and examples use `192.168.1.x`** and `PI_IP` / `ATARI_IP`, never a real home network.
-- **Every app with a gateway says how to set up the Gateway** (Erez, 21 Oct 2026), in its README and
+- **Every app with a gateway says how to set up the Gateway** (decided 21 Oct 2026), in its README and
   its help guide alike. It gives the steps from a fresh Raspberry Pi, with the app's own service line, then how
   to update and check, then where in the app the Gateway's address and port go:
 
@@ -2189,7 +2187,7 @@ for every app (the ones in maintenance too: section 8).
   ```
 
 ### 7.4 Direct connection: TLS.OVL (must, 24 Oct 2026)
-- **One program for every Atari** (Erez, 24 Oct 2026). TLS on the Atari (BearSSL, the DSP's RSA and
+- **One program for every Atari** (decided 24 Oct 2026). TLS on the Atari (BearSSL, the DSP's RSA and
   curves, 68030 code: about 140 KB) is not in the program but in `TLS.OVL` next to it. An ST never
   loads it and keeps the memory; a TT, a Falcon or an accelerated ST (68020 or better) loads it the
   first time a Direct connection needs it, into the program's own memory (an accessory's heap, 2.2;
@@ -2210,10 +2208,10 @@ for every app (the ones in maintenance too: section 8).
   connection is ticked in Settings, so the user hears at once, not at the first connection. The log
   says "TLS.OVL 1.0 loaded, 139 KB, 50 ms"; the About box names `tls_ovl_version()` beside the
   connection.
-- **The name.** The user sees **Direct connection** (Erez, 24 Oct 2026) in the menu, Settings' Secure
+- **The name.** The user sees **Direct connection** (decided 24 Oct 2026) in the menu, Settings' Secure
   page, alerts, the help file and the README, never "Falcon mode", which a TT owner doesn't relate to.
   The INF keeps `FALCON=` (its note says Direct connection), so settings carry over.
-- **EUpdate uses TLS.OVL too** (Erez, 27 Oct 2026; 1.20): it loads the family's TLS.OVL at its
+- **EUpdate uses TLS.OVL too** (decided 27 Oct 2026; 1.20): it loads the family's TLS.OVL at its
   first job, once its window is drawn, and a missing or damaged TLS.OVL gives an alert and a line in
   the log, with nothing asked of GitHub. Its program at start went from 423 KB to 278 KB. It brings
   TLS.OVL in each zip it unpacks, its own included, puts TLS.OVL next to each app it updates, and an
@@ -2229,33 +2227,32 @@ for every app (the ones in maintenance too: section 8).
 
 ## 8. Where each app stands (October 2026; checked with every app 22 Nov 2026)
 
-**Focus and maintenance (Erez, 1 Nov 2026).** EWeb, EPDF and EPlay have the family's effort until
+**Focus and maintenance (decided 1 Nov 2026).** EWeb, EPDF and EPlay have the family's effort until
 they reach 1.0. Every other app (ECal, EContact, EMail, EFTP, EHypView, ClaudeST, EUpdate, and
 AERA-Gateway, EDOS and EFTP_XL) is in maintenance mode:
 - no new features and no speed rounds of its own;
-- **every family rule holds for it as for the focus apps** (Erez, 17 Nov 2026: "there needs to be a
-  constant behavior across all applications. In the future, all applications must adhere to family
-  rules and be notified. We will review whether they need to issue a release." and "Applications on
-  maintenance does not mean they contain faults"). The hub notifies every app, maintenance or not, of
+- **every family rule holds for it as for the focus apps** (decided 17 Nov 2026: the same behaviour
+  in every app; every app keeps the family rules and is told of each, and whether it needs a release
+  is reviewed; an app in maintenance is not thereby an app with faults). The hub notifies every app, maintenance or not, of
   each new or changed rule and each shared fix; the app adopts it (with the shared code it needs) and
-  ticks its row here. Whether that needs a release of its own is reviewed with Erez through the hub;
+  ticks its row here. Whether that needs a release of its own is reviewed with the owner through the hub;
   a fault fix always does;
 - a release otherwise only for a security or data-loss fault, a crash or breakage, something outside
   that stops it working (a certificate, a server), or something EWeb, EPDF or EPlay need from it;
-- its session runs nothing in the background and waits for Erez or the hub.
+- its session runs nothing in the background and waits for the owner or the hub.
 
-One change goes to every app all the same (Erez, 2 Nov 2026): file names in lowercase (6.6), with
+One change goes to every app all the same (decided 2 Nov 2026): file names in lowercase (6.6), with
 the shared code it needs and a release each.
 
-EWeb's ST edition (`EWEBST.PRG`) is frozen after 1.0 (Erez, 4 Nov 2026, from EWeb's session): bug
+EWeb's ST edition (`EWEBST.PRG`) is frozen after 1.0 (decided 4 Nov 2026, from EWeb's session): bug
 fixes only, no new features; it stays in every release as 1.0 has it. Its rigs (the 1040 ST in
 `hatarigui`, the 68000 checks) run for a release, not for each change (the accessories are not run beside it any more: 4 Nov 2026), and the
 family's newer ST rules (the About box's 200 ms, NVDI on the ST of 2 Nov) apply to it as to an app in
 maintenance: with its next release, if there is one. `EWEB.PRG` (Falcon and TT) is unchanged.
 
-Only Erez ends it, by saying so explicitly. A rule added or changed here applies to every app; this
-table's ✗ and ? are work for the app concerned, in maintenance too (Erez, 17 Nov 2026). What the frozen apps would do next is kept
-in [PARKED.md](PARKED.md), to go through with Erez when the three reach 1.0.
+Only the owner ends it, by saying so explicitly. A rule added or changed here applies to every app; this
+table's ✗ and ? are work for the app concerned, in maintenance too (decided 17 Nov 2026). What the frozen apps would do next is kept
+in [PARKED.md](PARKED.md), to go through with the owner when the three reach 1.0.
 
 ✓ = done, ✗ = missing or different, ~ = partly done, ? = not reported yet. EWeb's column (0.11, a program for the TT and Falcon) is from its session's report. EPDF's
 (from 0.1, 31 Oct 2026) is from its session's report and the hub's runs; ? where not reported yet. EPlay's (31 Oct 2026: a program for the Falcon and TT, `EPLAYST.PRG` for the STE; 1 Nov: MP3 on any 68030 too, by the 68030, the DSP or the FDI, chosen in its settings, Auto by default) is — until its first release.
@@ -2268,12 +2265,12 @@ program's window.
 
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST | EWeb | EPDF | EPlay |
 |---|---|---|---|---|---|---|---|---|---|
-| Mode (Erez, 1 Nov 2026) | maintenance (2.57) | maintenance (2.12) | maintenance (2.28) | maintenance (2.16) | maintenance (2.10) | maintenance (2.14) | focus (1.25; 1.0 on 10 Nov) | focus (2.43; 2.44 next) | focus (1.52) |
+| Mode (decided 1 Nov 2026) | maintenance (2.57) | maintenance (2.12) | maintenance (2.28) | maintenance (2.16) | maintenance (2.10) | maintenance (2.14) | focus (1.25; 1.0 on 10 Nov) | focus (2.43; 2.44 next) | focus (1.52) |
 | 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a (program only) | n/a (program only) | — |
 | 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) | ✓ | ✓ (0.1) | — |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (common's, 0.1) | — |
 | 1.3 About reachable in every edition | ✓ | ✓ | ✓ | ✓ | ✓ (right-click menu) | ✓ | ✓ | ✓ | — |
-| 1.4 README is a front page: about 600 words, 100 lines, ten Highlights, one Gateway paragraph (Erez, 9 Nov 2026) | ✓ (653 words, 86 lines) | ✓ (650, 89) | ✓ (677, 92) | ✓ (621, 87) | ✓ (661, 83) | ✓ (652, 94) | ✓ pilot (699, 95) | ✓ (405; ten Highlights not yet) | ✓ (646, 82) |
+| 1.4 README is a front page: about 600 words, 100 lines, ten Highlights, one Gateway paragraph (decided 9 Nov 2026) | ✓ (653 words, 86 lines) | ✓ (650, 89) | ✓ (677, 92) | ✓ (621, 87) | ✓ (661, 83) | ✓ (652, 94) | ✓ pilot (699, 95) | ✓ (405; ten Highlights not yet) | ✓ (646, 82) |
 | 2.1 PRG + ACC (the app's choice) | ✓ | ✓ | ✓ PRG, and EMAILCHK.ACC beside it (1.57) | n/a (PRG only) | ✓ | n/a (PRG only) | n/a (PRG only) | PRG only | — |
 | 2.2 ACC ignores AP_TERM | ✓ | ✓ | ✓ (EMAILCHK.ACC, 1.57: AP_TERM goes to av_message, which ignores it) | n/a | ✓ | n/a | n/a | n/a | — |
 | 2.2 ACC quiet start (nothing before the first event call, ≤ 50 ms between calls) | ✓ (2.6: slices after START=, reminders from ALARMS.IDX; ≤ 50 ms Falcon, ≤ 100 ms ST, its session's Hatari run) | ✓ (1.40: loads in slices after START=; ≤ 50 ms Falcon, 90 ms ST, its session's Hatari run) | ✓ (EMAILCHK.ACC, 1.58: nothing before the first event call; ST-1 ≤ 100 ms a stretch through the gateway, Falcon ≤ 25; Direct's key exchange only while idle; the new-mail alert the AES's) | n/a | ✓ (1.7: index when opened, in steps; ≤ 40 ms between calls) | n/a | n/a | n/a | — |
@@ -2304,8 +2301,8 @@ program's window.
 | 6.1 INF in boot root (apps with an ACC) | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a | n/a (PRG only: beside the program) | — |
 | 6.2 Shared alert with bidi | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (0.1) | — |
 | 6.4 Crash handler (offers to show CRASH.LOG) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
-| 6.5 Disk: user's changes at once, bulk work through memory, one open per file per job | ✓ (2.13: ECAL.INF read once a start with no look; 3 looks a job; caches read in 16/32 KB pieces; a refresh gathered and written 16/32 KB at a time, ALARMS.IDX once; 10 changed: 6 opens and 8 looks, 2.11 8 and 34; idle 0; acc_files.py budgets; 2.32: written pieces count as read ones, ST-1 19/19, ST:mono 18/18) | ✓ (1.51: the photos in one pack, CACHE\PHOTOS.PAK; a job gathered in memory and written a buffer at a time; 192 photos: Falcon accessory 23 opens, program 17, a 4 MB ST's accessory 103 at Erez's 64 KB (1.49: 127 for 25); a refresh with 10 changed 52 to 5; reads and writes in 16/32 KB pieces, through ST RAM without _FRB; the log held for a job; on a 1 MB ST photos are not synced in the accessory; acc_files.py budgets) | ✓ (1.42: the bodies in one pack per folder, gathered in memory: Download all 53 in 5 opens and lookups, 166 before; FOLDERS.LST once per job; disk_test.py budgets) | ✓ (1.42: one open per file, the date set on the handle, 64 KB writes and reads from TT or ST RAM, no lookup per file, Dfree once per job; disk_audit.py) | ✓ (1.13: a file looked at once and opened once a job, size and date from the open file; the INF read once a start; the index read in 32 KB pieces (16 KB on a 68000) and written in one go; acc_files.py budgets) | ✓ (1.49: Save to disk gathered in memory, one write on an ST, four on a 1 MB ST, 569 in 1.48; Attach in 16/32 KB pieces; the font list one safe save; disk_budget.sh) | ✓ (0.12: EWEB.FNT open start to quit, INF written only when changed, ZOOM at once; a later session's first secure page 2 opens and 2 looks; disk_files.py budgets) | ✓ (0.2: EPDF.TXC opened once a document; 16/32 KB reads; files-test counts the opens) | — |
-| 6.6 File names in lowercase, in the code and the release (Erez, 2 Nov 2026; every app) | ✓ (2.42) | ✓ (1.77) | ✓ (1.72) | ✓ (1.76) | ✓ (1.39) | ✓ (1.74) | ✓ (0.62) | ✓ (0.5.4) | ✓ (0.16) |
+| 6.5 Disk: user's changes at once, bulk work through memory, one open per file per job | ✓ (2.13: ECAL.INF read once a start with no look; 3 looks a job; caches read in 16/32 KB pieces; a refresh gathered and written 16/32 KB at a time, ALARMS.IDX once; 10 changed: 6 opens and 8 looks, 2.11 8 and 34; idle 0; acc_files.py budgets; 2.32: written pieces count as read ones, ST-1 19/19, ST:mono 18/18) | ✓ (1.51: the photos in one pack, CACHE\PHOTOS.PAK; a job gathered in memory and written a buffer at a time; 192 photos: Falcon accessory 23 opens, program 17, a 4 MB ST's accessory 103 at a 64 KB heap (1.49: 127 for 25); a refresh with 10 changed 52 to 5; reads and writes in 16/32 KB pieces, through ST RAM without _FRB; the log held for a job; on a 1 MB ST photos are not synced in the accessory; acc_files.py budgets) | ✓ (1.42: the bodies in one pack per folder, gathered in memory: Download all 53 in 5 opens and lookups, 166 before; FOLDERS.LST once per job; disk_test.py budgets) | ✓ (1.42: one open per file, the date set on the handle, 64 KB writes and reads from TT or ST RAM, no lookup per file, Dfree once per job; disk_audit.py) | ✓ (1.13: a file looked at once and opened once a job, size and date from the open file; the INF read once a start; the index read in 32 KB pieces (16 KB on a 68000) and written in one go; acc_files.py budgets) | ✓ (1.49: Save to disk gathered in memory, one write on an ST, four on a 1 MB ST, 569 in 1.48; Attach in 16/32 KB pieces; the font list one safe save; disk_budget.sh) | ✓ (0.12: EWEB.FNT open start to quit, INF written only when changed, ZOOM at once; a later session's first secure page 2 opens and 2 looks; disk_files.py budgets) | ✓ (0.2: EPDF.TXC opened once a document; 16/32 KB reads; files-test counts the opens) | — |
+| 6.6 File names in lowercase, in the code and the release (decided 2 Nov 2026; every app) | ✓ (2.42) | ✓ (1.77) | ✓ (1.72) | ✓ (1.76) | ✓ (1.39) | ✓ (1.74) | ✓ (0.62) | ✓ (0.5.4) | ✓ (0.16) |
 | 5.4 Text fields hold more than they show (22 Oct) | ✓ (5e02c1a8, in 2.22: its own fields, as long as their settings: Server 399, Invite 255, Location 199; field_test.py) | ✓ (4f318ed7: its own fields, as long as their settings: server 399, phone 99, dlg_ask 63; long_field.py) | ✓ (17bf752c, in 1.51: accounts 63-95, signature rows 78, folders 199 and 63, passwords masked LFIELDs; field_test.py) | ✓ (aad64570, common at 6da68e1: Site Manager and Quick connect 63, folders 159, Rename 199 on the server; field_test.py on Falcon and ST-1) | ✓ (135ad790, in 1.20: Settings > Library PATHS= 128; gui-test on Falcon and ST:mono) | ✓ (125cb200, in 1.57: its own VDI fields, Rename and New project 71; long_field.sh) | ✓ (0e37396f, in 0.27: SEARCH= 255, GATE= 63, prompt() 255; EUpdate ✓ 3e85328, in 1.3) | ✓ (0.1: Find holds 64 in a 32-wide view) | — |
 | 5.2 Colours not set by the app come from pens 0–15, matched by TOS's colour (23 Oct) | ✓ (d8b1447f, 2.23) | ✓ (09e69cf2, 1.62) | ✓ (1ee7bb49, 1.53) | ✓ (939f2e5c, 1.47) | ✓ (b65c550c, 1.23) | ✓ (1f5e894b, 1.60) | ✓ (49353b4c 0.56; a07220da 0.82, the toolbar frame; EUpdate ✓ none found, 6f3e720) | ✓ (0.1: pens 0 and 1; pictures their own palette) | — |
 | 5.5 The family's icon from `common/icons` (appicon.py: RSC, ICN, icon.h, README pictures; 22 Oct) | ✓ (cebd1930, in 2.22) | ✓ (db0e0d15, in 1.61) | ✓ (5df39bb8, in 1.52) | ✓ (f8a7953a, in 1.46) | ✓ (f099e6e6, in 1.22) | ✓ (b19bcbbb, in 1.58; 256-colour About icon a0c1fd35, in 1.59) | ✓ (9dacc2ed, 256-colour About icon 2d71a75e, in 0.27; EUpdate ✓ febb9d6, in 1.4) | ✓ (EPDF and EPDFDOC, 0.1) | — |
@@ -2323,17 +2320,17 @@ program's window.
 | 7.4 One program; TLS in TLS.OVL; "Direct connection" (24 Oct) | ✓ (a9b9d77, 80ef99d, 2.25) | ✓ (0d310f0b5, 1.64) | ✓ (06dfac1, 1.56) | ✓ (b6cb9b16, 1.49) | n/a | n/a | ✓ (the name: 16fd3b8e, 0.31; EWEBST.PRG stays; EUpdate ✓ 83905f8f1, 1.20: TLS.OVL in place of its own TLS; it carries TLS.OVL and replaces ST editions since a0d1a101, 1.6) | n/a | — |
 | 1.2 No `-dev` label: every build shows `VERSION` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 | 1.2 Only formal releases leave the build machine (no CI artifacts) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (Gateway too) | ✓ | ✓ (0.1 by the Release workflow) | — |
-| 1.2 Releases go out without asking Erez (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) | ✓ | — |
-| Who decides what: Erez's part (new programs, capabilities, how programs work together, the user experience, phases, priorities, conflicts) in CLAUDE.md (31 Oct; EUpdate ✓ c6c69ddad; AERA-Gateway ✓ 226cb5c, committed by Erez) | ✓ (094b9afb) | ✓ (8a9d7888) | ✓ (16e2674b5) | ✓ (c844b2975) | ✓ (738d72c) | ✓ (e192cb83) | ✓ (d7893a129, 0.56) | ✓ (b90c64c) | ✓ (0e26f57) |
+| 1.2 Releases go out without asking the owner (23 Oct; EUpdate and AERA-Gateway too) | ✓ (d86a7b18) | ✓ (dd24bbab) | ✓ (4597cfd7) | ✓ (35cffa8a) | ✓ (55d79818) | ✓ (c64ed776) | ✓ (061b500d; EUpdate ✓ 6f3e720; AERA-Gateway ✓ 6c72dfc) | ✓ | — |
+| Who decides what: the owner's part (new programs, capabilities, how programs work together, the user experience, phases, priorities, conflicts) in CLAUDE.md (31 Oct; EUpdate ✓ c6c69ddad; AERA-Gateway ✓ 226cb5c) | ✓ (094b9afb) | ✓ (8a9d7888) | ✓ (16e2674b5) | ✓ (c844b2975) | ✓ (738d72c) | ✓ (e192cb83) | ✓ (d7893a129, 0.56) | ✓ (b90c64c) | ✓ (0e26f57) |
 | Speed: plain text, scrolls and selections through common's `text_plain`, `scr_rows`, `scr_xor` where the app draws them (31 Oct) | ✓ 2.35 (text_plain, scr_rows; selections are fills) | ✓ 1.75 (text_plain; its list, 240 px at most, keeps TOS's copy) | ✓ 1.69 (text_plain, scr_rows; scr_xor for the editor's cursor) | ✓ 1.70 (text_plain, scr_rows; selections are fills) | ✓ 1.35 (text_plain, scr_rows; scr_xor for the toolbar's pressed button) | ✓ 1.71 (text_plain, scr_rows; no XOR selections) | ✓ (d40227dd: text_plain, scr_rows; selections drawn in the page, not XOR) | ✓ 0.2 (text_plain, scr_rows, scr_xor) | — |
-| Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ (exception, Erez 31 Oct: a line scrolled on ST:mono 115-155 ms, glide steps kept) | ✓ (2.11: books read 100 ST:mono, 95 Falcon-4:16; the ST's Clr/Home 60-70, arrow 80-90, Backspace 65, accepted by Erez 20 Nov) | ✓ (the speed rig on all three; 2.22 level with 2.21) | ✓ (speed.py since 1.76, 5cf85ff; timed at the shipped layout 946c3b4; 2.12 gate) | ✓ (rig within, the rows over in work since 22 Nov) | ✓ (tests/hatari/speed.py; timed at the shipped layout 7b34aac7; 2.11) | ~ (0.56: the ST floor recorded, DESIGN.md 076f9a7c1, Erez 31 Oct; Falcon-4: 3 actions still over; EUpdate ✗) | ✓ (0.5, the hub's run on TOS 1.04/4.04: ST:mono, ST:med and Falcon-4, plain and under NVDI with Courier 14, all within; About 185 on ST:med, under 2 Nov's 200) | — |
+| Speed: the stock machines set it; a speed rig on `ST` and `Falcon-4` within the times (26 Oct) | ✗ (exception, decided 31 Oct: a line scrolled on ST:mono 115-155 ms, glide steps kept) | ✓ (2.11: books read 100 ST:mono, 95 Falcon-4:16; the ST's Clr/Home 60-70, arrow 80-90, Backspace 65, accepted 20 Nov) | ✓ (the speed rig on all three; 2.22 level with 2.21) | ✓ (speed.py since 1.76, 5cf85ff; timed at the shipped layout 946c3b4; 2.12 gate) | ✓ (rig within, the rows over in work since 22 Nov) | ✓ (tests/hatari/speed.py; timed at the shipped layout 7b34aac7; 2.11) | ~ (0.56: the ST floor recorded, DESIGN.md 076f9a7c1, decided 31 Oct; Falcon-4: 3 actions still over; EUpdate ✗) | ✓ (0.5, the hub's run on TOS 1.04/4.04: ST:mono, ST:med and Falcon-4, plain and under NVDI with Courier 14, all within; About 185 on ST:med, under 2 Nov's 200) | — |
 | Speed: text through `text_n` and `text_fx` (`common/ui/text.c`), clipping off inside the clip (26 Oct) | ✓ (draw.c text_at; 2.34/2.39) | ✓ (2.11: draw.c's bold is text_fx, its v_gtext_n loops text_n; screens pixel for pixel the same) | ✓ (1.62: cb210535) | ✓ (1.61: 25e66d0) | ✓ (266db73, 1.28) | ✓ (1.66: 387e054) | ✓ (d89ee749, 0.43) | ✓ (0.1: textwin.c draw_rows) | — |
 | Speed: the clip set to the area moved before a scroll's `vro_cpyfm` (26 Oct, EFTP) | ✓ (win.c clip_on before scr_rows) | ✓ (1.70: no change needed) | ✓ (1.62: scroll_copy, as it was) | ✓ (1.62: 71432ab9d) | ✓ (scroll_area's text_clip before scr_rows, 1.28) | ✓ (1.66: text_noclip before each copy) | ✓ (0.43: clip_on before both scrolls; EUpdate ✓ 1.15: 39ffae04a) | ✓ (0.1: textwin.c moved()) | — |
-| 1.2 No app tests with another AERA program or accessory (Erez, 8 Nov): stand-ins in the app's repo, the real ones in the hub's family checks | ✓ (ECal ab0711a0: fakecontact.acc stand-in; hypview_test dropped; no fetch) | ✓ (EContact 78027a582: alertacc.acc stand-in; docs_shots no longer fetches EMail or ECal; the two screenshots stay) | ✓ (EMail e85fd2c, acb5b87: fakeweb/fakehelp/fakecontact/fakecal stand-ins; no getrelease; rig.py fix for Xvfb) | ✓ (EFTP 2954ee7: none loaded or fetched; THING.ACC stand-in; rig.py drops AERA_WITH_ACCS) | ✓ (EHypView c74277de: tests/fixtures/front test guide replaces the family's help in the colour, speed and acc-files tests; nothing fetched; ASKHELP.PRG stand-in) | ✓ (ClaudeST bdc76da: font_gdos.py --release is now --prg FILE; nothing fetched) | ✓ (EWeb 7a43e307f: the gateway group runs EWeb alone; Gateway checks kept) | ✓ (EPDF ec7cbc52e, aa8b18e31: fakegate.py stand-in and the real pdfgate.py) | ✓ (EPlay: none loaded or fetched; no commit) |
+| 1.2 No app tests with another AERA program or accessory (decided 8 Nov): stand-ins in the app's repo, the real ones in the hub's family checks | ✓ (ECal ab0711a0: fakecontact.acc stand-in; hypview_test dropped; no fetch) | ✓ (EContact 78027a582: alertacc.acc stand-in; docs_shots no longer fetches EMail or ECal; the two screenshots stay) | ✓ (EMail e85fd2c, acb5b87: fakeweb/fakehelp/fakecontact/fakecal stand-ins; no getrelease; rig.py fix for Xvfb) | ✓ (EFTP 2954ee7: none loaded or fetched; THING.ACC stand-in; rig.py drops AERA_WITH_ACCS) | ✓ (EHypView c74277de: tests/fixtures/front test guide replaces the family's help in the colour, speed and acc-files tests; nothing fetched; ASKHELP.PRG stand-in) | ✓ (ClaudeST bdc76da: font_gdos.py --release is now --prg FILE; nothing fetched) | ✓ (EWeb 7a43e307f: the gateway group runs EWeb alone; Gateway checks kept) | ✓ (EPDF ec7cbc52e, aa8b18e31: fakegate.py stand-in and the real pdfgate.py) | ✓ (EPlay: none loaded or fetched; no commit) |
 | Machines: 68000 builds with `-fdisable-tree-bswap` (not `-fno-expensive-optimizations`) | ✓ (2.10) | ✓ (1.44) | ✓ (1.39) | ✓ (1.39) | ✓ (1.9, one 68000 build) | ✓ (1.46) | n/a (68030 only) | ✓ (0.1) | — |
 | Machines: `-ffunction-sections -fdata-sections`, `--gc-sections` for every program and accessory (1 Nov) | ✓ (2.39: ECAL.ACC 16.3 KB, ECAL.PRG 9.7 KB less) | ✓ (1.76) | ✓ (6075a05e) | ✓ (1.74: 12.3 KB less) | ✓ (since before 1.16) | ✓ (4ca7128e, 2.11: 10 KB less) | ✓ (cb7143ab: every program and tool; EWEBJS.OVL an overlay, reached by its imports) | ✓ (since 0.1) | ✓ (since 0.1) |
 | Machines: a 68020+ program says so on an ST (`cpucheck.c`, 27 Oct), and on a FireBee names its FireBee edition (`cpu_cf_alert`, 15 Nov) | ✓ (2.57: two packages, each alert names the other, 7.4) | n/a (68000) | ✓ (2.28: two packages, each alert names the other, 7.4) | ✓ (2.16: two packages, each alert names the other, 7.4) | ✓ (2.10: two packages, each alert names the other, 7.4) | ✓ (2.14: two packages, each alert names the other, 7.4) | ✓ (1.25: two packages, each alert names the other, 7.4) | n/a (a 68000 program) | ✓ (1.52: two packages, each alert names the other, 7.4) |
-| Machines: `tlsfb.ovl` shipped beside `tls.ovl` for the FireBee, `tls_ovl.c` loading it by `_CF_` (15 Nov; EUpdate missed it in maintenance, 2.09 under way on Erez's word, 17 Nov) | ✓ (2.57: superseded by the FireBee package, tls.ovl in it) | ✓ | ✓ (2.28: superseded by the FireBee package, tls.ovl in it) | ✓ (2.16: superseded by the FireBee package, tls.ovl in it) | n/a (no TLS) | n/a (no TLS) | ✓ (1.25: superseded by the FireBee package, tls.ovl in it) | n/a (no Direct TLS) | ✓ (1.52: superseded by the FireBee package, tls.ovl in it) |
+| Machines: `tlsfb.ovl` shipped beside `tls.ovl` for the FireBee, `tls_ovl.c` loading it by `_CF_` (15 Nov; EUpdate missed it in maintenance, 2.09 under way as decided, 17 Nov) | ✓ (2.57: superseded by the FireBee package, tls.ovl in it) | ✓ | ✓ (2.28: superseded by the FireBee package, tls.ovl in it) | ✓ (2.16: superseded by the FireBee package, tls.ovl in it) | n/a (no TLS) | n/a (no TLS) | ✓ (1.25: superseded by the FireBee package, tls.ovl in it) | n/a (no Direct TLS) | ✓ (1.52: superseded by the FireBee package, tls.ovl in it) |
 | Machines: `oddaccess.py` in `make test`, no odd stack access (27 Oct) | ✓ (2.32: cal.elf and fakeguide.elf, 0 found; CI's `make oddaccess`) | ✓ (e0f1de1d, 1.73) | ✓ (f7b6b3a79, 1.65: pdir_pick fixed) | ✓ (1b0e7402, 1.66) | ✓ (0432c99, 1.31: in make atari) | ✓ (61d07b827, 1.68) | ✓ (EWEBST.PRG: 82bf60544, 0.47; EUpdate n/a, 68030) | ✓ (0.1) | — |
 | Machines: rigs start Hatari through `machines.py` (ST, ST-1, TT, Falcon) | ✓ (043cc6a) | ✓ (da310a6) | ✓ (83734b70) | ✓ (2e58e3e) | ✓ (1450c68) | ✓ (a49765b) | ✓ (gui_test.py) | ✓ | — |
 | 3.2 Shortcuts take Control through `key_ctrl()` | ✓ (2.11) | ✓ (1.46) | ✓ (1.40; key_ctrl on main ec5ec777) | ✓ (1.40) | ✓ (1.10) | ✓ (1.47) | ✓ (0.11) | ✓ (0.1) | — |
@@ -2349,20 +2346,20 @@ program's window.
 | 6.1 A program's own files from `app_dir()` (`shel_read`), not the current folder (28 Oct) | ✓ (0fd8fd4; 2.54) | ✓ (57e480ac, 1.74) | ✓ (909ef989c, 1.67: work_dir()) | ✓ (6f14a42d, 1.67: work_dir()) | ✓ (3b2de1a, 1.32: start_dir) | ✓ (e3e4383, 1.69) | ✓ (890245b6f, 0.49: work_dir(); EUpdate ✓ 25580444d, 1.21) | ✓ (0.1) | — |
 | Speed: the DSP shared, `Dsp_Lock` refused means the 68030 (31 Oct) | ✓ (TLS.OVL: common's dspec.c, dsprsa.c) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | ✓ (TLS.OVL) | n/a (no DSP) | n/a (no DSP) | ✓ (TLS.OVL; dspjpeg.c) | — (no DSP yet; its pictures will use dspjpeg.c) | — |
 | 5.8 A list click: selected on press, done on release (1 Nov) | ✓ (2.41: the program on one click; the accessory on two, its presses drawn while held) | ✓ (1.76: list, buttons and tabs on the release; the accessory one click too) | ✓ (46baa58b, 91de30ce) | ✓ (1.74: panes and the Site Manager on press, drawn while held) | ✓ (2.1) | ✓ | — | ✓ (0.4: a press selects at once, drawn while held; the word on release) | ✓ (0.4: its buttons drawn pressed on press, act on release over them) |
-| 5.9 The progress bar: blue in 256, pens 1–15 in 16, black otherwise (`progbar`; 3 Nov) | — | ✓ (2.0, field.c on progbar) | n/a (progress in the info line, as text; Erez, 22 Nov 2026: "Keep the progress in the info line") | ✓ (2.5, UI 14) | n/a (none) | n/a | ✓ (0.63) | ✓ (0.6) | — |
+| 5.9 The progress bar: blue in 256, pens 1–15 in 16, black otherwise (`progbar`; 3 Nov) | — | ✓ (2.0, field.c on progbar) | n/a (progress in the info line, as text; decided 22 Nov 2026: the progress stays in the info line) | ✓ (2.5, UI 14) | n/a (none) | n/a | ✓ (0.63) | ✓ (0.6) | — |
 | Speed: common's fast paths used (text_plain, text_fx, scr_rows, scr_fill, pb_vdi, DLG_CPU, offdraw), none slower under NVDI with a GDOS font (1 Nov) | ✓ (2.40: text_fx; scr_fill under scr_cpu_wins(); scr_xor under text_plain_state() > 0) | ✓ (1.76: its own audit; offdraw for the window) | — | ✓ (text_plain, text_fx, scr_rows, offdraw, scr_fill, pb_vdi, DLG_CPU) | ✓ | — | — | — | — |
-| Speed: a redraw of 300 ms or less is drawn in one piece, a longer one in pieces of at most 100 ms (Erez, 4 Nov) | ✓ (2.56; the whole window in one piece, Erez 20 Nov: "Whole, as 2.55") | ✓ (2.11: every redraw 300 or less in one piece; the whole window after ^S or sizing up to 390 on Erez's Falcon, whole: accepted by Erez 20 Nov; the ST whole, 28d08fc) | ✓ (2.25: a message, Find and a resize drawn in one piece; the main window whole on an ST, 380-480 ms, Erez 19 Nov) | ✓ (2.15: nothing over 300 in one stretch on the Falcons and TT, whole redraw 225-275, resize 235; pieces cost 16-39 %, so whole; the ST whole, Erez 19 Nov) | ✓ (the ST's whole draws accepted 19 Nov) | — | ✓ (EWEBST.PRG in pieces of 85 ms past 300; EWEB.PRG whole, Erez's 7 Nov decision: "lets do this only for the ST") | ✓ (dcf4ffd3a: bands of about 60 ms) | to check |
-| 7.3 The name is Gateway, never "Pi" or "Pi gateway", in the status line, Settings' Secure page, menus, alerts, About box, guide, README and notes (Erez, 7 Nov) | ✓ | ✓ | ✓ (dc310f2b) | ✗ → words approved (Erez, 22 Nov 2026, "Yes, as proposed"): next EFTP release | n/a (no network) | ~ (one "Waiting for bridge..." left) | ✓ | next release | ✓ |
-| 7.3 Work handed to the Gateway shows three phases in the status line: Sending, Working, Receiving (`conn_phase`; Erez, 7 Nov) | — | n/a (dav passes CardDAV through) | ✓ (db649250) | — | n/a | — | ✓ (Sending / The Gateway is loading / Receiving) | with the Gateway mode | — |
-| 1.2 The hub's checks follow the release; a fault is fixed forward by a new release, never rolled back (Erez, 7 Nov) | ✓ (2.55) | maintenance | ✓ (8dfe31a8) | ✓ (2.16) | maintenance | ✓ (2.12-2.14) | ✓ | next release | ✓ |
-| 1.2 At least 60% of an app's Atari boots per candidate run under NVDI, every app the same (Erez, 7 Nov); the app's session needs Erez's NVDI copy | has NVDI; next release | has NVDI; next release | ✓ (2.22: 35 of 58 boots under NVDI) | needs NVDI; next release | ✓ (2.9) | needs NVDI; next release | needs NVDI; next candidate | needs NVDI; next candidate | needs NVDI; next candidate |
-| 3.1/6.1 Settings in the family's layout (sidebar list, page heading and line, Cancel and OK on row H-2) and in Options, not File (Erez, 9 Nov) | ✓ (common's Settings engine; 2.54) | ✓ (dc9ec257, 2.9: its own FIELD dialog in the engine's layout, for the 1 MB ST) | ✓ (the reference: settings_sidebar) | ✓ | ✓ (src/gem/settings.c) | ✓ (b736182e, 3e5e3a66; 2.11) | ✓ | ✓ (d9663a9cd, 762f5e0fe) | to check |
-| 3.1 to 6.3 and 5.10, 5.11: the UI standards in `ui/` (menus, controls, windows); each app answers the rows of `ui/DEVIATIONS.md` that name it (9 Nov) | maintenance | maintenance | maintenance | ✓ (UI backlog done but item 7, Erez's) | maintenance | ✓ (DEVIATIONS rows done; UI-BACKLOG 10 of 10) | to check | to check | to check |
+| Speed: a redraw of 300 ms or less is drawn in one piece, a longer one in pieces of at most 100 ms (decided 4 Nov) | ✓ (2.56; the whole window in one piece, decided 20 Nov: whole, as 2.55) | ✓ (2.11: every redraw 300 or less in one piece; the whole window after ^S or sizing up to 390 on a real Falcon, whole: accepted 20 Nov; the ST whole, 28d08fc) | ✓ (2.25: a message, Find and a resize drawn in one piece; the main window whole on an ST, 380-480 ms, decided 19 Nov) | ✓ (2.15: nothing over 300 in one stretch on the Falcons and TT, whole redraw 225-275, resize 235; pieces cost 16-39 %, so whole; the ST whole, decided 19 Nov) | ✓ (the ST's whole draws accepted 19 Nov) | — | ✓ (EWEBST.PRG in pieces of 85 ms past 300; EWEB.PRG whole, decided 7 Nov: pieces only for the ST) | ✓ (dcf4ffd3a: bands of about 60 ms) | to check |
+| 7.3 The name is Gateway, never "Pi" or "Pi gateway", in the status line, Settings' Secure page, menus, alerts, About box, guide, README and notes (decided 7 Nov) | ✓ | ✓ | ✓ (dc310f2b) | ✗ → words approved (decided 22 Nov 2026, as proposed): next EFTP release | n/a (no network) | ~ (one "Waiting for bridge..." left) | ✓ | next release | ✓ |
+| 7.3 Work handed to the Gateway shows three phases in the status line: Sending, Working, Receiving (`conn_phase`; decided 7 Nov) | — | n/a (dav passes CardDAV through) | ✓ (db649250) | — | n/a | — | ✓ (Sending / The Gateway is loading / Receiving) | with the Gateway mode | — |
+| 1.2 The hub's checks follow the release; a fault is fixed forward by a new release, never rolled back (decided 7 Nov) | ✓ (2.55) | maintenance | ✓ (8dfe31a8) | ✓ (2.16) | maintenance | ✓ (2.12-2.14) | ✓ | next release | ✓ |
+| 1.2 At least 60% of an app's Atari boots per candidate run under NVDI, every app the same (decided 7 Nov); the app's session needs the NVDI copy copy | has NVDI; next release | has NVDI; next release | ✓ (2.22: 35 of 58 boots under NVDI) | needs NVDI; next release | ✓ (2.9) | needs NVDI; next release | needs NVDI; next candidate | needs NVDI; next candidate | needs NVDI; next candidate |
+| 3.1/6.1 Settings in the family's layout (sidebar list, page heading and line, Cancel and OK on row H-2) and in Options, not File (decided 9 Nov) | ✓ (common's Settings engine; 2.54) | ✓ (dc9ec257, 2.9: its own FIELD dialog in the engine's layout, for the 1 MB ST) | ✓ (the reference: settings_sidebar) | ✓ | ✓ (src/gem/settings.c) | ✓ (b736182e, 3e5e3a66; 2.11) | ✓ | ✓ (d9663a9cd, 762f5e0fe) | to check |
+| 3.1 to 6.3 and 5.10, 5.11: the UI standards in `ui/` (menus, controls, windows); each app answers the rows of `ui/DEVIATIONS.md` that name it (9 Nov) | maintenance | maintenance | maintenance | ✓ (UI backlog done but item 7, still to be decided) | maintenance | ✓ (DEVIATIONS rows done; UI-BACKLOG 10 of 10) | to check | to check | to check |
 | 3.1 Options: the account or site item, Settings, Font (no key), a line, the ticks (D6, D7, D13) | ✓ (Add account or calendar... before Settings, 4ce7333; 2.47) | ✓ (eea9b0e0, 2.0) | ✓ (the Options menu) | ✓ (0930976) | ✓ (8d67995, acf737d) | ✓ (b736182e, 2.11) | ✓ | ✓ (762f5e0fe, b39b6cb6b) | ✓ (6ba89f273, 1.14) |
 | 3.1 `Write a log` and `Direct connection`, in the menu and in Settings (D8, D9) | ✓ (4ce7333; 2.47) | ✓ (eea9b0e0; Settings dc9ec257, 2.9) | ✓ (6dd8edac, 2.15) | ✓ (0930976) | — | ✓ (2.10; Direct n/a, no TLS) | ✓ (menu and Settings) | — | ✓ (f51accc7f 1.37; f73f23477 1.1) |
-| 6.5 No log without `Write a log` (a tick in Options and Settings, `LOG=`, off at first), CRASH.LOG excepted (Erez, 14 Nov) | ✓ | ✓ | ✓ | ✓ | ✓ (acf737d, 2.4) | ✓ (e69123d4, 2.10) | ✓ (EUpdate ✓) | ✓ (writes none) | ✓ (f51accc7f, 1.37) |
+| 6.5 No log without `Write a log` (a tick in Options and Settings, `LOG=`, off at first), CRASH.LOG excepted (decided 14 Nov) | ✓ | ✓ | ✓ | ✓ | ✓ (acf737d, 2.4) | ✓ (e69123d4, 2.10) | ✓ (EUpdate ✓) | ✓ (writes none) | ✓ (f51accc7f, 1.37) |
 | 3.1 A one-window program lists Quit alone; a line above the Close/Next/Quit group (D3, MD9) | ✓ (4ce7333; 2.47) | ✓ (before 2.0) | ✓ (m_file) | ✓ (since 1.76; 0930976) | ✓ (8d67995: several windows, the line above Close/Next/Quit) | ✓ (f91eab33, 81fc5c12; 2.11) | n/a (several windows; File's line above Close window/Next window/Quit, MD9) | ✓ (762f5e0fe) | ✓ (bbdb3c506, 1.12) |
-| 3.1 Find in Edit, an app's own search in its menu and named; Select all in the menu of the things selected (D4, D20, D21) | ✓ (Erez, 19 Nov 2026: Edit > Find event..., ^F; 94be7a8a) | ✓ (837156a7: Find in View, no Edit menu; Select all in Contact) | ✓ (29230f36) | ✓ (Select all ^A in Edit; no search of its own) | n/a (File > Library and search, named) | ✓ (Chat > Search chats ^F, named; no page to find in or select) | ✓ (Find... and Select all in Edit) | ✓ (menu.c Edit) | ✓ ("Find station..." in File, its only search, named) |
+| 3.1 Find in Edit, an app's own search in its menu and named; Select all in the menu of the things selected (D4, D20, D21) | ✓ (decided 19 Nov 2026: Edit > Find event..., ^F; 94be7a8a) | ✓ (837156a7: Find in View, no Edit menu; Select all in Contact) | ✓ (29230f36) | ✓ (Select all ^A in Edit; no search of its own) | n/a (File > Library and search, named) | ✓ (Chat > Search chats ^F, named; no page to find in or select) | ✓ (Find... and Select all in Edit) | ✓ (menu.c Edit) | ✓ ("Find station..." in File, its only search, named) |
 | 3.1, 4.3 Help is `NAME help  Help` and `Keys...`; EHypView `EHypView help`, its Help key the page (D10, D11) | ✓ (4ce7333; 2.47) | ✓ (eea9b0e0) | ✓ (m_help) | ✓ (since 1.76, 5cf85ff) | ✓ (83d404e, 2.0) | ✓ (51d8c298, 2.11) | ✓ (EWeb help  Help, Keys...) | ✓ (762f5e0fe, d9663a9cd) | ✓ (bbdb3c506, 1.12) |
 | 3.2 No key means two things: Mark as unread off ⇧^U, Index off ^I (D1, D2) | n/a | n/a | ✓ (Mark as unread on ^J, off ⇧^U; the stale hint fixed dfc0c05e) | n/a | ✓ (8d67995: Index on ⇧^T) | n/a | — (EUpdate —) | — | — |
 | 3.2 ⇧^S shows or hides every sidebar (D45) | ✓ (3209a8f; 2.34) | ✓ (before 2.0) | ✓ (94e0ebd5) | — | in work (the Subjects pane, 22 Nov) | ✓ (722facce, 2.11) | — (EUpdate —) | — | — |
@@ -2373,24 +2370,24 @@ program's window.
 | 5.8, 3.4 Buttons act on the release over them; Stop in a job on the press (D32, D33) | ✓ (buttons on release; ticks and pop-ups on press still open, C7; 2.54) | ✓ (bd01ff7c; win.c win_button) | ✓ (21909158, 2.22) | ✓ (-DDLG_CLICK and the toolbar since 1.76) | ✓ (dedb7ab; no Stop in a job) | ✓ (f7f4320e, 2.11; no Stop) | ✓ (press_track; Stop on the press, win_stop_hit) | ✓ (-DDLG_CLICK; EConvert's Stop 8a6dacf2f, 2.38) | ? |
 | 6.3 `Stop` for a job, `Cancel` for a dialog (D31) | — | ✓ (eea9b0e0) | ✓ (Esc/Undo stops; Save|Skip| n/a (Undo stops the search, 3ed23d4) | n/a | ✓ (the download box's Stop) | — | ~ (toolbar ✓; the download box's Cancel next release) | ✓ | — |
 | 5.10 A black title band in every dialog (D22) | ✓ (4ce7333; 2.47) | ✓ (50c6d0d6, 2.1) | ✓ (7954a076) | ✓ (9443153) | ✓ (ask.c since 2.1; Settings on the engine, 2.7) | ✓ (f7f4320e, 2.11; Settings by the engine) | ✓ (5197f567: settings.c, dlgbuild) | ✓ (d9663a9cd, b39b6cb6b) | ✓ (bbdb3c506, 1.12) |
-| 5.6 A bitmap tick for on/off, radio buttons for up to four choices, a pop-up above (D23, D24; the engine's `set_radio`, `set_radio_enable`, `set_popup_enable` are built, 9 Nov: apps adopt) | ✓ (9010f41, e8bf4cb, 1b4506b; the repeat end stays a pop-up, Erez 17 Nov; 2.54) | ✓ (dc9ec257, 2.9: radios on their own rows; bitmap ticks since 2.0) | ✓ (6dd8edac; no 2-4 choice control) | ✓ (ticks bitmaps; the Protocol as four radios, 193b266 on main; the Site Manager 66 wide) | ✓ (START four radios, 2.9) | ✓ (e69123d4 and the engine; no radios left) | ✓ (bitmap ticks; Scripts' two ticks, a question to Erez) | ✓ (set_tick; EConvert's pop-ups) | ? |
+| 5.6 A bitmap tick for on/off, radio buttons for up to four choices, a pop-up above (D23, D24; the engine's `set_radio`, `set_radio_enable`, `set_popup_enable` are built, 9 Nov: apps adopt) | ✓ (9010f41, e8bf4cb, 1b4506b; the repeat end stays a pop-up, decided 17 Nov; 2.54) | ✓ (dc9ec257, 2.9: radios on their own rows; bitmap ticks since 2.0) | ✓ (6dd8edac; no 2-4 choice control) | ✓ (ticks bitmaps; the Protocol as four radios, 193b266 on main; the Site Manager 66 wide) | ✓ (START four radios, 2.9) | ✓ (e69123d4 and the engine; no radios left) | ✓ (bitmap ticks; Scripts' two ticks, a question to the owner) | ✓ (set_tick; EConvert's pop-ups) | ? |
 | 5.10 The controls and the Settings pages can be reached from the keyboard (D25; `dlg_keys` and the engine's Tab, Space and arrows are built, 9 Nov: apps adopt) | ✓ (the engine and field.c; 2.54) | ✓ (dc9ec257, 2.9: Tab, Space, arrows, the ring; settings_keys.py) | ✓ (67bbc4ea, 2.22: its own reach) | ✓ (f78773f, ac44cda on dlg_do (C11); 2.13) | ✓ (Settings on settings.c; 2.7) | ✓ (d6944bfd and the engine; 2.11) | ✓ (5197f567: settings.c; the other dialogs a field and buttons) | ✓ (settings_run's keys) | ✓ (6ba89f273, 1.14) |
 | 5.10 Dialog buttons 10 wide (D26) | ✓ (2.54) | ✓ (50c6d0d6) | ✓ (Languages... 14) | ✓ (0930976) | ✓ (ask.c and the engine) | ✓ (f7f4320e, 2.11) | ✓ | ✓ (b39b6cb6b) | ✓ (6ba89f273, 1.14) |
 | 5.7 A pop-up opens with the ticked row over its button (D27) | ✓ (4ce7333, 65e6cb5; 2.47) | ✓ (eea9b0e0) | ✓ (6dd8edac) | ✓ (9443153, popup_over) | ✓ (e5b671a, 2.1) | ✓ (2.5) | ✓ (5197f567) | ✓ (popup_m, e3023e3f0) | ✓ (6ba89f273, 1.14) |
 | 3.5 Esc never cancels over a filter field (D28) | n/a (no filter field) | ✓ (eea9b0e0; esc_test.py) | ✓ (ui/find.c) | n/a (no filter field) | ✓ (the library's search field) | ✓ | — (EUpdate —) | — | ✗ |
 | 5.10 An out-of-range number is refused with an alert that says what to type (D30) | ✓ (the model, D30; Settings' number_ok) | ✓ (f77dcc45, 2.9: the Gateway's port) | ✓ (6dd8edac) | ✓ (231cecb, 7fd7d21, on main) | n/a (no number field: START's seconds are chosen) | ✓ (b736182e, 2.11: port, IP address) | ✓ (9c21430c, de7fec4a) | ✓ (8a6dacf2f, 2.38) | ✓ (6ba89f273, 1.14) |
-| 6.3 Job formats `45%`, `2 min left`, `12 KB of 3.4 MB` (D35) | — | ✓ (eea9b0e0) | — | ✓ (9443153; the Transfers rows keep "100/200KB": Erez, 22 Nov 2026, "Keep 100/200KB") | ✓ (3ed23d4, "Searching... 45%") | n/a | ~ (12 KB of 3.4 MB done; % and time left to do) | ✓ (b39b6cb6b, 422e70dbb) | ? |
+| 6.3 Job formats `45%`, `2 min left`, `12 KB of 3.4 MB` (D35) | — | ✓ (eea9b0e0) | — | ✓ (9443153; the Transfers rows keep "100/200KB": decided 22 Nov 2026) | ✓ (3ed23d4, "Searching... 45%") | n/a | ~ (12 KB of 3.4 MB done; % and time left to do) | ✓ (b39b6cb6b, 422e70dbb) | ? |
 | 5.1 The window's arrows scroll the pane under the pointer, else the slider's pane; no wheel (D37; the code waits for the hub) | — | ✓ (bd01ff7c) | ✓ (6dd8edac, arrowed.c) | ✓ (9443153) | ✓ (b43ded4, 2.1) | ✓ (e23890ff, 2.11) | — (EUpdate ✗) | — | — |
 | 5.1 Minimum size content-bound and the open check the same number; the first window on the whole desk (D38, D39) | ✓ (4ce7333; 2.47) | ✓ (eea9b0e0: 44 x 12) | ✓ (d0323057, 2.22) | ✓ (9443153; the first window on the whole desk since 1.76) | ✓ (D38; D39: the library on the whole desk until WINDOW= is saved; 2.7) | ✓ (56067c88, 2.11: 48 x 14; the whole desk) | ✓ (40 x 12 both; the whole desk with no WINDOW=) | ✓ (textwin.c place()) | ? |
 | 5.1 Column titles bold dim (D41; EPlay's design D stays, D42) | — | n/a (no column titles) | n/a (no column titles) | ✓ (D41's model) | n/a (no column titles) | n/a | — (EUpdate ✗) | — | — |
 | 5.2 One 16-colour selection colour, `theme.c` the family's (D42) | — | — | ✓ (20fd5bb4) | ✓ (9443153: common's theme.c) | in work (theme.c with theme_keep, 3ee44d0) | ✓ (theme.o) | — (EUpdate ?) | — | — |
-| 6.1 INF written only when a setting changed, not on every exit (Erez, 12 Nov 2026) | ✓ (b588b7a, 0ced908; 2.54) | ✓ (eecefa6b, 2.9) | ✓ (f5b31a08, 2.22: compared at the save) | ✓ (797bb69, 2.6; d45ec2c; inf_test.py) | ✓ (fixed in 2.1, gui-test infsame) | ✓ (b2f87af4, b301f6ea; 2.11) | ✓ (only on change; 1.5 also for a hand-edited file; EUpdate ✗: writes on every call; next release) | ✓ (EPDF and EConvert; a permanent rig check next) | ✓ (9158f1538, 1.27) |
+| 6.1 INF written only when a setting changed, not on every exit (decided 12 Nov 2026) | ✓ (b588b7a, 0ced908; 2.54) | ✓ (eecefa6b, 2.9) | ✓ (f5b31a08, 2.22: compared at the save) | ✓ (797bb69, 2.6; d45ec2c; inf_test.py) | ✓ (fixed in 2.1, gui-test infsame) | ✓ (b2f87af4, b301f6ea; 2.11) | ✓ (only on change; 1.5 also for a hand-edited file; EUpdate ✗: writes on every call; next release) | ✓ (EPDF and EConvert; a permanent rig check next) | ✓ (9158f1538, 1.27) |
 | 6.1 INF keys `WINDOW=x,y,w,h`, `PANES=`, `FONT=name,points`; the old key read once (D43, D44) | ✓ (WINDOW=, FONT=name,points; old keys read once; tests/inftest.sh; 2.54) | ✓ (50c6d0d6; no PANES=, SIDEBAR= stays) | ✓ (30855d5d) | ✓ (9443153) | ✓ (FONT=name,points, PANES=, WINDOW= for the library; old keys read once; 2.7) | ✓ (ce598788, 56067c88, 3e5e3a66; 2.11) | ✓ (WINDOW=, e1b165c2; no Font, no panes) | ✓ (9d096ae09, font.c) | ✓ (da73a428f, WINDOW=; no panes or font) |
 | 4.4 The clipboard sentences on the status line, never an alert (D50) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ (6dd8edac) | ✓ (since 1.76: the status line, no alert) | ✓ (8d67995, 2.0) | ✓ (f91eab33, 2.11) | ✓ (9c21430c) | ✓ (b39b6cb6b) | — |
-| 4.5 The notification button reads `Show` when it brings a window forward (D51) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ ("Open | ✓ (main.c "Show") |Later", W25; Show is Erez's word) | ✓ (since 1.76: queue.c's Show) | — | ✓ (51562d82) | ✓ (8798a8dd) | — | — |
+| 4.5 The notification button reads `Show` when it brings a window forward (D51) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ ("Open | ✓ (main.c "Show") |Later", W25; Show as decided) | ✓ (since 1.76: queue.c's Show) | — | ✓ (51562d82) | ✓ (8798a8dd) | — | — |
 | 5.2 Pictures borrow pens 192–255 while on top, `ui/picpens.c`, PIC.OVL's `quant` (22 Nov) | — | in work (decided 22 Nov 2026: 64 colours) | — | — | — | — | ? (its own palette while it runs: to align) | ? (pictures and pages; EConvert's band to 16–31) | — |
 
-**Rows added on 9 Nov 2026** for Erez's decisions D1 to D54 ([ui/DECISIONS-2026-11-09.md](ui/DECISIONS-2026-11-09.md)).
+**Rows added on 9 Nov 2026** for the decisions D1 to D54 ([ui/DECISIONS-2026-11-09.md](ui/DECISIONS-2026-11-09.md)).
 ✗ = the evaluation of 9 Nov shows the app differs from the rule; ? = the app's reply says it already matches, or it
 was not reported, or the rule is not checked against the final text yet; — = does not apply. **Nothing is ticked**
 until the app's session reports it. EUpdate has no column in this table: its mark is in the EWeb column, in

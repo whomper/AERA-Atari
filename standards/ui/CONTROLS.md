@@ -19,7 +19,7 @@ that names an app is "as read in the older copy" until its session re-reads it; 
 against [DEVIATIONS.md](DEVIATIONS.md) is the check. EPDF has the Find dialog (`find.c`) besides Settings, which it is
 rebuilding on the shared engine (unreleased); `Keys...` is added there.
 
-**How to read it.** "The family does X" is the rule. Erez answered the open choices on 9 Nov 2026
+**How to read it.** "The family does X" is the rule. The open choices were answered on 9 Nov 2026
 ([DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md)): a settled rule ends `Decided 9 Nov 2026 (Dn)`, and what the answers
 left unsettled is under `Still open` at the end of this file. Ids `C1` to `C26` point to rows in
 [DEVIATIONS.md](DEVIATIONS.md). F = focus app (EWeb, EPDF, EPlay), M = maintenance (the others).
@@ -73,7 +73,7 @@ left unsettled is under `Still open` at the end of this file. Ids `C1` to `C26` 
   - The Help key is not taken by a dialog.
   **Keyboard reach is a rule:** Space ticks a tick, the arrow keys move between radio buttons and in
   lists, and the Settings pages have keys. The focus apps first, the maintenance apps at a release they make
-  anyway. **Built 9 Nov 2026 in the shared code (hub's proposal for Erez to confirm, `Still open`):** `dlg_do` offers
+  anyway. **Built 9 Nov 2026 in the shared code (hub's proposal for the owner to confirm, `Still open`):** `dlg_do` offers
   every key to `dlg_keys` first (`dialog.h`), and the Settings engine (`settings.h`) takes: **Tab and Shift+Tab** through
   the page's text fields, ticks, radio groups (one stop each), pop-up buttons and action buttons in the order they were
   added, then the list of pages, and round; **Space** on a tick (turns it over), a pop-up button (opens it over the
@@ -153,7 +153,7 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
 
 ## 3. Text fields (guidelines 5.4, must)
 
-- **A field holds more than it shows** (Erez, 22 Oct 2026): it shows a window of its text and scrolls it with
+- **A field holds more than it shows** (decided 22 Oct 2026): it shows a window of its text and scrolls it with
   the cursor. Sizes: a GitHub token 99, a path as long as the app keeps it.
 - **How much:** it shows at most `LF_VIEW` = 80 characters (its template, `_` for each); EMail's, EFTP's and
   EWeb's builders cut a field to 60. What it holds is the app's `cap`; a key into a full field is taken and
@@ -338,7 +338,7 @@ The first paragraph and the "action is not done" list of 3.5 stay. The detail:
   - ticks and the Settings page names (`TOUCHEXIT`) act on the press as well. **Menus, pop-ups, ticks, pop-up
     buttons, page names and list rows act on the press; buttons act on the release over them.** This is the
     reading of 5.8 that fits the code; ECal's and EContact's ticks and pop-ups on the press (C7) follow it, which
-    Erez has not said in so many words (`Still open`).
+    is not yet decided in so many words (`Still open`).
 
 ---
 
@@ -546,18 +546,18 @@ The answers of 9 Nov did not settle these; nothing here is guessed.
 
 - **How the keyboard reaches a control** (D25). The hub built a proposal into the shared Settings engine (5, above, and
   `settings.h`): Tab and Shift+Tab visit fields, ticks, radio groups, pop-ups and buttons then the page list; Space
-  acts; arrows choose in a radio group and in the list; a thin ring shows the focus once a key was used. **For Erez to
+  acts; arrows choose in a radio group and in the list; a thin ring shows the focus once a key was used. **For the owner to
   confirm:** the ring (a solid 1-pixel frame, 2 pixels out: its look), Up and Down moving the page only while the list
   has the focus (so Tab to the list first, when the page has a text field), and no direct key for the page from a
-  text field (^Up and ^Down are free if he wants one).
+  text field (^Up and ^Down are free if one is wanted).
 - **A radio group in the Settings page** (D24). Four radio buttons are 40 cells wide (10 apart) against the 30-cell
   value column and the 42-cell page. The engine's proposal, built: a group starts at the page's column `SX` (or two in,
   as a pop-up does) on a row of its own, buttons 8 or 9 wide, 10 characters and 4 pixels apart (EFTP's), so four of them
-  are 40 characters and 12 pixels of the 42; **for Erez to confirm** with the first app that uses one.
+  are 40 characters and 12 pixels of the 42; **for the owner to confirm** with the first app that uses one.
 - **The words of the out-of-range alerts** (D30). ECal's are the model; each app proposes its own, and the words are
-  Erez's to approve.
+  the owner's to approve.
 - **EHypView's "Look there anyway?"** (C21) is about a folder that isn't there, not a number; D30 does not cover it.
 - **Press and release for ticks and pop-ups** (contradiction 2 of the evaluation). 5.8's "act on release" is written
   here for buttons, with menus, pop-ups, ticks, pop-up buttons, page names and list rows on the press, which is what
   the code does. C7 asked ECal and EContact to move ticks and pop-ups to the release; read this way it does not.
-  Erez's answers (D32, D33) speak of buttons only, so he may want to say.
+  The answers (D32, D33) speak of buttons only, so this is still to be settled.

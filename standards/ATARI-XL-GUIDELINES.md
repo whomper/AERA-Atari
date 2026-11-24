@@ -17,18 +17,18 @@ Words used here:
 - **MAC/65**: OSS MAC/65 1.01, the cartridge, on the Atari.
 - **the disk**: the program's ATR, with its sources as MAC/65 takes them.
 
-**No compatibility code, for now** (Erez, 17 Oct 2026), as on the ST: when the family changes a
+**No compatibility code, for now** (decided 17 Oct 2026), as on the ST: when the family changes a
 file, a name or a rule, every program moves in its next release and the old way goes.
 
-**Who decides what** is the ST's ([there](ATARI-APP-GUIDELINES.md#who-decides-what-erez-31-oct-2026); 31 Oct
+**Who decides what** is the ST's ([there](ATARI-APP-GUIDELINES.md#who-decides-what-decided-31-oct-2026); 31 Oct
 2026): new programs, their capabilities and how they work with the others, the user experience,
-phases, priorities and conflicts are Erez's; how it is made is the team's.
+phases, priorities and conflicts are the owner's; how it is made is the team's.
 
 ### The machines
 
 - **Any Atari 400, 800, XL or XE with 48K** (XL and XE tried; 400 and 800 expected) and a disk drive, MyDOS, SpartaDOS 3.x or DOS 2.5.
   Extended memory (130XE banks) is used when it is there, never needed.
-- **Erez's machines** (where releases are tried): a 1200XL with two 1050 drives, MAC/65, SpartaDOS 3.2,
+- **The reference machines** (where releases are tried): a 1200XL with two 1050 drives, MAC/65, SpartaDOS 3.2,
   and FujiNet (firmware 1.3 or later) for EFTP_XL.
 - In the emulator: atari800 with the Atari's own OS, DOS and MAC/65 (section 8).
 
@@ -42,7 +42,7 @@ phases, priorities and conflicts are Erez's; how it is made is the team's.
 - **Files:** upper-case 8.3 from one stem. The program, its settings, its disk:
   - `EFTPXL.COM`, `EFTPXL.CFG`, `EFTPXL.ATR`;
   - `EDOS.COM`, `EDOS.ATR`, `EDOSTEST.ATR`.
-- **The program's extension: `.COM` (must)** (Erez's decision, 18 Oct 2026; it replaces the `.PRG`
+- **The program's extension: `.COM` (must)** (decided 18 Oct 2026; it replaces the `.PRG`
   of 16 and 17 Oct). `.PRG` is the ST's. A `.COM` is typed without its extension at the SpartaDOS
   prompt, and loaded with L in DOS 2.5's and MyDOS's menu; EDOS is also installed as `DUP.SYS` there.
 
@@ -64,7 +64,7 @@ touched.
   - a test that needs another AERA program uses its latest release, not a build of its `main`;
   - never reuse a number;
   - a bad release is rolled back with a new one.
-  - releases go out without asking Erez, once the checks pass (23 Oct 2026).
+  - releases go out without asking the owner, once the checks pass (23 Oct 2026).
 - **The Release workflow** (`xl/workflows/release.yml`, the same in every program, section 9):
   - runs on `main` with the notes as its input (or, left empty, `release-notes/vX.Y.md`), or from a
     pushed `git tag -a vX.Y` with the tag's message;
@@ -72,7 +72,7 @@ touched.
   - runs `make test` and `make dist`, and publishes `dist/`'s files (1.3). The program's Makefile has
     `version`, `test` and `dist`.
   `withdraw.yml` puts "Withdrawn: use vX.Y instead" and why at the top of a bad release's notes.
-- **EDOS's one exception** (Erez, 15 Oct 2026): while `EDOS.COM` is byte for byte the latest
+- **EDOS's one exception** (decided 15 Oct 2026): while `EDOS.COM` is byte for byte the latest
   release's, CI replaces that release's ATRs, so the disk carries the current sources.
 
 ### 1.3 What a release carries
@@ -95,7 +95,7 @@ GPL-2.0-or-later
 github.com/whomper/EFTP_XL
 ```
 
-The title line shows `NAME x.y` and `(C) AERA 2026` at all times, as EFTP_XL's does (Erez, 17 Oct
+The title line shows `NAME x.y` and `(C) AERA 2026` at all times, as EFTP_XL's does (decided 17 Oct
 2026).
 
 ---
@@ -117,8 +117,8 @@ The title line shows `NAME x.y` and `(C) AERA 2026` at all times, as EFTP_XL's d
     fails on SpartaDOS: MAC/65's pass-2 POINT is refused);
   - a file is at most 16K tokenised (about 1,000 lines), so it LOADs and edits on any DOS;
     `xl/tools/atari_src.py` checks it.
-- **On the disk, numbered and tokenised; in git, neither** (Erez, 17 Oct 2026: "I need line numbers
-  and tokenization in the ATR so that I can compile on real atari"):
+- **On the disk, numbered and tokenised; in git, neither** (decided 17 Oct 2026: line numbers
+  and tokens on the ATR, so the sources assemble on a real Atari):
   - the disk carries every `.M65` numbered 10, 20, ... and tokenised as MAC/65's SAVE writes it,
     so it LOADs and assembles on a real Atari. `xl/tools/atari_src.py disk` makes the disk;
   - git keeps the text without numbers, in the family's columns (the operation at column 10, an
@@ -137,7 +137,7 @@ The title line shows `NAME x.y` and `(C) AERA 2026` at all times, as EFTP_XL's d
   A token not used before is checked against MAC/65 1.01's own SAVE (`xl/tools/mac65tok.py`).
 
 ### 2.2 Comments (must)
-EFTP_XL's style (Erez, 17 Oct 2026):
+EFTP_XL's style (decided 17 Oct 2026):
 
 ```
 ;
@@ -190,7 +190,7 @@ needs. Where only names and hex are typed, a program may hold capitals (EDOS doe
 so. BREAK at a typed prompt goes back, as ESC does.
 
 ### 3.4 ESC cancels (must)
-**ESC closes any question, prompt or box as if the answer were no** (Erez, 17 Oct 2026). That covers:
+**ESC closes any question, prompt or box as if the answer were no** (decided 17 Oct 2026). That covers:
 - a Y/N question;
 - a typed name or number;
 - a list to choose from;
@@ -202,7 +202,7 @@ BREAK does the same.
   - what was typed is thrown away;
   - the program goes back to the screen it came from.
 - ESC never clears text in a line that stays on screen; only editing keys do (BACK S, DELETE LINE).
-  What ESC throws away is a prompt it closes (Erez, 17 Oct 2026).
+  What ESC throws away is a prompt it closes (decided 17 Oct 2026).
 - At a Y question, ESC is no, as any key but Y is. In a box with choices, ESC picks the one that does
   nothing; it never picks the one that writes or erases.
 - During a transfer or a disk operation, ESC stops it (3.2), and the program says so.
@@ -284,7 +284,7 @@ MAC/65 assembles in two passes, and so must the sources:
 ### 5.3 The font: AERA.FNT (must)
 - **The family font is `AERA.FNT`:** EDOS's font plus EFTP_XL's four glyphs (the folder, the file,
   the "more" mark, the progress fill). It is kept in AERA-Atari, built by `xl/tools/font.py` from
-  Erez's `xl/font/EREZ.FNT`. The built file is `xl/font/AERA.FNT`, so a program carries it on its
+  the AERA font's source, `xl/font/EREZ.FNT`. The built file is `xl/font/AERA.FNT`, so a program carries it on its
   disk and in its release without building it; `font.py check` and xl's tests say it is up to date.
   It ships with every release and on every ATR. EDOS.FNT goes.
 - **Four characters are kept for icons:** screen codes $40, $46, $50 and $7B (ATASCII ^, (heart),
@@ -292,7 +292,7 @@ MAC/65 assembles in two passes, and so must the sources:
 - **When `D:AERA.FNT` is there (the current drive and, on SpartaDOS, folder: where the program was
   started from), the program uses it.** DOS doesn't tell a program where it was loaded from, so `D:`
   is the rule.
-- **It goes just below the screen, in every program** (Erez, 17 Oct 2026): the 1K at page
+- **It goes just below the screen, in every program** (decided 17 Oct 2026): the 1K at page
   (RAMTOP-8) AND $FC, as EDOS put it. That's $9800 with BASIC in and $B800 without, on a 64K
   machine.
 - **The code is shared:** `xl/src/AXFONT.M65`, nothing of a program's own.
@@ -303,7 +303,7 @@ MAC/65 assembles in two passes, and so must the sources:
     memory (EDOS: $80, above its bank window). Under that there is no room, and the ROM font
     stays.
   - The program keeps its own data off the font's page.
-- **No program carries the font in its binary, or a copy of it** (Erez, 17 Oct 2026). Without
+- **No program carries the font in its binary, or a copy of it** (decided 17 Oct 2026). Without
   `AERA.FNT` a program runs in the ROM font as it is. The box lines still look right, and a program
   shows ROM characters in place of its icons. EFTP_XL uses ATASCII $7F (right triangle) for a folder, a
   blank for a file, $1F (right arrow) for a cut name and $12 (a line) for the bar.
@@ -313,7 +313,7 @@ MAC/65 assembles in two passes, and so must the sources:
 - A server's error shows the server's own reply line.
 
 ### 5.5 Disk access (must)
-The family's policy (the ST guidelines, 6.5; Erez's decision, 18 Oct 2026). On SIO every OPEN reads
+The family's policy (the ST guidelines, 6.5; decided 18 Oct 2026). On SIO every OPEN reads
 the directory and the VTOC at 19,200 baud, so:
 - **What the user does goes to disk at once** (a setting, a site saved), in one OPEN, PUT and CLOSE.
 - **Bulk work goes through memory:** a transfer or a copy fills a buffer as big as the free memory
@@ -394,19 +394,19 @@ branch, carried read-only in each program as `xl/` (`tools/sync-xl.sh`), changed
 
 ## 10. Where each program stands (October 2026)
 
-**Maintenance (Erez, 1 Nov 2026).** EDOS and EFTP_XL are in maintenance mode while EWeb, EPDF and
+**Maintenance (decided 1 Nov 2026).** EDOS and EFTP_XL are in maintenance mode while EWeb, EPDF and
 EPlay go to 1.0 (ATARI-APP-GUIDELINES.md, section 8): no new features, and nothing run in the
-background. Every family rule holds for them as for the focus apps (Erez, 17 Nov 2026: "all
-applications must adhere to family rules and be notified"): the hub notifies them of each new or
-changed rule and each `xl/` fix, and whether that needs a release is reviewed with Erez; a fault fix
-always does. Only Erez ends maintenance, explicitly.
+background. Every family rule holds for them as for the focus apps (decided 17 Nov 2026: every
+app keeps the family rules and is told of each): the hub notifies them of each new or
+changed rule and each `xl/` fix, and whether that needs a release is reviewed with the owner; a fault fix
+always does. Only the owner ends maintenance, explicitly.
 
 | Rule | EDOS | EFTP_XL |
 |---|---|---|
 | 1.1 the program is NAME.COM | ✓ (EDOS.COM) | ✓ 1.5 |
 | 1.2 version in one place, checked | ✓ 3.3 (TTL2, the headers and About checked) | ✓ 1.2 |
-| 1.2 releases go out without asking Erez (23 Oct 2026) | ✓ (3f7617c) | ✓ (42fb621) |
-| Who decides what: Erez's part in CLAUDE.md (31 Oct 2026) | ✓ (7a15f98) | ✓ (f5a909c, 3dd4573) |
+| 1.2 releases go out without asking the owner (23 Oct 2026) | ✓ (3f7617c) | ✓ (42fb621) |
+| Who decides what: the owner's part in CLAUDE.md (31 Oct 2026) | ✓ (7a15f98) | ✓ (f5a909c, 3dd4573) |
 | 1.3 release files, AERA.FNT | ✓ 3.3 | ✓ 1.2 |
 | 1.4 About lines, title "(C) AERA 2026" | ✓ 3.3 (on `?`) | ✓ 1.2 |
 | 2.1 source form | ✓ 3.3 (largest file UTILS, 16,070 tokenised) | ✓ 1.2 |
@@ -416,7 +416,7 @@ always does. Only Erez ends maintenance, explicitly.
 | 3.4 ESC (and BREAK) cancel every question and prompt | ✓ 3.5 (all 33 prompts, Duplicate and Copy stop; typed lines key by key) | ✓ 1.3 (every prompt and the Sites screen, ESC and BREAK; a transfer stops with either) |
 | 4.2 load check | ✓ 3.3 (AXLOAD) | ✓ 1.2 (AXLOAD) |
 | 5.1 settings file notes | n/a | ✓ 1.3 (a note at the top, `;` lines skipped) |
-| 5.5 disk: user's changes at once, bulk work through a buffer, one OPEN per file per job | exception (Erez, 18 Oct 2026): Copy and Duplicate stay as they are (Copy: 3 OPENs and 16 KB GET/PUTs through the extended banks; Duplicate by sector through the banks); its own files one OPEN each; idle quiet; Byte Compare 1 OPEN a file, 4K of each file a GET through $4000 and $6000 (3.8, 21a762f) | ✓ 1.5 (loads at $1E00, Erez's choice; the transfer buffer above the program to MEMTOP, 8K with BASIC, 16K without: a 20 KB file in 3 or 2 PUT/GETs and one OPEN; a site saved in one OPEN) |
+| 5.5 disk: user's changes at once, bulk work through a buffer, one OPEN per file per job | exception (decided 18 Oct 2026): Copy and Duplicate stay as they are (Copy: 3 OPENs and 16 KB GET/PUTs through the extended banks; Duplicate by sector through the banks); its own files one OPEN each; idle quiet; Byte Compare 1 OPEN a file, 4K of each file a GET through $4000 and $6000 (3.8, 21a762f) | ✓ 1.5 (loads at $1E00, as decided; the transfer buffer above the program to MEMTOP, 8K with BASIC, 16K without: a 20 KB file in 3 or 2 PUT/GETs and one OPEN; a site saved in one OPEN) |
 | 5.3 AERA.FNT through the shared AXFONT | ✓ 3.6 (AXFONT, AXFROM; Load Binary protects the font's pages only when it is loaded) | ✓ 1.3 (AXFONT; no font in the program; without AERA.FNT, ROM characters for its icons) |
 | 8 tests, three levels | ✓ 3.3 (py65, atari800 with MAC/65, EDOSTEST.ATR) | ✓ 1.3 (a8sim, atari800 with MAC/65, EFTPTEST.ATR with TESTPLAN.TXT) |
 | 9 xl/ (tools, AXEQU, AXLOAD, AXRESET, AXFONT, AXERR, workflows) | ✓ 3.3 (a8sim next) | ✓ 1.2 (tests on a8sim) |

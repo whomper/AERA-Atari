@@ -1,22 +1,21 @@
 # Test matrix: what a release candidate goes through (draft, 7 Nov 2026; consolidated, with all four apps)
 
-Erez's rules (7 Nov 2026): NVDI is the configuration that counts; the same check without NVDI runs
+The rules (decided 7 Nov 2026): NVDI is the configuration that counts; the same check without NVDI runs
 once per candidate; one boot per test, not several of the same (guideline 1.2). Minutes are measured
 on the hub's machine from its queue logs (a Falcon boot is about 2.4 min, a speed run 2-7 min per
 machine, the whole EPlay set about 30 min); an app's own column is that session's figure.
 
-## The regression gate (Erez, 17 Nov 2026): every configuration, no speed lost, before the release
+## The regression gate (decided 17 Nov 2026): every configuration, no speed lost, before the release
 
-"Since we are now at an evolved phase, we need to be extra careful with regression issues as there are users of
-our software. This means testing across all configurations" and "make sure we don't loose performance". Every
-code candidate runs its rigs on each row below that the app runs on, on Erez's TOS images and NVDI; then the
+Extra care over regressions, as the software has users: testing across all configurations and no loss of
+performance. Every code candidate runs its rigs on each row below that the app runs on, on real TOS images and NVDI; then the
 paired speed run against the last release on rows 1, 2 and 8 (no row slower beyond a tick on any); then the
 hub's family check; and only then is released (guidelines 1.2, "The regression gate"). The sections after this
 one stay as the record of each check; where they say "follows the release" or "no longer a gate", this wins.
 
 | # | Configuration | Machine (`machines.py`) | TOS | VDI | AES | Which apps |
 |---|---|---|---|---|---|---|
-| 1 | Erez's configuration (speed pair too) | `Falcon-4:256` | 4.04 | NVDI | TOS | all GEM apps |
+| 1 | the reference configuration (speed pair too) | `Falcon-4:256` | 4.04 | NVDI | TOS | all GEM apps |
 | 2 | stock Falcon, 16 colours, no NVDI (speed pair too) | `Falcon-4:16` | 4.04 | TOS's | TOS | all GEM apps |
 | 3 | Falcon, true colour | `Falcon:65536` | 4.04 | NVDI | TOS | all GEM apps |
 | 4 | TT | `TT:ttmed`, `TT:ttlow`; NVDI with `AERA_WITH_NVDI=1 AERA_NVDI_ON=Falcon,TT` | 3.06 | TOS's and NVDI | TOS | all GEM apps |
@@ -32,14 +31,14 @@ one stay as the record of each check; where they say "follows the release" or "n
 Each row is one boot per rig unless it fails. A row the app can't run (no 68000 code, no network) is named in the
 report with why. The hub's family check is rows 1 and 5 with the real programs together, and `acc_all` on row 10.
 
-## Decided 10 Nov 2026 (Erez): one configuration, and the lighter set
+## Decided 10 Nov 2026: one configuration, and the lighter set
 
-**Erez's configuration** is the one every AERA app's testing has once: **a Falcon with TOS 4.04, 4 MB and NVDI, in
-256 colours** (`Falcon-4:256`, `AERA_WITH_NVDI=1`; `machines.ERZ_MACHINE`, `machines.erz_env()`). His own Falcon has
+**The reference configuration** is the one every AERA app's testing has once: **a Falcon with TOS 4.04, 4 MB and NVDI, in
+256 colours** (`Falcon-4:256`, `AERA_WITH_NVDI=1`; `machines.ERZ_MACHINE`, `machines.erz_env()`). A real Falcon may have
 14 MB, but 4 MB runs it as well and is the stock Falcon (68030 at 16 MHz, no FPU). Each app **replaces one of its
 Falcon runs with it** and does not run the same function twice on two Falcons. Where a session's container has no
 TOS images or NVDI (EMail, EPDF, EPlay), the same rig runs on EmuTOS without NVDI and says so in its report
-(`describe()` names "Erez's configuration" only when it really was his TOS and NVDI); **the hub runs it for real**.
+(`describe()` names "the reference configuration" only when it really was real TOS and NVDI); **the hub runs it for real**.
 This holds for every app, maintenance apps at the next release they make anyway.
 
 **The hub's set per candidate (kind 3: a change that draws, starts or loops over data), replacing the old one:**
@@ -47,13 +46,13 @@ This holds for every app, maintenance apps at the next release they make anyway.
 | # | What | Machine | Minutes |
 |---|---|---|---|
 | 1 | clean clone, `make`, `make test` (only the hash and a build if the session reported the checks) | host | 1 |
-| 2 | the speed rows, paired: the last release and the candidate, one run each | Erez's configuration | 5 |
+| 2 | the speed rows, paired: the last release and the candidate, one run each | the reference configuration | 5 |
 | 3 | the same, for an app with an ST edition | `ST-1:mono` (TOS 1.04) | 5-12 |
 | 4 | start, menu, About, one dialog, move and close a window, quit, no CRASH.LOG, no alert | TT 1280x960 + MiNT + XaAES (`common/tests/xaaes/run.py --machine tt`) | 1 |
 | 5 | a true-colour shot | `Falcon:65536` + NVDI, drawing candidates only | 3 |
 
 About 15 minutes of hub time a candidate, one queue at a time. **No longer a gate:** `acc_all` (monthly, first and
-second boot, on Erez's configuration), the plain-VDI Falcon run (once, only for a drawing candidate), repeated runs
+second boot, on the reference configuration), the plain-VDI Falcon run (once, only for a drawing candidate), repeated runs
 of a row (a second and third pair only for a row the first pair flags), the app's own `make test` again, and runs
 of an ST row on a second ST. A change to the docs alone takes no run (guidelines 1.2).
 
@@ -62,7 +61,7 @@ of an ST row on a second ST. A change to the docs alone takes no run (guidelines
 | Axis | Values |
 |---|---|
 | Machine and screen | ST, ST-1 (mono, med, low); TT (ttmed, mono, med); Falcon, Falcon-4 (16 colours, 256, true colour) |
-| TOS | Erez's images (1.04, 3.06, 4.04); EmuTOS 1.4 (development and CI only) |
+| TOS | real TOS images (1.04, 3.06, 4.04); EmuTOS 1.4 (development and CI only) |
 | VDI | NVDI (the one that counts); TOS's own VDI (once) |
 | AES | TOS; MiNT + XaAES (dialogs in windows, multitasking) |
 | Edition | program; accessory |
@@ -80,7 +79,7 @@ of an ST row on a second ST. A change to the docs alone takes no run (guidelines
 | speed, 256 | Falcon-4:256 (EPDF, EWeb) | 3 | 256-colour drawing | only when the change is in drawing |
 | compare | 5 runs a side, speedcmp | 5 x above | host noise | replaced by one paired run when the deterministic-input work (hub task) is done |
 
-### Erez, 7 Nov 2026, on the hub's checks (second round)
+### Decided 7 Nov 2026, on the hub's checks (second round)
 
 1. **Add MiNT + XaAES and the TT beside the Falcon.** The apps' own rigs already test TOS and the ST and
    Falcon; the hub's family run covers what they don't: FreeMiNT + XaAES (a multitasking AES: dialogs in
@@ -89,14 +88,14 @@ of an ST row on a second ST. A change to the docs alone takes no run (guidelines
    each starts the program, opens its menu, About and one dialog, moves and closes a window, quits with
    ^Q, and leaves no CRASH.LOG and no alert. No speed limits on the TT (the stock-machine rule is for the
    ST and Falcon-4); speed stays on ST:mono, ST:med and Falcon-4 under NVDI.
-2. **The accessory test (`acc_all`) is a memory test** (Erez: "once we optimize application memory and
-   performance, testing accessories is just to see what fits, and that depends on the user's data").
+2. **The accessory test (`acc_all`) is a memory test** (decided 7 Nov 2026: once the apps' memory and
+   speed are optimised, testing accessories only shows what fits, and that depends on the user's data).
    Proposed: not a release gate any more. Each accessory keeps its own memory rows (KB free, MEMKB) in
    its repo's rigs; `acc_all` stays in common/tests/family for a one-off question ("what fits with
-   these four"), and the hub runs it only when asked. Pending Erez's confirmation: it also caught crashes
+   these four"), and the hub runs it only when asked. Still to be confirmed: it also caught crashes
    and menu clashes when several accessories load, which the TT and MiNT runs do not.
 
-### Erez, 7 Nov 2026, third round, and the recommended configurations
+### Decided 7 Nov 2026, third round, and the recommended configurations
 
 - **A monthly accessory test**: `acc_all` (the four accessories at once, on Falcon:16 under NVDI, first
   and second boot) once a month, not per candidate.
@@ -113,35 +112,35 @@ of an ST row on a second ST. A change to the docs alone takes no run (guidelines
 | 6 | `Falcon:16` without NVDI | TOS's own VDI, once | once per drawing candidate |
 | 7 | `acc_all` | the four accessories together | monthly |
 
-ST mono is the 1 MB machine (Erez, 7 Nov): the separate 1 MB row is gone; ST medium is the 4 MB machine, for
-larger activities (Erez, 7 Nov). **EWeb's ST edition** (`EWEBST.PRG`) has a 4 MB floor since 23 Oct (DESIGN.md): its ST
+ST mono is the 1 MB machine (decided 7 Nov): the separate 1 MB row is gone; ST medium is the 4 MB machine, for
+larger activities (decided 7 Nov). **EWeb's ST edition** (`EWEBST.PRG`) has a 4 MB floor since 23 Oct (DESIGN.md): its ST
 rows run on the 4 MB ST (medium in row 3, and its mono rows on `ST:mono` with 4 MB, its one exception to row 2).
 EPlay has no ST edition. Every other app's mono ST rows move to `ST-1:mono`.
 
-Removed (Erez, 7 Nov): the separate TT 640x480 and MiNT runs (merged into 4); "Falcon:16 NVDI, start and quit"
+Removed (decided 7 Nov): the separate TT 640x480 and MiNT runs (merged into 4); "Falcon:16 NVDI, start and quit"
 (the apps' own tests run on Falcons plenty); the monthly TT 1280x960 (4 has that resolution); the monthly
 Falcon 256 colours (each app's own matrix must include a 256-colour run on a Falcon: EPDF has it in speed,
 prepared and econv_fsel; EWeb, EMail and EPlay to confirm).
 
 Row 4 is built (7 Nov, `common/tests/xaaes/run.py --machine tt`): a TT030 (68030 at 32 MHz, 4 MB + 16 MB TT RAM,
 FPU) on its high-resolution monitor, 1280x960 mono, EmuTOS 512k, FreeMiNT 1.17 with XaAES, the same IDE disk image the
-Falcon run uses (Hatari's TT takes IDE too; SCSI also works and is left aside, Erez). Shown working: ICONTEST (a
+Falcon run uses (Hatari's TT takes IDE too; SCSI also works and is left aside). Shown working: ICONTEST (a
 window with XaAES's closer, iconifier and full gadgets) opens at 11 s; EWeb (the 0.72 fix build) starts, draws its page
 at full size under XaAES's gadgets, quits with ^Q (sent by scan code) and saves its settings, about 40 s a run. Each
 app runs its existing xaaes test or a short tour with `--machine tt` (it needs its ready and quit lines through
-NatFeats, as EWeb's "EWEB shown" and "EWEB quit"). There is no TT image in Erez's folder: EmuTOS is the TOS here.
+NatFeats, as EWeb's "EWEB shown" and "EWEB quit"). There is no real TT image: EmuTOS is the TOS here.
 
-Not covered by emulation, and tested by Erez on his Falcon: the real DFB1 (50 MHz, 128 MB TT RAM), real
+Not covered by emulation, and tested on a real Falcon: an accelerated Falcon (50 MHz, 128 MB TT RAM), real
 disks, a NetUSBee, graphics cards (1024x768 and up, true colour), and the tester's CT63 (68060 under MiNT).
 For a large screen with a card, the closest the rig can come is EmuTOS's own VDI at 1024x768 and 16 bits
 (not yet built).
 
-### Erez, 7 Nov 2026, fourth round: NVDI is the norm
+### Decided 7 Nov 2026, fourth round: NVDI is the norm
 
-**At least 60% of each app's Atari boots per candidate run under NVDI, every app the same** ("the norm these days"; "all applications should have the same NVDI testing policies, not just the four of focus"; a maintenance app applies it at its next release). Counted over all the
+**At least 60% of each app's Atari boots per candidate run under NVDI, every app the same** (NVDI is the norm today, and every app has the same NVDI testing policy, not only the focus apps; a maintenance app applies it at its next release). Counted over all the
 boots of the app's own checks, ST boots included in the count: TOS 1.04 on an ST cannot run NVDI, so on a candidate
 with a fifth of its boots on the ST, 72% of the Falcon and TT boots must. The NVDI copy goes into each of the four
-focus apps' sessions (Erez's decision, replacing "the hub runs every NVDI row"): the apps run their function rigs,
+focus apps' sessions (decided 7 Nov 2026, replacing "the hub runs every NVDI row"): the apps run their function rigs,
 and their speed rows on the Falcon, with AERA_WITH_NVDI=1 in parallel with each other. The hub keeps the paired speed
 comparison for a candidate, the TT + MiNT run and the true-colour shot. Where a rig cannot run under NVDI (FreeMiNT
 with XaAES: not yet tried; the ST), it stays as it is and counts in the denominator. A run without NVDI stays once
@@ -167,14 +166,14 @@ session's figure in its container.
 | `Falcon:65536` NVDI (true colour) | planned | - | - | screens group | - | EWeb every drawing candidate; hub monthly for the others |
 | TT:mono 1280x960 + MiNT + XaAES | row built | xaaes_test (Falcon:16, EmuTOS), help_test TT:mono | - | screens group TT:ttmed + TT:mono | XaAES rig (Falcon:16) | **one hub run per candidate on the TT**; the app supplies its ready and quit lines; app-side XaAES rigs on dialog or window changes only |
 | other apps' releases (EContact, ECal, EHypView) | - | people, invite, econtact, help (4 rows) | - | - | - | run the cross-app row only when the code that talks to it changes |
-| `acc_all` (four accessories) | per candidate | - | - | - | row 8 | **monthly** (Erez, 7 Nov), not a gate |
+| `acc_all` (four accessories) | per candidate | - | - | - | row 8 | **monthly** (decided 7 Nov), not a gate |
 
 Per candidate today and proposed: EMail ~100 min (77 rigs, 23 speed) to ~60; EPDF ~85 min without big.py and EDOS (65
 of the 150 minutes were those two); EWeb ~125 min to ~115; EPlay ~45 min to ~25 on a draw-class change, ~12 on a
 DSP-only change; the hub ~35 min of speed and ~7 of the monthly accessory test. Boots total about 140 today, about 80
 proposed.
 
-Decisions the hub took on the apps' proposals (all within the team's remit; Erez sees them here):
+Decisions the hub took on the apps' proposals (all within the team's remit; the owner sees them here):
 - **Accepted:** EPlay row 5 weekly, row 7 only when flagged, row 8 monthly (wavvol stays its own case, 7 Nov: merging it into wav needs a key pressed at a moment the rig cannot pin down, a flaky check to save about 15 s); EMail's emailchk on
   ST-1 only (Falcon monthly), one Falcon:256 run, the ST duplicates dropped, disk_test's mailbox trimmed when next
   touched, rig 5/8/9/10/11/12/13 merged into one boot when next touched; EWeb's cuts (dialogs weekly on EmuTOS, scripts
@@ -190,7 +189,7 @@ Decisions the hub took on the apps' proposals (all within the team's remit; Erez
 
 Each session sends: every script or command it runs before it asks the hub (make, test, itest, each
 Hatari rig), with machines/screens, NVDI or not, TOS, boots, minutes, and what it catches that no other
-row catches. The hub merges, removes duplicates and sends back the table for Erez.
+row catches. The hub merges, removes duplicates and sends back the table for the owner.
 
 ### EPDF (its own checks, all on EmuTOS 1.4: that container has no TOS images or NVDI; minutes in that container)
 
@@ -204,7 +203,7 @@ row catches. The hub merges, removes duplicates and sends back the table for Ere
 | hold.py | ST:mono | 1 | 2 | a held key against a whole redraw |
 | prepared.py | ST:mono, Falcon:16, Falcon:256 (+EDOS) | 3 (4) | 3 each | converted PDFs in mono / 16 / 256 |
 | files.py | ST-1 | 1 | 4 | GEMDOS opens against the 6.5 budget |
-| big.py | ST-1 | 1 | 40 | **dropped (Erez, 7 Nov): performance is judged from simpler files that cost far less time.** What it alone covered, memory refused and recovered on 1 MB, is to be covered by a mid-size file on ST-1 with a tight memory limit |
+| big.py | ST-1 | 1 | 40 | **dropped (decided 7 Nov): performance is judged from simpler files that cost far less time.** What it alone covered, memory refused and recovered on 1 MB, is to be covered by a mid-size file on ST-1 with a tight memory limit |
 | econv.py | Falcon-4:16 (+EDOS, +ST:mono) | 1 (+1, +1) | 3 (EDOS 25) | EConvert's conversion, Stop; ST Gateway-only start |
 | econv_speed.py | Falcon-4:16 | 1 | 4 | EConvert's times |
 | econv_fsel.py | Falcon:16, Falcon:256 | 2 | 2 each | the file selector by the mouse |
@@ -216,9 +215,9 @@ Falcon:256 and econv_fsel on Falcon:256 only on a class-3 or palette change; gat
 EConvert's 68030 path or EPDF's drawing changes; its Falcon-4 speed rows on EmuTOS dropped if the hub always runs
 Falcon-4 with NVDI (ST:mono stays as the quick gate). No row boots the same test twice.
 
-Erez, 7 Nov 2026: no heavy file in any app's test for performance; simpler files give the same answer for a fraction of the time. EPDF's big.py (40 min) and every EDOS_01.PDF row (the conversion 25 min, prepared on the converted copy) go: Erez, 7 Nov, "remove it altogether"; performance comes from generated books (pdfgen's book(n)) and the corpus. The hub's runs never used them.
+Decided 7 Nov 2026: no heavy file in any app's test for performance; simpler files give the same answer for a fraction of the time. EPDF's big.py (40 min) and every EDOS_01.PDF row (the conversion 25 min, prepared on the converted copy) go: decided 7 Nov, removed altogether; performance comes from generated books (pdfgen's book(n)) and the corpus. The hub's runs never used them.
 
-### EWeb (its own checks; Erez's TOS on every Falcon and TT boot, TOS 1.04 on the ST; no NVDI in its container, every rig takes AERA_WITH_NVDI=1 and the hub runs them so)
+### EWeb (its own checks; real TOS on every Falcon and TT boot, TOS 1.04 on the ST; no NVDI in its container, every rig takes AERA_WITH_NVDI=1 and the hub runs them so)
 
 | Row | Machine and screen | Boots | Min | What only it catches |
 |---|---|---|---|---|
@@ -234,7 +233,7 @@ every drawing candidate. Its proposed cuts (about 5 boots, 10 minutes a candidat
 ST:mono dropped at 1.0; scripts "all" and "none" as one boot; deep's ST run weekly after 1.0; hatarinet's TT run weekly.
 It would keep speed at the stock 16 colours.
 
-### EMail (its own checks: the 2.0 candidate round of 7 Nov; Erez's TOS 1.04 and 4.04, TT on EmuTOS 1.4, no NVDI in its container, so every row is without NVDI; network "serial" = FAKESTNG over the serial bridge to Dovecot and a test SMTP)
+### EMail (its own checks: the 2.0 candidate round of 7 Nov; real TOS 1.04 and 4.04, TT on EmuTOS 1.4, no NVDI in its container, so every row is without NVDI; network "serial" = FAKESTNG over the serial bridge to Dovecot and a test SMTP)
 
 | # | Rig | Machine:screen | TOS | PRG/ACC | Boots | Min | Repeat of |
 |---|---|---|---|---|---|---|---|
@@ -262,7 +261,7 @@ numbers (-11; not accepted as put, see the consolidated matrix); rigs 5, 8-13 in
 drag_test on ST:mono and the ST:med badge run (-6); trim disk_test's mailbox; run people_file only when people code
 changes. After: ~60 minutes.
 
-### EPlay (its own checks, as run for 0.28; every Atari row on EmuTOS 1.4, its container has neither Erez's TOS nor NVDI, so the NVDI run of row 4 is the hub's; minutes in that 2-core container)
+### EPlay (its own checks, as run for 0.28; every Atari row on EmuTOS 1.4, its container has neither real TOS nor NVDI, so the NVDI run of row 4 is the hub's; minutes in that 2-core container)
 
 | # | Row | Machine and screen | Boots | Min | What only it catches |
 |---|---|---|---|---|---|
@@ -272,7 +271,7 @@ changes. After: ~60 minutes.
 | 3b | dsptest's stream harness, 10 runs | host | 0 | ~2 | host interrupt, ring, HF2, packet breaks |
 | 3c | the harness at SIMLAT 300, SIMLOAD 103 | host | 0 | ~1 | a stock Falcon's timing: late granules at 49,170 Hz |
 | 4 | play_test, 20 cases (10 sound, 10 GEM) | Falcon-4:16 | 20 | ~5 | sound recorded and checked; the GEM cases |
-| 5 | play_test, the same 20 | Falcon:16 (the DFB1's 32 MHz) | 20 | ~5 | a 68030 faster than the DSP |
+| 5 | play_test, the same 20 | Falcon:16 (32 MHz, as an accelerated Falcon) | 20 | ~5 | a 68030 faster than the DSP |
 | 6 | speed.py, 5 sessions, base and candidate | Falcon-4:16 | 10 | ~12 | AESGAP rows against the release before |
 | 7 | speed medians of 3, rows speedcmp flags only | Falcon-4:16 | 4 a row | ~3 a pair | a real step against noise |
 | 8 | acc_all --prg EPlay | Falcon:16 | 1 | ~2 | EPlay with the four accessories loaded |

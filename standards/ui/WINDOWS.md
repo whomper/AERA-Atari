@@ -13,7 +13,7 @@ Older `common/` copies in EFTP, EUpdate, ECal, EContact and EHypView carry older
 
 **How to read it.** "The family does X" is the rule; where the apps do not agree the text says what most do
 and the disagreement has a row `W1` to `W28` in [DEVIATIONS.md](DEVIATIONS.md) (the number is the old section
-4.n of the audit). Erez answered the open choices on 9 Nov 2026
+4.n of the audit). The open choices were answered on 9 Nov 2026
 ([DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md)): a settled rule ends `Decided 9 Nov 2026 (Dn)`, and what the answers
 left unsettled is under `Still open` at the end of this file. F = focus app (EWeb, EPDF, EPlay); M = maintenance (the
 others).
@@ -51,7 +51,7 @@ others).
   before it is given to `wind_set_str(WF_INFO)` (`win.c:main_status`, `bidi_visual`), and the app sets it again
   only when the text changed (the AES redraws the line at every set).
   **Both stay: the info line, and an own status bar at the foot where the app has a progress line (5.9)** (EWeb,
-  EPDF; Erez, 2 Nov: "Like EWeb, placed at the bottom"); ClaudeST's status stays in the sidebar's foot. Decided
+  EPDF; decided 2 Nov: as EWeb, at the bottom); ClaudeST's status stays in the sidebar's foot. Decided
   9 Nov 2026 (D40, W12).
 - **Position and size** are saved in the INF and checked against the screen on the next start: the saved place
   is used when the window is at least the opening minimum wide and high and lies on the desk (`main_open`: `wd <
@@ -109,7 +109,7 @@ the AES's buffer), and nothing is laid out for the small work area: the app lays
 A page or file asked for (VA_START) brings an iconified viewer back (EHypView). `WM_BOTTOMED` sends the window
 to the back. EPlay gets iconify code with its fuller (D47), and EConvert's fixed form the iconifier (D34, W13).
 
-### 1.3 The AES's widgets (must; Erez, 24 Oct 2026)
+### 1.3 The AES's widgets (must; decided 24 Oct 2026)
 The bullets of 5.1 stay (the AES's sizer; its sliders where the content scrolls as one; the right-edge pane
 uses the AES's slider column; one click, one step). In detail, all in `common/ui/panebar.c`:
 - A pane bar is as wide as the AES's slider column (`pb_width`: the larger of `graf_handle`'s box width and what
@@ -131,7 +131,7 @@ uses the AES's slider column; one click, one step). In detail, all in `common/ui
   that pane, wherever the pointer is. Only EContact asks `graf_mkstate` and sends the list its arrows when the
   pointer is over the list (`win_message`), because some AESes send a wheel as `WM_ARROWED`.
   **No app handles a wheel message** (`WM_WHEEL`): the Speed table's "the wheel" is not met by any app.
-  **No wheel is wanted unless Erez asks** (the Speed table no longer lists it). **One rule: the window's arrows
+  **No wheel is wanted unless it is decided so** (the Speed table no longer lists it). **One rule: the window's arrows
   scroll the pane under the pointer, else the slider's pane.** EContact does it today; the others change with the hub's
   `common/ui/arrowed.c` (`arrow_target`, 10 Nov 2026). Decided 9 Nov 2026 (D37, W9).
 - **One click, one step** (28 Oct): the AES's second `WM_ARROWED` is dropped by `evnt_multi_`.
@@ -316,7 +316,7 @@ uses the AES's slider column; one click, one step). In detail, all in `common/ui
   EContact's `draw.c:sel_color` searches pens 2 to 255 for the colour nearest (120, 400, 880), against 5.2's
   rule; 16-colour `P_SEL` is (0,0,667) in EFTP and EUpdate and (0,0,533) in EMail. **`theme.c` is the family's palette,
   with one 16-colour selection colour, (0,0,667) as EFTP and EUpdate have it:** EMail changes, and the hub keeps the
-  one `theme.c` (`common/ui/theme.c`, `theme.h`, 10 Nov 2026: six base roles, the app's own handed to `theme_init`). ECal and EContact keep their palette unless Erez says otherwise; EContact's `sel_color` reads pens 0
+  one `theme.c` (`common/ui/theme.c`, `theme.h`, 10 Nov 2026: six base roles, the app's own handed to `theme_init`). ECal and EContact keep their palette unless decided otherwise; EContact's `sel_color` reads pens 0
   to 15 when next touched (5.2). EPlay's design D (its own pens and selection, plain column titles) stays. Decided
   9 Nov 2026 (D42, W16).
 - **The Hebrew keyboard's badge** sits: in EUpdate, EFTP, ECal and EContact at the toolbar row's right end
@@ -369,10 +369,10 @@ gap `g` of half a line (halved until the box fits the desk):
   other people's work it must credit (EUpdate "Git logo by Jason Long, CC BY 3.0"; EWeb its libraries; EPlay's credits are in `NOTICES.TXT`, and "MP3
   decoded on the Falcon's DSP." is not a credit). No repository address.
 - **Taglines** (one line, at most 44 characters): "E-mail for the Atari ST, TT and Falcon", "File transfer for
-  the ST, TT and Falcon" (39 characters; Erez approved it for EFTP on 9 Nov, in EFTP's next release), "A calendar for ...", "Contacts for ...",
+  the ST, TT and Falcon" (39 characters; approved for EFTP on 9 Nov, in EFTP's next release), "A calendar for ...", "Contacts for ...",
   "Hypertexts for ...", "PDF viewer for ...", "GitHub releases for the Atari Falcon and TT", "A web browser for
   the Atari Falcon", "An audio player for the Atari Falcon". **Fix both:** EFTP's is shortened to 44 characters or fewer,
-  and EPlay's names the machines it runs on (it runs on the TT and STE as well). Each session sends Erez the wording
+  and EPlay's names the machines it runs on (it runs on the TT and STE as well). Each session sends the owner the wording
   to approve. Decided 9 Nov 2026 (D49, W22). Whether the article is the rule (it is sometimes there, sometimes not)
   is in `Still open`.
 - **It opens from the first Desk-menu item** "About NAME..." (menu bar), or the first entry of the toolbar's [≡]
@@ -553,7 +553,7 @@ because 5.10 is "How a dialog is run", in [CONTROLS.md](CONTROLS.md).)
   9 Nov 2026 (D35, W4).
 
 ### 8.3 EConvert: B2 (decided 9 Nov 2026, D34)
-**EConvert keeps B2:** Erez's choice of "B with the list management of A", a **fixed form** (an AES object tree with name,
+**EConvert keeps B2:** the choice (B, with A's list management), a **fixed form** (an AES object tree with name,
 closer, mover and the iconifier, no sizer or fuller) with **two bars**. The layout this file proposed here (a window
 the user can size, a list pane like EFTP's, one bar in a status bar) is not adopted. 5.9 has a written exception for
 EConvert's two bars. B2 is built on EPDF's unreleased `ui-family` branch; EPDF's session reports it as a per-file
@@ -661,10 +661,10 @@ Cells of the app's font (`cw` x `ch`). "Pane bar" is `common/ui/panebar.c`; "AES
 | Part | As built |
 |---|---|
 | Window | `NAME CLOSER MOVER INFO SIZER VSLIDE UPARROW DNARROW` (no fuller, no iconifier yet: both come with a saved place, D47); title ` EPlay `; 56 cells wide fixed, height in whole rows (list 3+ rows); mini player `NAME CLOSER MOVER` only; centred a third of the way down; **no place saved yet**; info line `Playing 2 of 6 · Falcon 49.1 kHz` |
-| Bar | `4 * ch + 4` high, its own colours (pens 16 to 22, design D, Erez 3 Nov), its own drawn controls (Previous, Play/Pause, Next, position and volume; shuffle and repeat are in the Play menu and there is no Stop button), cover art |
+| Bar | `4 * ch + 4` high, its own colours (pens 16 to 22, design D, decided 3 Nov), its own drawn controls (Previous, Play/Pause, Next, position and volume; shuffle and repeat are in the Play menu and there is no Stop button), cover art |
 | List | rows `ch + 4`; page = full rows |
 
-EPlay's design D is Erez's decision of 3 Nov: its own palette (pens 16 to 22) and 56 columns wide. The hub read
+EPlay's design D is decided 3 Nov: its own palette (pens 16 to 22) and 56 columns wide. The hub read
 EPlay's `DESIGN.md` on 9 Nov: line 1104 lists the iconifier and the fuller as the window's parts, and nothing in it
 rules out a saved place. They are added (D47, W13); the palette and the fixed width stay (D42, W27).
 
@@ -706,7 +706,7 @@ The answers of 9 Nov did not settle these; nothing here is guessed.
 - **Further windows' first place** (D39). The rule is for a main window's first appearance; EWeb's ^N windows and
   EHypView's cascade (two text rows down and to the right) are not covered.
 - **EPlay's column titles** (D41 against D42). D41 makes titles bold dim everywhere; D42 keeps EPlay's design D, whose
-  titles are plain. The text keeps design D; Erez to confirm.
+  titles are plain. The text keeps design D; still to be confirmed.
 - **Which panes are a sidebar** (D45), and where EMail and ClaudeST put the hide command (neither has a View menu).
   EHypView's Subjects pane (the library's panes layout) is not named.
 - **INF keys D43 does not name:** `PANECOLS=` (EHypView), `PANE=` (EUpdate: one pane's height), `SIDEBAR=` (a switch in

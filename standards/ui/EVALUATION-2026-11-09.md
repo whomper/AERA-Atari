@@ -2,7 +2,7 @@ Answered 9 Nov 2026: see [DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md).
 
 # The app sessions' evaluation of the UI standards, 9 Nov 2026
 
-For Erez, from the hub. Nine of ten app sessions checked [MENUS.md](MENUS.md), [CONTROLS.md](CONTROLS.md),
+For the owner, from the hub. Nine of ten app sessions checked [MENUS.md](MENUS.md), [CONTROLS.md](CONTROLS.md),
 [WINDOWS.md](WINDOWS.md) and [DEVIATIONS.md](DEVIATIONS.md) against their own code and answered: EMail 2.14,
 EWeb 0.82, EContact 1.82, ClaudeST 2.1, EUpdate 2.02, EFTP 2.2, EHypView 1.39, ECal 2.46, EPlay 1.11.
 **EPDF has not replied** (it is fixing a bug); its place is in section 6 and holds what the earlier review of
@@ -17,7 +17,7 @@ Sizes: **S** a few lines or a text, **H** about half a day, **M** days or a layo
 
 Nine of ten apps answered; EPDF is pending. Of the 100 rows in DEVIATIONS, 8 were wrong, 12 need a correction (right in substance; a list, count or kind changes) and 80 were not disputed (rows only EPDF can answer included). Ten more text points need correcting (section 3: 29 items). You have **54 decisions**: 32 marked R, which "all R" accepts, and 22 that need your thought. Main risks: a shifted shortcut typed while an app is busy arrives plain, and in EMail that closes the window (D1); the shared Settings dialog is over its speed budget on a stock ST and Falcon (section 7, item 7), which matters before EWeb, EPlay and EPDF move onto it; shared-code fixes in `common/` hold up several apps. Real bugs are first in section 6: EWeb MD22, EMail's pop-up key, EPlay's silent port clamp, EPDF's three.
 
-## 2. Decisions for Erez
+## 2. Decisions for the owner
 
 ### Menus
 

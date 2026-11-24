@@ -8,7 +8,7 @@ Real screens of the latest releases of the AERA Atari apps, for the guidelines (
   - `st1`: ST:mono (640x400), TOS 1.04, flat
   - `xa`: a Falcon under FreeMiNT 1.17.0 with XaAES (common/tests/xaaes), EmuTOS 1.4, 16 colours
   - `f256`: Falcon:256, TOS 4.04, where 256 colours matter (the progress bar, a drawn PDF page)
-- Machines and TOS are the family's (common/tools/machines.py); the TOS images are Erez's own and not in git. Test data only: no real addresses (127.0.0.1, dana@test.local).
+- Machines and TOS are the family's (common/tools/machines.py); the TOS images are real ones, kept out of git. Test data only: no real addresses (127.0.0.1, dana@test.local).
 - Each line: file, app and version, machine, what it shows. A picture may serve two sections; it is listed once, under the one it shows best.
 
 ## 1.3 About box

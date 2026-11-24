@@ -18,16 +18,16 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
 
   When a change touches one of these, do it the guideline's way, even if the old code here did it
   differently.
-- **Never build a window, dialog or menu from the guidelines' words alone** (Erez, 9 Nov 2026): open the
-  family's real one in Hatari and copy its code (guidelines 5.6). A mock-up for Erez is a Hatari shot of the
+- **Never build a window, dialog or menu from the guidelines' words alone** (decided 9 Nov 2026): open the
+  family's real one in Hatari and copy its code (guidelines 5.6). A mock-up for the owner is a Hatari shot of the
   real thing changed, never a drawing.
-- **Speed is set by the stock machines** (Erez, 26 Oct 2026; the guidelines' "Speed"): an 8 MHz ST
-  and a stock Falcon (`ST`, `ST-1`, `Falcon-4`), not the DFB1. Design and code for them: draw only
+- **Speed is set by the stock machines** (decided 26 Oct 2026; the guidelines' "Speed"): an 8 MHz ST
+  and a stock Falcon (`ST`, `ST-1`, `Falcon-4`), not an accelerated one. Design and code for them: draw only
   what changed, keep the 68000's slow operations out of inner loops, do work once. A change to
   drawing, a loop over the data or the start gives its `AESGAP` stretches on `ST` and `Falcon-4`,
   before and after, in its commit message. A GEM release passes the speed rig within the
   guidelines' times.
-- **A new capability goes to the hub first** (Erez, 5 Nov 2026; guidelines 1.2): before building anything the family might share (a keyboard, a dialog, a format, a protocol, a helper, a setting), ask the hub whether `common/` has it or should get it. Never write your own copy.
+- **A new capability goes to the hub first** (decided 5 Nov 2026; guidelines 1.2): before building anything the family might share (a keyboard, a dialog, a format, a protocol, a helper, a setting), ask the hub whether `common/` has it or should get it. Never write your own copy.
 - **Shared code lives in [AERA-Atari](https://github.com/whomper/AERA-Atari).** Files under `common/` come from it. Change them
   there, not here, and pull them in with `tools/sync-common.sh`. A fix made only in this repo will drift
   again.
@@ -40,34 +40,34 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
   A build must leave every tracked file unchanged and shows the version in `VERSION` as it is (there is
   no `-dev` label). Don't
   commit built programs, help files or certificates (`binary/`, `dist/`). Never reuse a number.
-- **Only formal releases leave the build machine.** Erez gets vX.Y releases made by the Release workflow from
+- **Only formal releases leave the build machine.** The owner gets vX.Y releases made by the Release workflow from
   `main`, nothing else: no test builds, no CI artifacts, no builds from a branch.
   Work lands on `main`; to try a fix on real hardware, release it. If a release doesn't work, fix
-  forward: a new release with the next number, before any other work; never a rollback (Erez, 7 Nov 2026).
-- **Releases go out without asking Erez** (his decision, 23 Oct 2026; guidelines 1.2). Release when
+  forward: a new release with the next number, before any other work; never a rollback (decided 7 Nov 2026).
+- **Releases go out without asking the owner** (decided 23 Oct 2026; guidelines 1.2). Release when
   work on `main` is ready:
   - this repo's checks pass;
   - the rigs this file asks for pass (on EmuTOS where the session has nothing else).
 
-  Then give Erez the link in one line, with anything he has to do, and send the hub the link. The
-  hub's checks (Erez's TOS and NVDI, the configurations of AERA-Atari's standards/TEST-MATRIX.md) follow
+  Then give the owner the link in one line, with anything the owner has to do, and send the hub the link. The
+  hub's checks (real TOS and NVDI, the configurations of AERA-Atari's standards/TEST-MATRIX.md) follow
   the release; a fault they find is fixed forward by a new release that comes before any other work.
-  Decisions that are his still go to him first.
-- **Who decides what** (Erez, 31 Oct 2026; the guidelines' "Who decides what"). Erez's part, put
-  to him before the work as a decision with a short context:
+  The owner's decisions still go to the owner first.
+- **Who decides what** (decided 31 Oct 2026; the guidelines' "Who decides what"). The owner's part, put
+  to the owner before the work as a decision with a short context:
   - new programs and ideas, their core capabilities, and how they work with the other programs;
   - the user experience: the look, the layout, the way through a task, the words, the icons, the
     defaults;
-  - phases: work stays inside the phase he approved; at its end, one phase report (what it set out
+  - phases: work stays inside the approved phase; at its end, one phase report (what it set out
     to do, what was done with the release links, what is left, the next phase as a proposal), and
-    the next phase starts when he says so;
+    the next phase starts when the owner says so;
   - priorities and conflicts between programs or sessions (through the hub, with its options and
     recommendation);
   - packages on the Pi and ports.
 
   How it is made is the team's, without asking: code, structure, shared code, tests, measurements,
   fixes, docs and releases inside an approved phase.
-- **Only the hub tests interdependency and the family** (Erez, 8 Nov 2026). An app's own tests run the
+- **Only the hub tests interdependency and the family** (decided 8 Nov 2026). An app's own tests run the
   app alone: no other AERA program or accessory loaded, started or fetched for it (`getrelease.py`,
   `machines.py accs()` and `acc_all.py` stop outside AERA-Atari). What it does with another program is
   tested against a stand-in this repo owns; the real programs together are the hub's family checks.
@@ -81,14 +81,14 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
   `standards/GITHUB-IDENTITY.md`).
 - **The owner is not named as the one who asked or decided** anywhere on GitHub: release notes,
   commit messages, comments, docs, code comments, this file. Write "decided 22 Nov 2026" or what the
-  program does and why, never "Erez asked" or "Erez, <date>" (AERA-Atari, `standards/GITHUB-IDENTITY.md`).
+  program does and why, never "the owner asked" or "the owner, <date>" (AERA-Atari, `standards/GITHUB-IDENTITY.md`).
   The author and copyright lines keep "AERA | Erez Yaary". Old text is cleaned when next touched.
 - **Never commit:**
   - real addresses from the owner's network: use `192.168.1.x`, `PI_IP`, `ATARI_IP`
   - passwords, session keys, `.KEY` / `.INF` files from a test run
   - photos that still carry EXIF/GPS data
-  - anything the owner provides: his files, logs, screenshots, share links or file IDs, his machines'
-    measurements, and no quote of his words (`standards/GITHUB-IDENTITY.md`, Commits: a reported fault
+  - anything the owner provides: the owner's files, logs, screenshots, share links or file IDs, measurements
+    of the owner's machines, and no quote of the owner's words (`standards/GITHUB-IDENTITY.md`, Commits: a reported fault
     becomes a case made from scratch; a decision is written as "decided <date>" and what it is)
 - **README:** keep the section order from the template (Highlights, Getting started, How it reaches the
   servers, Building, Source, Tests, Licence, family footer). Use British English.

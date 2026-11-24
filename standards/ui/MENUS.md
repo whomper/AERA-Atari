@@ -10,8 +10,8 @@ ClaudeST 2.1, EPDF 2.1 (with EConvert), EPlay 1.10. Every app's copy of `common/
 `popup.c` and `popup.h` is byte-identical to the hub's. A pointer reads `app: file:function`, from the app's
 repository root at that tag.
 
-**How to read it.** "The family does X" is the rule. Erez answered the open choices of
-[EVALUATION-2026-11-09.md](EVALUATION-2026-11-09.md) on 9 Nov 2026 ([DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md)):
+**How to read it.** "The family does X" is the rule. The open choices of
+[EVALUATION-2026-11-09.md](EVALUATION-2026-11-09.md) were answered on 9 Nov 2026 ([DECISIONS-2026-11-09.md](DECISIONS-2026-11-09.md)):
 a settled rule ends `Decided 9 Nov 2026 (Dn)`, and what the answers left unsettled is under `Still open` at the end of
 this file. Where an app does not meet a rule yet, its row in [DEVIATIONS.md](DEVIATIONS.md) says so (ids such as `MD7`
 point to it): a focus app (F: EWeb, EPDF, EPlay) takes it as work, a maintenance app (M: all others) with a release it
@@ -34,7 +34,7 @@ makes anyway.
   EPlay Play. A title with nothing to hold is left out (EContact has no Edit; EPDF has no Options until it moves Settings and Font
   there: MD1, D6).
   A title's text is `" File "`: a space each side.
-- **A program with several windows has a Window title** (Erez, 13 and 14 Nov 2026: EWeb 1.11, then EHypView), the last
+- **A program with several windows has a Window title** (decided 13 and 14 Nov 2026: EWeb 1.11, then EHypView), the last
   of its own titles, before Options: its windows, oldest first, by what each shows (a page's title); the one in front
   ticked; choosing another tops it (`WF_TOP`, as Next window does). Close window and Next window stay in File (3.1).
 - **The Desk title is the product name, `" EMail "`, never the word "Desk"** (1.1). Its menu is
@@ -101,7 +101,7 @@ makes anyway.
   shortcut typed while the app was busy arrives as the plain one (EPDF's comment: "Shift may be gone too when
   EPDF was busy"). **Therefore a shifted variant must never be a more dangerous command than its plain key.**
   EMail's ⇧^U (Mark as unread) can arrive as ^U (Close window).
-  **EMail's Mark as unread moves off ⇧^U** (EMail proposes the key, Erez approves it) and **EHypView's Index moves
+  **EMail's Mark as unread moves off ⇧^U** (EMail proposes the key, the owner approves it) and **EHypView's Index moves
   off ^I** (the family's Get info) at its next release. The other per-app letters stay; across apps only
   the rows of the 2.1 table are promised. Shift typed while busy is read with `key_ctrl` for Control, and Shift+Left
   and Shift+Right are known by their '4' and '6' (EContact); a shared `key_shift` beside `key_ctrl` is hub work.
@@ -159,7 +159,7 @@ makes anyway.
   `NAME.HYP` at its first page through `common/ui/help.c`. It is **not context-sensitive** in any app (every
   `help_key` call passes page 0; only EConvert passes a page). With no viewer an alert offers the app's own
   keys list (`Keys...`, a dialog). Opening the page of what is on screen is not built and not wanted now: Help opens the first
-  page, and Erez will look at context help again after 1.0 (MG9; a hub build task in `common/ui/help.c` that is not
+  page, and context help is looked at again after 1.0 (MG9; a hub build task in `common/ui/help.c` that is not
   started). Decided 9 Nov 2026 (D12).
   **Every app says `NAME help  Help` and has `Keys...`** (MD4): EPDF and EPlay now (EPlay's guide command no longer
   falls back to About), EHypView at its next release. **EHypView's exception:** its Help key shows the shown
@@ -596,7 +596,7 @@ As built at the tags; the rules of 1.5 say where each is going.
 
 The answers of 9 Nov did not settle these; nothing here is guessed, and new code does not depend on them.
 
-- **The keys.** EMail's new key for Mark as unread (EMail proposes, Erez approves: D1) and EHypView's new key for
+- **The keys.** EMail's new key for Mark as unread (EMail proposes, the owner approves: D1) and EHypView's new key for
   Index (D2). Until then the keys stay as they are; nothing shifted is added.
 - **Find, the words and the place** (D4 settles the rule only). EMail's find bar is a tick item in Message that
   should be `Find` and say what it searches; ECal's `Find...` (a dialog over events, in View) and EContact's `Find`
@@ -615,4 +615,4 @@ The answers of 9 Nov did not settle these; nothing here is guessed, and new code
 - **`Write a log` in "every app"** (D8): EHypView, ClaudeST, EPDF and EPlay have no log item. Read here as the
   wording where a log exists; whether each must have one is not said.
 - **MD28**, EPDF's zoom keys (`Zoom in +` / `Zoom out -` without Control against `^+` / `^-`): not among the 54;
-  EPDF asked Erez separately.
+  EPDF asked separately.

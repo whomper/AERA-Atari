@@ -1,6 +1,6 @@
-# Erez's decisions of 9 Nov 2026
+# Decisions of 9 Nov 2026
 
-Erez answered the 54 decisions D1 to D54 of [EVALUATION-2026-11-09.md](EVALUATION-2026-11-09.md) on 9 Nov 2026.
+The 54 decisions D1 to D54 of [EVALUATION-2026-11-09.md](EVALUATION-2026-11-09.md) were answered on 9 Nov 2026.
 This file records each one in plain words, who it affects and what it costs; the rules themselves are written
 into [MENUS.md](MENUS.md), [CONTROLS.md](CONTROLS.md), [WINDOWS.md](WINDOWS.md) and
 [../ATARI-APP-GUIDELINES.md](../ATARI-APP-GUIDELINES.md), each ending `Decided 9 Nov 2026 (Dn)`, and every row of
@@ -20,7 +20,7 @@ the context menu, where the evaluation kept it ticking). D13 was confirmed for E
 ## Menus (D1 to D21)
 
 - **D1.** Mark as unread moves off ⇧^U, because a shifted key typed while the app is busy arrives plain and ^U
-  closes the window. EMail proposes the key; Erez approves it. EMail (M).
+  closes the window. EMail proposes the key; the owner approves it. EMail (M).
 - **D2.** EHypView's Index leaves ^I at its next release (^I is Get info in the family). EHypView (M). S.
 - **D3.** A one-window program lists Quit alone; ^U still quits and the accessory's ≡ menu keeps Close. ECal and
   ClaudeST change (M); EFTP, EUpdate, EContact, EPDF and EPlay already do it.
@@ -95,7 +95,7 @@ the context menu, where the evaluation kept it ticking). D13 was confirmed for E
 - **D35.** Job formats are `45%`, sizes `12 KB of 3.4 MB` (EFTP's) and time `2 min left` (EPDF's). EFTP, EUpdate,
   EContact (M) and EConvert (F). S.
 - **D36.** Row heights: no change; the text records the heights. No work.
-- **D37.** The window's arrows scroll the pane under the pointer, else the slider's pane; no wheel unless Erez asks.
+- **D37.** The window's arrows scroll the pane under the pointer, else the slider's pane; no wheel unless the owner asks.
   **Hub first** (`common/`); then EMail, EFTP, EUpdate, ClaudeST, EHypView (M).
 - **D38.** Minimum window sizes are content-bound, a toolbar window is wide enough for its buttons, and the open
   check uses the same number as `WM_SIZED`. EFTP, ECal, EContact (M). S.
@@ -104,7 +104,7 @@ the context menu, where the evaluation kept it ticking). D13 was confirmed for E
 - **D40.** The info line and the status bar both stay; the status bar where the app has a progress line. No work.
 - **D41.** Column titles are bold dim everywhere; sorting stays EFTP's. EUpdate (M). S. (EPlay: see D42.)
 - **D42.** `theme.c` is the family's, with one selection colour, the hub picking (0,0,667) as in EFTP; ECal and
-  EContact keep their palette unless Erez says; EPlay's design D stays. EMail changes (M). **Hub** keeps the one
+  EContact keep their palette unless the owner says; EPlay's design D stays. EMail changes (M). **Hub** keeps the one
   `theme.c`.
 - **D43.** INF keys are `WINDOW=x,y,w,h`, `PANES=` and `FONT=name,points`: the focus apps now, the others when
   they next move. M apps: EMail H, EUpdate H, EFTP M, ECal M, EContact M, ClaudeST H, EHypView S.
@@ -121,8 +121,8 @@ the context menu, where the evaluation kept it ticking). D13 was confirmed for E
 
 ## Other (D49 to D54)
 
-- **D49.** Taglines: fix both. EFTP's is shortened to 44 characters or fewer (Erez approved "File transfer for the ST, TT and Falcon", 39, on 9 Nov); EPlay's names the machines it runs
-  on. Each session sends Erez the wording to approve. EFTP (M), EPlay (F).
+- **D49.** Taglines: fix both. EFTP's is shortened to 44 characters or fewer ("File transfer for the ST, TT and Falcon", 39, approved on 9 Nov); EPlay's names the machines it runs
+  on. Each session sends the owner the wording to approve. EFTP (M), EPlay (F).
 - **D50.** The clipboard sentences are `Copied to the clipboard.` and `Couldn't write the clipboard.` on the status
   line, never an alert. EMail, EContact, EHypView, ClaudeST, EUpdate (M), EWeb, EPDF (F). S each.
 - **D51.** A notification's button reads `Show` when it brings a window forward. EUpdate and EContact change from
@@ -160,7 +160,7 @@ Pairs the hub found while writing; each is settled in the text as noted, or left
 - **D32, D48, D34 and 5.8, 5.9** ("act on release", "one bar per job"): each is a written exception.
 - **D53 and WINDOWS 2.2** (Clr/Home is the first row): a player's exception.
 - **D41 and D42** (column titles bold dim everywhere; EPlay's design D has plain ones): the text keeps EPlay's
-  design D; **Erez to confirm** (in `Still open`).
+  design D; **still to be confirmed** (in `Still open`).
 - **D46 and 3.5** (a one-line field of a window empties on Esc): D46 is written for the entry line of a window
   whose list shares the keyboard; the same file lists the search field as open.
 - **D14 and EMail's `^E`:** the pop-up shows the bar's key (⇧^R), not the alias.
@@ -168,8 +168,8 @@ Pairs the hub found while writing; each is settled in the text as noted, or left
 
 ## The evaluation's contradictions (section 4)
 
-How each was resolved in the text. Those with a D follow Erez's answer; the rest are the hub's reading of the code,
-which he did not rule on.
+How each was resolved in the text. Those with a D follow the answer; the rest are the hub's reading of the code,
+not ruled on.
 
 1. Find, Translate and Select all against "a command on the app's own things is in that thing's menu": D4, D5, D20.
 2. "Act on release" against menus and pop-ups opening on the press: buttons act on the release; menus, pop-ups, ticks,
@@ -200,7 +200,7 @@ which he did not rule on.
   (D39); EHypView's "Look there anyway?" against D30; the other INF keys D43 does not name (`PANECOLS=`, `PANE=`,
   `SIDEBAR=`, `HEBFONT=`); a playlist copying its selection (D21); ECal's 500 ms dialog tips (D18); which panes
   count as a sidebar (D45); EPlay's column titles (D41, D42).
-- **Not among the 54:** MD28, EPDF's zoom keys (it asked Erez separately), and whether EPDF's new look is released.
+- **Not among the 54:** MD28, EPDF's zoom keys (asked separately), and whether EPDF's new look is released.
 - Evaluation section 5 ("what the standards miss") is not part of this change except where a decision settles an
   item: the hub writes it next.
 
@@ -208,7 +208,7 @@ EPDF's reply arrived after the evaluation was written (EPDF 2.2; its `ui-family`
 with MD1, MD4 and the controls rows, reports that its Find dialog exists (`find.c`), and chose B2 for EConvert,
 which D34 confirms.
 
-## Decided by Erez, one by one, 10 Nov 2026
+## Decided one by one, 10 Nov 2026
 
 1. **D25, keys in Settings:** kept as built (Tab/Shift+Tab, Space, arrows, Up/Down in the page list, the thin ring after a key).
 2. **D4, Find words:** the rule as written: ECal `Find...`, EMail `Find`, EContact `Find`; places unchanged.
@@ -219,7 +219,7 @@ which D34 confirms.
 7. **Changing the Settings page from a text field:** no direct key; Tab to the page list, then Up/Down.
 8. **C21, EHypView's "Look there anyway?":** kept; D30 covers numbers only, a missing folder is a question.
 
-### Decided by Erez, one by one, 10 Nov 2026 (second round)
+### Decided one by one, 10 Nov 2026 (second round)
 
 9. **D17, where Insert's menu opens:** at the selection: the selected row's top-left (lists, folders), the text cursor (editor), the chosen words (reader); with no selection, the pane's top-left (ECal: the selected event, else the selected day, else the pointer).
 10. **D18, ECal's dialog tips:** 0.7 s like every other tip, through `tooltip.c`.
@@ -228,7 +228,7 @@ which D34 confirms.
 13. **D2, EHypView's Index key:** ⇧^T (next to Contents ^T).
 14. **D49, EContact's tagline:** `Contacts for the ST, TT and Falcon`.
 
-## Added 17 Nov 2026 (Erez: "Approve your recommendations")
+## Added 17 Nov 2026 (the hub's recommendations, approved)
 
 - **EWeb, D9:** Settings' tick reads `Direct connection`, as the menu does (not "Direct connection: TLS on this Atari").
 - **EWeb, D24:** Scripts in Settings are three radio buttons, `Off` / `Chosen sites` / `Every site`, in place of the two ticks.
@@ -236,13 +236,13 @@ which D34 confirms.
 - **EHypView, D43/D44:** `PANECOLS=` becomes `PANES=`; `PANECOLS=` is read once.
 - **EHypView, speed:** a line scrolled on an 8 MHz ST (125 ms against 50) is left for after EWeb, EPDF and EPlay reach 1.0.
 - **Order for EWeb, EPDF and EPlay:** their section-8 rows are worked after the release each has in flight, before the next step of its phase.
-- **ClaudeST, D43:** `WINDOW=x,y,w,h` saved at quit only when the place changed (6.1), checked against the screen at the start; the whole desk when there is none (Erez, 17 Nov 2026: "Approve your recommendations").
+- **ClaudeST, D43:** `WINDOW=x,y,w,h` saved at quit only when the place changed (6.1), checked against the screen at the start; the whole desk when there is none (decided 17 Nov 2026, as recommended).
 - **ClaudeST, D43/D44:** `SIDEBAR=` becomes `PANES=`; `SIDEBAR=` is read once. `HEBFONT=` stays.
-- **ECal (Erez, 17 Nov 2026: "approve 1,3,4,5. 2 remove Hebrew and 6 do it in this release"):**
+- **ECal (decided 17 Nov 2026: 1, 3, 4 and 5 approved; 2, the Hebrew setting removed; 6 in this release):**
   1. Toolbar tips as ECal proposed: "Show or hide the calendar list (⇧^S)", "The week before (Shift+←)", "The next week (Shift+→)" (the view's unit), "Today (T)", "The day/week/month/year view (D/W/M/Y)", "A new event (N)", "Refresh the calendars (^R)" with "With Shift: everything again (Shift+^R)", "Every command, in a menu" on ≡.
   2. The "Hebrew in font" setting is removed from ECal.
   3. "Read calendars" as four radio buttons: "At start", "1 minute", "5 minutes", "Opened".
   4. The event dialog's repeat end stays a pop-up in the Repeat row.
   5. Keys gains "Insert: the right-click menu" (D17).
   6. C24, the older FIELD dialogs to the AES look (the event, Calendar info, accounts, Find, Go to), in this release.
-- **ClaudeST (Erez, 17 Nov 2026: "yes, remove it from ClaudeST too"):** the "Hebrew in fonts" setting is removed; `HEBFONT=` is read once and dropped (D44). No app has the setting now.
+- **ClaudeST (decided 17 Nov 2026: removed from ClaudeST too):** the "Hebrew in fonts" setting is removed; `HEBFONT=` is read once and dropped (D44). No app has the setting now.
