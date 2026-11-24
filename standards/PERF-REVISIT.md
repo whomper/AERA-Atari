@@ -439,6 +439,13 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   its page 185 / 190 on the STs (365): a line there is a picture line of 48-80 px, the row move alone 25-30 ms of
   an 8 MHz ST's. Accepted (23 Nov 2026). To look at when speed is the focus: the picture pages' lines.
 
+- **EPlay 1.57** (256 colours leave the system palette alone, the bar on the screen's nearest pens; 24 Nov 2026)
+  against 1.56, Falcon-4:256 with NVDI: started with 8 files 740 -> 755, About 370 -> 385, a Mega Drive VGM's
+  start 2,370 -> 2,385. EPlay's timed draw parts match 1.56 to 0.1 ms and every symbol sits at 1.56's place mod
+  256; the same build drawing in 1.56's pens 16-22 reads 735, so the 15 ms is NVDI drawing in the screen's
+  own pens, the cost of the fix. Accepted (24 Nov 2026). Falcon-4:16's VGM start (2,200 -> 2,265; the 1.56
+  binary itself 2,200-2,280) and the STE's Next (1.56 itself 405-450) judged noise by the hub.
+
 - **EPlay 1.55** against 1.54, Falcon-4:256 with NVDI, a VGM's second "10 s back": medians of five pairs
   190 -> 200 ms (the same row as 1.53 -> 1.54). Not work: under Hatari's profiler the stretch's code runs the
   same counts and cycles in both (6,241 calls of dspopn.c's put, its wait loop never waiting), the +1.4 ms
