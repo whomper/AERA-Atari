@@ -149,9 +149,10 @@ should update its remote:
   - **His own published work stays.** What he made and published himself is the product, not data
     handed over: EDOS's sources, his font EREZ.FNT (AERA.FNT is made from it), his story in his words.
   - **Public web pages** he names may still be recorded into the private EWeb-sites repository.
-  - **History.** Data of his found in a repository is taken out of its current files; a public main
-    branch's history is not rewritten. Only an unmerged working branch, or a private repository's, is
-    rewritten to take it out. Each finding goes to the hub first.
+  - **History stays** (decided 24 Nov 2026, for every repository). Data of his found in a repository
+    is taken out of its current files and replaced by a case made from scratch; no history is rewritten
+    and nothing is force-pushed. A working branch that holds such data is squashed when it is merged and
+    then deleted. Each finding goes to the hub first.
 - **Branches.** `main` is the default branch everywhere. Under Settings → General, tick
   "Automatically delete head branches" so merged branches tidy themselves away.
 
