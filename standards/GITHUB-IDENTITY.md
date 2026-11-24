@@ -137,13 +137,21 @@ should update its remote:
   of who decided what stays with the sessions, off GitHub.
 - **Nothing the owner provides is committed** (decided 24 Nov 2026). No commit, on any branch of any
   repository, public or private, carries data the owner gives a session: his files (PDFs, archives,
-  music, pictures, screenshots, logs such as EPLAY.LOG or epdf.log), links to his own things (a Drive,
-  iCloud or other share link, a file's ID), his messages and words, or his machine's settings. Nor does
-  a commit message, test name or note quote them. A fault he reports becomes a case made from scratch
-  that shows the same thing (a made-up page, file or log in the same form). His data stays on the
-  build machine, used and deleted. Public web pages he names may still be recorded into the private
-  EWeb-sites repository as before. A commit found carrying his data is reported to the hub at once;
-  removing it from history is the owner's call.
+  music, pictures, screenshots and videos of his screen, logs such as EPLAY.LOG or epdf.log), links to
+  his own things (a Drive, iCloud or other share link, a file's ID), measurements or settings of his
+  machines, or his messages. A fault he reports becomes a case made from scratch that shows the same
+  thing (a made-up page, file, log or table in the same form); his data stays on the build machine,
+  used and deleted. The scope, decided the same day:
+  - **His words.** No new quote of him anywhere: not in commits, CLAUDE.md, code comments, tests or
+    release notes. Write the decision and its date ("decided 24 Nov 2026: short dates in the list").
+    Quotes already in a file are put in plain words when that file is next touched; commit history
+    stays as it is.
+  - **His own published work stays.** What he made and published himself is the product, not data
+    handed over: EDOS's sources, his font EREZ.FNT (AERA.FNT is made from it), his story in his words.
+  - **Public web pages** he names may still be recorded into the private EWeb-sites repository.
+  - **History.** Data of his found in a repository is taken out of its current files; a public main
+    branch's history is not rewritten. Only an unmerged working branch, or a private repository's, is
+    rewritten to take it out. Each finding goes to the hub first.
 - **Branches.** `main` is the default branch everywhere. Under Settings → General, tick
   "Automatically delete head branches" so merged branches tidy themselves away.
 

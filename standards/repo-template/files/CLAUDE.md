@@ -87,8 +87,9 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
   - real addresses from the owner's network: use `192.168.1.x`, `PI_IP`, `ATARI_IP`
   - passwords, session keys, `.KEY` / `.INF` files from a test run
   - photos that still carry EXIF/GPS data
-  - anything the owner provides: his files, logs, screenshots, share links or file IDs, his words
-    (`standards/GITHUB-IDENTITY.md`, Commits; a reported fault becomes a case made from scratch)
+  - anything the owner provides: his files, logs, screenshots, share links or file IDs, his machines'
+    measurements, and no quote of his words (`standards/GITHUB-IDENTITY.md`, Commits: a reported fault
+    becomes a case made from scratch; a decision is written as "decided <date>" and what it is)
 - **README:** keep the section order from the template (Highlights, Getting started, How it reaches the
   servers, Building, Source, Tests, Licence, family footer). Use British English.
 
