@@ -1,5 +1,5 @@
 # NVDI 5.03's own 256-colour palette on a Falcon, register by register (VgetRGB under
-# NVDI with no palette loaded; Hatari, Erez's NVDI 5.03, 23 Oct 2026)
+# NVDI with no palette loaded; Hatari, NVDI 5.03, 23 Oct 2026)
 ffffff
 f20000
 00e600

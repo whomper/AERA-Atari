@@ -8,17 +8,17 @@ This repo is the reference for the AERA Atari family. It holds:
   `standards/ATARI-XL-GUIDELINES.md`; test with `python3 xl/tests/test_tools.py`,
   `test_ax.py` and `test_sim.py` before pushing)
 
-- **Focus and maintenance (Erez, 1 Nov 2026).** EWeb, EPDF and EPlay are the focus until 1.0; every
+- **Focus and maintenance (decided 1 Nov 2026).** EWeb, EPDF and EPlay are the focus until 1.0; every
   other app is in maintenance mode (ATARI-APP-GUIDELINES.md, section 8): no new features or speed
-  rounds. Shared work serves the three first. Only Erez ends it, explicitly.
-- **Every app follows every family rule, maintenance or not** (Erez, 17 Nov 2026: "all applications
-  must adhere to family rules and be notified. We will review whether they need to issue a release."):
+  rounds. Shared work serves the three first. Only the owner ends it, explicitly.
+- **Every app follows every family rule, maintenance or not** (decided 17 Nov 2026: every app
+  keeps the family rules and is told of each; whether it needs a release is reviewed):
   notify every app (the 8-bit ones of XL rules and `xl/` fixes) of each new or changed rule and each
-  shared fix, with what it must do; whether that needs a release is put to Erez, except a fault fix,
+  shared fix, with what it must do; whether that needs a release is put to the owner, except a fault fix,
   which always does.
-- **The regression gate (Erez, 17 Nov 2026):** every code candidate of every app is tested on every
-  configuration of `standards/TEST-MATRIX.md`'s gate table on Erez's TOS and NVDI, paired for speed against
-  the last release on Erez's configuration, `Falcon-4:16` and `ST:mono` (no row slower beyond a tick), and
+- **The regression gate (decided 17 Nov 2026):** every code candidate of every app is tested on every
+  configuration of `standards/TEST-MATRIX.md`'s gate table on real TOS and NVDI, paired for speed against
+  the last release on the reference configuration, `Falcon-4:16` and `ST:mono` (no row slower beyond a tick), and
   checked by the hub with the real programs together, before it is released; a user's fault becomes a rig
   case in the release that fixes it. The hub's family check answers each candidate with go or faults.
 - **A change to a standard is a change to every app.** When a rule changes:

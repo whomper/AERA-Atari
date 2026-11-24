@@ -1,7 +1,7 @@
 name: Rig tools
 
-# The measuring programs Erez runs on his own Atari for the test rigs
-# (common/tests/calib: CALIB.PRG, what a file call costs on his disk).
+# The measuring programs run on a real Atari for the test rigs
+# (common/tests/calib: CALIB.PRG, what a file call costs on a real disk).
 # Only formal releases leave the build machine: run this workflow on main
 # with a tag (rigtools-1, rigtools-2, ... never reused) and the notes.
 on:

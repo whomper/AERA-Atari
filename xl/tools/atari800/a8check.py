@@ -8,7 +8,7 @@ through a8run (build.sh). From EFTP_XL's build-machine checks.
       the disk boots SpartaDOS, PROGRAM is typed at the D1: prompt, and
       TEXT (e.g. the title "EFTP_XL 1.1") must come on the screen
   a8check.py mac65 A8RUN DISK.ATR MAIN.M65 PROGRAM CART
-      MAC/65 (CART: Erez's MAC/65 1.01 cartridge image, type 15, never
+      MAC/65 (CART: a MAC/65 1.01 cartridge image, type 15, never
       in git) LOADs MAIN.M65 from the disk and assembles it over
       PROGRAM, as on the Atari (ASM ,,#D:PROGRAM), on a copy without
       PROGRAM so a full disk has room; it must report 0 errors, and what

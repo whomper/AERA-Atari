@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2026 AERA | Erez Yaary
 """mkfoldericon.py - the AERA folder, a desktop icon for the folder that
-holds the AERA programs (Erez, 21 Oct 2026): a folder in the mark's night
+holds the AERA programs (decided 21 Oct 2026): a folder in the mark's night
 with the pyramid A on it, the A of EWeb's throbber (EWeb's
 tools/mkthrobber.py, drawn the same way: 8 times bigger, then reduced).
 
@@ -36,7 +36,7 @@ BRONZE = dict(HI=(255, 236, 200), LIGHT=(236, 190, 130), MID=(196, 132, 78), DAR
               COPPER=(222, 140, 88))
 SYSTEM16 = dict(HI=(255, 255, 255), LIGHT=(255, 255, 0), MID=(170, 170, 0), DARK=(170, 170, 0), DEEP=(170, 0, 0),
                 COPPER=(170, 170, 0))
-# selected, the icon lit (Erez, 21 Oct 2026): the A and the edge brighter
+# selected, the icon lit (decided 21 Oct 2026): the A and the edge brighter
 SEL16 = dict(HI=(255, 255, 255), LIGHT=(255, 255, 255), MID=(255, 255, 0), DARK=(255, 255, 0), DEEP=(255, 0, 0),
              COPPER=(255, 255, 0))
 SEL256 = {k: tuple(int(v + (255 - v) * 0.3) for v in c) for k, c in BRONZE.items()}
