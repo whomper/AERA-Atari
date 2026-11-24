@@ -4,7 +4,7 @@
 
     asm.py CAR SRCDIR RUNDIR MEMLO 'COMMAND' ['COMMAND' ...]
 
-CAR is Erez's MAC/65 1.01 image (MAC_65_1.01_with_DDT.car, CAR type 15,
+CAR is a MAC/65 1.01 image (MAC_65_1.01_with_DDT.car, CAR type 15,
 16,400 bytes); it never goes in git. SRCDIR holds the D: files (MAC/65
 tokenized sources, as atari_src.py puts them on the disk); it is copied to
 RUNDIR, where MAC/65 reads and writes. MEMLO is hex (DOS's MEMLO, e.g.

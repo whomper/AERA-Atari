@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # AERA-Atari xl/tools - AERA.FNT, the family's character set
 # Copyright (C) 2026 AERA | Erez Yaary. GPL-2.0-or-later, see COPYING.
-"""AERA.FNT (the 8-bit guidelines, 5.3) is Erez's EREZ.FNT (xl/font/),
+"""AERA.FNT (the 8-bit guidelines, 5.3) is made from the AERA font's source, EREZ.FNT (xl/font/),
 moved one pixel right where its glyph leaves column 7 empty, so inverse
 characters show as solid blocks as the ROM font's do (EDOS's font), with
 the family's four icons in the places kept for them (5.3; a program may
