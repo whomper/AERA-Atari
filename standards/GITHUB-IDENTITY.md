@@ -135,6 +135,15 @@ should update its remote:
   text is cleaned when its file is next touched for another reason (no sweep of its own), except the
   published release notes, cleaned once (each repository's Notes workflow, from the repo template). The record
   of who decided what stays with the sessions, off GitHub.
+- **Nothing the owner provides is committed** (decided 24 Nov 2026). No commit, on any branch of any
+  repository, public or private, carries data the owner gives a session: his files (PDFs, archives,
+  music, pictures, screenshots, logs such as EPLAY.LOG or epdf.log), links to his own things (a Drive,
+  iCloud or other share link, a file's ID), his messages and words, or his machine's settings. Nor does
+  a commit message, test name or note quote them. A fault he reports becomes a case made from scratch
+  that shows the same thing (a made-up page, file or log in the same form). His data stays on the
+  build machine, used and deleted. Public web pages he names may still be recorded into the private
+  EWeb-sites repository as before. A commit found carrying his data is reported to the hub at once;
+  removing it from history is the owner's call.
 - **Branches.** `main` is the default branch everywhere. Under Settings → General, tick
   "Automatically delete head branches" so merged branches tidy themselves away.
 
