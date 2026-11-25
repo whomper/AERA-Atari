@@ -1079,6 +1079,10 @@ no field, closes on Esc and Undo alike.
   `alert()` hands its text, wrapped as ours is, to `form_alert`, and Esc does there what that AES's
   alerts do (XaAES's take Return, a click or the underlined letter, not Esc). On TOS and EmuTOS our
   own stays, with Esc: TOS's alert ignores it and cuts lines at 30 characters.
+  One exception, where the AES's alert is known to fail (decided 25 Nov 2026): MyAES on the
+  FireBee (the `_CF_` cookie and MyAES's `ALERT` program), whose ColdFire ALERT.PRG died with a bus
+  error on a tester's machine for a one-button [3] alert. There `alert()` shows ours, in a window as
+  the other dialogs are (common's `aes_alert_fails` in `ui/alert.c`).
 - **There a dialog is a window** (the same AESes): `dlg_open` puts it in a window of the AES's with
   the app's name (`dlg_title`), a closer (as Undo: Cancel) and a mover, and other programs go on running and
   drawing while it is open; the app's other windows are drawn through `dlg_redraw_hook`. On TOS and
