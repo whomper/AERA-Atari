@@ -433,6 +433,14 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   its page 185 / 190 on the STs (365): a line there is a picture line of 48-80 px, the row move alone 25-30 ms of
   an 8 MHz ST's. Accepted (23 Nov 2026). To look at when speed is the focus: the picture pages' lines.
 
+- **ECal 2.59** (the date picker; a new start moves the end; 25 Nov 2026) against 2.58, Falcon-4:16, medians
+  of 3 candidate runs against 5 of 2.58: week whole 745 -> 780, month again 1075 -> 1085, next month
+  1260 -> 1270, today 510 -> 515, month whole 770 -> 825 (2.58 itself 770-820), the year, back to today and week
+  again stretches +5-10; Falcon-4:256 with NVDI the year whole 2325 -> 2370 (2.58 itself 2285-2365). Everything
+  outside editor.o and field.o at 2.58's places mod 256; Hatari's profile shows ECal's own work the same to
+  0.1-0.4 % of instructions on every view, the rest TOS's time between slices. ST:mono's day view is two-mode
+  in 2.58 itself (960-1035). Accepted (25 Nov 2026: release as it is).
+
 - **EPlay 1.57** (256 colours leave the system palette alone, the bar on the screen's nearest pens; 24 Nov 2026)
   against 1.56, Falcon-4:256 with NVDI: started with 8 files 740 -> 755, About 370 -> 385, a Mega Drive VGM's
   start 2,370 -> 2,385. EPlay's timed draw parts match 1.56 to 0.1 ms and every symbol sits at 1.56's place mod
