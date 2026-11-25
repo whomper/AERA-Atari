@@ -1739,6 +1739,16 @@ rows, states, words and keys: [ui/WINDOWS.md](ui/WINDOWS.md) section 8. **In eve
 `2 min left` and `12 KB of 3.4 MB` (D35), and `Stop` is the job's word (D31). EConvert keeps B2, a fixed form with two
 bars (D34).
 
+### 5.12 The file dialog: opening and saving (must; decided 25 Nov 2026)
+The family's own file dialog, `common/ui/filepick.c`, is the default wherever an app saves a file:
+`filepick_save()` (Save as with the proposed name, the folders and the files of the save type, one row chosen at a
+time, the type's extension added, `* ? \ :` refused, 8+3 off MiNT, and "NAME is there already. Replace it?" before it
+closes). Opening several files is `filepick_run()` (EPlay's Add files). It runs its own loop with the app's idle()
+called, so music, transfers and jobs go on while it is open. **Every app that offers it has the setting "Use the system
+file selector"** in its Settings (off by default), which sends the same calls to the AES's own selector
+(`filepick_system`), with the name filled in and the same replace question. The look is as approved on 25 Nov 2026
+(common/tests/filepick/save.py takes its shots); the app writes the file itself, in steps where it is large (6.5).
+
 ---
 
 ## 6. Settings, files, errors
@@ -2385,7 +2395,8 @@ program's window.
 | 6.1 INF keys `WINDOW=x,y,w,h`, `PANES=`, `FONT=name,points`; the old key read once (D43, D44) | ✓ (WINDOW=, FONT=name,points; old keys read once; tests/inftest.sh; 2.54) | ✓ (50c6d0d6; no PANES=, SIDEBAR= stays) | ✓ (30855d5d) | ✓ (9443153) | ✓ (FONT=name,points, PANES=, WINDOW= for the library; old keys read once; 2.7) | ✓ (ce598788, 56067c88, 3e5e3a66; 2.11) | ✓ (WINDOW=, e1b165c2; no Font, no panes) | ✓ (9d096ae09, font.c) | ✓ (da73a428f, WINDOW=; no panes or font) |
 | 4.4 The clipboard sentences on the status line, never an alert (D50) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ (6dd8edac) | ✓ (since 1.76: the status line, no alert) | ✓ (8d67995, 2.0) | ✓ (f91eab33, 2.11) | ✓ (9c21430c) | ✓ (b39b6cb6b) | — |
 | 4.5 The notification button reads `Show` when it brings a window forward (D51) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ ("Open | ✓ (main.c "Show") |Later", W25; Show as decided) | ✓ (since 1.76: queue.c's Show) | — | ✓ (51562d82) | ✓ (8798a8dd) | — | — |
-| 5.2 Pictures borrow pens 192–255 while on top, `ui/picpens.c`, PIC.OVL's `quant` (22 Nov) | — | in work (decided 22 Nov 2026: 64 colours) | — | — | — | — | ? (its own palette while it runs: to align) | ? (pictures and pages; EConvert's band to 16–31) | — |
+| 5.2 Pictures borrow pens 192–255 while on top, `ui/picpens.c`, PIC.OVL's `quant` (22 Nov) | — | ✓ (2.16) | — | — | — | — | ~ (1.26: its colours given back when not on top; its own palette still 16–254) | ? (pictures and pages; EConvert's band to 16–31) | — |
+| 5.12 Saving through the family's file dialog, with "Use the system file selector" in Settings (25 Nov) | — | ✗ (Export) | ✗ (Save attachment) | — | — | — | ✗ (Save page, downloads) | ✗ (Save Optimised) | in work (Save playlist) |
 
 **Rows added on 9 Nov 2026** for the decisions D1 to D54 ([ui/DECISIONS-2026-11-09.md](ui/DECISIONS-2026-11-09.md)).
 ✗ = the evaluation of 9 Nov shows the app differs from the rule; ? = the app's reply says it already matches, or it
