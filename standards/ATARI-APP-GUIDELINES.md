@@ -1752,6 +1752,10 @@ called, so music, transfers and jobs go on while it is open. **Every app that of
 file selector"** in its Settings (off by default), which sends the same calls to the AES's own selector
 (`filepick_system`), with the name filled in and the same replace question. The look is as approved on 25 Nov 2026
 (common/tests/filepick/save.py takes its shots); the app writes the file itself, in steps where it is large (6.5).
+**One exception, EContact** (decided 25 Nov 2026): its Export keeps the AES's own selector. The dialog adds about
+20 KB to a program (filepick.o 12.3 KB of code and 4.7 KB of buffers, dirlist.o 2.6 KB, as a 68000 build for size),
+and EContact's one build for the accessory and the program has 56 bytes left over the 1 MB ST's floor. Its Import and
+folder choice use the AES's selector already.
 
 ---
 
@@ -2400,7 +2404,7 @@ program's window.
 | 4.4 The clipboard sentences on the status line, never an alert (D50) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ (6dd8edac) | ✓ (since 1.76: the status line, no alert) | ✓ (8d67995, 2.0) | ✓ (f91eab33, 2.11) | ✓ (9c21430c) | ✓ (b39b6cb6b) | — |
 | 4.5 The notification button reads `Show` when it brings a window forward (D51) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ ("Open | ✓ (main.c "Show") |Later", W25; Show as decided) | ✓ (since 1.76: queue.c's Show) | — | ✓ (51562d82) | ✓ (8798a8dd) | — | — |
 | 5.2 Pictures borrow pens 192–255 while on top, `ui/picpens.c`, PIC.OVL's `quant` (22 Nov) | — | ✓ (2.16) | — | — | — | — | ~ (1.26: its colours given back when not on top; its own palette still 16–254) | ? (pictures and pages; EConvert's band to 16–31) | — |
-| 5.12 Saving through the family's file dialog, with "Use the system file selector" in Settings (25 Nov) | — | ✗ (Export) | ✗ (Save attachment) | — | — | — | ✗ (Save page, downloads) | ✗ (Save Optimised) | in work (Save playlist) |
+| 5.12 Saving through the family's file dialog, with "Use the system file selector" in Settings (25 Nov) | — | — (exception: system selector) | in work (Save attachment) | — | — | — | ✗ (Save page, downloads) | ✗ (Save Optimised) | in work (Save playlist) |
 
 **Rows added on 9 Nov 2026** for the decisions D1 to D54 ([ui/DECISIONS-2026-11-09.md](ui/DECISIONS-2026-11-09.md)).
 ✗ = the evaluation of 9 Nov shows the app differs from the rule; ? = the app's reply says it already matches, or it
