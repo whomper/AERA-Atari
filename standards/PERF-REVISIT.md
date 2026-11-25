@@ -433,6 +433,12 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   its page 185 / 190 on the STs (365): a line there is a picture line of 48-80 px, the row move alone 25-30 ms of
   an 8 MHz ST's. Accepted (23 Nov 2026). To look at when speed is the focus: the picture pages' lines.
 
+- **EContact 2.16** (the photos in their own 64 colours, guidelines 5.2; PIC.OVL 1.5's quant job; the overlay on a
+  256-byte boundary; 25 Nov 2026) against 2.15: the reference configuration, "let go: its card" 40 -> 50 ms,
+  only while the photo's own colours are held (with PIC.OVL 1.3 it stays 40); the card's bands sit at about
+  35-40 ms each, so a few ms of placement inside draw.o flips the row. The books read on Falcon-4:16 85 -> 70.
+  Accepted (25 Nov 2026: ship as it is).
+
 - **EWeb 1.26** (the top-20 layout fixes, the bar's blues, colours given back when not on top, the Drive page;
   25 Nov 2026) against 1.25, padded to 1.25's places: Falcon-4:16, the pictures page's finished picture
   384 -> 390 and its stretch 385 -> 390, the softer picture colours' CPU rows (pic.c row_many_soft) for
