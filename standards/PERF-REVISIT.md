@@ -221,6 +221,15 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
 
 ## Small differences judged noise (not to chase)
 
+- **EPlay 1.58** (Save playlist through the family's save dialog; 4dc398030) against 1.57, Falcon-4:16:
+  started with 8 files 655 -> 680, a Mega Drive VGM's start 2,265 -> 2,285; STE:mono "10 s back" 175-180 -> 210.
+  Not work: Hatari's profiler, stretch by stretch in both builds, gives EPlay's own code the same to 0.1 ms in
+  every stretch the rows count. The starts' difference is gem.c's deduction of idle AES calls landing
+  differently (a 25.9 / 25.3 ms stretch reported under 20 in 1.57 only; 1.57's VGM redraw had an AESOTHER of
+  45 ms subtracted, 1,658 / 1,655 raw). The seek's turn does less in 1.58 (142.8 -> 91.4 ms, the ring filled
+  for less time gone). Left: +3.5 ms of TOS and RAM time inside an unchanged AESSTART. Judged noise by the hub
+  (25 Nov 2026).
+
 - **EPlay 1.27** against 1.26, NVDI: rows within 5–15 ms either way (Add of three 105 → 120,
   Delete 65 → 60); the release changed only MP3 and the INF.
 - **EPDF 2.32** against 2.31, `Falcon-4:16` (TOS 4.04): next page 90 → 105 (limit 300) in the release's
