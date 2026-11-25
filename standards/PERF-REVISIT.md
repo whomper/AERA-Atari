@@ -433,6 +433,15 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   its page 185 / 190 on the STs (365): a line there is a picture line of 48-80 px, the row move alone 25-30 ms of
   an 8 MHz ST's. Accepted (23 Nov 2026). To look at when speed is the focus: the picture pages' lines.
 
+- **EWeb 1.26** (the top-20 layout fixes, the bar's blues, colours given back when not on top, the Drive page;
+  25 Nov 2026) against 1.25, padded to 1.25's places: Falcon-4:16, the pictures page's finished picture
+  384 -> 390 and its stretch 385 -> 390, the softer picture colours' CPU rows (pic.c row_many_soft) for
+  pictures the DSP doesn't dither, chosen 22 Nov. Falcon-4:256 with NVDI, the news page on a 4 MB Falcon: 1.25
+  dropped its styles for memory (an unstyled list, 16,358 px), 1.26 keeps them (headings and cards, 9,332 px;
+  css 185 KB against 47 KB) and draws more: loaded 490 -> 885, page scrolled 395 -> 755, line 75 -> 150,
+  Settings closed 335 -> 505, About closed 285 -> 390, 4 pages down 445 -> 1155. On the memory limit, so not
+  promised. Accepted (25 Nov 2026).
+
 - **ECal 2.59** (the date picker; a new start moves the end; 25 Nov 2026) against 2.58, Falcon-4:16, medians
   of 3 candidate runs against 5 of 2.58: week whole 745 -> 780, month again 1075 -> 1085, next month
   1260 -> 1270, today 510 -> 515, month whole 770 -> 825 (2.58 itself 770-820), the year, back to today and week
