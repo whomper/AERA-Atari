@@ -1749,7 +1749,7 @@ The family's own file dialog, `common/ui/filepick.c`, is the default wherever an
 time, the type's extension added, `* ? \ :` refused, 8+3 off MiNT, and "NAME is there already. Replace it?" before it
 closes). Opening several files is `filepick_run()` (EPlay's Add files). It runs its own loop with the app's idle()
 called, so music, transfers and jobs go on while it is open. **Every app that offers it has the setting "Use the system
-file selector"** in its Settings, on the General page (off by default), which sends the same calls to the AES's own selector
+file selector"** in its Settings, on the General page, or the first page where there is none (EMail: Mail) (off by default), which sends the same calls to the AES's own selector
 (`filepick_system`), with the name filled in and the same replace question. The look is as approved on 25 Nov 2026
 (common/tests/filepick/save.py takes its shots); the app writes the file itself, in steps where it is large (6.5).
 **One exception, EContact** (decided 25 Nov 2026): its Export keeps the AES's own selector. The dialog adds about
