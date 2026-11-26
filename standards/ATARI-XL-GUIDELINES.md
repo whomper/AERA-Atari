@@ -409,7 +409,7 @@ always does. Only the owner ends maintenance, explicitly.
 | 1.1 the program is NAME.COM | ✓ (EDOS.COM) | ✓ 1.5 |
 | 1.2 version in one place, checked | ✓ 3.3 (TTL2, the headers and About checked) | ✓ 1.2 |
 | 1.2 releases go out without asking the owner (23 Oct 2026) | ✓ (3f7617c) | ✓ (42fb621) |
-| 1.2 fewer releases, each carrying more (26 Nov 2026) | ✗ | ✓ (00153e6) |
+| 1.2 fewer releases, each carrying more (26 Nov 2026) | ✓ (e376c0e) | ✓ (00153e6) |
 | Who decides what: the owner's part in CLAUDE.md (31 Oct 2026) | ✓ (7a15f98) | ✓ (f5a909c, 3dd4573) |
 | 1.3 release files, AERA.FNT | ✓ 3.3 | ✓ 1.2 |
 | 1.4 About lines, title "(C) AERA 2026" | ✓ 3.3 (on `?`) | ✓ 1.2 |
