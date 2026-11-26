@@ -16,6 +16,11 @@ speed is the focus again.
 
 ## Accepted (revisit when speed becomes the focus)
 
+- **EMail 2.30** (Save attachment as through the family's save dialog, 5.12; 77f6188a) against 2.29: the start
+  on the reference configuration 755 -> 780 ms (the dialog's 17 KB loaded with the program; a build without it
+  760; the ST's start the same in three pairs), Settings opened 90 -> 100 there and 295 -> 305 on ST:mono (the
+  Mail page's new tick). Accepted (26 Nov 2026). Revisit with the dialog as an overlay loaded at the first save.
+
 - **About box opened over 150 ms** in common's `aboutbox.c`: 230–270 ms on a Falcon (ClaudeST
   230, EUpdate 270, EPDF 235), and more on an ST. Accepted as it is (12 Nov).
 - **EMail 2.18, ST double click** accepted as the limit (12 Nov).
