@@ -92,7 +92,9 @@ long acc_heap_take(long first, long tt_first, long heapkb, long memkb)
 	}
 	if (want < 32L * 1024)
 		return 0;
-	p = Mxalloc(want, acc_heap_tt ? 1 : 3);
+	/* owned by the accessory itself on plain TOS (libc's acc_core), not by
+	   the process current now, which would hand it to the next program */
+	p = acc_core(want, acc_heap_tt ? 1 : 3);
 	if (acc_heap_tt && (long)p <= 0) {
 		/* no luck in TT RAM after all: ST RAM, at its own share */
 		long st = (long)Malloc(-1L) / 2;
@@ -102,7 +104,7 @@ long acc_heap_take(long first, long tt_first, long heapkb, long memkb)
 		p = 0;
 	}
 	if ((long)p == -32 || (long)p <= 0)
-		p = Malloc(want);
+		p = acc_core(want, -1);
 	if ((long)p <= 0)
 		return 0;
 	heap_add(p, (size_t)want);
