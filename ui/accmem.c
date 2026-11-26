@@ -11,6 +11,7 @@
 #include "gem.h"
 
 long acc_heap_bytes, acc_heap_avail;
+void *acc_heap_at;
 short acc_heap_tt;
 long acc_heap_leave = 32L * 1024;
 
@@ -109,6 +110,7 @@ long acc_heap_take(long first, long tt_first, long heapkb, long memkb)
 		return 0;
 	heap_add(p, (size_t)want);
 	acc_heap_bytes = want;
+	acc_heap_at = p;
 	acc_heap_avail = avail;
 	return want;
 }
