@@ -828,6 +828,20 @@ gets a reader started, and sends the rest elsewhere.
   running, from EMail's own settings and folders, writing nothing of EMail's. It is another
   program, not `EMAIL.ACC`, so "one binary" below doesn't apply to it; everything else for an ACC
   does. The rest of section 2, and 6.1's settings in the root, are for the apps that have an ACC.
+- **No accessory on a 1 MB machine** (decided 26 Nov 2026). An Atari with under 2 MB of ST RAM (a 1 MB
+  ST, a 520) runs the family's programs only. TOS loads every `.ACC` in the boot root at boot and it stays
+  loaded: on TOS 1.04 EContact's accessory alone left 383 KB for the program in front, less than ClaudeST,
+  EMail or EPDF needs to open its menu bar, and the program's own work had little room left besides. An
+  accessory can't unload itself, so before its first event call it asks common's `acc_small_machine()`
+  (`ui/accmem.c`: ST RAM by phystop under 2 MB) and, where it says yes:
+  - takes no heap (no `acc_heap_take`), loads no fonts, no overlay, reads no file but its INF's location
+    and starts no background work: it only waits for AC_OPEN;
+  - on AC_OPEN shows `acc_small_alert(NAME, FILE)`: "[1][NAME needs|an Atari with 2 MB or more.|Remove
+    FILE|from the boot drive.][ OK ]", and nothing else;
+  - its README's Getting started says accessories need 2 MB, and the program edition runs on 1 MB.
+  The accessories' ST rigs run on `ST-2` (2 MB, TOS 1.04, common's machines.py); on `ST-1` an accessory's
+  rig checks only the above (the alert from the Desk entry, nothing taken: Malloc(-1) the same before and
+  after the accessory's start), and `acc_all.py` refuses it.
 - **One source tree, one binary.** `crt0.S` tells PRG from ACC (`a0 != 0` at start: ECal's crt0).
   `NAME.ACC` and `NAME.PRG` are the same file under two names.
 - **ACC memory comes from a fixed heap**, taken once before the first event call and then measured
@@ -2435,6 +2449,7 @@ program's window.
 | 1.2 The hub's checks follow the release; a fault is fixed forward by a new release, never rolled back (decided 7 Nov) | ✓ (2.55) | maintenance | ✓ (8dfe31a8) | ✓ (2.16) | maintenance | ✓ (2.12-2.14) | ✓ | next release | ✓ |
 | 1.2 Fewer releases, each carrying more; only a data-loss, security or crash fault alone (decided 26 Nov) | ✓ (8cf2ae380) | ✓ (5ed3459d3) | ✓ (main, after 2.30) | ✓ (45508a8) | ✓ (352d00a) | ✓ (b0e0d11b7) | ~ (11cac5470 on its branch; EUpdate ✓ 9c00aaf2; AERA-Gateway ✓ 576f115) | ✓ (cb354f0) | ~ (113ff70a9 on midi; main with the next candidate) |
 | 1.2 Nothing known left in a queue behind a release; the candidate lists what it left out (26 Nov) | ✓ (40c363898) | ✓ (c0eeb3583) | ? | ✓ (2675285) | ✓ (d15fda2) | ✓ (55df8fc07) | ? (EUpdate ✓ 2aca8920; AERA-Gateway ✓ 63ec6ed) | ? | ✓ (9e71101) |
+| 2.1 No accessory on a 1 MB machine: `acc_small_machine()`, no heap, `acc_small_alert` from the Desk entry; ST rigs on ST-2 (26 Nov) | ✗ | ✗ | ✗ (EMAILCHK.ACC) | n/a (PRG only) | ✗ | n/a (PRG only) | n/a (PRG only) | n/a (PRG only) | n/a (PRG only) |
 | 1.2 At least 60% of an app's Atari boots per candidate run under NVDI, every app the same (decided 7 Nov); the app's session needs the NVDI copy copy | has NVDI; next release | has NVDI; next release | ✓ (2.22: 35 of 58 boots under NVDI) | ✓ (2.17 gate: 33 of 55 boots under NVDI) | ✓ (2.9) | needs NVDI; next release | needs NVDI; next candidate | needs NVDI; next candidate | needs NVDI; next candidate |
 | 3.1/6.1 Settings in the family's layout (sidebar list, page heading and line, Cancel and OK on row H-2) and in Options, not File (decided 9 Nov) | ✓ (common's Settings engine; 2.54) | ✓ (dc9ec257, 2.9: its own FIELD dialog in the engine's layout, for the 1 MB ST) | ✓ (the reference: settings_sidebar) | ✓ | ✓ (src/gem/settings.c) | ✓ (b736182e, 3e5e3a66; 2.11) | ✓ | ✓ (d9663a9cd, 762f5e0fe) | to check |
 | 3.1 to 6.3 and 5.10, 5.11: the UI standards in `ui/` (menus, controls, windows); each app answers the rows of `ui/DEVIATIONS.md` that name it (9 Nov) | maintenance | maintenance | maintenance | ✓ (UI backlog done but item 7, still to be decided) | maintenance | ✓ (DEVIATIONS rows done; UI-BACKLOG 10 of 10) | to check | to check | to check |
