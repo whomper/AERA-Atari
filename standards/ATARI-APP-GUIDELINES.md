@@ -637,6 +637,10 @@ touched.
     unless it is one of those.
   - Docs, CLAUDE.md and rig changes never need a release of their own (as before).
   - Shared fixes from the hub are taken with the next release, unless the hub names one as the exception.
+  - **Nothing known is left in a queue behind a release** (26 Nov 2026): before a candidate goes to the gate,
+    the session folds in every known fault and pending item of its own that can be done within a few days.
+    Its message to the hub lists what it left out and why, and the hub checks that list before its go. A
+    reported fault that is waiting goes into the release then being prepared, not the one after.
   The session then gives the owner the release's link in one line, with anything the owner has to do (the Gateway's
   `./update-pi.sh`, say), and sends the hub the link. A bad release is fixed forward, without
   asking. The owner's decisions still go to the owner before the work ("Who decides what",
