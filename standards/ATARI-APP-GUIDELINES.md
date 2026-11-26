@@ -624,7 +624,19 @@ touched.
   - the candidate has passed the regression gate (the next bullet): every configuration, no row
     slower, then the hub's family check.
 
-  It doesn't wait for a yes, and it releases as soon as the work is done rather than collecting it.
+  It doesn't wait for a yes.
+- **Fewer releases, each carrying more** (decided 26 Nov 2026; this replaces "as soon as the work is done
+  rather than collecting it" of 23 Oct): an app doesn't release for every single fix or feature. Its
+  changes gather on `main` and go out together, so that users get fewer, steadier versions rather than a
+  stream of small ones. A release is made when a body of work is complete: the fixes known at the time and
+  the features of the phase, each through the regression gate and the hub's family check as one candidate.
+  - **The one exception:** a fault that loses or damages data, a security fault, or a crash or breakage that
+    stops users working goes out on its own at once (fix forward, below), with only that fix, and its
+    notes say why.
+  - A fault a user reports is still fixed, with its case in the rigs, but it waits for the next release
+    unless it is one of those.
+  - Docs, CLAUDE.md and rig changes never need a release of their own (as before).
+  - Shared fixes from the hub are taken with the next release, unless the hub names one as the exception.
   The session then gives the owner the release's link in one line, with anything the owner has to do (the Gateway's
   `./update-pi.sh`, say), and sends the hub the link. A bad release is fixed forward, without
   asking. The owner's decisions still go to the owner before the work ("Who decides what",
@@ -650,7 +662,8 @@ touched.
      second boot): the hub answers with go or the faults it found.
 
   Only then is it released. A fault found anyway, by a user, the hub or the owner, is fixed forward by a new
-  release with the next number, before any other work of that session; the old release stays, with one
+  release with the next number (at once when it is the exception above; else with the next release, the fix
+  first among that session's work); the old release stays, with one
   line in the new one's notes saying what it fixes (no revert, no "withdrawn" notice, no deleting). **Every
   fault a user reports becomes a case in the app's rigs** (or the hub's, for one between programs) in the
   same release that fixes it, run at every later candidate, so it can't come back unseen. A change to the
@@ -2373,6 +2386,7 @@ program's window.
 | 7.3 The name is Gateway, never "Pi" or "Pi gateway", in the status line, Settings' Secure page, menus, alerts, About box, guide, README and notes (decided 7 Nov) | ✓ | ✓ | ✓ (dc310f2b) | ✗ → words approved (decided 22 Nov 2026, as proposed): next EFTP release | n/a (no network) | ~ (one "Waiting for bridge..." left) | ✓ | next release | ✓ |
 | 7.3 Work handed to the Gateway shows three phases in the status line: Sending, Working, Receiving (`conn_phase`; decided 7 Nov) | — | n/a (dav passes CardDAV through) | ✓ (db649250) | — | n/a | — | ✓ (Sending / The Gateway is loading / Receiving) | with the Gateway mode | — |
 | 1.2 The hub's checks follow the release; a fault is fixed forward by a new release, never rolled back (decided 7 Nov) | ✓ (2.55) | maintenance | ✓ (8dfe31a8) | ✓ (2.16) | maintenance | ✓ (2.12-2.14) | ✓ | next release | ✓ |
+| 1.2 Fewer releases, each carrying more; only a data-loss, security or crash fault alone (decided 26 Nov) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | 1.2 At least 60% of an app's Atari boots per candidate run under NVDI, every app the same (decided 7 Nov); the app's session needs the NVDI copy copy | has NVDI; next release | has NVDI; next release | ✓ (2.22: 35 of 58 boots under NVDI) | needs NVDI; next release | ✓ (2.9) | needs NVDI; next release | needs NVDI; next candidate | needs NVDI; next candidate | needs NVDI; next candidate |
 | 3.1/6.1 Settings in the family's layout (sidebar list, page heading and line, Cancel and OK on row H-2) and in Options, not File (decided 9 Nov) | ✓ (common's Settings engine; 2.54) | ✓ (dc9ec257, 2.9: its own FIELD dialog in the engine's layout, for the 1 MB ST) | ✓ (the reference: settings_sidebar) | ✓ | ✓ (src/gem/settings.c) | ✓ (b736182e, 3e5e3a66; 2.11) | ✓ | ✓ (d9663a9cd, 762f5e0fe) | to check |
 | 3.1 to 6.3 and 5.10, 5.11: the UI standards in `ui/` (menus, controls, windows); each app answers the rows of `ui/DEVIATIONS.md` that name it (9 Nov) | maintenance | maintenance | maintenance | ✓ (UI backlog done but item 7, still to be decided) | maintenance | ✓ (DEVIATIONS rows done; UI-BACKLOG 10 of 10) | to check | to check | to check |

@@ -65,6 +65,9 @@ touched.
   - never reuse a number;
   - a bad release is rolled back with a new one.
   - releases go out without asking the owner, once the checks pass (23 Oct 2026).
+  - fewer releases, each carrying more (decided 26 Nov 2026, the app guidelines 1.2): changes gather on
+    `main` and go out together when a body of work is complete, not one release per fix or feature; a
+    data-loss, security or crash fault alone goes out at once.
 - **The Release workflow** (`xl/workflows/release.yml`, the same in every program, section 9):
   - runs on `main` with the notes as its input (or, left empty, `release-notes/vX.Y.md`), or from a
     pushed `git tag -a vX.Y` with the tag's message;

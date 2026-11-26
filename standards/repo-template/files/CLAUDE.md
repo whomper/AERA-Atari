@@ -44,8 +44,12 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
   `main`, nothing else: no test builds, no CI artifacts, no builds from a branch.
   Work lands on `main`; to try a fix on real hardware, release it. If a release doesn't work, fix
   forward: a new release with the next number, before any other work; never a rollback (decided 7 Nov 2026).
+- **Fewer releases, each carrying more** (decided 26 Nov 2026; guidelines 1.2): no release for every single
+  fix or feature. Changes gather on `main` and go out together when a body of work is complete, as one
+  candidate through the gate and the hub's family check. Only a data-loss, security or crash fault goes
+  out on its own at once, with only that fix.
 - **Releases go out without asking the owner** (decided 23 Oct 2026; guidelines 1.2). Release when
-  work on `main` is ready:
+  a body of work on `main` is ready:
   - this repo's checks pass;
   - the rigs this file asks for pass (on EmuTOS where the session has nothing else).
 
