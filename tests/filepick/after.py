@@ -5,7 +5,7 @@
 saved in C:\\MUSIC\\), then six presses on the desk, each of which must come to the program as a press
 ("FPT press N"): EWeb 1.27's gate lost presses after the dialog on TOS 4.04. RUNS times over.
 
-    after.py WORK MACHINE [RUNS] [--nvdi] [--box]
+    after.py WORK MACHINE [RUNS] [--nvdi] [--box] [--ewloop]
 
 --box: first a box over the screen (dlg_open_area), three presses in it, as EWeb's download box
 """
@@ -18,6 +18,7 @@ sys.path.insert(0, HERE)
 import run  # noqa: E402
 
 BOX = "--box" in sys.argv
+EWLOOP = "--ewloop" in sys.argv
 
 
 def session(work, machine, nvdi, prg, display):
@@ -31,6 +32,8 @@ def session(work, machine, nvdi, prg, display):
         open(os.path.join(r.hd, "FPAFTER.TXT"), "w").write("after\n")
         if BOX:
             open(os.path.join(r.hd, "FPBOX.TXT"), "w").write("box\n")
+        if EWLOOP:
+            open(os.path.join(r.hd, "FPEWLOOP.TXT"), "w").write("ew\n")
         run.shutil.copy(prg, os.path.join(r.hd, "FPTEST.PRG"))
         r.start("C:\\FPTEST.PRG", ready="picture add", boot=900)
         if "picture add" not in r.console():
