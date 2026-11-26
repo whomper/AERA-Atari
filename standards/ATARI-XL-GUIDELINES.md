@@ -68,6 +68,9 @@ touched.
   - fewer releases, each carrying more (decided 26 Nov 2026, the app guidelines 1.2): changes gather on
     `main` and go out together when a body of work is complete, not one release per fix or feature; a
     data-loss, security or crash fault alone goes out at once.
+  - nothing known left in a queue behind a release (26 Nov 2026, the app guidelines 1.2): a candidate takes
+    every known fault and pending item its session can finish within a few days; its message to the hub
+    lists what was left out and why, and the hub checks that list first.
 - **The Release workflow** (`xl/workflows/release.yml`, the same in every program, section 9):
   - runs on `main` with the notes as its input (or, left empty, `release-notes/vX.Y.md`), or from a
     pushed `git tag -a vX.Y` with the tag's message;

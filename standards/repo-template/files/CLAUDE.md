@@ -47,7 +47,9 @@ These come from AERA-Atari's repo template and are the same in every app's CLAUD
 - **Fewer releases, each carrying more** (decided 26 Nov 2026; guidelines 1.2): no release for every single
   fix or feature. Changes gather on `main` and go out together when a body of work is complete, as one
   candidate through the gate and the hub's family check. Only a data-loss, security or crash fault goes
-  out on its own at once, with only that fix.
+  out on its own at once, with only that fix. Nothing known is left in a queue behind a release: a
+  candidate takes every known fault and pending item this session can finish within a few days, and its
+  message to the hub lists what was left out and why (the hub checks that list before its go).
 - **Releases go out without asking the owner** (decided 23 Oct 2026; guidelines 1.2). Release when
   a body of work on `main` is ready:
   - this repo's checks pass;
