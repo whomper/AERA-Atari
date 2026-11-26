@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include "tos.h"
 #include "accmem.h"
-#include "alert.h"
+#include "gem.h"
 
 long acc_heap_bytes, acc_heap_avail;
 short acc_heap_tt;
@@ -167,5 +167,12 @@ int acc_small_machine(void)
 
 void acc_small_alert(const char *name, const char *file)
 {
-	alert(1, "[1][%s needs|an Atari with 2 MB or more.|Remove %s|from the boot drive.][ OK ]", name, file);
+	/* the AES's own alert, not the family's alert(): that saves the screen
+	   behind it in memory malloc'd from a heap this accessory never took,
+	   16 KB gone from the 1 MB machine from the first opening (EHypView's
+	   small_acc.py, 26 Nov 2026). The words on the stack */
+	char a[128];
+	snprintf(a, sizeof a, "[1][%s needs|an Atari with 2 MB or more.|Remove %s|from the boot drive.][ OK ]",
+		 name, file);
+	form_alert(1, a);
 }
