@@ -206,6 +206,7 @@ int main(void)
 	      "the log line");
 	printf("     %s\n", line);
 
+	check(acc_heap_at == area, "acc_heap_at says where the heap is");
 	check(owned > 0, "the heap's blocks are taken through acc_core: owned by the accessory on plain TOS");
 	phystop = 1024 * KB;
 	check(acc_small_machine(), "a 1 MB ST is a small machine: no accessory there");
