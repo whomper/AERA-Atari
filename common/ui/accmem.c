@@ -153,7 +153,11 @@ int acc_mem_line(char *buf, int size, long next_kb)
    no heap and says so from its Desk entry */
 static long phystop_read(void)
 {
-	return *(volatile long *)0x42EL;
+	volatile long *p;
+	/* the address hidden from GCC (as crash.c's low()): GCC 13 takes a
+	   constant address for an object of size 0 and warns (-Warray-bounds) */
+	__asm__("" : "=a"(p) : "0"(0x42EL));
+	return *p;
 }
 
 int acc_small_machine(void)
