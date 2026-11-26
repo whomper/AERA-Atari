@@ -111,6 +111,13 @@ int main(void)
 		static const FP_SPEC sspec = { "Save the list as a playlist", "Save", "No folder saved in yet", "FPT", pl, 2 };
 		static char name[64] = "PLAYLIST.M3U", path[FP_PATH + 64];
 		int round, rounds = Fopen("C:\\FPROUNDS.TXT", 0) >= 0 ? 6 : 1;
+		if (Fopen("C:\\FPWIN.TXT", 0) >= 0) {
+			/* rounds.py --win: a window of the program's under the dialogs, as an app's (EWeb's) */
+			short wh = wind_create(0x0B, desk_x, desk_y, desk_w, desk_h);
+			if (wh > 0)
+				wind_open(wh, desk_x, desk_y, desk_w, desk_h);
+			nf_debug(wh > 0 ? "FPT window open\n" : "FPT no window\n");
+		}
 		for (round = 0; round < rounds; round++) {
 		if (Fopen("C:\\FPPRE.TXT", 0) >= 0) {
 			/* rounds.py --pre: a press taken as EWeb's main loop takes a link's (any button, 0x101, 3,

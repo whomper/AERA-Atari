@@ -7,7 +7,7 @@ watched with graf_mkstate until it is let go ("FPT round N press let go"; "STUCK
 gate found TOS's button held down after a press on the box that came after the dialog, in about half its
 runs, and never after the system's selector. RUNS boots.
 
-    rounds.py WORK MACHINE [RUNS] [--nvdi] [--sys] [--pre]   (--sys: FPSYS.TXT, the system's selector, to
+    rounds.py WORK MACHINE [RUNS] [--nvdi] [--sys] [--pre] [--win]   (--sys: FPSYS.TXT, the system's selector, to
     compare; --pre: before each save a press taken with no wait for its release, as EWeb's link)
 """
 import os
@@ -20,6 +20,7 @@ import run  # noqa: E402
 
 SYS = "--sys" in sys.argv
 PRE = "--pre" in sys.argv
+WIN = "--win" in sys.argv
 
 
 def session(work, machine, nvdi, prg, display):
@@ -28,7 +29,7 @@ def session(work, machine, nvdi, prg, display):
     fails = []
     try:
         os.makedirs(os.path.join(r.hd, "MUSIC"), exist_ok=True)
-        for f in ("FPSAVE.TXT", "FPROUNDS.TXT") + (("FPSYS.TXT",) if SYS else ()) + (("FPPRE.TXT",) if PRE else ()):
+        for f in ("FPSAVE.TXT", "FPROUNDS.TXT") + (("FPSYS.TXT",) if SYS else ()) + (("FPPRE.TXT",) if PRE else ()) + (("FPWIN.TXT",) if WIN else ()):
             open(os.path.join(r.hd, f), "w").write("x\n")
         run.shutil.copy(prg, os.path.join(r.hd, "FPTEST.PRG"))
         r.start("C:\\FPTEST.PRG", ready="FPT open", boot=900)
