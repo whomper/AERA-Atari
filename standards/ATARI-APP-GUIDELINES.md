@@ -1333,6 +1333,32 @@ CONTACTS.TXT when the user chooses it (below).
 
 ---
 
+### 4.6 Going back to the program that started you (decided 26 Nov 2026)
+
+On single-tasking TOS, a family program that starts another (EMail opening a link in EWeb) ends
+itself, and the user had to start it again by hand and find their place. The round trip brings them
+back:
+
+- **The caller** starts the other program with shel_write as before and adds one argument to its
+  command line, after what it passes today: `--back=PATH`, the full path of the caller's own
+  program (`app_dir()` and its name, in capitals as on the disk), with no spaces (a path with a
+  space is not passed, and there is no round trip). Before it ends, it writes where the user was
+  (account, folder, item, scroll) into its INF, written as any other setting (6.1).
+- **The program started** reads `--back=` and keeps the path. When it ends by the user's Quit
+  (not on an error that ends it), and only where the AES runs one program at a time (TOS, EmuTOS:
+  not under MiNT or MagiC, where the caller is still running), it starts PATH with
+  `shel_write(1, 1, 0, PATH, " --resume")` (the tail's first byte its length) before it returns.
+  A PATH that no longer exists is let go quietly. It passes nothing else back.
+- **The caller started with `--resume`** opens where its INF says the user was, from what it has
+  cached, then goes on as at any start (a check, a sync) without holding the user up. Without the
+  argument it starts as always.
+- Neither side shows anything new: no alert, no setting. The words are the ones each already has.
+- Rig: each side against a stand-in of the other (1.2: the app's tests run it alone), on TOS 4.04
+  and 1.04; the hub's family check runs the real pair.
+
+First use: EMail and EWeb (EMail's `--back` and `--resume`, EWeb's return), then any pair the same
+way.
+
 ## 5. Windows, screen, fonts
 
 ### 5.1 Windows
