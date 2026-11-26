@@ -117,7 +117,7 @@ int main(void)
 			short m[8];
 			AEVENT e;
 			unsigned long t0 = tos_ms();
-			int k = 0;
+			int k = 0, ewloop = Fopen("C:\\FPEWLOOP.TXT", 0) >= 0;
 			fsel_settle();			/* as EWeb does after it */
 			if (Fopen("C:\\FPBOX.TXT", 0) >= 0) {	/* a box over the screen first (EWeb's download box) */
 				short bx = 160, by = 120, bw = 320, bh = 160, j = 0;
@@ -141,7 +141,18 @@ int main(void)
 			}
 			nf_debug("FPT after ready\n");
 			while (tos_ms() - t0 < 30000 && k < 6) {
-				short w = evnt_multi_(MU_BUTTON | MU_TIMER, 1, 1, 1, 50, m, &e);
+				short w;
+				if (ewloop) {
+					/* EWeb's main loop: any button pressed (0x101, 3, 0), the pointer's leaving
+					   of a 1x1 box, then the keys alone with no wait */
+					short mx, my, mb, ks;
+					graf_mkstate(&mx, &my, &mb, &ks);
+					evnt_set_m1(1, mx, my, 1, 1);
+					w = evnt_multi_(MU_KEYBD | MU_BUTTON | MU_M1 | MU_MESAG | MU_TIMER, 0x101, 3, 0, 200, m, &e);
+					if (!(w & MU_BUTTON))
+						evnt_multi_(MU_KEYBD | MU_TIMER, 0x101, 3, 0, 0, m, &e);
+				} else
+					w = evnt_multi_(MU_BUTTON | MU_TIMER, 1, 1, 1, 50, m, &e);
 				if (w & MU_BUTTON) {
 					snprintf(b, sizeof(b), "FPT press %d %d %d\n", ++k, e.mx, e.my);
 					nf_debug(b);
