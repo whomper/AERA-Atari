@@ -913,6 +913,23 @@ before its first event call (7 s with 6,700 pages).
 - **Checked:** build with `-DAES_PROFILE` (common/atari/gem.c) and every stretch over the limit goes
   to the emulator's console as `AESGAP <ms> ms <tag>`; `common/tests/bgwork` shows the way.
 
+**The exception for a Direct connection (EMAILCHK.ACC, decided 24 Oct 2026).** An accessory's memory is
+taken once, before its first event call (`common/ui/accmem.c`, `acc_heap_take`). EMail check takes 64 KB,
+enough for a check through the Gateway (measured 80 KB with its margin, kept as `MEMKB=`). A Direct
+connection needs about 230 KB more for TLS.OVL, ROOTS.DAT and BearSSL's buffers (`MEMKB=313`); here
+"take only what it needs at boot" bends:
+- **In TT RAM** the room for Direct is taken at the first boot; a later check that finds the heap short
+  writes the larger `MEMKB=` for the next boot.
+- **In ST RAM** it is never taken unless `HEAPKB=` asks for it: it would come out of the program in front
+  (on a 4 MB Falcon with NVDI and the family's accessories, EMail then couldn't open its screen; acc_all.py,
+  24 Oct 2026).
+- **Without the room** the account isn't checked Direct; the accessory's alert says what it lacks and the
+  ways out (use the Gateway, `HEAPKB=300` in EMAILCHK.INF, or more memory).
+- **Everything else in 2.2 holds:** no file open across an event call (CACERT.PEM read a piece at a time,
+  opened and closed round each), nothing shown at boot.
+
+Reference: EMail `ui/emailchk.c` (`acc_memory`, `direct_room`).
+
 ### 2.3 PRG and ACC side by side
 Both editions use the **same settings and data files** (see 6.1), and **only one of them is in use at a
 time**, so they never write the same file at once. The shared `common/ui/twin.c` does the finding:
