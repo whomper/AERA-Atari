@@ -499,8 +499,8 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   (bF1 and bF3 at 35); gemprof a turn at a time gives the same functions in the same order and the
   same ms to within 2 ms in both builds (turns 1-9), and a 100-turn profile puts the 35 on turn 2 in
   one and turn 9 (40) in the other. A fix that checked the time after the piece (121b846) left it at
-  35 and was dropped. Judged the timing's place, not work, by the hub (26 Nov 2026). Revisit if a VGM
-  window's sum, not its longest turn, grows.
+  35 and was dropped. Judged the timing's place, not work, by the hub, and accepted (26 Nov 2026); released
+  in 1.59. Revisit if a VGM window's sum, not its longest turn, grows.
 
 ## How to add a line
 
