@@ -492,6 +492,16 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   state and about half the time in the other; every layout tried (data and code moved 2.5-5 KB) gives either
   state from run to run. Judged the machine's by the hub (23 Nov 2026); no pad or code change can fix it.
 
+- **EPlay 1.59** (MIDI.OVL and #100's measurements; d3d938d, the same tree at 11f7491) against 1.58,
+  Falcon-4:16, "a Mega Drive VGM (YM2612) playing, 5 s": 25 -> 35 ms in four runs a side (the window's
+  sum 115-140 -> 125-145). Not work: a once-a-second turn's long stretch (the time drawn and a VGZ
+  piece, about 25 and 10 ms) falls in this window in the candidate and in the next windows in 1.58
+  (bF1 and bF3 at 35); gemprof a turn at a time gives the same functions in the same order and the
+  same ms to within 2 ms in both builds (turns 1-9), and a 100-turn profile puts the 35 on turn 2 in
+  one and turn 9 (40) in the other. A fix that checked the time after the piece (121b846) left it at
+  35 and was dropped. Judged the timing's place, not work, by the hub (26 Nov 2026). Revisit if a VGM
+  window's sum, not its longest turn, grows.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
