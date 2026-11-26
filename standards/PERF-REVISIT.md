@@ -16,6 +16,14 @@ speed is the focus again.
 
 ## Accepted (revisit when speed becomes the focus)
 
+- **ECal 2.60** (the day view's events after the week view, missing in 2.56-2.59; the sb_printf fix; 885095c97,
+  events drawn with fewer VDI calls) against 2.59, same-day pairs: next week's picture ST:mono 1,355 -> 1,795 ms,
+  Falcon-4:16 310 -> 525, Falcon-4:256 with NVDI 275 -> 430; the day view with 24 events 825 -> 1,155, 285 -> 530,
+  250 -> 410; the ST's line scroll 95 -> 130-ish (120-130); Delete's alert on the ST 0 -> 155 (2.59's Delete did
+  nothing there); other rows within 5-40 ms. The work 2.56-2.59 skipped, drawn again (before 2.56: next week
+  1,865-1,870 on the ST, 410-445 under NVDI). Accepted (26 Nov 2026), with 2.61 as the speed round: each day's
+  layout kept until its events change, the Falcon's event text by the CPU where it wins.
+
 - **EMail 2.30** (Save attachment as through the family's save dialog, 5.12; 77f6188a) against 2.29: the start
   on the reference configuration 755 -> 780 ms (the dialog's 17 KB loaded with the program; a build without it
   760; the ST's start the same in three pairs), Settings opened 90 -> 100 there and 295 -> 305 on ST:mono (the
