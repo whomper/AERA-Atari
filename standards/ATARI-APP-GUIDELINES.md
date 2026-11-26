@@ -927,6 +927,18 @@ before its first event call (7 s with 6,700 pages).
 - **Checked:** build with `-DAES_PROFILE` (common/atari/gem.c) and every stretch over the limit goes
   to the emulator's console as `AESGAP <ms> ms <tag>`; `common/tests/bgwork` shows the way.
 
+**An accessory's memory is its own** (26 Nov 2026). On plain TOS, GEMDOS gives a block to the process
+current when it's asked for and frees it when that process ends. An accessory isn't a process of its
+own, so a block it took while another program was current (a program started at boot, or any program in
+front later) went back to TOS when that program ended. The next program was handed it, and one without
+the fast-load bit cleared it: ECAL.ACC 2.60 stopped the machine on ST-2 with a program auto-started at
+boot. Every GEMDOS block an accessory takes goes through libc's `acc_core(n, mode)` and comes back
+through `acc_free(p)`, which take it with the accessory's own basepage as the current process (common
+9fd1335; MiNT and MagiC own an accessory's memory themselves, and there they are Malloc, Mxalloc and
+Mfree). `Malloc(-1)` and `Mxalloc(-1, ...)` inquiries are unchanged. Rigs: an accessory's ST-2 boot with a
+program auto-started and ended, then a program without the fast-load bit, the accessory's data intact
+(ECal's small_acc.py --held, EContact's acc_room.py, `acc_heap_at`).
+
 **The exception for a Direct connection (EMAILCHK.ACC, decided 24 Oct 2026).** An accessory's memory is
 taken once, before its first event call (`common/ui/accmem.c`, `acc_heap_take`). EMail check takes 64 KB,
 enough for a check through the Gateway (measured 80 KB with its margin, kept as `MEMKB=`). A Direct
@@ -2450,6 +2462,7 @@ program's window.
 | 1.2 Fewer releases, each carrying more; only a data-loss, security or crash fault alone (decided 26 Nov) | ✓ (8cf2ae380) | ✓ (5ed3459d3) | ✓ (main, after 2.30) | ✓ (45508a8) | ✓ (352d00a) | ✓ (b0e0d11b7) | ~ (11cac5470 on its branch; EUpdate ✓ 9c00aaf2; AERA-Gateway ✓ 576f115) | ✓ (cb354f0) | ~ (113ff70a9 on midi; main with the next candidate) |
 | 1.2 Nothing known left in a queue behind a release; the candidate lists what it left out (26 Nov) | ✓ (40c363898) | ✓ (c0eeb3583) | ? | ✓ (2675285) | ✓ (d15fda2) | ✓ (55df8fc07) | ? (EUpdate ✓ 2aca8920; AERA-Gateway ✓ 63ec6ed) | ? | ✓ (9e71101) |
 | 2.1 No accessory on a 1 MB machine: `acc_small_machine()`, no heap, `acc_small_alert` from the Desk entry; ST rigs on ST-2 (26 Nov) | ✗ | ✗ | ✗ (EMAILCHK.ACC) | n/a (PRG only) | ✗ | n/a (PRG only) | n/a (PRG only) | n/a (PRG only) | n/a (PRG only) |
+| 2.2 An accessory's GEMDOS memory through acc_core/acc_free, its own on plain TOS (26 Nov) | ✗ (2.61) | ✗ (2.18) | ✗ (EMAILCHK.ACC, 2.31) | n/a | ✗ | n/a | n/a | n/a | n/a |
 | 1.2 At least 60% of an app's Atari boots per candidate run under NVDI, every app the same (decided 7 Nov); the app's session needs the NVDI copy copy | has NVDI; next release | has NVDI; next release | ✓ (2.22: 35 of 58 boots under NVDI) | ✓ (2.17 gate: 33 of 55 boots under NVDI) | ✓ (2.9) | needs NVDI; next release | needs NVDI; next candidate | needs NVDI; next candidate | needs NVDI; next candidate |
 | 3.1/6.1 Settings in the family's layout (sidebar list, page heading and line, Cancel and OK on row H-2) and in Options, not File (decided 9 Nov) | ✓ (common's Settings engine; 2.54) | ✓ (dc9ec257, 2.9: its own FIELD dialog in the engine's layout, for the 1 MB ST) | ✓ (the reference: settings_sidebar) | ✓ | ✓ (src/gem/settings.c) | ✓ (b736182e, 3e5e3a66; 2.11) | ✓ | ✓ (d9663a9cd, 762f5e0fe) | to check |
 | 3.1 to 6.3 and 5.10, 5.11: the UI standards in `ui/` (menus, controls, windows); each app answers the rows of `ui/DEVIATIONS.md` that name it (9 Nov) | maintenance | maintenance | maintenance | ✓ (UI backlog done but item 7, still to be decided) | maintenance | ✓ (DEVIATIONS rows done; UI-BACKLOG 10 of 10) | to check | to check | to check |
