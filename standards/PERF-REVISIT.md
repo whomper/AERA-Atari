@@ -502,6 +502,11 @@ Lesson: the group must come from a profile of the 68030 build, and a group that 
   35 and was dropped. Judged the timing's place, not work, by the hub, and accepted (26 Nov 2026); released
   in 1.59. Revisit if a VGM window's sum, not its longest turn, grows.
 
+- **EWeb 1.27** (07a9d9a22) against 1.26, Falcon-4:16 without NVDI, a page loaded: home 460 -> 470,
+  sample 410 -> 425, news 805 -> 815 ms. The profile shows no new work: the same drawing functions
+  slightly slower, code and data at other cache places after 1.27's growth. The reference configuration
+  and ST:mono within a tick. Accepted (27 Nov 2026). Revisit with the next pad round or a layout change.
+
 ## How to add a line
 
 Name the app and version or commit, the row, the machine (`ST:mono`, `ST-1`, `Falcon-4:16`,
