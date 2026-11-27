@@ -22,22 +22,23 @@ static short cell_w = 8, cell_h = 16, desk_w = 640, desk_h = 381;
 static short pick;			/* 0: the cancel object; else this button */
 static short got_cancel, got_start, got_default, mouse_arrow;
 
-/* FIREBEE=1: a FireBee ('_CF_'). Under MyAES (myaes: its own name from
-   boot, ALERT not running yet, as on the tester's) the AES's own alert is
+/* FIREBEE=1: a FireBee ('_CF_'). Under MyAES (myaes: its cookies MAS1
+   and MAS2, ALERT not running yet, as on the tester's) the AES's own alert is
    known to fail, so ours is shown even there; under XaAES (myaes 0) the
    AES's own is kept */
 #ifndef FIREBEE
 #define FIREBEE 0
 #endif
+static int myaes;			/* the AES is MyAES: its cookies MAS1 and MAS2 */
 long get_cookie(long id)
 {
-	return FIREBEE && id == 0x5F43465FL;
+	return (FIREBEE && id == 0x5F43465FL) || (myaes && (id == 0x4D415331L || id == 0x4D415332L));
 }
 
-static int myaes;			/* the AES is MyAES */
 short appl_find(const char *name)
 {
-	return myaes && !strcmp(name, "MYAES   ") ? 1 : -1;
+	(void)name;
+	return -1;			/* MyAES's ALERT not running yet, nor any name of its own */
 }
 
 static int windowed;			/* a multitasking AES (MiNT, MagiC) */
