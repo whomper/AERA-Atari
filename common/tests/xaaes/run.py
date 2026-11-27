@@ -77,6 +77,10 @@ and its output (NatFeats, MiNT's boot messages) in WORK/hatari.log.
             not a fault. The FireBee's ColdFire alert.prg (159,168 bytes) is another program, not run here. It is a test
             stand-in, never committed and never in a release. --cnf is XaAES's and is refused with it
 
+build/AESPROBE.PRG (aesprobe.c, make) as PRG says what the AES shows of itself before any alert
+            (cookies, version, appl_getinfo, appl_find, appl_search): "AESPROBE ..." lines in
+            WORK/hatari.log; --steps "until AESPROBE done 240"
+
 Prints the screenshots' names at the end; exits 1 when a step failed.
 """
 import argparse, os, shutil, signal, subprocess, sys, time
