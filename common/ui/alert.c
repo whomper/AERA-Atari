@@ -246,13 +246,15 @@ static short al_build(short icon, short nlines, const char *btns, short def, sho
    in a window as the other dialogs are (decided 25 Nov 2026): MyAES on
    the FireBee, whose ColdFire ALERT.PRG (MyAES draws form_alert in that
    system program of its own) died with a bus error on a tester's machine
-   for a one-button [3] alert. MyAES is told by that program (appl_find
-   "ALERT"), which XaAES, N.AES and MagiC don't have; the FireBee by _CF_ */
+   for a one-button [3] alert. Every AES on the FireBee (_CF_) since 27 Nov
+   2026: MyAES may start ALERT.PRG only at the first form_alert, so
+   appl_find("ALERT") found nothing before it, and the alert went to the
+   AES's and was killed as before (the tester, under EPlay 1.60) */
 static int aes_alert_fails(void)
 {
 	static int fails = -1;
 	if (fails < 0)
-		fails = get_cookie(0x5F43465FL) != 0 && appl_find("ALERT   ") >= 0;	/* '_CF_' */
+		fails = get_cookie(0x5F43465FL) != 0;	/* '_CF_' */
 	return fails;
 }
 
