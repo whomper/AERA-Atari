@@ -1861,7 +1861,9 @@ these rules where it plays more than a bell (EPlay):
   means silent: no wait, no retry. EPlay holds the lock while it plays and gives it back on pause and stop.
 - **Put back what you change** once the sound has ended, at the next event turn (`bell_poll()`): the DMA's mode, the
   Falcon's matrix and prescale, then `Unlocksnd()`. **Never the user's volume** (the LMC1992, the Falcon's
-  attenuation): the level is in the sample, a bell's peak about -12 dBFS. The YM goes only through `Dosound`, ends
+  attenuation): the level is in the sample, a bell's peak about -12 dBFS. The one exception is a player's own volume
+control, which the user turns (EPlay): set only while it plays, and put back after. The STE's LMC1992 can't be
+read back, so it goes back to 0 dB, the value TOS starts with. The YM goes only through `Dosound`, ends
   with its voices silent and leaves register 7's port bits as they were.
 - **Never block:** the sound starts and the call returns; nothing waits on it to end.
 - **Nothing on a machine with neither** (`_SND` says; TOS 1.00-1.04 sets no cookies, and no `_MCH` either means an
@@ -2524,7 +2526,7 @@ program's window.
 | 4.5 The notification button reads `Show` when it brings a window forward (D51) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ ("Open | ✓ (main.c "Show") |Later", W25; Show as decided) | ✓ (since 1.76: queue.c's Show) | — | ✓ (51562d82) | ✓ (8798a8dd) | — | — |
 | 5.2 Pictures borrow pens 192–255 while on top, `ui/picpens.c`, PIC.OVL's `quant` (22 Nov) | — | ✓ (2.16) | — | — | — | — | ~ (1.26: its colours given back when not on top; its own palette still 16–254) | ? (pictures and pages; EConvert's band to 16–31) | — |
 | 5.12 Saving through the family's file dialog, with "Use the system file selector" in Settings (25 Nov) | — | — (exception: system selector) | ✓ 2.30 (Save attachment) | — | — | — | ~ 1.27 (MiNT/MagiC; TOS: the AES's until the fix) | ✗ (Save Optimised) | ✓ 1.58 (Save playlist) |
-| 5.13 Sound: never taken from another, put back, never the volume, a setting (`bell.c`; 27 Nov) | n/a | n/a | ~ 2.33 (the new-mail bell, in its candidate) | n/a | n/a | n/a | n/a | n/a | ? (to check: the lock, the matrix put back) |
+| 5.13 Sound: never taken from another, put back, never the volume, a setting (`bell.c`; 27 Nov) | n/a | n/a | ~ 2.33 (the new-mail bell, in its candidate) | n/a | n/a | n/a | n/a | n/a | ✓ 1.61 (the lock with every path, the matrix put back, its volume control only while it plays; the lock back 2 s after a pause: the next turn, next release) |
 
 **Rows added on 9 Nov 2026** for the decisions D1 to D54 ([ui/DECISIONS-2026-11-09.md](ui/DECISIONS-2026-11-09.md)).
 ✗ = the evaluation of 9 Nov shows the app differs from the rule; ? = the app's reply says it already matches, or it
