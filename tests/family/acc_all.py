@@ -140,7 +140,8 @@ def get(app, names):
 # on an ST the ST edition, while a release has one: from TLS.OVL on (the
 # guidelines, 7.4) the one ACC runs on every Atari
 want = {"ECal": ("ECALST.ACC", "ECAL.ACC"), "EContact": ("ECONTST.ACC", "ECONTACT.ACC"),
-        "EHypView": ("EHYPVIEW.ACC", "EHYPVIEW.ACC"), "EMailCheck": ("EMAILCHK.ACC", "EMAILCHK.ACC")}
+        "EHypView": ("EHYPVIEW.ACC", "EHYPVIEW.ACC"), "EMailCheck": ("EMAILCHK.ACC", "EMAILCHK.ACC"),
+        "EWeb": ("EWEB.ACC", "EWEB.ACC")}
 # the release an accessory comes in, where it isn't its own app's name
 repo = {"EMailCheck": "EMail"}
 # accessories whose Desk entry shows an alert rather than a window: Esc
@@ -176,6 +177,18 @@ if "EMailCheck" in want and not again:
     os.makedirs(os.path.join(hd, "EMAIL"), exist_ok=True)
     with open(os.path.join(hd, "EMAILCHK.INF"), "w", newline="") as f:
         f.write("; EMail's folder, where EMAIL.PRG and EMAIL.INF are\r\nFOLDER=C:\\EMAIL\r\n\r\n")
+if "EWeb" in want and not again:
+    # EWEB.ACC (EWeb 1.28 on; TT RAM only): its files beside it in the root,
+    # from the folder the --use candidate or the release came from, and
+    # EWEB.INF there with FOLDER= (the guidelines 6.1), a blank page at its
+    # opening, so no network is asked for
+    src = os.path.dirname(use["EWEB.ACC"]) if "EWEB.ACC" in use else rel
+    for f in ("EWEB.FNT", "EWEBJS.OVL", "EWEBTW.OVL", "TLS.OVL"):
+        if os.path.exists(os.path.join(src, f)) or get("EWeb", [f]):
+            shutil.copy(os.path.join(src if os.path.exists(os.path.join(src, f)) else rel, f),
+                        os.path.join(hd, f.lower()))
+    with open(os.path.join(hd, "eweb.inf"), "w", newline="") as f:
+        f.write("HOME=about:blank\r\nFOLDER=C:\\\r\n")
 if font and not again:
     with open(os.path.join(hd, "EHYPVIEW.INF"), "w", newline="") as f:
         f.write("FOLDER=C:\\\r\nFONT=Courier 10 Pitch\r\nPOINT=10\r\n")
