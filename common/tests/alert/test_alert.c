@@ -22,9 +22,10 @@ static short cell_w = 8, cell_h = 16, desk_w = 640, desk_h = 381;
 static short pick;			/* 0: the cancel object; else this button */
 static short got_cancel, got_start, got_default, mouse_arrow;
 
-/* FIREBEE=1: a FireBee ('_CF_'), where the AES's own alert is known to
-   fail, so ours is shown even there; MyAES's ALERT program not running
-   yet (it may start only at the first form_alert), as on the tester's */
+/* FIREBEE=1: a FireBee ('_CF_'). Under MyAES (myaes: its own name from
+   boot, ALERT not running yet, as on the tester's) the AES's own alert is
+   known to fail, so ours is shown even there; under XaAES (myaes 0) the
+   AES's own is kept */
 #ifndef FIREBEE
 #define FIREBEE 0
 #endif
@@ -33,10 +34,10 @@ long get_cookie(long id)
 	return FIREBEE && id == 0x5F43465FL;
 }
 
+static int myaes;			/* the AES is MyAES */
 short appl_find(const char *name)
 {
-	(void)name;
-	return -1;
+	return myaes && !strcmp(name, "MYAES   ") ? 1 : -1;
 }
 
 static int windowed;			/* a multitasking AES (MiNT, MagiC) */
@@ -335,9 +336,14 @@ int main(void)
 	windowed = 1;
 	via = 0;
 	alert(1, "[3][Can't find pop3.example.net. Check the server's name in Settings.][Retry|Cancel]");
-	if (FIREBEE)
-		expect_n("the FireBee, ALERT not running yet: our own", via, 'T');
-	else {
+	if (FIREBEE) {
+		expect_n("the FireBee under XaAES: its own form_alert", via, 'F');
+		myaes = 1;
+		via = 0;
+		alert(1, "[3][Can't find pop3.example.net. Check the server's name in Settings.][Retry|Cancel]");
+		expect_n("the FireBee under MyAES, ALERT not running yet: our own", via, 'T');
+		myaes = 0;
+	} else {
 		expect_n("a multitasking AES: form_alert", via, 'F');
 		expect("... the text wrapped into lines of 30 at most",
 		       "[3][Can't find pop3.example.net.|Check the server's name in|Settings.][Retry|Cancel]");
