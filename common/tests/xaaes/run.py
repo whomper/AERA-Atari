@@ -169,6 +169,14 @@ def main():
         ap.error("a PRG, or --start")
     if not os.path.isdir(BASE):
         sys.exit("no %s: make base" % BASE)
+    # a base that lost FreeMiNT's own files comes up in MiNT's shell every
+    # time, which the retries below would take for the rare open failure
+    md = os.path.join(BASE, "mint")
+    vers = [d for d in os.listdir(md) if d[0].isdigit()] if os.path.isdir(md) else []
+    if not vers or not os.path.isfile(os.path.join(md, vers[0], "mint.cnf")) or \
+            not os.path.isfile(os.path.join(md, vers[0], "xaaes", "xaaes.km")) or \
+            not os.path.isfile(os.path.join(BASE, "auto", "mint030.prg")):
+        sys.exit("%s has lost FreeMiNT's files (mint.cnf, xaaes.km, AUTO's kernel): make base" % BASE)
     a.tos = os.path.abspath(a.tos)
     # Now and then, mostly with several Hatari at once, FreeMiNT can't open
     # MINT.CNF on the IDE disk and starts its own shell: then once more
