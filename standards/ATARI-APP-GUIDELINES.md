@@ -1848,10 +1848,9 @@ file selector"** in its Settings, on the General page, or the first page where t
 20 KB to a program (filepick.o 12.3 KB of code and 4.7 KB of buffers, dirlist.o 2.6 KB, as a 68000 build for size),
 and EContact's one build for the accessory and the program has 56 bytes left over the 1 MB ST's floor. Its Import and
 folder choice use the AES's selector already.
-**For now, EWeb on plain TOS** (decided 26 Nov 2026): EWeb 1.27 saves through the AES's selector on TOS and
-through the family's dialog under MiNT and MagiC, until EWeb's fix for a press left held after its download box
-(seen in EWeb's download rig; found on 27 Nov 2026 to be EWeb's own, not dialog.c's: it shows with no family dialog
-before the box too).
+EWeb's "for now" on plain TOS (decided 26 Nov 2026: the AES's selector there) ended on 27 Nov 2026 (decided: the
+family's dialog again, from the release with EWEB.ACC): the press held after its download box is EWeb's own and shows
+with no family dialog before it.
 
 ### 5.13 Sound (must; 27 Nov 2026)
 An app that makes a sound of its own (EMail's new-mail bell first) does it through `common/ui/bell.c`, or keeps
@@ -2529,7 +2528,7 @@ program's window.
 | 4.4 The clipboard sentences on the status line, never an alert (D50) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ (6dd8edac) | ✓ (since 1.76: the status line, no alert) | ✓ (8d67995, 2.0) | ✓ (f91eab33, 2.11) | ✓ (9c21430c) | ✓ (b39b6cb6b) | — |
 | 4.5 The notification button reads `Show` when it brings a window forward (D51) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ ("Open | ✓ (main.c "Show") |Later", W25; Show as decided) | ✓ (since 1.76: queue.c's Show) | — | ✓ (51562d82) | ✓ (8798a8dd) | — | — |
 | 5.2 Pictures borrow pens 192–255 while on top, `ui/picpens.c`, PIC.OVL's `quant` (22 Nov) | — | ✓ (2.16) | — | — | — | — | ~ (1.26: its colours given back when not on top; its own palette still 16–254) | ? (pictures and pages; EConvert's band to 16–31) | — |
-| 5.12 Saving through the family's file dialog, with "Use the system file selector" in Settings (25 Nov) | — | — (exception: system selector) | ✓ 2.30 (Save attachment) | — | — | — | ~ 1.27 (MiNT/MagiC; TOS: the AES's until the fix) | ✗ (Save Optimised) | ✓ 1.58 (Save playlist) |
+| 5.12 Saving through the family's file dialog, with "Use the system file selector" in Settings (25 Nov) | — | — (exception: system selector) | ✓ 2.30 (Save attachment) | — | — | — | ~ 1.27 (MiNT/MagiC); everywhere from the release with EWEB.ACC (decided 27 Nov 2026) | ✗ (Save Optimised) | ✓ 1.58 (Save playlist) |
 | 5.13 Sound: never taken from another, put back, never the volume, a setting (`bell.c`; 27 Nov) | n/a | n/a | ~ 2.33 (the new-mail bell, in its candidate) | n/a | n/a | n/a | n/a | n/a | ✓ 1.61 (the lock with every path, the matrix put back, its volume control only while it plays; the lock back 2 s after a pause: the next turn, next release) |
 
 **Rows added on 9 Nov 2026** for the decisions D1 to D54 ([ui/DECISIONS-2026-11-09.md](ui/DECISIONS-2026-11-09.md)).
