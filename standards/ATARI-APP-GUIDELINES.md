@@ -1866,6 +1866,10 @@ control, which the user turns (EPlay): set only while it plays, and put back aft
 read back, so it goes back to 0 dB, the value TOS starts with. The YM goes only through `Dosound`, ends
   with its voices silent and leaves register 7's port bits as they were.
 - **Never block:** the sound starts and the call returns; nothing waits on it to end.
+- **Give the lock back while a box is up.** `bell_poll()` runs on every event turn, and inside the family's dialogs
+  through `dlg_idle` (`dlg_idle = bell_poll`: every 20 ms), so an app that rings and then opens a modal box (EMail
+  check's news) gives the lock back about 1.7 s after the ring, whatever the user does. The AES's own `form_alert`
+  (MiNT or MagiC without BGEM.NG) has no idle: there the lock waits for the answer, known and accepted (27 Nov 2026).
 - **Nothing on a machine with neither** (`_SND` says; TOS 1.00-1.04 sets no cookies, and no `_MCH` either means an
   ST, which has the YM). No ban under MiNT or MagiC: `Locksnd` decides there too.
 - **A sound the user hears is a setting**, on by default where the owner chose so ("Ring a bell for new mail", EMail,
