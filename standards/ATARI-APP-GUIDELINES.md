@@ -1406,6 +1406,12 @@ back:
 First use: EMail and EWeb (EMail's `--back` and `--resume`, EWeb's return), then any pair the same
 way.
 
+**Release order:** the program started goes first. A caller sends `--back=` only once a released version
+of the program it starts reads it. Before that, the caller sends what it always did. The hub's family check
+runs the real pair before the caller's release. (EMail 2.31 sent `--back=` to EWeb 1.26, which took the
+whole line as the address, and links failed on plain TOS until 2.32, 27 Nov 2026.) A program reading
+its command line stops an address at the first " --".
+
 ## 5. Windows, screen, fonts
 
 ### 5.1 Windows
