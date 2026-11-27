@@ -247,14 +247,15 @@ static short al_build(short icon, short nlines, const char *btns, short def, sho
    Nov 2026; narrowed to MyAES alone, decided 27 Nov 2026), whose ColdFire
    ALERT.PRG (MyAES draws form_alert in that system program of its own)
    died with a bus error on a tester's machine for a one-button [3] alert.
-   MyAES is told by its own name, "MYAES", which it has from boot, or by
-   ALERT, which it may start only at the first form_alert; XaAES, N.AES and
-   MagiC have neither and keep their own alert. Asked at each alert, never
-   kept: a "no" at the first could be ALERT not started yet */
+   MyAES is told by its cookies MAS1 and MAS2, set from boot (MyAES 0.99
+   under FreeMiNT; XaAES sets nAES and neither of them). Its ALERT program
+   isn't: it starts only at the first form_alert. Asked at each alert, as
+   the cookies are cheap and the AES can be started after us. Either
+   cookie will do, so a value of 0 in one doesn't hide MyAES */
 static int aes_alert_fails(void)
 {
 	return get_cookie(0x5F43465FL) != 0 &&					/* '_CF_' */
-	       (appl_find("MYAES   ") >= 0 || appl_find("ALERT   ") >= 0);
+	       (get_cookie(0x4D415331L) != 0 || get_cookie(0x4D415332L) != 0);	/* 'MAS1', 'MAS2' */
 }
 
 short alert(short def, const char *fmt, ...)
