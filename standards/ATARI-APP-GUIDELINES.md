@@ -2366,8 +2366,11 @@ for every app (the ones in maintenance too: section 8).
 ## 8. Where each app stands (October 2026; checked with every app 22 Nov 2026)
 
 **Focus and maintenance (decided 1 Nov 2026).** EWeb, EPDF and EPlay have the family's effort until
-they reach 1.0. Every other app (ECal, EContact, EMail, EFTP, EHypView, ClaudeST, EUpdate, and
-AERA-Gateway, EDOS and EFTP_XL) is in maintenance mode:
+they reach 1.0. Every other app (ECal, EContact, EMail, EFTP, EHypView, ClaudeST, EUpdate, EDOS and
+EFTP_XL) is in maintenance mode. **AERA-Gateway is not** (decided 28 Nov 2026: the Gateway mirrors the
+apps that aren't in maintenance, so it moves with them; its first feature out of it, the dashboard's
+admin views). Its releases wait for the owner's OK, each one, until he says otherwise (decided 28 Nov
+2026). The apps in maintenance:
 - no new features and no speed rounds of its own;
 - **every family rule holds for it as for the focus apps** (decided 17 Nov 2026: the same behaviour
   in every app; every app keeps the family rules and is told of each, and whether it needs a release
