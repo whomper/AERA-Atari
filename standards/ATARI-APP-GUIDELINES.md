@@ -2406,7 +2406,7 @@ program's window.
 
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST | EWeb | EPDF | EPlay |
 |---|---|---|---|---|---|---|---|---|---|
-| Mode (decided 1 Nov 2026) | maintenance (2.57) | maintenance (2.12) | maintenance (2.28) | maintenance (2.17) | maintenance (2.10) | maintenance (2.14) | focus (1.29; 1.0 on 10 Nov) | focus (2.43; 2.44 next) | focus (1.52) |
+| Mode (decided 1 Nov 2026) | maintenance (2.57) | maintenance (2.12) | maintenance (2.28) | maintenance (2.17) | maintenance (2.10) | maintenance (2.18) | focus (1.29; 1.0 on 10 Nov) | focus (2.43; 2.44 next) | focus (1.52) |
 | 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a (program only) | n/a (program only) | — |
 | 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) | ✓ | ✓ (0.1) | — |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (common's, 0.1) | — |
@@ -2531,7 +2531,7 @@ program's window.
 | 4.4 The clipboard sentences on the status line, never an alert (D50) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ (6dd8edac) | ✓ (since 1.76: the status line, no alert) | ✓ (8d67995, 2.0) | ✓ (f91eab33, 2.11) | ✓ (9c21430c) | ✓ (b39b6cb6b) | — |
 | 4.5 The notification button reads `Show` when it brings a window forward (D51) | ✓ (3209a8f; 2.34) | ✓ (eea9b0e0) | ✓ ("Open | ✓ (main.c "Show") |Later", W25; Show as decided) | ✓ (since 1.76: queue.c's Show) | — | ✓ (51562d82) | ✓ (8798a8dd) | — | — |
 | 5.2 Pictures borrow pens 192–255 while on top, `ui/picpens.c`, PIC.OVL's `quant` (22 Nov) | — | ✓ (2.16) | — | — | — | — | ~ (1.26: its colours given back when not on top; its own palette still 16–254) | ? (pictures and pages; EConvert's band to 16–31) | — |
-| 5.12 Saving through the family's file dialog, with "Use the system file selector" in Settings (25 Nov) | n/a (saves nothing a user names) | — (exception: system selector) | ✓ 2.30 (Save attachment) | n/a (no save) | n/a (no save) | ~ (Save artifact as: on main 50f75b01f, the next release) | ✓ 1.28 (Save page as, downloads; the family's dialog everywhere) | ✓ 2.46 (Save Optimised) | ✓ 1.58 (Save playlist) |
+| 5.12 Saving through the family's file dialog, with "Use the system file selector" in Settings (25 Nov) | n/a (saves nothing a user names) | — (exception: system selector) | ✓ 2.30 (Save attachment) | n/a (no save) | n/a (no save) | ✓ 2.18 (Save artifact as) | ✓ 1.28 (Save page as, downloads; the family's dialog everywhere) | ✓ 2.46 (Save Optimised) | ✓ 1.58 (Save playlist) |
 | 5.13 Sound: never taken from another, put back, never the volume, a setting (`bell.c`; 27 Nov) | n/a | n/a | ✓ 2.33 (the new-mail bell in EMail and EMail check, BELL=) | n/a | n/a | n/a | n/a | n/a | ✓ 1.61 (the lock with every path, the matrix put back, its volume control only while it plays; the lock back 2 s after a pause: the next turn, next release) |
 | 4.6 Going back to the program that started you: `--back=`, the place kept, `--resume` (26 Nov) | — | — | ✓ 2.33 (EWeb started for a link, back at the same message; with EWeb 1.27 or newer) | — | — | — | ✓ 1.27 (--back=: back to the program that started it) | — | — |
 
