@@ -2406,7 +2406,7 @@ program's window.
 
 | Rule | ECal | EContact | EMail | EFTP | EHypView | ClaudeST | EWeb | EPDF | EPlay |
 |---|---|---|---|---|---|---|---|---|---|
-| Mode (decided 1 Nov 2026) | maintenance (2.57) | maintenance (2.12) | maintenance (2.28) | maintenance (2.17) | maintenance (2.10) | maintenance (2.18) | focus (1.29; 1.0 on 10 Nov) | focus (2.43; 2.44 next) | focus (1.52) |
+| Mode (decided 1 Nov 2026) | maintenance (2.57) | maintenance (2.12) | maintenance (2.28) | maintenance (2.17) | maintenance (2.10) | maintenance (2.18) | focus (1.30; 1.0 on 10 Nov) | focus (2.43; 2.44 next) | focus (1.52) |
 | 1.1 Desk name = product name | ✓ | ✓ | n/a | n/a | ✓ | n/a | n/a (program only) | n/a (program only) | — |
 | 1.2 Build doesn't change VERSION; releases | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (VERSION in st/claudest.c) | ✓ | ✓ (0.1) | — |
 | 1.3 About: layout and GPL line | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (common's, 0.1) | — |
